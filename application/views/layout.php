@@ -1,27 +1,24 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    
     <?php 
-    
         foreach ($styles as $style) {
             if (is_string($style)) {
-                html::style($style);
+                echo html::style($style);
             } elseif (is_array()) {
-                html::style(current($style), next($style));
+                echo html::style(current($style), next($style));
             }
         }
         
         foreach ($scripts as $script) {
             if (is_string($script)) {
-                html::style($script);
+                echo html::style($script);
             } elseif (is_array()) {
-                html::style(current($style), next($style));
+                echo html::style(current($style), next($style));
             }
         }
         
     ?>
-    
     <title><?php echo isset($title)?$title:'Grapevine'; ?></title>
 </head>
 <body>

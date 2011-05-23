@@ -1,5 +1,100 @@
+body {
+    background-color: #EDEDED;
+    margin: 0px;
+    padding: 0px;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    font-size: 11px;
+}
 
 #main-wrapper {
-    width: 980px;
-    margin: 0px auto;
+    background-color: white;
+}
+
+#header-holder {
+    height: 75px;
+    border-bottom: 1px solid gray;
+    position: relative;
+}
+
+#top-menu {
+    position: absolute;
+    right: 15px;
+    bottom: 0px;
+}
+
+.top-menu-item {
+    display: inline-block;
+    padding: 5px;
+    border-width: 1px 1px 0px 1px;
+    border-color: gray;
+    border-style: solid;
+    background-color: #999;
+}
+
+#main-body {
+    margin: 10px;
+    min-width: 500px;
+    /*width: 980px;*/
+}
+
+#account-settings-menu {
+    width: 20%;
+    min-width: 100px;
+    float: left;
+}
+
+.menu-title {
+    border: 1px solid gray;
+    padding: 5px;
+    background-color: #999999;
+    font-weight: bold;
+    margin-bottom: 1px;
+}
+
+.menu-section {
+    border: 1px solid gray;
+    margin-bottom: 1px;
+}
+
+.menu-section-title {
+    padding: 5px;
+    background-color: #DDDDDD;
+    border-bottom: 1px solid gray;
+}
+
+.menu-section-item {
+    padding: 5px;
+    border-bottom: 1px solid gray;
+}
+
+.menu-section-item.last {
+    border-bottom: 0px;
+}
+
+#account-content {
+    width: 79%;
+    float: right;
+    min-width: 395px;
+    border: 1px solid gray;
+}
+
+.content-title {
+    margin: 0px;
+    padding: 5px;
+    background-color: #999;
+    font-size: 11px;
+    border-bottom: 1px solid gray;
+}
+
+#footer-holder {
+    margin: 5px;
+    border-top: 1px solid gray;
+    padding: 5px;
+    text-align: center;
+}
+
+#copyrights {
+    width: 220px;
+    margin: 5px auto;
+    border: 1px solid gray;
 }
