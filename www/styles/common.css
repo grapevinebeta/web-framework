@@ -1,0 +1,17 @@
+
+
+.clear {
+    clear: both;
+}
+
+.b {
+    font-weight: bold !important;
+}
+
+.i {
+    font-style: italic !important;
+}
+
+.u {
+    text-decoration: underline;
+}
