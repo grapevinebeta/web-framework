@@ -6,6 +6,13 @@ body {
     font-size: 11px;
 }
 
+textarea {
+    margin: 0px;
+    padding: 0px;
+    border-width: 1px;
+    border-style: solid;
+}
+
 #main-wrapper {
     background-color: white;
 }
@@ -84,6 +91,13 @@ body {
     background-color: #999;
     font-size: 11px;
     border-bottom: 1px solid gray;
+}
+
+.content-section-title {
+    margin: 0px;
+    padding: 5px;
+    background-color: #DDDDDD;
+    font-size: 11px;
 }
 
 #footer-holder {

@@ -1,10 +1,8 @@
 <h1 class="content-title">
     <?php echo _('User Management'); ?>
 </h1>
-<div class="padding-5">
-    <p>
-        <?php echo _('User Accounts'); ?>:
-    </p>
+<h2 class="content-section-title"><?php echo _('User Accounts'); ?>:</h2>
+<div id="account-users-list-section" class="padding-5">
     <div id="account-users-list-holder">
         <form action="" method="post">
         <table class="wide data-grid" cellpadding="5">
@@ -48,7 +46,69 @@
         </table>
         </form>
     </div>
+</div>
+<h2 class="content-section-title"><?php echo _('Add / Edit User'); ?></h2>
+<div id="account-users-edit-section" class="padding-5">
     <div id="account-users-edit-holder">
-        
+        <form action="" method="post">
+            <table>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('First Name'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('first_name'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('Last Name'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('last_name'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('Email'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('email'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('Contact Phone'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('phone'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('Username'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('username'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('Password'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('password'); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="a-right">
+                        <?php echo _('Confirm Password'); ?>:
+                    </td>
+                    <td>
+                        <?php echo form::input('password2'); ?>
+                    </td>
+                </tr>
+            </table>
+        </form>
     </div>
 </div>

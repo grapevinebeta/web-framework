@@ -49,7 +49,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_alerts()
     {
-        
+        $this->_contentView = View::factory('account/alerts');
     }
     
     public function action_reporting()
