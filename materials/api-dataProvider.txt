@@ -1,0 +1,231 @@
+
+/api/dataProvider/<dataSet>
+	 - all requests will need to be POST requests
+	 - range [string:required]  : datestamp in mm/dd/yyyy or <value><date_metric>
+			date_metrics : m = months,d=days,y=years ie 30d,3m, 1y
+	 - filter [array:optional] : data key to filter against
+	 - dateInterval [number:optional] In some cases we need to break the returned data set into date interval, this will be set to do so
+	 so we can break our data into every <dateInterval> days
+Returned:
+	- data [object:required]
+	- error[optional:object]
+
+Format:	
+<endpoint>
+<notes:optional>
+<data>
+
+
+/api/dataProvider/ogsi
+{
+	ogsi:OGSIObject	
+}
+	
+
+/api/dataProvider/reviews 
+{
+	reviews:ArrayCollection of ReviewObject
+	filters:{
+		status:ArrayCollection of FilterObject
+		source:ArrayCollection of FilterObject		
+	}
+}
+
+
+/api/dataProvider/review/expand/<id>	
+	
+
+{
+		review:ReviewObject
+}
+
+
+	
+/api/dataProvider/review/email/<id>
+
+
+
+/api/dataProvider/review/status/<id>
+	-status :[string:required] "references Reviews.Status[OPEN|CLOSED|TODO]"
+
+
+
+
+/api/dataProvider/sites
+{
+	sites:ArrayCollection of SiteObject 
+}
+
+/api/dataProvider/keywords
+{
+	keywords:ArrayCollection of KeywordObject
+}
+
+/api/dataProvider/social/activity
+Note: returns numeric data only
+{
+	networks:ArrayCollection of SocialActivityObject
+}
+
+/api/dataProvider/social/reach
+Note: returns numeric data only
+{
+	networks:ArrayCollection of SocialReachObject
+}
+
+
+
+/api/dataProvider/socials
+{
+	socials:ArrayCollection of SocialContentObject
+	filters:{
+		status:ArrayCollection of FilterObject
+		source:ArrayCollection of FilterObject
+	}		
+}
+
+
+/api/dataPrivider/competition/comparision
+{
+	comparision:An object hashed by the unixtimestamp generated from <dateInterval> 
+			keys will be an ArrayCollection of OGSICompetitionRatingObject
+	
+
+}
+/api/dataProvider/competition/details
+@TODO
+
+
+/api/dataProvider/competition/distribution
+{
+	distribution:ArrayCollection of OGSICompetitionDistributionObject
+
+}
+
+/api/dataProvider/competition/ledger
+{
+	reviews:ArrayCollection of CompetitionReviewObject
+}
+
+Objects
+
+ContentObject :
+{
+			status:[string:required]refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+			rating:[decimal:optional] - review overall rating
+			submitted:[int:required] - unixtimestamp - date review was submitted , note indexed
+			except:[string:required] - excerpt of content
+			site:[string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+			id:[int:required] - id for content
+			review:[text:optional] - full content
+			category:[string:optional] - internal category
+			notes:[text:optional] - notes
+			keywords:[array:optional] - keywords as string
+			title:[string:optional]  - title for content
+			link:[string:optional] - link for content
+			author:[string:optional] - author of the content
+}
+ReviewObject extends ContentObject
+{
+}
+SocialContentObject extends ContentObject
+{
+	network:[string:required]  name of network from Social.Networks[....]
+
+}
+
+
+SiteObject
+{
+	id:[int:required] - site id
+	site:[string:required] - site key value as related to what is stored in the database, human text lookup will need to be done on the client
+	positive:[int:required] - positive count
+	negative:[int:required] - negative count
+	neutral:[int:required] - neutral count
+	total:[int:required] - total count
+	average:[decimal:required] - average count
+
+}
+
+SocialActivityObject
+{
+	network:[string:required] - social network
+	action:[string:required] - type of activity, ex. tweet,checkin,upload
+	value:[int:required] - activity value
+	change:[decimal:required] - change amount
+	total:[int:required] - total amount
+
+
+	
+}
+SocalReachObject{
+	network:[string:required] - social network
+	action:[string:required] - type of reach, ex. like,follower,subscriber
+	value:[int:required] - reach value
+	change:[decimal:required] - change amount
+	total:[int:required] - total amount
+
+}
+
+KeywordObject
+{
+	id:[int:required]
+	keyword:[string:required]
+	used:[int:required]
+	rating:[decimal:required]
+	percent:[decimal:required]
+
+}
+
+FilterObject{
+	total: [optional]
+	value: string - value that will be passed to "filter" array when requesting a dataSet
+
+}
+
+OGSIObject{
+
+	   distribution:OGSIDistributionObject,
+	   ogsi:OGSIScoreObject,
+	   reviews:OGSIReviewsObject,
+	   rating:OGSIRatingObect
+}
+OGSIScoreObject{
+			
+		   value:[decimal:required] - the ogsi percent
+		   change:[decimal:required] - the change in percentage
+}
+OGSIDistributionObject{
+	   positive:[int:required] - positive count
+	   negative:[int:required] - negative count
+	   neutral:[int:required] - neutral count
+	   total:[int:required] - total count
+	   average:[decimal:required] - average count
+}
+OGSIReviewsObject {
+		value:[number:required] - the number of reviews
+		change:[number:required] - the change in percentage
+}
+OGSIRatingObect {
+		value:[decimal:required] - the current rating
+		change:[decimal:required] - change in rating
+}
+
+IOGISBaseCompetitionObject{
+	competition:[string:required] name of competition
+}
+OGSICompetitionRatingObject extends OGSIRatingObect implements IOGISBaseCompetitionObject
+{
+	
+}
+OGSICompetitionDistributionObject extends OGISBaseCompetitionObject implements IOGISBaseCompetitionObject
+{
+}
+OGSICompetitionObject extends OGSIObject implements IOGISBaseCompetitionObject
+{
+}
+CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObject
+{
+
+}
+
