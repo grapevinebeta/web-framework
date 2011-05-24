@@ -59,6 +59,14 @@ class Controller_Account extends Controller_Template {
     
     public function action_competitors()
     {
+        $this->_contentView = View::factory('account/competitors');
+        $competitorsData = array(
+            array('id' => 1, 'name' => 'Jacek Kromski', 'active' => 1),
+            array('id' => 2, 'name' => 'Tomasz Jaśkowski', 'active' => 0),
+            array('id' => 3, 'name' => 'Richard Ortega', 'active' => 1),
+            array('id' => 4, 'name' => 'John Kowalski', 'active' => 0),
+        );
+        $this->_contentView->competitors = $competitorsData;
         
     }
 
@@ -69,7 +77,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_billing()
     {
-        
+        $this->_contentView = View::factory('account/billing');
     }
     
     

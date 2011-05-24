@@ -40,4 +40,10 @@
             <?php endif; ?>
         </table>
     </form>
+    <form action="" method="post">
+        <p>
+            <input type="text" name="newCompetitor" />
+            <?php echo form::submit('', _('Add Competitor')); ?>
+        </p>
+    </form>
 </div>
