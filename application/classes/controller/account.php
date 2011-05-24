@@ -52,9 +52,14 @@ class Controller_Account extends Controller_Template {
         $this->_contentView = View::factory('account/alerts');
     }
     
-    public function action_reporting()
+    public function action_reports()
     {
-        
+        $this->_contentView = View::factory('account/reports');
+        $emailsData = array(
+            'jacek.kromski@polcode.com',
+            'tomasz.jaskowski@polcode.com',
+        );
+        $this->_contentView->emails = $emailsData;
     }
     
     public function action_competitors()
@@ -72,6 +77,8 @@ class Controller_Account extends Controller_Template {
 
     public function action_socials()
     {
+        $this->_contentView = View::factory('account/socials');
+        
         
     }
     
