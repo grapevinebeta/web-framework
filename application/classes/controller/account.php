@@ -20,7 +20,7 @@ class Controller_Account extends Controller_Template {
 
     public function action_index()
     {
-        $this->response->body('hello, world!');
+        $this->request->redirect('account/general');
     }
     
     public function action_logout() {
