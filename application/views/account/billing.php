@@ -1,10 +1,10 @@
 <h1 class="content-title">
-    <?php echo _('Billing'); ?>
+    <?php echo __('Billing'); ?>
 </h1>
 <div id="account-billing-section" class="padding-5">
-    <?php $billingMethod = _('Invoicing Quarterly'); ?>
-    <?php echo _('Current Billing Method'); ?>: 
+    <?php $billingMethod = __('Invoicing Quarterly'); ?>
+    <?php echo __('Current Billing Method'); ?>:
     <?php echo html::anchor('#', $billingMethod); ?>
     <br /><br />
-    <?php echo _('Want to change your billing?'), ' ', html::anchor('contact', _('Contact Us')); ?>
+    <?php echo __('Want to change your billing?'), ' ', html::anchor('contact', __('Contact Us')); ?>
 </div>

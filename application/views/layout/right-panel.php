@@ -1,7 +1,7 @@
 <div id="right-panel-holder">
     <div class="light-box">
         <div class="light-box-header">
-            <?php echo _('All Time Snapshot'); ?>
+            <?php echo __('All Time Snapshot'); ?>
             <a href="#">?</a>
         </div>
         <div class="light-box-header">
@@ -11,7 +11,7 @@
 
     <div class="light-box">
         <div class="light-box-header">
-            <?php echo _('Recent Activity'); ?>
+            <?php echo __('Recent Activity'); ?>
             <a href="#">?</a>
         </div>
         <div class="light-box-header">
@@ -21,7 +21,7 @@
 
     <div class="light-box">
         <div class="light-box-header">
-            <?php echo _('Resource & Help'); ?>
+            <?php echo __('Resource & Help'); ?>
             <a href="#">?</a>
         </div>
         <div class="light-box-header">

@@ -1,10 +1,10 @@
 <div id="footer-holder">
-    <?php echo html::anchor(url::base(), _('Home')); ?> | 
-    <?php echo html::anchor('#', _('Help')); ?> | 
-    <?php echo html::anchor('#', _('Legal')); ?> | 
-    <?php echo html::anchor('#', _('Terms of Service')); ?> | 
-    <?php echo html::anchor('#', _('Privacy')); ?> | 
-    <?php echo html::anchor('#', _('Blog')); ?>
+    <?php echo html::anchor(url::base(), __('Home')); ?> |
+    <?php echo html::anchor('#', __('Help')); ?> |
+    <?php echo html::anchor('#', __('Legal')); ?> |
+    <?php echo html::anchor('#', __('Terms of Service')); ?> |
+    <?php echo html::anchor('#', __('Privacy')); ?> |
+    <?php echo html::anchor('#', __('Blog')); ?>
     
     <div id="copyrights">
         &copy; Copyright Grapevine 2011

@@ -1,6 +1,6 @@
 <div id="top-options-holder">
     <form action="" method="post">
-        <?php echo _('Viewing'); ?>: 
+        <?php echo __('Viewing'); ?>:
         <?php echo html::image('', array('alt' => '?')); ?>
         <select name="timePeriod">
             <option>1m</option>
@@ -9,9 +9,9 @@
             <option>1y</option>
         </select>
         
-        <?php echo _('Date Range'); ?>:
+        <?php echo __('Date Range'); ?>:
         <?php echo form::input('dateRange', date('m/d/Y'), array('id' => 'top-option-date-picker', 'style' => 'width: 75px;')); ?>
-        <?php echo html::anchor('#', _('Select')); ?>
+        <?php echo html::anchor('#', __('Select')); ?>
         
         <?php echo html::anchor('#email', 'Email'); ?>
         <?php echo html::anchor('#email', 'Export'); ?>
