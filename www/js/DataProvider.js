@@ -1,5 +1,7 @@
-var DataProvider = function() {
+var ApiUrl = 'http://grapevine/';
 
+var DataProvider = function() {
+    
     /**
      * 
      */
@@ -40,7 +42,7 @@ var DataProvider = function() {
         setCallback: function(value) {
             callback = value;
             return this;
-        
+            
         },
         
         fetch:function() {
@@ -52,7 +54,7 @@ var DataProvider = function() {
                     filters: filters
                     },
                 dataType: "json",
-                url: Site.API + endpoint,
+                url: ApiUrl + endpoint,
                 success: callback
             });
         }

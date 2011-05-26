@@ -18,4 +18,3 @@ class Controller_Dashboard extends Controller_Template {
     }
     
 }
-    
