@@ -93,11 +93,86 @@ textarea {
     border-bottom: 1px solid gray;
 }
 
+#boxes-holder {
+    float: left;
+    width: 85%;
+}
+
+.box-container {
+    
+}
+
+.box-container.active {
+    padding: 5px 0px;
+}
+
+.box-container-left {
+    float: left;
+    width: 49%;
+}
+
+.box-container-right {
+    float: right;
+    width: 49%;
+}
+
+.box {
+    border: 1px solid gray;
+}
+
 .content-section-title {
     margin: 0px;
     padding: 5px;
     background-color: #DDDDDD;
     font-size: 11px;
+}
+
+.box-header {
+    position: relative;
+    margin: 0px;
+    padding: 5px;
+    background-color: #999;
+    font-size: 11px;
+    border-bottom: 1px solid gray;
+}
+
+.box-header-left-buttons {
+    float: left;
+    padding-right: 5px;
+}
+
+.box-header-title {
+    float: left;
+}
+
+.box-header-right-buttons {
+    float: right;
+    padding-right: 5px;
+}
+
+.light-box {
+    margin-bottom: 10px;
+}
+
+.light-box-header {
+    border: 1px solid gray;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.light-box-content {
+    padding: 5px;
+}
+
+
+#top-options-holder {
+    margin: 10px 0px;
+    text-align: right;
+}
+
+#right-panel-holder {
+    width: 14%;
+    float: right;
 }
 
 #footer-holder {

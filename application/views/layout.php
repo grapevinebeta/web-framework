@@ -12,9 +12,9 @@
         
         foreach ($scripts as $script) {
             if (is_string($script)) {
-                echo html::style($script);
+                echo html::script($script);
             } elseif (is_array()) {
-                echo html::style(current($style), next($style));
+                echo html::script(current($style), next($style));
             }
         }
         
@@ -25,6 +25,14 @@
     <div id="main-wrapper">
         <?php echo $header; ?>
         <div id="main-body">
+            <?php if (!empty($topOptions)): ?>
+                <?php echo $topOptions; ?>
+            <?php endif; ?>
+
+            <?php if (!empty($rightPanel)): ?>
+                <?php echo $rightPanel; ?>
+            <?php endif; ?>
+
             <?php echo $body; ?>
         </div>
         <?php echo $footer; ?>
