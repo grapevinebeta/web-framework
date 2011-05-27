@@ -65,10 +65,7 @@ var BoxController = Class.extend({
      */
     endpoint: null,
     
-    construct: function () {
-        alert('asdad');
-    },
-    
+    construct: function () {},
     
     init: function () {
         //this.getContentDom().children().hide();
@@ -194,6 +191,33 @@ var BC_SocialActivityDetails = BoxController.extend({
     
 });
 
+BoxManager = Class.extend({
+    
+    collection: {},
+    
+    add: function (box) {
+        if (!(box instanceof BoxController)) {
+            return;
+        }
+        if (!box.getBoxId()) {
+            return;
+        }
+        
+        this.collection[box.getBoxId()] = box;
+    },
+    
+    init: function () {
+        $( ".box" ).draggable({ 
+            snap: ".box-container", 
+            handle: ".box-header-button-move",
+            revert: true
+        });
+    }
+    
+});
+
+boxManager = new BoxManager();
+
 
 boxCollection.push(new BC_KeywordsAnalysis());
 boxCollection.push(new BC_ReviewSites());
@@ -206,6 +230,8 @@ $(document).ready(function () {
     for (var i = 0; i < boxCollection.length; i++) {
         boxCollection[i].init();
     }
+    
+    boxManager.init();
 });
 
 

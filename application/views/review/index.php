@@ -6,6 +6,10 @@
         <div class="clear"></div>
     </div>
 
+    <div class="box-container">
+        <div class="clear"></div>
+    </div>
+
     <div class="box-container active">
         <div class="box-container-left">
             <div id="box-review-sites" class="box">
@@ -92,12 +96,6 @@
         <div class="clear"></div>
     </div>
     
-    <div class="box-container">
-        <div class="box-container-right"></div>
-        <div class="box-container-left"></div>
-        <div class="clear"></div>
-    </div>
-
     <div class="box-container active">
         <div id="box-recent-reviews" class="box">
             <div class="box-header">
@@ -118,6 +116,10 @@
     <div class="box-container">
         <div class="box-container-right"></div>
         <div class="box-container-left"></div>
+        <div class="clear"></div>
+    </div>
+    
+    <div class="box-container">
         <div class="clear"></div>
     </div>
     
