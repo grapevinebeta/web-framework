@@ -6,5 +6,5 @@
     <?php echo __('Current Billing Method'); ?>:
     <?php echo html::anchor('#', $billingMethod); ?>
     <br /><br />
-    <?php echo __('Want to change your billing?'), ' ', html::anchor('contact', __('Contact Us')); ?>
+    <?php echo __('Want to change your billing?'), ' ', html::anchor(Route::url('contact'), __('Contact Us')); ?>
 </div>
