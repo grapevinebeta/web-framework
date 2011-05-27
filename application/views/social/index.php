@@ -16,7 +16,7 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo _('Social Activity'); ?>
+                <?php echo __('Social Activity'); ?>
             </div>
             <div class="box-content padding-5"></div>
         </div>
@@ -43,7 +43,7 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo _('Recent Reviews'); ?>
+                <?php echo __('Recent Reviews'); ?>
             </div>
             <div class="box-content padding-5"></div>
         </div>
@@ -66,7 +66,7 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo _('Social Activity Details'); ?>
+                <?php echo __('Social Activity Details'); ?>
             </div>
             <div class="box-content padding-5"></div>
         </div>

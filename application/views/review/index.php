@@ -17,24 +17,24 @@
                     <div class="box-header-left-buttons">
                         <a class="box-header-button-move" href="#" title="Move">m</a>
                     </div>
-                    <?php echo _('Review Sites'); ?>:
+                    <?php echo __('Review Sites'); ?>:
                 </div>
                 <div class="box-content padding-5">
                     <div class="data-grid-holder">
                         <table class="wide data-grid">
                             <thead>
                                 <tr>
-                                    <th><?php echo _('Site'); ?></th>
-                                    <th><?php echo _('Total'); ?></th>
-                                    <th><?php echo _('Pos'); ?></th>
-                                    <th><?php echo _('Neut'); ?></th>
-                                    <th><?php echo _('Neg'); ?></th>
-                                    <th><?php echo _('Avg'); ?></th>
+                                    <th><?php echo __('Site'); ?></th>
+                                    <th><?php echo __('Total'); ?></th>
+                                    <th><?php echo __('Pos'); ?></th>
+                                    <th><?php echo __('Neut'); ?></th>
+                                    <th><?php echo __('Neg'); ?></th>
+                                    <th><?php echo __('Avg'); ?></th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th class="a-left"><?php echo _('Total'); ?></td>
+                                    <th class="a-left"><?php echo __('Total'); ?></td>
                                     <th class="col-total a-center">40</td>
                                     <th class="col-pos a-center">30</td>
                                     <th class="col-neut a-center">8</td>
@@ -84,7 +84,7 @@
                     <div class="box-header-left-buttons">
                         <a class="box-header-button-move" href="#" title="Move">m</a>
                     </div>
-                    <?php echo _('Analysis of Review Keywords'); ?>:
+                    <?php echo __('Analysis of Review Keywords'); ?>:
                 </div>
                 <div class="box-content padding-5"></div>
             </div>
@@ -108,7 +108,7 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo _('Recent Reviews'); ?>
+                <?php echo __('Recent Reviews'); ?>
             </div>
             <div class="box-content padding-5"></div>
         </div>

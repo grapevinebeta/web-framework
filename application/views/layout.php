@@ -41,7 +41,7 @@
         <div class="ajax-loader">
             <?php echo html::image(
                 'images/ajax-loader.gif', 
-                array('alt' => _('loading ...'), 'title' => _('loading ...') )) ?>
+                array('alt' => __('loading ...'), 'title' => __('loading ...') )) ?>
         </div>
     </div>
     <script type="text/javascript">
