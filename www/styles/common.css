@@ -99,8 +99,12 @@ table.data-grid td {
     border-collapse: collapse;
 }
 
-table.data-grid tr th {
+table.data-grid tbody tr th {
     background-color: #ddd;
+}
+
+table.data-grid tfoot tr th {
+    background-color: #95BCF2;
 }
 
 table.data-grid tr.odd td {

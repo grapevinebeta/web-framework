@@ -37,5 +37,15 @@
         </div>
         <?php echo $footer; ?>
     </div>
+    <div id="ajax-loader-holder">
+        <div class="ajax-loader">
+            <?php echo html::image(
+                'images/ajax-loader.gif', 
+                array('alt' => _('loading ...'), 'title' => _('loading ...') )) ?>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var b = BoxController();
+    </script>
 </body>
 </html> 

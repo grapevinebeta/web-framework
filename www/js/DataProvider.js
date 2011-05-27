@@ -1,14 +1,14 @@
-var ApiUrl = 'http://grapevine/';
+var ApiUrl = 'http://grapevine/api/dataProvider/';
 
 var DataProvider = function() {
     
     /**
-     * 
+     * @var String name of the last part of URL
      */
     var endpoint;
     
     /**
-     * 
+     * @var Array
      */
     var filters; 
     
