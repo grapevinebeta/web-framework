@@ -17,10 +17,10 @@
                     <div class="box-header-left-buttons">
                         <a class="box-header-button-move" href="#" title="Move">m</a>
                     </div>
-                    <?php echo _('Box'); ?>:
+                    <?php echo __('Box'); ?>:
                 </div>
                 <div class="box-content padding-5">
-                    <?php echo _('content'); ?>
+                    <?php echo __('content'); ?>
                 </div>
             </div>
         </div>
@@ -34,10 +34,10 @@
                     <div class="box-header-left-buttons">
                         <a class="box-header-button-move" href="#" title="Move">m</a>
                     </div>
-                    <?php echo _('Box'); ?>:
+                    <?php echo __('Box'); ?>:
                 </div>
                 <div class="box-content padding-5">
-                    <?php echo _('content'); ?>
+                    <?php echo __('content'); ?>
                 </div>
             </div>
         </div>
@@ -60,10 +60,10 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo _('Box'); ?>:
+                <?php echo __('Box'); ?>:
             </div>
             <div class="box-content padding-5">
-                <?php echo _('content'); ?>
+                <?php echo __('content'); ?>
             </div>
         </div>
         <div class="clear"></div>

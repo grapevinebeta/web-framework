@@ -1,23 +1,23 @@
 <h1 class="content-title">
-    <?php echo _('User Management'); ?>
+    <?php echo __('User Management'); ?>
 </h1>
-<h2 class="content-section-title"><?php echo _('User Accounts'); ?>:</h2>
+<h2 class="content-section-title"><?php echo __('User Accounts'); ?>:</h2>
 <div id="account-users-list-section" class="padding-5">
     <div id="account-users-list-holder">
         <form action="" method="post">
         <table class="wide data-grid" cellpadding="5">
             <tr>
                 <th class="a-left">
-                    <?php echo _('User Accounts'); ?>
+                    <?php echo __('User Accounts'); ?>
                 </th>
                 <th class="a-center">
-                    <?php echo _('Admin'); ?>
+                    <?php echo __('Admin'); ?>
                 </th>
                 <th class="a-center">
-                    <?php echo _('Read Only'); ?>
+                    <?php echo __('Read Only'); ?>
                 </th>
                 <th class="a-center">
-                    <?php echo _('Delete'); ?>
+                    <?php echo __('Delete'); ?>
                 </th>
             </tr>
             <?php if (!empty($users)): ?>
@@ -26,7 +26,7 @@
             <tr class="<?php echo ($k % 2?'even':'odd'); ?>">
                 <td>
                     <?php echo form::hidden($_inputPrefix . '[id]', $user['id']); ?>
-                    <?php echo $user['name'], ' ', html::anchor('#', _('edit')) ?>
+                    <?php echo $user['name'], ' ', html::anchor('#', __('edit')) ?>
                 </td>
                 <td class="a-center">
                     <?php echo form::radio($_inputPrefix . '[role]', 'admin', $user['role'] == 'admin'); ?>
@@ -38,7 +38,7 @@
                     <?php echo html::anchor(
                         '#', 'x', 
                         array('class' => 'confirm-required', 
-                              'onclick' => "return confirm('". _('Are you sure?') ."')")) ?>
+                              'onclick' => "return confirm('". __('Are you sure?') ."')")) ?>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -47,14 +47,14 @@
         </form>
     </div>
 </div>
-<h2 class="content-section-title"><?php echo _('Add / Edit User'); ?></h2>
+<h2 class="content-section-title"><?php echo __('Add / Edit User'); ?></h2>
 <div id="account-users-edit-section" class="padding-5">
     <div id="account-users-edit-holder">
         <form action="" method="post">
             <table>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('First Name'); ?>:
+                        <?php echo __('First Name'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('first_name'); ?>
@@ -62,7 +62,7 @@
                 </tr>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('Last Name'); ?>:
+                        <?php echo __('Last Name'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('last_name'); ?>
@@ -70,7 +70,7 @@
                 </tr>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('Email'); ?>:
+                        <?php echo __('Email'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('email'); ?>
@@ -78,7 +78,7 @@
                 </tr>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('Contact Phone'); ?>:
+                        <?php echo __('Contact Phone'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('phone'); ?>
@@ -86,7 +86,7 @@
                 </tr>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('Username'); ?>:
+                        <?php echo __('Username'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('username'); ?>
@@ -94,7 +94,7 @@
                 </tr>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('Password'); ?>:
+                        <?php echo __('Password'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('password'); ?>
@@ -102,7 +102,7 @@
                 </tr>
                 <tr>
                     <td class="a-right">
-                        <?php echo _('Confirm Password'); ?>:
+                        <?php echo __('Confirm Password'); ?>:
                     </td>
                     <td>
                         <?php echo form::input('password2'); ?>

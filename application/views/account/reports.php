@@ -1,19 +1,19 @@
 <h1 class="content-title">
-    <?php echo _('Reports'); ?>
+    <?php echo __('Reports'); ?>
 </h1>
-<h2 class="content-section-title"><?php echo _('Email Addresses for Reports'); ?>:</h2>
+<h2 class="content-section-title"><?php echo __('Email Addresses for Reports'); ?>:</h2>
 <div id="account-reports-list-section" class="padding-5">
     <p>
-        <?php echo _('We send a weekly Grapevine reportto highlight key item like your OGSI Score, Current Star Rating, Review samples and more. Please add your desired email resipends below.'); ?>
+        <?php echo __('We send a weekly Grapevine reportto highlight key item like your OGSI Score, Current Star Rating, Review samples and more. Please add your desired email resipends below.'); ?>
     </p>
     <form action="" method="post">
         <table class="wide data-grid" cellpadding="5">
             <tr>
                 <th class="a-left">
-                    <?php echo _('Email Address'); ?>
+                    <?php echo __('Email Address'); ?>
                 </th>
                 <th class="a-center">
-                    <?php echo _('Delete'); ?>
+                    <?php echo __('Delete'); ?>
                 </th>
             </tr>
             <?php if (!empty($emails)): ?>
@@ -26,7 +26,7 @@
                     <?php echo html::anchor(
                         '#', 'x', 
                         array('class' => 'confirm-required', 
-                              'onclick' => "return confirm('". _('Are you sure?') ."')")) ?>
+                              'onclick' => "return confirm('". __('Are you sure?') ."')")) ?>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -36,8 +36,8 @@
     <form action="" method="post">
         <p>
             <input type="text" name="newEmail" />
-            <?php echo form::submit('', _('Add Email')); ?>
+            <?php echo form::submit('', __('Add Email')); ?>
         </p>
     </form>
-    * <?php echo _('PLEASE add <a href="mailto:customer.service@grapevinebeta.com">customer.service@grapevinebeta.com</a> to your email address book "whitelist" to guarantee you will receive these reports.'); ?>
+    * <?php echo __('PLEASE add <a href="mailto:customer.service@grapevinebeta.com">customer.service@grapevinebeta.com</a> to your email address book "whitelist" to guarantee you will receive these reports.'); ?>
 </div>

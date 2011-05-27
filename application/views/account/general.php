@@ -1,18 +1,18 @@
 <h1 class="content-title">
-    <?php echo _('General'); ?>
+    <?php echo __('General'); ?>
 </h1>
 <div class="padding-5">
     <form action="" method="post">
         <table>
             <tr>
                 <td class="b a-right">
-                    <?php echo _('Account Owner'); ?>
+                    <?php echo __('Account Owner'); ?>
                 </td>
                 <td></td>
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Name'); ?>:
+                    <?php echo __('Name'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('name'); ?>
@@ -20,7 +20,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Email'); ?>:
+                    <?php echo __('Email'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('email'); ?>
@@ -28,7 +28,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Contact Phone'); ?>:
+                    <?php echo __('Contact Phone'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('phone'); ?>
@@ -36,7 +36,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Extension'); ?>:
+                    <?php echo __('Extension'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('extension'); ?>
@@ -44,18 +44,18 @@
             </tr>
             <tr>
                 <td class="b a-right">
-                    <?php echo _('Current Location'); ?>
+                    <?php echo __('Current Location'); ?>
                 </td>
                 <td></td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <?php echo _('Your business information is based on your original account set up. Use form below to make any needed chages.'); ?>
+                    <?php echo __('Your business information is based on your original account set up. Use form below to make any needed chages.'); ?>
                 </td>
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Location Name'); ?>:
+                    <?php echo __('Location Name'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('location_name'); ?>
@@ -63,7 +63,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Address 1'); ?>:
+                    <?php echo __('Address 1'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('adress1'); ?>
@@ -71,7 +71,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Address 2'); ?>:
+                    <?php echo __('Address 2'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('adress2'); ?>
@@ -79,7 +79,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('City'); ?>:
+                    <?php echo __('City'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('city'); ?>
@@ -87,7 +87,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('State'); ?>:
+                    <?php echo __('State'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('state'); ?>
@@ -95,7 +95,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Zip'); ?>:
+                    <?php echo __('Zip'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('zip'); ?>
@@ -103,7 +103,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('Phone'); ?>:
+                    <?php echo __('Phone'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('location_phone'); ?>
@@ -111,7 +111,7 @@
             </tr>
             <tr>
                 <td class="a-right">
-                    <?php echo _('URL'); ?>:
+                    <?php echo __('URL'); ?>:
                 </td>
                 <td>
                     <?php echo form::input('url'); ?>
@@ -119,7 +119,7 @@
             </tr>
         </table>
         <div class="a-right">
-            <?php echo form::submit('', _('Save')); ?>
+            <?php echo form::submit('', __('Save')); ?>
         </div>
     </form>
 </div>

@@ -22,8 +22,8 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/jquery.tipTip.min.js',
             'js/DataProvider.js',
             'js/Boxes.js',
+            'js/highcharts/highcharts.js',
         );
-        
         
         $this->template->body = 'test';
         
