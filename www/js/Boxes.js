@@ -216,8 +216,8 @@ BoxManager = Class.extend({
             zIndex: 10,
             start: function(event, ui) {
                 $(this).css({});
-                $('.box-container.empty').addClass('box-dropable');
-                $('.box-container').css('min-height', $(this).height());
+                $('.box-container.empty').addClass('box-dropable')
+                    .css('min-height', $(this).height());
                 
             },
             stop: function (event, ui) {
@@ -227,6 +227,7 @@ BoxManager = Class.extend({
                         width: 'auto'
                         });
                 $('.box-container').css('min-height', '');
+                $('.box-container.empty').removeClass('box-dropable')
             },
         });
         $('.box-container')
@@ -240,7 +241,7 @@ BoxManager = Class.extend({
                     if (oldBox.children().length > 0) {
                         ui.draggable.parent().append(oldBox.children());
                     } else {
-                        ui.draggable.parent().removeClass('active').addClass('empty');
+                        ui.draggable.parent().addClass('empty').removeClass('active');
                     }
                     $(this).removeClass('empty').addClass('active')
                     $(this).append(ui.draggable);
@@ -248,16 +249,21 @@ BoxManager = Class.extend({
                         if (fromContainer.hasClass('box-container-left') 
                             && !fromContainer.next().hasClass('active')) {
                                 var tmp = fromContainer.next();
+                                tmp.next('.clear').remove();
                                 fromContainer.parent().append(fromContainer);
                                 fromContainer.parent().append(tmp);
+                                fromContainer.parent().append('<div class="clear"></div>');
                         } else if (fromContainer.hasClass('box-container-right') 
                             && !fromContainer.prev().hasClass('active')) {
                                 var tmp = fromContainer.prev();
+                                fromContainer.next('.clear').remove();
                                 fromContainer.parent().append(tmp);
                                 fromContainer.parent().append(fromContainer);
+                                fromContainer.parent().append('<div class="clear"></div>');
                         } else if (!fromContainer.hasClass('box-container-left')
                             && !fromContainer.hasClass('box-container-right')) {
-                            fromContainer.parent().append($fromContainer);
+                                
+                            fromContainer.nextAll(':last').after(fromContainer.remove());
                         }
                     }
                 }

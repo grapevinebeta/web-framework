@@ -52,7 +52,6 @@
                 <?php echo __('content'); ?>
             </div>
         </div>
-        <div class="clear"></div>
     </div>
     
     <div class="box-container empty box-container-left"></div>

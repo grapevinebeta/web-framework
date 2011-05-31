@@ -14,7 +14,6 @@
             </div>
             <div class="box-content padding-5"></div>
         </div>
-        <div class="clear"></div>
     </div>
     
     <div class="box-container active">
@@ -31,7 +30,6 @@
             </div>
             <div class="box-content padding-5"></div>
         </div>
-        <div class="clear"></div>
     </div>
     
     <div class="box-container active">
@@ -48,7 +46,6 @@
             </div>
             <div class="box-content padding-5"></div>
         </div>
-        <div class="clear"></div>
     </div>
     
     <div class="box-container empty box-container-left"></div>
