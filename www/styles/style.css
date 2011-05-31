@@ -96,14 +96,36 @@ textarea {
 #boxes-holder {
     float: left;
     width: 85%;
+    position: relative;
 }
 
 .box-container {
-    
+    border: 1px solid transparent;
+    z-index: 1;
 }
 
 .box-container.active {
-    padding: 5px 0px;
+    margin-bottom: 10px;
+}
+
+.box-container.empty {
+    display: none;
+    margin-bottom: 10px;
+}
+
+.box-dropable {
+    border-width: 1px;
+    border-style: dotted;
+    border-color: gray;
+    display: block !important;
+}
+
+.box-dropable.empty {
+    height: 50px;
+}
+
+.box-drag-over {
+    border-style: dashed !important;
 }
 
 .box-container-left {
@@ -118,6 +140,8 @@ textarea {
 
 .box {
     border: 1px solid gray;
+    top: 0px;
+    left: 0px;
 }
 
 .content-section-title {

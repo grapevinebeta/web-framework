@@ -209,9 +209,59 @@ BoxManager = Class.extend({
     init: function () {
         $( ".box" ).draggable({ 
             snap: ".box-container", 
+            snapMode: 'inner',
             handle: ".box-header-button-move",
-            revert: true
+            revert: 'invalid',
+            appendTo: 'body',
+            zIndex: 10,
+            start: function(event, ui) {
+                $(this).css({});
+                $('.box-container.empty').addClass('box-dropable');
+                $('.box-container').css('min-height', $(this).height());
+                
+            },
+            stop: function (event, ui) {
+                $(this).css({
+                        top: 0,
+                        left: 0,
+                        width: 'auto'
+                        });
+                $('.box-container').css('min-height', '');
+            },
         });
+        $('.box-container')
+            .droppable({
+                accept: '.box',
+                activeClass: "box-dropable",
+                hoverClass: "box-drag-over",
+                drop: function (event, ui) {
+                    var oldBox = $(this);
+                    var fromContainer = ui.draggable.parent();
+                    if (oldBox.children().length > 0) {
+                        ui.draggable.parent().append(oldBox.children());
+                    } else {
+                        ui.draggable.parent().removeClass('active').addClass('empty');
+                    }
+                    $(this).removeClass('empty').addClass('active')
+                    $(this).append(ui.draggable);
+                    if (fromContainer.children().length == 0) {
+                        if (fromContainer.hasClass('box-container-left') 
+                            && !fromContainer.next().hasClass('active')) {
+                                var tmp = fromContainer.next();
+                                fromContainer.parent().append(fromContainer);
+                                fromContainer.parent().append(tmp);
+                        } else if (fromContainer.hasClass('box-container-right') 
+                            && !fromContainer.prev().hasClass('active')) {
+                                var tmp = fromContainer.prev();
+                                fromContainer.parent().append(tmp);
+                                fromContainer.parent().append(fromContainer);
+                        } else if (!fromContainer.hasClass('box-container-left')
+                            && !fromContainer.hasClass('box-container-right')) {
+                            fromContainer.parent().append($fromContainer);
+                        }
+                    }
+                }
+            });
     }
     
 });

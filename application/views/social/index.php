@@ -1,11 +1,5 @@
 <div id="boxes-holder">
 
-    <div class="box-container">
-        <div class="box-container-right"></div>
-        <div class="box-container-left"></div>
-        <div class="clear"></div>
-    </div>
-
     <div class="box-container active">
         <div id="box-social-activity" class="box">
             <div class="box-header">
@@ -20,19 +14,9 @@
             </div>
             <div class="box-content padding-5"></div>
         </div>
-        <div class="box-container-left">
-        </div>
-        <div class="box-container-right">
-        </div>
         <div class="clear"></div>
     </div>
     
-    <div class="box-container">
-        <div class="box-container-right"></div>
-        <div class="box-container-left"></div>
-        <div class="clear"></div>
-    </div>
-
     <div class="box-container active">
         <div id="box-recent-reviews" class="box">
             <div class="box-header">
@@ -47,12 +31,6 @@
             </div>
             <div class="box-content padding-5"></div>
         </div>
-        <div class="clear"></div>
-    </div>
-    
-    <div class="box-container">
-        <div class="box-container-right"></div>
-        <div class="box-container-left"></div>
         <div class="clear"></div>
     </div>
     
@@ -73,11 +51,10 @@
         <div class="clear"></div>
     </div>
     
-    <div class="box-container">
-        <div class="box-container-right"></div>
-        <div class="box-container-left"></div>
-        <div class="clear"></div>
-    </div>
+    <div class="box-container empty box-container-left"></div>
+    <div class="box-container empty box-container-right"></div>
+    <div class="clear"></div>
+    <div class="box-container empty"></div>
     
 </div>
 <div class="clear"></div>
