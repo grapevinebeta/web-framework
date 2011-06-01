@@ -33,7 +33,7 @@ Class.extend = function(def) {
 
     proto.$ = superClass;
     classDef.prototype = proto;    
-    classDef.extend = this.extend;        
+    classDef.extend = this.extend;
     return classDef;
 };
 
@@ -69,7 +69,6 @@ var BoxController = Class.extend({
     
     init: function () {
         //this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
         this.loadData();
     },
     
@@ -84,7 +83,10 @@ var BoxController = Class.extend({
      * @return jQuery DOM element which holds content of the box
      */
     getContentDom: function () {
-        return $('#' + this.boxId + ' .box-content:first');
+        if (!this._contentDom) {
+            this._contentDom = $('#' + this.boxId + ' .box-content:first');
+        }
+        return this._contentDom;
     },
     
     /**
@@ -106,17 +108,31 @@ var BoxController = Class.extend({
         return this.boxId
     },
     
+    beforeLoadData: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+    },
+    
+    afterLoadData: function () {
+        this.getContentDom().find('.ajax-loader').remove();
+        this.getContentDom().children().show();
+    },
+    
     /**
      * Will handle Ajax response of the loadData
      */
     loadDataCallback: function () {
-        
+        this.boxController.afterLoadData();
     },
     
     /**
      * Load Data by Ajax
      */
     loadData: function () {
+        this.beforeLoadData();
+        if (!this.loadDataCallback.boxController) {
+            this.loadDataCallback.boxController = this;
+        }
         this.data = null;
         this.dataProvider.setEndpoint(this.endpoint);
         this.dataProvider.setCallback(this.loadDataCallback);
@@ -142,6 +158,44 @@ var BC_ReviewSites = BoxController.extend({
      * @var String DOM id of the container div 
      */
     boxId: 'box-review-sites',
+    
+    /**
+     * @var String Name of the requested resource, used in Ajax URL
+     */
+    endpoint: 'sites',
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        var table = boxController.getContentDom().find('.data-grid-holder > table');
+        var trTemplate = table.find('tbody tr').clone();
+        var tr = null;
+        var trFooter = table.find('tfoot tr');
+        trFooter.find('th:not(:first)').text('0');
+        table.find('tbody tr').remove();
+        for (var i = 0; i < boxController.data.keywords.length; i++) {
+            tr = trTemplate.clone();
+            for (n in boxController.data.keywords[i]) {
+                var value = boxController.data.keywords[i][n];
+                tr.find('td.col-' + n).text(value);
+                if (n != 'site') {
+                    var currentTotalValue = 0;
+                    if (n == 'average') {
+                        currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
+                    } else {
+                        currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
+                    }
+                    trFooter.find('th.col-' + n).text(value + currentTotalValue);
+                }
+            }
+            table.find('tbody').append(tr);
+        }
+        trFooter.find('th.col-average').text(
+            parseFloat(trFooter.find('th.col-average').text()) / 
+            boxController.data.keywords.length
+        );
+        boxController.afterLoadData();
+    },
     
     construct: function () {},
     
@@ -227,7 +281,7 @@ BoxManager = Class.extend({
                         width: 'auto'
                         });
                 $('.box-container').css('min-height', '');
-                $('.box-container.empty').removeClass('box-dropable')
+                $('.box-container.empty').removeClass('box-dropable');
             },
         });
         $('.box-container')

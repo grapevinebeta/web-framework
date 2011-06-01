@@ -13,7 +13,7 @@
                 <?php echo __('Review Sites'); ?>:
             </div>
             <div class="box-content padding-5">
-                <div class="data-grid-holder">
+                <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid">
                         <thead>
                             <tr>
@@ -28,37 +28,21 @@
                         <tfoot>
                             <tr>
                                 <th class="a-left"><?php echo __('Total'); ?></td>
-                                <th class="col-total a-center">40</td>
-                                <th class="col-pos a-center">30</td>
-                                <th class="col-neut a-center">8</td>
-                                <th class="col-neg a-center">2</td>
-                                <th class="col-avg a-center">4.2</td>
+                                <th class="col-total a-center"></td>
+                                <th class="col-positive a-center"></td>
+                                <th class="col-neutral a-center"></td>
+                                <th class="col-negative a-center"></td>
+                                <th class="col-average a-center"></td>
                             </tr>
                         </tfoot>
                         <tbody>
                             <tr>
-                                <td class="col-site">Cars.com</td>
-                                <td class="col-total a-center">40</td>
-                                <td class="col-pos a-center">30</td>
-                                <td class="col-neut a-center">8</td>
-                                <td class="col-neg a-center">2</td>
-                                <td class="col-avg a-center">4.2</td>
-                            </tr>
-                            <tr>
-                                <td class="col-site">DealerRater</td>
-                                <td class="col-total a-center">20</td>
-                                <td class="col-pos a-center">15</td>
-                                <td class="col-neut a-center">4</td>
-                                <td class="col-neg a-center">1</td>
-                                <td class="col-avg a-center">3.7</td>
-                            </tr>
-                            <tr>
-                                <td class="col-site">Yellow Pages</td>
-                                <td class="col-total a-center">35</td>
-                                <td class="col-pos a-center">20</td>
-                                <td class="col-neut a-center">8</td>
-                                <td class="col-neg a-center">6</td>
-                                <td class="col-avg a-center">3</td>
+                                <td class="col-site"></td>
+                                <td class="col-total a-center"></td>
+                                <td class="col-positive a-center"></td>
+                                <td class="col-neutral a-center"></td>
+                                <td class="col-negative a-center"></td>
+                                <td class="col-average a-center"></td>
                             </tr>
                         </tbody>
                     </table>

@@ -1,4 +1,5 @@
-var ApiUrl = 'http://grapevine/api/dataProvider/';
+//var ApiUrl = 'http://grapevine/api/dataProvider/';
+var ApiUrl = 'http://grapevine/api/static/';
 
 var DataProvider = function() {
     
