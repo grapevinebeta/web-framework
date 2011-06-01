@@ -271,7 +271,7 @@ var BC_SocialActivityDetails = BoxController.extend({
     
 });
 
-BoxManager = Class.extend({
+boxManager = {
     
     collection: {},
     
@@ -286,6 +286,29 @@ BoxManager = Class.extend({
         this.collection[box.getBoxId()] = box;
     },
     
+    moveEmptyToBottom: function () {
+        
+        var boxesHolder = $('#boxes-holder');
+        var boxes = $('#boxes-holder .box-container');
+        
+        boxes.each(function (index) {
+            var box = $(this);
+            if (!box.children().length) {
+                if (box.hasClass('box-container-left')
+                    && !box.next().hasClass('active')) {
+                        var tmp = box.next();
+                        tmp.next('.clear').remove();
+                        boxesHolder.append(box);
+                        boxesHolder.append(tmp);
+                        boxesHolder.append('<div class="clear"></div>');
+                } else if (!box.hasClass('box-container-left')
+                    && !box.hasClass('box-container-right')) {
+                    box.nextAll(':last').after(box);
+                }
+            }
+        });
+    },
+    
     init: function () {
         $( ".box" ).draggable({ 
             snap: ".box-container", 
@@ -298,7 +321,6 @@ BoxManager = Class.extend({
                 $(this).css({});
                 $('.box-container.empty').addClass('box-dropable')
                     .css('min-height', $(this).height());
-                
             },
             stop: function (event, ui) {
                 $(this).css({
@@ -323,36 +345,16 @@ BoxManager = Class.extend({
                     } else {
                         ui.draggable.parent().addClass('empty').removeClass('active');
                     }
-                    $(this).removeClass('empty').addClass('active')
+                    $(this).removeClass('empty').addClass('active');
                     $(this).append(ui.draggable);
-                    if (fromContainer.children().length == 0) {
-                        if (fromContainer.hasClass('box-container-left') 
-                            && !fromContainer.next().hasClass('active')) {
-                                var tmp = fromContainer.next();
-                                tmp.next('.clear').remove();
-                                fromContainer.parent().append(fromContainer);
-                                fromContainer.parent().append(tmp);
-                                fromContainer.parent().append('<div class="clear"></div>');
-                        } else if (fromContainer.hasClass('box-container-right') 
-                            && !fromContainer.prev().hasClass('active')) {
-                                var tmp = fromContainer.prev();
-                                fromContainer.next('.clear').remove();
-                                fromContainer.parent().append(tmp);
-                                fromContainer.parent().append(fromContainer);
-                                fromContainer.parent().append('<div class="clear"></div>');
-                        } else if (!fromContainer.hasClass('box-container-left')
-                            && !fromContainer.hasClass('box-container-right')) {
-                                
-                            fromContainer.nextAll(':last').after(fromContainer.remove());
-                        }
-                    }
+                    
+                    boxManager.moveEmptyToBottom();
                 }
             });
     }
-    
-});
+};
 
-boxManager = new BoxManager();
+//boxManager = new BoxManager();
 
 
 boxCollection.push(new BC_KeywordsAnalysis());
