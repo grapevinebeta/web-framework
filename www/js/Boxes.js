@@ -148,6 +148,32 @@ var BC_KeywordsAnalysis = BoxController.extend({
      */
     boxId: 'box-keywords-analysis',
     
+    /**
+     * @var String Name of the requested resource, used in Ajax URL
+     */
+    endpoint: 'keywords',
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        var table = boxController.getContentDom().find('.data-grid-holder > table');
+        var trTemplate = table.find('tbody tr').clone();
+        var tr = null;
+        table.find('tbody tr').remove();
+        for (var i = 0; i < boxController.data.keywords.length; i++) {
+            tr = trTemplate.clone();
+            for (n in boxController.data.keywords[i]) {
+                var value = boxController.data.keywords[i][n];
+                if (n == 'percent') {
+                    value = value + '%';
+                } 
+                tr.find('td.col-' + n).text(value);
+            }
+            table.find('tbody').append(tr);
+        }
+        boxController.afterLoadData();
+    },
+    
     construct: function () {},
     
 });
@@ -173,10 +199,10 @@ var BC_ReviewSites = BoxController.extend({
         var trFooter = table.find('tfoot tr');
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.keywords.length; i++) {
+        for (var i = 0; i < boxController.data.sites.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.keywords[i]) {
-                var value = boxController.data.keywords[i][n];
+            for (n in boxController.data.sites[i]) {
+                var value = boxController.data.sites[i][n];
                 tr.find('td.col-' + n).text(value);
                 if (n != 'site') {
                     var currentTotalValue = 0;
@@ -192,7 +218,7 @@ var BC_ReviewSites = BoxController.extend({
         }
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
-            boxController.data.keywords.length
+            boxController.data.sites.length
         );
         boxController.afterLoadData();
     },

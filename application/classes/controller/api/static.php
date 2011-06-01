@@ -23,7 +23,7 @@ class Controller_Api_Static extends Controller {
     
     public function action_sites()
     {
-        $keywords = array(
+        $sites = array(
             array(
                 'id' => 1,
                 'site' => 'cars.com',
@@ -41,6 +41,28 @@ class Controller_Api_Static extends Controller {
                 'neutral' => 8,
                 'total' => 30,
                 'average' => 3.2
+                ),
+            );
+            sleep(2);
+        $this->apiResponse = array('sites' => $sites);
+    }
+
+    public function action_keywords()
+    {
+        $keywords = array(
+            array(
+                'id' => 1,
+                'keyword' => 'great location',
+                'used' => 30,
+                'rating' => 2,
+                'percent' => 8,
+                ),
+            array(
+                'id' => 2,
+                'keyword' => 'bad location',
+                'used' => 20,
+                'rating' => 2,
+                'percent' => 8,
                 ),
             );
             sleep(2);

@@ -17,7 +17,7 @@
                     <table class="wide data-grid">
                         <thead>
                             <tr>
-                                <th><?php echo __('Site'); ?></th>
+                                <th class="a-left"><?php echo __('Site'); ?></th>
                                 <th><?php echo __('Total'); ?></th>
                                 <th><?php echo __('Pos'); ?></th>
                                 <th><?php echo __('Neut'); ?></th>
@@ -63,7 +63,29 @@
                 </div>
                 <?php echo __('Analysis of Review Keywords'); ?>:
             </div>
-            <div class="box-content padding-5"></div>
+            <div class="box-content padding-5">
+                <div class="data-grid-holder" style="display: none;">
+                    <table class="wide data-grid">
+                        <thead>
+                            <tr>
+                                <th class="a-left"><?php echo __('Important Keywords'); ?></th>
+                                <th><?php echo __('Times Used'); ?></th>
+                                <th><?php echo __('Avg star rating'); ?></th>
+                                <th><?php echo __('% of Total'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-keyword"></td>
+                                <td class="col-used a-center"></td>
+                                <td class="col-rating a-center"></td>
+                                <td class="col-percent a-center"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="graph-holder"></div>
+            </div>
         </div>
     </div>
     <div class="clear"></div>
