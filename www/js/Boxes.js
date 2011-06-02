@@ -69,7 +69,9 @@ var BoxController = Class.extend({
     
     init: function () {
         //this.getContentDom().children().hide();
-        this.loadData();
+        if (this.getContentDom().length) {
+            this.loadData();
+        }
     },
     
     /**
