@@ -111,12 +111,37 @@ Kohana::modules(array(
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))',
-        array('directory' => '(api)')
-    );
+Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
+		'directory' => '(api)'
+	));
+// Competition tab
+Route::set('competition', 'competition')
+	->defaults(array(
+		'controller' => 'competition',
+		'action'     => 'index',
+	));
+// Contact form
 Route::set('contact', 'contact')
 	->defaults(array(
 		'controller' => 'contact',
+		'action'     => 'index',
+	));
+// Dashboard page
+Route::set('dashboard', 'dashboard')
+	->defaults(array(
+		'controller' => 'dashboard',
+		'action'     => 'index',
+	));
+// Review tab
+Route::set('review', 'review')
+	->defaults(array(
+		'controller' => 'review',
+		'action'     => 'index',
+	));
+// Social activity tab
+Route::set('social', 'social')
+	->defaults(array(
+		'controller' => 'social',
 		'action'     => 'index',
 	));
 Route::set('default', '(<controller>(/<action>(/<id>)))')
