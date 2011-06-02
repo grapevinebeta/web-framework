@@ -100,9 +100,45 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo __('Recent Reviews'); ?>
+                <div style="margin: 0px 30px 0px 15px;">
+                    <div>
+                        <?php echo __('Review Status Filter'); ?>:
+                        <span id="box-header-status-filters"></span>
+                    </div>
+                    <div>
+                        <?php echo __('Review Source Filter'); ?>:
+                        <span id="box-header-source-filters"></span>
+                    </div>
+                </div>
             </div>
-            <div class="box-content padding-5"></div>
+            <div class="box-content">
+                <div class="data-grid-holder" style="display: none;">
+                    <table class="wide data-grid no-outer-border" cellpadding="5">
+                        <?php /*
+                        <thead>
+                            <tr>
+                                <th class="a-left"><?php echo __('Important Keywords'); ?></th>
+                                <th><?php echo __('Times Used'); ?></th>
+                                <th><?php echo __('Avg star rating'); ?></th>
+                                <th><?php echo __('% of Total'); ?></th>
+                            </tr>
+                        </thead>
+                         * 
+                         */?>
+                        <tbody>
+                            <tr>
+                                <td class="col-checkbox"></td>
+                                <td class="col-rating"></td>
+                                <td class="col-submitted a-center"></td>
+                                <td class="col-title"></td>
+                                <td class="col-site"></td>
+                                <td class="col-status a-right">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     

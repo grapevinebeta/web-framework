@@ -65,7 +65,90 @@ class Controller_Api_Static extends Controller {
                 'percent' => 8,
                 ),
             );
-            sleep(2);
+            sleep(1);
         $this->apiResponse = array('keywords' => $keywords);
+    }
+    
+    public function action_reviews()
+    {
+        sleep(3);
+        $this->apiResponse = array(
+            'reviews' => array(
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => 3, // [decimal:optional] - review overall rating
+                    'submitted' => 1306016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => '1', // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    ),
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => 3, // [decimal:optional] - review overall rating
+                    'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => '1', // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    ),
+            ),
+            'filters' => array(
+                'status' => array(
+                    array(
+                        'total' => 67,
+                        'value' => 'Total',
+                    ),
+                    array(
+                        'total' => 4,
+                        'value' => 'New',
+                    ),
+                    array(
+                        'total' => 5,
+                        'value' => 'Neutral',
+                    ),
+                    array(
+                        'total' => 7,
+                        'value' => 'Positive',
+                    ),
+                    array(
+                        'total' => 1,
+                        'value' => 'Negative',
+                    ),
+                    array(
+                        'value' => 'Alert',
+                    ),
+                    array(
+                        'value' => 'Flagged',
+                    ),
+                    array(
+                        'value' => 'Completed',
+                    ),
+                ),
+                'source' => array(
+                    array(
+                        'value' => 'DealerRater',
+                    ),
+                    array(
+                        'value' => 'Cars.com',
+                    ),
+                    array(
+                        'value' => 'Google',
+                    ),
+                ),
+            ),
+        );
     }
 }

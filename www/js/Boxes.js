@@ -234,6 +234,88 @@ var BC_RecentReviews = BoxController.extend({
      */
     boxId: 'box-recent-reviews',
     
+    endpoint: 'reviews',
+    
+    beforeLoadData: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+        this.getHeaderDom().find('#box-header-status-filters').html($(this.getLoaderHtml()).children());
+        this.getHeaderDom().find('#box-header-source-filters').html($(this.getLoaderHtml()).children());
+    },
+    
+    loadHeaderFilters: function (filterType) {
+        if (filterType != 'status' && filterType != 'source') {
+            return;
+        }
+        var filters = this.data.filters[filterType];
+        var filterHolder = this.getHeaderDom().find('#box-header-' + filterType + '-filters');
+        filterHolder.html('');
+        for (var i = 0; i < filters.length; i++) {
+            var filterLink = $('<a href="#"></a>');
+            if (filters[i].total) {
+                filterLink.text(filters[i].total +' ');
+            }
+            filterLink.text(filterLink.text() + filters[i].value);
+            filterHolder.append(filterLink);
+            filterHolder.append(' ');
+        }
+    },
+    
+    loadReviews: function (reviews) {
+        var table = this.getContentDom().find('.data-grid-holder > table');
+        var trTemplate = table.find('tbody tr').clone();
+        var tr = null;
+        table.find('tbody tr').remove();
+        for (var i = 0; i < this.data.reviews.length; i++) {
+            tr = trTemplate.clone();
+            
+            for (n in this.data.reviews[i]) {
+                var value = this.data.reviews[i][n];
+                if (n == 'submitted') {
+                    var tmpDate = new Date(value * 1000);
+                    tr.find('td.col-' + n).text(
+                        monthNames[tmpDate.getMonth()] +
+                        ' ' +
+                        tmpDate.getDate()
+                    );
+                } else if (n == 'title') {
+                    var titleLink = $('<a href="#"></a>');
+                    titleLink.text(value);
+                    tr.find('td.col-' + n).html(titleLink);
+                } else {
+                    tr.find('td.col-' + n).text(value);
+                }
+            }
+            
+            if (i % 2) {
+                tr.addClass('even');
+            } else {
+                tr.addClass('odd');
+            }
+            
+            table.find('tbody').append(tr);
+        }
+        this.getContentDom().find('.ajax-loader').remove()
+        this.getContentDom().find('.data-grid-holder').show();
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        if (data.reviews) {
+            boxController.loadReviews();
+        }
+        
+        if (data.filters && data.filters.status) {
+            boxController.loadHeaderFilters('status');
+        }
+        
+        if (data.filters && data.filters.source) {
+            boxController.loadHeaderFilters('source');
+        }
+    },
+    
     construct: function () {},
     
 });
@@ -373,6 +455,19 @@ $(document).ready(function () {
 });
 
 
-
+var monthNames = [
+    'Jan',
+    'Feb',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'Aug',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dec'
+    ];
 
 

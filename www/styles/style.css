@@ -220,3 +220,7 @@ textarea {
     text-align: center;
     padding: 10px;
 }
+
+.ajax-loading-gif {
+    vertical-align: middle;
+}

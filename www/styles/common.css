@@ -131,3 +131,16 @@ table.data-grid tr.odd td {
 table.data-grid tr.even td {
     background-color: #eee;
 }
+
+table.no-outer-border {
+    border-width: 0px;
+}
+
+table.no-outer-border tr:first-child td {
+    border-top-width: 0px;
+}
+
+table.no-outer-border tr:last-child td {
+    border-bottom-width: 0px;
+}
+
