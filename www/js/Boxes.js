@@ -176,7 +176,7 @@ var BC_KeywordsAnalysis = BoxController.extend({
         boxController.afterLoadData();
     },
     
-    construct: function () {},
+    construct: function () {}
     
 });
 
@@ -225,7 +225,7 @@ var BC_ReviewSites = BoxController.extend({
         boxController.afterLoadData();
     },
     
-    construct: function () {},
+    construct: function () {}
     
 });
 
@@ -318,7 +318,7 @@ var BC_RecentReviews = BoxController.extend({
         }
     },
     
-    construct: function () {},
+    construct: function () {}
     
 });
 
@@ -329,7 +329,7 @@ var BC_SocialActivity = BoxController.extend({
      */
     boxId: 'box-social-activity',
     
-    construct: function () {},
+    construct: function () {}
     
 });
 
@@ -340,7 +340,7 @@ var BC_SocialReach = BoxController.extend({
      */
     boxId: 'box-social-reach',
     
-    construct: function () {},
+    construct: function () {}
     
 });
 
@@ -351,7 +351,7 @@ var BC_SocialActivityDetails = BoxController.extend({
      */
     boxId: 'box-social-activity-details',
     
-    construct: function () {},
+    construct: function () {}
     
 });
 
@@ -414,7 +414,7 @@ boxManager = {
                         });
                 $('.box-container').css('min-height', '');
                 $('.box-container.empty').removeClass('box-dropable');
-            },
+            }
         });
         $('.box-container')
             .droppable({
