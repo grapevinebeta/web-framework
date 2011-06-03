@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Social extends Controller_Template {
+class Controller_Competition extends Controller_Template {
     
     public function before() {
         parent::before();
