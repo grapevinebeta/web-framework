@@ -10,7 +10,10 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo __('Review Sites'); ?>:
+                <span class="box-header-title">
+                    <?php echo __('Review Sites'); ?>
+                </span>
+                <div class="clear"></div>
             </div>
             <div class="box-content padding-5">
                 <div class="data-grid-holder" style="display: none;">
@@ -47,7 +50,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="graph-holder"></div>
+                <div id="box-review-sites-graph-holder" class="graph-holder"></div>
             </div>
         </div>
     </div>
@@ -61,7 +64,10 @@
                 <div class="box-header-left-buttons">
                     <a class="box-header-button-move" href="#" title="Move">m</a>
                 </div>
-                <?php echo __('Analysis of Review Keywords'); ?>:
+                <span class="box-header-title">
+                    <?php echo __('Analysis of Review Keywords'); ?>
+                </span>
+                <div class="clear"></div>
             </div>
             <div class="box-content padding-5">
                 <div class="data-grid-holder" style="display: none;">
@@ -84,7 +90,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="graph-holder"></div>
+                <div id="box-keywords-analysis-graph-holder" class="graph-holder"></div>
             </div>
         </div>
     </div>
@@ -113,30 +119,38 @@
             </div>
             <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
-                    <table class="wide data-grid no-outer-border" cellpadding="5">
-                        <?php /*
-                        <thead>
-                            <tr>
-                                <th class="a-left"><?php echo __('Important Keywords'); ?></th>
-                                <th><?php echo __('Times Used'); ?></th>
-                                <th><?php echo __('Avg star rating'); ?></th>
-                                <th><?php echo __('% of Total'); ?></th>
-                            </tr>
-                        </thead>
-                         * 
-                         */?>
-                        <tbody>
-                            <tr>
-                                <td class="col-checkbox"></td>
-                                <td class="col-rating"></td>
-                                <td class="col-submitted a-center"></td>
-                                <td class="col-title"></td>
-                                <td class="col-site"></td>
-                                <td class="col-status a-right">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <form action="">
+                        <table class="wide data-grid no-outer-border" cellpadding="5">
+                            <?php /*
+                            <thead>
+                                <tr>
+                                    <th class="a-left"><?php echo __('Important Keywords'); ?></th>
+                                    <th><?php echo __('Times Used'); ?></th>
+                                    <th><?php echo __('Avg star rating'); ?></th>
+                                    <th><?php echo __('% of Total'); ?></th>
+                                </tr>
+                            </thead>
+                             * 
+                             */?>
+                            <tbody>
+                                <tr>
+                                    <td class="col-checkbox"></td>
+                                    <td class="col-rating"></td>
+                                    <td class="col-submitted a-center"></td>
+                                    <td class="col-title"></td>
+                                    <td class="col-site"></td>
+                                    <td class="col-status a-right"></td>
+                                </tr>
+                                <tr style="display: none;">
+                                    <td colspan="6">
+                                        <div>
+                                            
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
                 </div>
             </div>
         </div>
