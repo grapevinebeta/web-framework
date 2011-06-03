@@ -144,6 +144,12 @@ textarea {
     left: 0px;
 }
 
+.graph-holder {
+    display: none;
+    height: 250px;
+    overflow: hidden;
+}
+
 .content-section-title {
     margin: 0px;
     padding: 5px;

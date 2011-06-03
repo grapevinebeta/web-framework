@@ -43,7 +43,7 @@ class Controller_Api_Static extends Controller {
                 'average' => 3.2
                 ),
             );
-            sleep(2);
+            //sleep(2);
         $this->apiResponse = array('sites' => $sites);
     }
 
@@ -55,23 +55,22 @@ class Controller_Api_Static extends Controller {
                 'keyword' => 'great location',
                 'used' => 30,
                 'rating' => 2,
-                'percent' => 8,
+                'percent' => 60,
                 ),
             array(
                 'id' => 2,
                 'keyword' => 'bad location',
                 'used' => 20,
                 'rating' => 2,
-                'percent' => 8,
+                'percent' => 40,
                 ),
             );
-            sleep(1);
+            //sleep(1);
         $this->apiResponse = array('keywords' => $keywords);
     }
     
     public function action_reviews()
     {
-        sleep(3);
         $this->apiResponse = array(
             'reviews' => array(
                 array(
@@ -95,7 +94,7 @@ class Controller_Api_Static extends Controller {
                     'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
                     'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '1', // [int:required] - id for content
+                    'id' => '2', // [int:required] - id for content
                     'review' => 'full text', // [text:optional] - full content
                     'category' => 'category', // [string:optional] - internal category
                     'notes' => 'notes', // [text:optional] - notes
