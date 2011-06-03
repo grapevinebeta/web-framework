@@ -30,12 +30,12 @@
                         </thead>
                         <tfoot>
                             <tr>
-                                <th class="a-left"><?php echo __('Total'); ?></td>
-                                <th class="col-total a-center"></td>
-                                <th class="col-positive a-center"></td>
-                                <th class="col-neutral a-center"></td>
-                                <th class="col-negative a-center"></td>
-                                <th class="col-average a-center"></td>
+                                <th class="a-left"><?php echo __('Total'); ?></th>
+                                <th class="col-total a-center"></th>
+                                <th class="col-positive a-center"></th>
+                                <th class="col-neutral a-center"></th>
+                                <th class="col-negative a-center"></th>
+                                <th class="col-average a-center"></th>
                             </tr>
                         </tfoot>
                         <tbody>
