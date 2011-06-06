@@ -100,7 +100,6 @@
         <div id="box-recent-reviews" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Close">g</a>
                     <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
                 </div>
                 <div class="box-header-left-buttons">
@@ -121,17 +120,6 @@
                 <div class="data-grid-holder" style="display: none;">
                     <form action="">
                         <table class="wide data-grid no-outer-border" style="padding: 5px;">
-                            <?php /*
-                            <thead>
-                                <tr>
-                                    <th class="a-left"><?php echo __('Important Keywords'); ?></th>
-                                    <th><?php echo __('Times Used'); ?></th>
-                                    <th><?php echo __('Avg star rating'); ?></th>
-                                    <th><?php echo __('% of Total'); ?></th>
-                                </tr>
-                            </thead>
-                             * 
-                             */?>
                             <tbody>
                                 <tr>
                                     <td class="col-checkbox"></td>

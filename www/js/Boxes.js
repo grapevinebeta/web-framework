@@ -918,9 +918,6 @@ boxManager = {
     }
 };
 
-//boxManager = new BoxManager();
-
-
 boxManager.add(new BC_KeywordsAnalysis());
 boxManager.add(new BC_ReviewSites());
 boxManager.add(new BC_RecentReviews());
