@@ -109,8 +109,8 @@ textarea {
 }
 
 .box-container.empty {
-    display: none;
     margin-bottom: 10px;
+    display: none;
 }
 
 .box-dropable {
@@ -146,7 +146,7 @@ textarea {
 
 .graph-holder {
     display: none;
-    height: 250px;
+    min-height: 250px;
     overflow: hidden;
 }
 

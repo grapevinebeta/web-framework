@@ -150,4 +150,133 @@ class Controller_Api_Static extends Controller {
             ),
         );
     }
+
+    public function action_social()
+    {
+        $id = $this->request->param('id');
+        $networks = array();
+        switch ($id) {
+            case 'activity':
+                $networks[] = array(
+                    'network' => 'Facebook' , //[string:required] - social network
+                    'action' => 'Interactions' , //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => 5 , //[int:required] - activity value
+                    'change' => 4.0 , //[decimal:required] - change amount
+                    'total' => 444 , //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Tweeter', //[string:required] - social network
+                    'action' => 'Tweets', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => 5, //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 123, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Flickr', //[string:required] - social network
+                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => 5, //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 23, //[int:required] - total amount
+                );
+                break;
+            case 'reach':
+                $networks[] = array(
+                    'network' => 'Facebook' , //[string:required] - social network
+                    'action' => 'Likes' , //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => 5 , //[int:required] - activity value
+                    'change' => 4.0 , //[decimal:required] - change amount
+                    'total' => 444 , //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Tweeter', //[string:required] - social network
+                    'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => 5, //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 123, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Flickr', //[string:required] - social network
+                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => 5, //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 23, //[int:required] - total amount
+                );
+                
+                break;
+        }
+        $this->apiResponse = array('networks' => $networks);
+    }
+
+    public function action_socials() {
+        $this->apiResponse = array(
+            'socials' => array(
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => 3, // [decimal:optional] - review overall rating
+                    'submitted' => 1306016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'facebook.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => '1', // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    'network' => 'Facebook', //[string:required]  name of network from Social.Networks[....]
+                    ),
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => 3, // [decimal:optional] - review overall rating
+                    'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'tweeter.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => '2', // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    'network' => 'Tweeter', //[string:required]  name of network from Social.Networks[....]
+                    ),
+            ),
+            'filters' => array(
+                'activity' => array(
+                    array(
+                        'total' => 50,
+                        'value' => 'New',
+                    ),
+                    array(
+                        'total' => 5,
+                        'value' => 'FB Posts',
+                    ),
+                    array(
+                        'total' => 5,
+                        'value' => 'Tweets',
+                    ),
+                    array(
+                        'total' => 21,
+                        'value' => 'Photos',
+                    ),
+                    array(
+                        'value' => 'Alert',
+                    ),
+                ),
+                'network' => array(
+                    array(
+                        'value' => 'DealerRater',
+                    ),
+                    array(
+                        'value' => 'Cars.com',
+                    ),
+                    array(
+                        'value' => 'Google',
+                    ),
+                ),
+            ),
+        );
+    }
 }

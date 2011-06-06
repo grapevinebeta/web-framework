@@ -18,7 +18,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         );
         $this->template->scripts = array(
             'js/jquery-1.6.min.js',
-            'js/highcharts/highcharts.js',
+            'js/highcharts/highcharts.src.js',
             'js/jquery-ui-1.8.13.custom.min.js',
             'js/jquery.tipTip.min.js',
             'js/DataProvider.js',
