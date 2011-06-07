@@ -5,17 +5,27 @@
             <div class="box-header">
                 <div class="box-header-right-buttons">
                     <a class="box-header-button-show-graph" href="#" title="Close">g</a>
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
+                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
+                        <?php echo html::image(
+                            'images/box/button/pin.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">m</a>
+                    <a class="box-header-button-move" href="#" title="Move">
+                        <?php echo html::image(
+                            'images/box/button/move.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <span class="box-header-title">
                     <?php echo __('Review Sites'); ?>
                 </span>
                 <div class="clear"></div>
             </div>
-            <div class="box-content padding-5">
+            <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid">
                         <thead>
@@ -59,17 +69,27 @@
             <div class="box-header">
                 <div class="box-header-right-buttons">
                     <a class="box-header-button-show-graph" href="#" title="Close">g</a>
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
+                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
+                        <?php echo html::image(
+                            'images/box/button/pin.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">m</a>
+                    <a class="box-header-button-move" href="#" title="Move">
+                        <?php echo html::image(
+                            'images/box/button/move.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <span class="box-header-title">
                     <?php echo __('Analysis of Review Keywords'); ?>
                 </span>
                 <div class="clear"></div>
             </div>
-            <div class="box-content padding-5">
+            <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid">
                         <thead>
@@ -100,10 +120,20 @@
         <div id="box-recent-reviews" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
+                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
+                        <?php echo html::image(
+                            'images/box/button/pin.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">m</a>
+                    <a class="box-header-button-move" href="#" title="Move">
+                        <?php echo html::image(
+                            'images/box/button/move.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <div style="margin: 0px 30px 0px 15px;">
                     <div>

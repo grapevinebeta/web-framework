@@ -104,16 +104,22 @@
 }
 
 table.data-grid {
-    border: 1px solid gray;
+    border: 0px solid gray;
     border-collapse: collapse;
+    border-radius: 0px 0px 9px 9px;
 }
 
 table.data-grid th, 
 table.data-grid td {
-    border-width: 1px 0px;
+    border-width: 0px;
     border-style: solid;
     border-color: gray;
     border-collapse: collapse;
+}
+
+table.data-grid thead tr th {
+    background-color: #573975;
+    color: white;
 }
 
 table.data-grid tbody tr th {
@@ -121,7 +127,17 @@ table.data-grid tbody tr th {
 }
 
 table.data-grid tfoot tr th {
-    background-color: #95BCF2;
+    background-color: #573975;
+    color: white;
+    padding-bottom: 5px;
+}
+
+table.data-grid tfoot tr th:first-child {
+    border-radius: 0px 0px 0px 8px;
+}
+
+table.data-grid tfoot tr th:last-child {
+    border-radius: 0px 0px 8px 0px;
 }
 
 table.data-grid tr.odd td {
@@ -129,7 +145,7 @@ table.data-grid tr.odd td {
 }
 
 table.data-grid tr.even td {
-    background-color: #eee;
+    background-color: #E7E4EF;
 }
 
 table.no-outer-border {

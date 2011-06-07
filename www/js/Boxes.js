@@ -877,6 +877,12 @@ boxManager = {
             snap: ".box-container", 
             snapMode: 'inner',
             handle: ".box-header-button-move",
+            cursor: 'move',
+            cursorAt: { 
+                cursor: "move", 
+                top: 10, 
+                left: 100 
+            },
             revert: 'invalid',
             appendTo: 'body',
             zIndex: 10,
