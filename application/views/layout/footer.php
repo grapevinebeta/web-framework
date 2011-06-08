@@ -7,6 +7,6 @@
     <?php echo html::anchor('#', __('Blog')); ?>
     
     <div id="copyrights">
-        &copy; Copyright Grapevine 2011
+        &copy; Copyright <?php echo html::anchor(url::base(), 'Grapevine') ?> 2011
     </div>
 </div>

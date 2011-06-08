@@ -11,7 +11,12 @@
 
 <div class="box-header">
     <div class="box-header-right-buttons">
-        <a class="box-header-button-show-graph" href="#" title="Graph">g</a>
+        <a class="box-header-button-show-graph" href="#" title="Chart">
+            <?php echo html::image(
+                'images/box/button/chart.png', 
+                array('alt' => '', 'title' => __('Chart'))); 
+            ?>
+        </a>
         <a class="box-header-button-dashboard-pin" href="#" title="<?php echo __('Pin to Dashboard'); ?>">
             <?php echo html::image(
                 'images/box/button/pin.jpg', 
