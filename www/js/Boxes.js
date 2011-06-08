@@ -53,7 +53,7 @@ var BoxController = Class.extend({
     /**
      * @var DataProvider
      */
-    dataProvider: new DataProvider(),
+    dataProvider: null,
     
     /**
      * @var Object To store data from ajax responces
@@ -61,14 +61,31 @@ var BoxController = Class.extend({
     data: null,
     
     /**
+     * @var Object To store data from ajax responces
+     */
+    error: null,
+    
+    /**
      * @var String Name of the requested resource, used in Ajax URL
      */
     endpoint: null,
     
+    /**
+     * @var Object [optional] filters data key to filter against
+     */
+    filters: {},
+    
+    /**
+     * @var String [optional] datestamp in mm/dd/yyyy or <value><date_metric>
+     *      date_metrics : m = months,d=days,y=years ie 30d,3m, 1y
+     */
+    range: '1m',
+    
+    dateInterval: null,
+    
     construct: function () {},
     
     init: function () {
-        //this.getContentDom().children().hide();
         if (this.boxId && this.getContentDom().length) {
             this.loadData();
         }
@@ -139,6 +156,27 @@ var BoxController = Class.extend({
         this.dataProvider.setEndpoint(this.endpoint);
         this.dataProvider.setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
+    },
+    
+    setDataProvider: function (dataProvider) {
+        this.dataProvider = new DataProvider();
+    },
+    
+    setFilter: function(filters) {
+        return this;
+    },
+
+    setRange: function(range) {
+        return this;
+    },
+    
+    setDateInterval: function (dateInterval) {
+        return this;
+    },
+    
+    refresh: function () {
+        this.loadData();
+        return this;
     }
     
 });
@@ -151,28 +189,35 @@ var GraphBoxController = BoxController.extend({
     
     init: function () {
         this.getContentDom().children().hide();
-        this.getContentDom().parent().find('.box-header-button-show-graph').click(function () {
-            var box = $(this).parents('.box:first');
-            var dataGrid = box.find('.data-grid-holder');
-            if (dataGrid.css('display') != 'none') {
-                dataGrid.hide();
-                box.find('.graph-holder').show();
-                $(window).resize();
-            } else {
-                box.find('.graph-holder').hide();
-                dataGrid.show();
-            }
-            return false;
-        });
+        this.toggleGraph.boxController = this;
+        this.getContentDom().parent().find('.box-header-button-show-graph').click(this.toggleGraph);
         if (this.getContentDom().length) {
             this.loadData();
         }
     },
     
-    afterLoadData: function () {
-        this.getContentDom().find('.ajax-loader').remove();
-        this.getContentDom().children(':first').show();
-        this.prepareGraph();
+    toggleGraph: function () {
+        var boxControllerId = $(this).parents('.box:first').attr('id');
+        var boxController = boxManager.getBox(boxControllerId);
+        var box = $(this).parents('.box:first');
+        var dataGrid = box.find('.data-grid-holder');
+        if (dataGrid.css('display') != 'none') {
+            dataGrid.hide();
+            box.find('.graph-holder').show();
+            if (!box.find('.graph-holder').children().length) {
+                boxController.prepareGraph();
+            }
+            //$(window).resize();
+        } else {
+            box.find('.graph-holder').hide();
+            dataGrid.show();
+        }
+        return false;
+        
+    },
+    
+    prepareGraph: function () {
+        alert("'prepareGraph' is not implemented!!!");
     }
 });
 
@@ -821,18 +866,24 @@ boxManager = {
     
     collection: {},
     
+    dataProvider: null,
+    
     add: function (box) {
-        if (!(box instanceof BoxController)) {
-            return;
+        if (
+            (box instanceof BoxController) 
+            && box.getBoxId() 
+            && box.endpoint 
+            && box.getContentDom().length
+            )
+        {
+            if (!box.dataProvider && this.dataProvider) {
+                box.setDataProvider(this.dataProvider);
+            }
+            this.collection[box.getBoxId()] = box;
+        } else {
+            delete box;
         }
-        if (!box.getBoxId()) {
-            return;
-        }
-        if (!box.endpoint) {
-            return;
-        }
-        
-        this.collection[box.getBoxId()] = box;
+        return this;
     },
     
     getBox: function (id) {
@@ -842,33 +893,11 @@ boxManager = {
         return false;
     },
     
-    moveEmptyToBottom: function () {
-        
-        var boxesHolder = $('#boxes-holder');
-        var boxes = $('#boxes-holder .box-container');
-        
-        boxes.each(function (index) {
-            var box = $(this);
-            if (!box.children().length) {
-                if (box.hasClass('box-container-left')
-                    && !box.next().hasClass('active')) {
-                        var tmp = box.next();
-                        tmp.next('.clear').remove();
-                        boxesHolder.append(box);
-                        boxesHolder.append(tmp);
-                        boxesHolder.append('<div class="clear"></div>');
-                } else if (!box.hasClass('box-container-left')
-                    && !box.hasClass('box-container-right')) {
-                    box.nextAll(':last').after(box);
-                }
-            }
-        });
-    },
-    
     initBoxes: function () {
         for (i in this.collection) {
             this.collection[i].init();
         }
+        return this;
     },
     
     init: function () {
@@ -921,18 +950,73 @@ boxManager = {
                     $(window).resize();
                 }
             });
+        return this;
+    },
+    
+    moveEmptyToBottom: function () {
+        
+        var boxesHolder = $('#boxes-holder');
+        var boxes = $('#boxes-holder .box-container');
+        
+        boxes.each(function (index) {
+            var box = $(this);
+            if (!box.children().length) {
+                if (box.hasClass('box-container-left')
+                    && !box.next().hasClass('active')) {
+                        var tmp = box.next();
+                        tmp.next('.clear').remove();
+                        boxesHolder.append(box);
+                        boxesHolder.append(tmp);
+                        boxesHolder.append('<div class="clear"></div>');
+                } else if (!box.hasClass('box-container-left')
+                    && !box.hasClass('box-container-right')) {
+                    box.nextAll(':last').after(box);
+                }
+            }
+        });
+        return this;
+    },
+    setDataProvider: function (dataProvider) {
+        this.dataProvider = dataProvider;
+        for (i in this.collection) {
+            this.collection[i].setDataProvider(dataProvider);
+        }
+        return this;
+    },
+    
+    
+    setFilter: function(filters) {
+        for (i in this.collection) {
+            this.collection[i].setFilter(filters);
+        }
+        return this;
+    },
+
+    setRange: function(range) {
+        for (i in this.collection) {
+            this.collection[i].setRange(range);
+        }
+        return this;
+    },
+    
+    setDateInterval: function (dateInterval) {
+        for (i in this.collection) {
+            this.collection[i].setDateInterval(dateInterval);
+        }
+        return this;
     }
 };
 
-boxManager.add(new BC_KeywordsAnalysis());
-boxManager.add(new BC_ReviewSites());
-boxManager.add(new BC_RecentReviews());
-boxManager.add(new BC_SocialActivity());
-boxManager.add(new BC_SocialReach());
-boxManager.add(new BC_SocialActivityDetails());
 
 $(document).ready(function () {
-    boxManager.init();
+    boxManager.add(new BC_KeywordsAnalysis())
+              .add(new BC_ReviewSites())
+              .add(new BC_RecentReviews())
+              .add(new BC_SocialActivity())
+              .add(new BC_SocialReach())
+              .add(new BC_SocialActivityDetails())
+              .setDataProvider(new DataProvider())
+              .init();
 });
 
 

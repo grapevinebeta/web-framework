@@ -1,7 +1,7 @@
 <div id="top-options-holder">
     <form action="<?php echo url::site(); ?>" method="post">
         <?php echo __('Viewing'); ?>:
-        <?php echo html::anchor('#', '?'); ?>
+        <?php echo html::anchor('#', html::image('images/icons/help.png', array('alt' => '', 'class'=> 'icon'))); ?>
         
         <select name="timePeriod">
             <option>1m</option>

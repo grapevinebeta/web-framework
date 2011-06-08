@@ -2,9 +2,9 @@
     <div class="light-box">
         <div class="light-box-header">
             <?php echo __('All Time Snapshot'); ?>
-            <a href="#">?</a>
+            <?php echo html::anchor('#', html::image('images/icons/help.png', array('alt' => '', 'class'=> 'icon'))); ?>
         </div>
-        <div class="light-box-header">
+        <div class="light-box-content">
             <h3>OGSI 115%</h3>
         </div>
     </div>
@@ -12,9 +12,9 @@
     <div class="light-box">
         <div class="light-box-header">
             <?php echo __('Recent Activity'); ?>
-            <a href="#">?</a>
+            <?php echo html::anchor('#', html::image('images/icons/help.png', array('alt' => '', 'class'=> 'icon'))); ?>
         </div>
-        <div class="light-box-header">
+        <div class="light-box-content">
             test content
         </div>
     </div>
@@ -22,9 +22,9 @@
     <div class="light-box">
         <div class="light-box-header">
             <?php echo __('Resource & Help'); ?>
-            <a href="#">?</a>
+            <?php echo html::anchor('#', html::image('images/icons/help.png', array('alt' => '', 'class'=> 'icon'))); ?>
         </div>
-        <div class="light-box-header">
+        <div class="light-box-content">
             <div>
                 ? <a href="#">FAQs</a>
             </div>

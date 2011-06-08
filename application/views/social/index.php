@@ -4,7 +4,12 @@
         <div id="box-social-activity" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Close">g</a>
+                    <a class="box-header-button-show-graph" href="#" title="Chart">
+                        <?php echo html::image(
+                            'images/box/button/chart.png', 
+                            array('alt' => '', 'title' => __('Chart'))); 
+                        ?>
+                    </a>
                     <a class="box-header-button-dashboard-pin" href="#" title="Close">
                         <?php echo html::image(
                             'images/box/button/pin.jpg', 
@@ -57,7 +62,12 @@
         <div id="box-social-reach" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Close">g</a>
+                    <a class="box-header-button-show-graph" href="#" title="Chart">
+                        <?php echo html::image(
+                            'images/box/button/chart.png', 
+                            array('alt' => '', 'title' => __('Chart'))); 
+                        ?>
+                    </a>
                     <a class="box-header-button-dashboard-pin" href="#" title="Close">
                         <?php echo html::image(
                             'images/box/button/pin.jpg', 

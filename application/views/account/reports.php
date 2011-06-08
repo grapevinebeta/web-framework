@@ -4,7 +4,7 @@
 <h2 class="content-section-title"><?php echo __('Email Addresses for Reports'); ?>:</h2>
 <div id="account-reports-list-section" class="padding-5">
     <p>
-        <?php echo __('We send a weekly Grapevine reportto highlight key item like your OGSI Score, Current Star Rating, Review samples and more. Please add your desired email resipends below.'); ?>
+        <?php echo __('We send a weekly Grapevine report to highlight key item like your OGSI Score, Current Star Rating, Review samples and more. Please add your desired email recipients below.'); ?>
     </p>
     <form action="" method="post">
         <table class="wide data-grid" cellpadding="5">

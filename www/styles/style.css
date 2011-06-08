@@ -19,6 +19,10 @@ img {
     border-width: 0px;
 }
 
+img.icon {
+    vertical-align: middle;
+}
+
 a {
     color: #573E77;
     text-decoration: none;
@@ -54,6 +58,7 @@ a:hover {
     background-position: right -34px;
     overflow: hidden;
     float: left;
+    color: white;
 }
 
 .top-menu-item-label {
@@ -65,15 +70,19 @@ a:hover {
     background-repeat: no-repeat;
     display: inline-block;
     cursor: pointer;
+    color: white;
+    font-weight: bold;
 }
 
 .top-menu-item.active {
     height: 34px;
     background-image: url(../images/top-menu-item-bg-active.jpg);
+    color: #553979;
 }
 
 .top-menu-item.active .top-menu-item-label {
     background-image: url(../images/top-menu-item-bg-active.jpg);
+    color: #553979;
 }
 
 #main-body {
@@ -197,14 +206,15 @@ a:hover {
 }
 
 .box {
-    background-color: white;
-    border: 1px solid #BEC0BF;
     top: 0px;
     left: 0px;
+    background-color: white;
+    border: 1px solid #BEC0BF;
     -moz-box-shadow: 2px 2px 2px #888;
     -webkit-box-shadow: 2px 2px 2px #888;
     box-shadow: 2px 2px 2px #888;
     -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
     border-radius: 10px;
     padding: 2px;
 }
@@ -229,6 +239,8 @@ a:hover {
     background-color: #D1CDDC;
     font-size: 15px;
     font-weight: bold;
+    -moz-border-radius: 8px 8px 0px 0px;
+    -webkit-border-radius: 8px 8px 0px 0px;
     border-radius: 8px 8px 0px 0px;
     text-align: center;
 }
@@ -255,17 +267,32 @@ a:hover {
 }
 
 .light-box {
+    background-color: white;
+    border: 1px solid #BEC0BF;
+    -moz-box-shadow: 2px 2px 2px #888;
+    -webkit-box-shadow: 2px 2px 2px #888;
+    box-shadow: 2px 2px 2px #888;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    padding: 2px;
     margin-bottom: 10px;
 }
 
 .light-box-header {
-    border: 1px solid gray;
+    -moz-border-radius: 8px 8px 0px 0px;
+    -webkit-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
     padding: 5px;
     margin-bottom: 5px;
 }
 
 .light-box-content {
     padding: 5px;
+    -moz-border-radius: 0px 0px 8px 8px;
+    -webkit-border-radius: 0px 0px 8px 8px;
+    border-radius: 0px 0px 8px 8px;
+    background-color: #D1CDDC;
 }
 
 

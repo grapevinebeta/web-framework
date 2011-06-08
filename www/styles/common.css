@@ -133,10 +133,14 @@ table.data-grid tfoot tr th {
 }
 
 table.data-grid tfoot tr th:first-child {
+    -moz-border-radius: 0px 0px 0px 8px;
+    -webkit-border-radius: 0px 0px 0px 8px;
     border-radius: 0px 0px 0px 8px;
 }
 
 table.data-grid tfoot tr th:last-child {
+    -moz-border-radius: 0px 0px 8px 0px;
+    -webkit-border-radius: 0px 0px 8px 0px;
     border-radius: 0px 0px 8px 0px;
 }
 
