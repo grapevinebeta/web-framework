@@ -150,10 +150,10 @@
                         <?php echo __('Review Status Filter'); ?>:
                         <span id="box-header-status-filters"></span>
                     </div>
-                    <div>
+                    <!--<div>
                         <?php echo __('Review Source Filter'); ?>:
                         <span id="box-header-source-filters"></span>
-                    </div>
+                    </div>-->
                 </div>
             </div>
             <div class="box-content">

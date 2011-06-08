@@ -15,7 +15,7 @@ Class.__asMethod__ = function(func, superClass) {
 
 Class.extend = function(def) {
     var classDef = function() {
-        if (arguments[0] !== Class && this.construct) { this.construct.apply(this, arguments); }
+        if (arguments[0] !== Class && this.construct) {this.construct.apply(this, arguments);}
     };
     
     var proto = new this(Class);
@@ -88,9 +88,27 @@ var BoxController = Class.extend({
     init: function () {
         if (this.boxId && this.getContentDom().length) {
             this.loadData();
+            this.attachCommonEvents();
         }
     },
-    
+
+    /**
+     * Attach events to specific elements within currently processed box. Has to
+     * use .delegate() jQuery method on the current box's DOM (eg. retrieved by
+     * this.getBoxDom()), to stand the data reloading without the need to attach
+     * again and not to impact in extent, like .live() does.
+     */
+    attachCommonEvents: function() {
+        var self = this;
+
+        // Attach event for setting filter by status 
+        self.getBoxDom().delegate('a[data-filter-status]', 'click', function(event){
+            event.preventDefault();
+            var filter_value = $(this).attr('data-filter-status');
+            self.setFilter({ 'value': filter_value });
+        });
+    },
+
     /**
      * @return jQuery DOM element which holds the box
      */
@@ -161,8 +179,15 @@ var BoxController = Class.extend({
     setDataProvider: function (dataProvider) {
         this.dataProvider = new DataProvider();
     },
-    
-    setFilter: function(filters) {
+
+    /**
+     * Sets filter. Requires JS object to be passed in the following form:
+     * { 'total': 10, 'value': 'negative' }
+     * where 'total' is optional (integer?) and 'value' is required string
+     * @todo Actually set filter in compliance to API
+     */
+    setFilter: function(filter) {
+        log('Filter status of "#' + this.boxId + '" set to "' + filter.value + '"');
         return this;
     },
 
@@ -473,14 +498,14 @@ var BC_RecentReviews = BoxController.extend({
     },
     
     loadHeaderFilters: function (filterType) {
-        if (filterType != 'status' && filterType != 'source') {
+        if (filterType != 'status') {
             return;
         }
         var filters = this.data.filters[filterType];
         var filterHolder = this.getHeaderDom().find('#box-header-' + filterType + '-filters');
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
-            var filterLink = $('<a href="#"></a>');
+            var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
             if (filters[i].total) {
                 filterLink.text(filters[i].total +' ');
             }
