@@ -113,7 +113,10 @@ var BoxController = Class.extend({
      * @return jQuery DOM element which holds the box
      */
     getBoxDom: function () {
-        return $('#' + this.boxId);
+        if (!this._boxDom) {
+            this._boxDom = $('#' + this.boxId);
+        }
+        return this._boxDom;
     },
 
     /**
