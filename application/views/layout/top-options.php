@@ -1,7 +1,8 @@
 <div id="top-options-holder">
-    <form action="" method="post">
+    <form action="<?php echo url::site(); ?>" method="post">
         <?php echo __('Viewing'); ?>:
-        <?php echo html::image('', array('alt' => '?')); ?>
+        <?php echo html::anchor('#', '?'); ?>
+        
         <select name="timePeriod">
             <option>1m</option>
             <option>3m</option>

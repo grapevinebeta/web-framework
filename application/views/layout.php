@@ -25,15 +25,17 @@
     <div id="main-wrapper">
         <?php echo $header; ?>
         <div id="main-body">
-            <?php if (!empty($topOptions)): ?>
-                <?php echo $topOptions; ?>
-            <?php endif; ?>
-
-            <?php if (!empty($rightPanel)): ?>
-                <?php echo $rightPanel; ?>
-            <?php endif; ?>
+            <div style="margin: 10px">
+                <?php if (!empty($topOptions)): ?>
+                    <?php echo $topOptions; ?>
+                <?php endif; ?>
+    
+                <?php if (!empty($rightPanel)): ?>
+                    <?php echo $rightPanel; ?>
+                <?php endif; ?>
 
             <?php echo $body; ?>
+            </div>
         </div>
         <?php echo $footer; ?>
     </div>

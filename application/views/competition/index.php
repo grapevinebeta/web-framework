@@ -25,15 +25,25 @@
         <div id="box-keywords-analysis" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Close">g</a>
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
+                    <a class="box-header-button-show-graph" href="#" title="Graph">g</a>
+                    <a class="box-header-button-dashboard-pin" href="#" title="<?php echo __('Pin to Dashboard'); ?>">
+                        <?php echo html::image(
+                            'images/box/button/pin.jpg', 
+                            array('alt' => '', 'title' => __('Pin to Dashboard'))); 
+                        ?>
+                    </a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">m</a>
+                    <a class="box-header-button-move" href="#" title="<?php echo __('Move'); ?>">
+                        <?php echo html::image(
+                            'images/box/button/move.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
                 <?php echo __('Analysis of Review Keywords'); ?>:
             </div>
-            <div class="box-content padding-5">
+            <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid">
                         <thead>
@@ -64,13 +74,22 @@
         <div id="box-recent-reviews" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Close">g</a>
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
+                    <a class="box-header-button-dashboard-pin" href="#" title="<?php echo __('Pin to Dashboard'); ?>">
+                        <?php echo html::image(
+                            'images/box/button/pin.jpg', 
+                            array('alt' => '', 'title' => __('Pin to Dashboard'))); 
+                        ?>
+                    </a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">m</a>
+                    <a class="box-header-button-move" href="#" title="<?php echo __('Move'); ?>">
+                        <?php echo html::image(
+                            'images/box/button/move.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
                 </div>
-                <div style="margin: 0px 30px 0px 15px;">
+                <div class="box-header-title-holder">
                     <div>
                         <?php echo __('Review Status Filter'); ?>:
                         <span id="box-header-status-filters"></span>
@@ -84,17 +103,6 @@
             <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid no-outer-border" cellpadding="5">
-                        <?php /*
-                        <thead>
-                            <tr>
-                                <th class="a-left"><?php echo __('Important Keywords'); ?></th>
-                                <th><?php echo __('Times Used'); ?></th>
-                                <th><?php echo __('Avg star rating'); ?></th>
-                                <th><?php echo __('% of Total'); ?></th>
-                            </tr>
-                        </thead>
-                         *
-                         */?>
                         <tbody>
                             <tr>
                                 <td class="col-checkbox"></td>

@@ -1,6 +1,20 @@
 <div id="top-menu">
-    <?php echo html::anchor(Route::url('dashboard'), __('Dashboard'), array('class' => 'top-menu-item')); ?>
-    <?php echo html::anchor(Route::url('review'), __('Review Breakdown'), array('class' => 'top-menu-item')); ?>
-    <?php echo html::anchor(Route::url('social'), __('Social'), array('class' => 'top-menu-item')); ?>
-    <?php echo html::anchor(Route::url('competition'), __('Competition'), array('class' => 'top-menu-item')); ?>
+    <?php $currentController = Request::current()->controller(); ?>
+    <?php echo html::anchor(
+        Route::url('dashboard'), 
+        '<span class="top-menu-item-label">' . __('Dashboard') . '</span>', 
+        array('class' => 'top-menu-item' . ($currentController == 'dashboard'?' active':''))); ?>
+    <?php echo html::anchor(
+        Route::url('review'), 
+        '<span class="top-menu-item-label">' . __('Review Breakdown') . '</span>', 
+        array('class' => 'top-menu-item' . ($currentController == 'review'?' active':''))); ?>
+    <?php echo html::anchor(
+        Route::url('social'), 
+        '<span class="top-menu-item-label">' . __('Social') . '</span>', 
+        array('class' => 'top-menu-item' . ($currentController == 'social'?' active':''))); ?>
+    <?php echo html::anchor(
+        Route::url('competition'), 
+        '<span class="top-menu-item-label">' . __('Competition') . '</span>', 
+        array('class' => 'top-menu-item' . ($currentController == 'competition'?' active':''))); ?>
+    <div class="clear"></div>
 </div>

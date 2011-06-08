@@ -11,15 +11,25 @@
 
 <div class="box-header">
     <div class="box-header-right-buttons">
-        <a class="box-header-button-show-graph" href="#" title="Close">g</a>
-        <a class="box-header-button-dashboard-pin" href="#" title="Close">p</a>
+        <a class="box-header-button-show-graph" href="#" title="Graph">g</a>
+        <a class="box-header-button-dashboard-pin" href="#" title="<?php echo __('Pin to Dashboard'); ?>">
+            <?php echo html::image(
+                'images/box/button/pin.jpg', 
+                array('alt' => '', 'title' => __('Pin to Dashboard'))); 
+            ?>
+        </a>
     </div>
     <div class="box-header-left-buttons">
-        <a class="box-header-button-move" href="#" title="Move">m</a>
+        <a class="box-header-button-move" href="#" title="<?php echo __('Move'); ?>">
+            <?php echo html::image(
+                'images/box/button/move.jpg', 
+                array('alt' => '', 'title' => __('Move'))); 
+            ?>
+        </a>
     </div>
     <?php echo $caption; ?>:
 </div>
-<div class="box-content padding-5">
+<div class="box-content">
     <div class="data-grid-holder" style="display: none;">
         <table class="wide data-grid">
             <?php if (Arr::get($data, 'headers') !== null && count(Arr::get($data, 'headers')) > 0): ?>

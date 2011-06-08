@@ -1,5 +1,7 @@
 <?php echo $menu; ?>
 <div id="account-content">
-    <?php echo $content;?>
+    <div class="padding-2">
+        <?php echo $content;?>
+    </div>
 </div>
 <div class="clear"></div>

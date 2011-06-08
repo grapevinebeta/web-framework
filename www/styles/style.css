@@ -3,7 +3,9 @@ body {
     margin: 0px;
     padding: 0px;
     font-family: Arial, Verdana, Helvetica, sans-serif;
-    font-size: 11px;
+    font-size: 12px;
+    color: #593B7C;
+    background-color: white;
 }
 
 textarea {
@@ -13,13 +15,26 @@ textarea {
     border-style: solid;
 }
 
+img {
+    border-width: 0px;
+}
+
+a {
+    color: #573E77;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 #main-wrapper {
     background-color: white;
 }
 
 #header-holder {
-    height: 75px;
-    border-bottom: 1px solid gray;
+    margin: 20px 10px 0px;
+    min-height: 75px;
     position: relative;
 }
 
@@ -27,20 +42,51 @@ textarea {
     position: absolute;
     right: 15px;
     bottom: 0px;
+    height: 30px;
 }
 
 .top-menu-item {
+    background-image: url(../images/top-menu-item-bg.jpg);
+    background-repeat: no-repeat;
     display: inline-block;
-    padding: 5px;
-    border-width: 1px 1px 0px 1px;
-    border-color: gray;
-    border-style: solid;
-    background-color: #999;
+    height: 30px;
+    padding-right: 8px;
+    background-position: right -34px;
+    overflow: hidden;
+    float: left;
+}
+
+.top-menu-item-label {
+    padding: 10px 10px 10px 30px;
+    font-size: 15px;
+    line-height: 100%;
+    background-position: left top;
+    background-image: url(../images/top-menu-item-bg.jpg);
+    background-repeat: no-repeat;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.top-menu-item.active {
+    height: 34px;
+    background-image: url(../images/top-menu-item-bg-active.jpg);
+}
+
+.top-menu-item.active .top-menu-item-label {
+    background-image: url(../images/top-menu-item-bg-active.jpg);
 }
 
 #main-body {
-    margin: 10px;
+    margin: 0px 10px 10px;
     min-width: 500px;
+    border: 1px solid #D1D1D3;
+    -moz-box-shadow: 2px 2px 2px #888;
+    -webkit-box-shadow: 2px 2px 2px #888;
+    box-shadow: 2px 2px 2px #888;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    padding: 2px;
     /*width: 980px;*/
 }
 
@@ -48,30 +94,35 @@ textarea {
     width: 20%;
     min-width: 100px;
     float: left;
+    background-color: white;
+    border: 1px solid #BEC0BF;
+    -moz-box-shadow: 2px 2px 2px #888;
+    -webkit-box-shadow: 2px 2px 2px #888;
+    box-shadow: 2px 2px 2px #888;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .menu-title {
-    border: 1px solid gray;
     padding: 5px;
-    background-color: #999999;
+    background-color: #D1CDDC;
     font-weight: bold;
     margin-bottom: 1px;
+    -moz-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
 }
 
 .menu-section {
-    border: 1px solid gray;
     margin-bottom: 1px;
 }
 
 .menu-section-title {
     padding: 5px;
     background-color: #DDDDDD;
-    border-bottom: 1px solid gray;
 }
 
 .menu-section-item {
     padding: 5px;
-    border-bottom: 1px solid gray;
 }
 
 .menu-section-item.last {
@@ -82,15 +133,22 @@ textarea {
     width: 79%;
     float: right;
     min-width: 395px;
-    border: 1px solid gray;
+    background-color: white;
+    border: 1px solid #BEC0BF;
+    -moz-box-shadow: 2px 2px 2px #888;
+    -webkit-box-shadow: 2px 2px 2px #888;
+    box-shadow: 2px 2px 2px #888;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .content-title {
     margin: 0px;
     padding: 5px;
-    background-color: #999;
-    font-size: 11px;
-    border-bottom: 1px solid gray;
+    background-color: #D1CDDC;
+    font-size: 15px;
+    -moz-border-radius: 8px 8px 0px 0px;
+    border-radius: 8px 8px 0px 0px;
 }
 
 #boxes-holder {
@@ -109,8 +167,8 @@ textarea {
 }
 
 .box-container.empty {
-    display: none;
     margin-bottom: 10px;
+    display: none;
 }
 
 .box-dropable {
@@ -139,14 +197,21 @@ textarea {
 }
 
 .box {
-    border: 1px solid gray;
+    background-color: white;
+    border: 1px solid #BEC0BF;
     top: 0px;
     left: 0px;
+    -moz-box-shadow: 2px 2px 2px #888;
+    -webkit-box-shadow: 2px 2px 2px #888;
+    box-shadow: 2px 2px 2px #888;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    padding: 2px;
 }
 
 .graph-holder {
     display: none;
-    height: 250px;
+    min-height: 250px;
     overflow: hidden;
 }
 
@@ -161,9 +226,11 @@ textarea {
     position: relative;
     margin: 0px;
     padding: 5px;
-    background-color: #999;
-    font-size: 11px;
-    border-bottom: 1px solid gray;
+    background-color: #D1CDDC;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px 8px 0px 0px;
+    text-align: center;
 }
 
 .box-header-left-buttons {
@@ -171,13 +238,20 @@ textarea {
     padding-right: 5px;
 }
 
+.box-header-title-holder {
+    margin-left: 20px;
+    margin-right: 40px;
+}
+
 .box-header-title {
-    float: left;
 }
 
 .box-header-right-buttons {
     float: right;
-    padding-right: 5px;
+}
+
+.box-content {
+    min-height: 50px;
 }
 
 .light-box {
