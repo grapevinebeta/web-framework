@@ -89,7 +89,17 @@ var BoxController = Class.extend({
         if (this.boxId && this.getContentDom().length) {
             this.loadData();
             this.attachCommonEvents();
+            this.attachBoxEvents();
         }
+    },
+
+    /**
+     * Attach events specific to the current box / class. This method will be
+     * invoked once, during box initialization. Should rely on .delegate()
+     * method or attach events that will not require re-attachment.
+     */
+    attachBoxEvents: function() {
+        // this method can be safely overriden by any of the inheriting classes
     },
 
     /**
@@ -107,12 +117,6 @@ var BoxController = Class.extend({
             var filter_value = $(this).attr('data-filter-status');
             self.setFilter({'value': filter_value});
             self.refresh();
-        });
-
-        // Attach event for setting filter by status
-        self.getBoxDom().delegate('table tr.odd, table tr.even', 'click', function(event){
-            event.preventDefault();
-            $(this).next('tr.odd').toggle('slow');
         });
     },
 
@@ -524,19 +528,56 @@ var BC_RecentReviews = BoxController.extend({
     boxId: 'box-recent-reviews',
     
     endpoint: 'reviews',
-    
-//    getReviewDetailsTemplate: function () {
-//        var template = $('<div>');
-//
-//
-//        return template;
-//    },
-    
+
+    /**
+     * Attach events associated with RecentReviews box, such as expanding review
+     * details when the review snippet is being clicked.
+     */
+    attachBoxEvents: function() {
+        var self = this;
+
+        // Attach event for expanding and collapsing review details
+        self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
+            event.preventDefault();
+            var review_id = $(this).attr('data-review-id');
+            log('Toggling details of review with ID="' + review_id + '"');
+            self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails').toggle('slow');
+        });
+    },
+
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
         this.getHeaderDom().find('#box-header-status-filters').html($(this.getLoaderHtml()).children());
         this.getHeaderDom().find('#box-header-source-filters').html($(this.getLoaderHtml()).children());
+    },
+
+    /**
+     * Get the template for details of specific review
+     */
+    getReviewDetailsTemplate: function (review_id) {
+        return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
+            + '<td colspan="6">some review details placeholder, some review details placeholder, '
+            + 'some review details placeholder, some review details placeholder, some review details '
+            + 'placeholder, some review details placeholder, some review details placeholder, some '
+            + 'review details placeholder, some review details placeholder, some review details '
+            + 'placeholder, some review details placeholder, some review details placeholder, some '
+            + 'review details placeholder, some review details placeholder</td>'
+            + '</tr>');
+    },
+
+    /**
+     * Get the snippet of specific review
+     */
+    getReviewSnippetTemplate: function (review_id) {
+        return $('<tr data-review-id="' + review_id + '" class="reviewSnippet">'
+            + '<td class="col-checkbox"></td>'
+            + '<td class="col-rating"></td>'
+            + '<td class="col-submitted a-center"></td>'
+            + '<td class="col-title"></td>'
+            + '<td class="col-site"></td>'
+            + '<td class="col-status a-right"></td>'
+            + '</tr>');
     },
     
     loadFilters: function (filterType) {
@@ -559,13 +600,16 @@ var BC_RecentReviews = BoxController.extend({
     
     loadReviews: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr:first').clone();
-        var trContentTemplate = '<tr><td colspan="6"></td></tr>';
         var tr = null;
         var trContent = null;
+        var current_id = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < this.data.reviews.length; i++) {
-            tr = trTemplate.clone();
+            current_id = parseInt(this.data.reviews[i].id);
+            log('Generating row for review with ID="' + current_id + '"');
+            tr = this.getReviewSnippetTemplate(current_id);
+            log('Generating content row for review with ID="' + current_id + '"');
+            trContent = this.getReviewDetailsTemplate(current_id);
             
             for (n in this.data.reviews[i]) {
                 var value = this.data.reviews[i][n];
@@ -579,11 +623,6 @@ var BC_RecentReviews = BoxController.extend({
                 } else if (n == 'title') {
                     var titleLink = $('<a href="#"></a>');
                     titleLink.text(value);
-                    titleLink.click(function (event) {
-                        event.preventDefault();
-                        var parent = $(this).parent('tr');
-                        parent.next('tr[data-review-id="' + parent.attr('data-review-id') + '"]').show('slow');
-                    });
                     tr.find('td.col-' + n).html(titleLink);
                 } else {
                     tr.find('td.col-' + n).text(value);
@@ -598,15 +637,9 @@ var BC_RecentReviews = BoxController.extend({
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
             checkbox.attr('value', this.data.reviews[i].id);
-            tr.attr('data-review-id', this.data.reviews[1].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.find('tbody').append(tr);
-            
-            trContent = $(trContentTemplate);
-            trContent.attr('data-review-id', this.data.reviews[1].id);
-            trContent.css('display', 'none').find('td').text('adsfsf fsadfsa');
-            table.find('tbody').append(trContent);
+            table.find('tbody').append(tr, trContent); // append two elements
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();

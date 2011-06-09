@@ -333,3 +333,11 @@ a:hover {
 .ajax-loading-gif {
     vertical-align: middle;
 }
+
+/* Styles for specific boxes */
+
+#box-recent-reviews {}
+
+    #box-recent-reviews tr.reviewSnippet {
+        cursor: pointer;
+    }
