@@ -101,11 +101,18 @@ var BoxController = Class.extend({
     attachCommonEvents: function() {
         var self = this;
 
-        // Attach event for setting filter by status 
+        // Attach event for setting filter by status
         self.getBoxDom().delegate('a[data-filter-status]', 'click', function(event){
             event.preventDefault();
             var filter_value = $(this).attr('data-filter-status');
-            self.setFilter({ 'value': filter_value });
+            self.setFilter({'value': filter_value});
+            self.refresh();
+        });
+
+        // Attach event for setting filter by status
+        self.getBoxDom().delegate('table tr.odd, table tr.even', 'click', function(event){
+            event.preventDefault();
+            $(this).next('tr.odd').toggle('slow');
         });
     },
 
@@ -518,12 +525,12 @@ var BC_RecentReviews = BoxController.extend({
     
     endpoint: 'reviews',
     
-    getReviewDetailsTemplate: function () {
-        var template = $('<div>');
-        
-        
-        return template;
-    },
+//    getReviewDetailsTemplate: function () {
+//        var template = $('<div>');
+//
+//
+//        return template;
+//    },
     
     beforeLoadData: function () {
         this.getContentDom().children().hide();
@@ -572,9 +579,10 @@ var BC_RecentReviews = BoxController.extend({
                 } else if (n == 'title') {
                     var titleLink = $('<a href="#"></a>');
                     titleLink.text(value);
-                    titleLink.click(function () {
-                        $(this).parents('tr:first').next().toggle('slow');
-                        return false;
+                    titleLink.click(function (event) {
+                        event.preventDefault();
+                        var parent = $(this).parent('tr');
+                        parent.next('tr[data-review-id="' + parent.attr('data-review-id') + '"]').show('slow');
                     });
                     tr.find('td.col-' + n).html(titleLink);
                 } else {
@@ -590,11 +598,13 @@ var BC_RecentReviews = BoxController.extend({
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
             checkbox.attr('value', this.data.reviews[i].id);
+            tr.attr('data-review-id', this.data.reviews[1].id);
             tr.find('td.col-checkbox').html(checkbox);
             
             table.find('tbody').append(tr);
             
             trContent = $(trContentTemplate);
+            trContent.attr('data-review-id', this.data.reviews[1].id);
             trContent.css('display', 'none').find('td').text('adsfsf fsadfsa');
             table.find('tbody').append(trContent);
         }
