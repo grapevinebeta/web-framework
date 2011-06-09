@@ -557,12 +557,13 @@ var BC_RecentReviews = BoxController.extend({
      */
     getReviewDetailsTemplate: function (review_id) {
         return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
-            + '<td colspan="6">some review details placeholder, some review details placeholder, '
+            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">some review '
+            + 'details placeholder, some review details placeholder, some review details placeholder, '
             + 'some review details placeholder, some review details placeholder, some review details '
             + 'placeholder, some review details placeholder, some review details placeholder, some '
             + 'review details placeholder, some review details placeholder, some review details '
             + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder, some review details placeholder</td>'
+            + 'review details placeholder</td>'
             + '</tr>');
     },
 
@@ -571,12 +572,12 @@ var BC_RecentReviews = BoxController.extend({
      */
     getReviewSnippetTemplate: function (review_id) {
         return $('<tr data-review-id="' + review_id + '" class="reviewSnippet">'
-            + '<td class="col-checkbox"></td>'
+            //+ '<td class="col-checkbox"></td>' // no need for checkbox
+            + '<td class="col-status"></td>'
             + '<td class="col-rating"></td>'
             + '<td class="col-submitted a-center"></td>'
             + '<td class="col-title"></td>'
-            + '<td class="col-site"></td>'
-            + '<td class="col-status a-right"></td>'
+            + '<td class="col-site a-right"></td>'
             + '</tr>');
     },
     
