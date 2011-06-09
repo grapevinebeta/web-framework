@@ -96,11 +96,15 @@ Note: returns numeric data only
 @TODO
 
 
+
+Node: added to api static controller to continue work on competition tab
 /api/dataProvider/competition/distribution
 {
-	distribution:ArrayCollection of OGSICompetitionDistributionObject
+	distribution:ArrayCollection of OGSIDistributionObject
 
 }
+
+
 
 /api/dataProvider/competition/ledger
 {
