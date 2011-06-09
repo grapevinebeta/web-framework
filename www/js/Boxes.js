@@ -812,11 +812,96 @@ var BC_SocialReach = BoxController.extend({
     
 });
 
-var BC_CompetitionDistribution = BoxController.extend({
+var BC_CompetitionDistribution = GraphBoxController.extend({
  
     boxId: 'box-competition-distribution',
  
     endpoint: 'distribution',
+ 
+    prepareGraph: function () {
+        if (!this.data) {
+            return;
+        }
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var graphHolder = $('#' + graphHolderId);
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                type: 'bar'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+                '#80699B', 
+                '#AA4643', 
+                '#4572A7', 
+                '#89A54E', 
+                '#3D96AE', 
+                '#DB843D', 
+                '#92A8CD', 
+                '#A47D7C', 
+                '#B5CA92'
+            ],
+            xAxis: {
+                categories: [],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            legend: {
+                verticalAlign: 'bottom',
+                borderWidth: 1,
+                borderRadius: 0,
+                backgroundColor: '#FFFFFF',
+                shadow: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Average',
+                data: []
+            }, {
+                name: 'Negative',
+                data: []
+            }, {
+                name: 'Neutral',
+                data: []
+            }, {
+                name: 'Positive',
+                data: []
+            }]
+        }
+        
+        for (var i = 0; i < this.data.dists.length; i++) {
+            var dist = this.data.dists[i];
+            options.xAxis.categories.push(dist.site);
+            options.series[0].data.push(dist.average);
+            options.series[1].data.push(dist.negative);
+            options.series[2].data.push(dist.neutral);
+            options.series[3].data.push(dist.positive);
+        }
+        
+        this.graph = new Highcharts.Chart(options);
+    },
  
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
@@ -833,7 +918,6 @@ var BC_CompetitionDistribution = BoxController.extend({
             for (n in boxController.data.dists[i]) {
                 var value = boxController.data.dists[i][n];
                 
-                console.log(value);
                 tr.find('td.col-' + n).text(value);
                 if (n != 'dealership') {
                     var currentTotalValue = 0;

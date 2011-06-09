@@ -80,6 +80,12 @@
         <div id="box-competition-distribution" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
+                    <a class="box-header-button-show-graph" href="#" title="Chart">
+                        <?php echo html::image(
+                            'images/box/button/chart.png', 
+                            array('alt' => '', 'title' => __('Chart'))); 
+                        ?>
+                    </a>
                     <a class="box-header-button-dashboard-pin" href="#" title="<?php echo __('Pin to Dashboard'); ?>">
                         <?php echo html::image(
                             'images/box/button/pin.jpg', 
@@ -126,6 +132,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div id="box-competition-distribution-graph-holder" class="graph-holder"></div>
             </div>
         </div>
     </div>
