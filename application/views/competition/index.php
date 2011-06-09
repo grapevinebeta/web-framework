@@ -21,6 +21,7 @@
             ?>
         </div>
     </div>
+    
     <div class="box-container active box-container-right">
         <div id="box-keywords-analysis" class="box">
             <div class="box-header">

@@ -133,7 +133,10 @@ var BoxController = Class.extend({
      * @return jQuery DOM element which holds header of the box
      */
     getHeaderDom: function () {
-        return $('#' + this.boxId + ' .box-header:first');
+        if (!this._headerDom) {
+            this._headerDom = $('#' + this.boxId + ' .box-header:first');
+        }
+        return this._headerDom;
     },
     
     getLoaderHtml: function () {
@@ -142,17 +145,24 @@ var BoxController = Class.extend({
     
     
     /**
-     * @return String
+     * @return String Id of the box
      */
     getBoxId: function () {
-        return this.boxId
+        return this.boxId;
     },
     
+    /**
+     * Called before ajax request, generaly used for set ajax-loader.gif
+     */
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
     },
     
+    /**
+     * Called after ajax request, generaly used for unset ajax-loader.gif 
+     * and show new data or display an error
+     */
     afterLoadData: function () {
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().children(':first').show();
@@ -177,6 +187,7 @@ var BoxController = Class.extend({
         this.dataProvider.setEndpoint(this.endpoint);
         this.dataProvider.setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
+        return this;
     },
     
     setDataProvider: function (dataProvider) {
@@ -194,14 +205,28 @@ var BoxController = Class.extend({
         return this;
     },
 
+    /**
+     * Setter
+     * @param range datestamp in mm/dd/yyyy or <value><date_metric>
+     *       date_metrics : m = months,d=days,y=years ie 30d,3m, 1y
+     * @return BoxController
+     */
     setRange: function(range) {
         return this;
     },
     
+    /**
+     * setter
+     * @return BoxController
+     */
     setDateInterval: function (dateInterval) {
         return this;
     },
     
+    /**
+     * Alias for loadData
+     * @return BoxController
+     */
     refresh: function () {
         this.loadData();
         return this;
@@ -221,6 +246,14 @@ var GraphBoxController = BoxController.extend({
         this.getContentDom().parent().find('.box-header-button-show-graph').click(this.toggleGraph);
         if (this.getContentDom().length) {
             this.loadData();
+        }
+    },
+    
+    beforeLoadData: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+        if (this.graph) {
+            this.graph.destroy();
         }
     },
     
@@ -291,7 +324,6 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
             events: {
                 load: function (e) {
                     var container = $(this.container);
-                    this.setSize(container.width(), container.height());
                 }
             },
             tooltip: {
@@ -322,7 +354,7 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
         var boxController = this.success.boxController;
         boxController.data = data;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.keywords.length; i++) {
@@ -444,7 +476,7 @@ var BC_ReviewSites = GraphBoxController.extend({
         var boxController = this.success.boxController;
         boxController.data = data;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         var trFooter = table.find('tfoot tr');
         trFooter.find('th:not(:first)').text('0');
@@ -500,7 +532,7 @@ var BC_RecentReviews = BoxController.extend({
         this.getHeaderDom().find('#box-header-source-filters').html($(this.getLoaderHtml()).children());
     },
     
-    loadHeaderFilters: function (filterType) {
+    loadFilters: function (filterType) {
         if (filterType != 'status') {
             return;
         }
@@ -520,7 +552,7 @@ var BC_RecentReviews = BoxController.extend({
     
     loadReviews: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var trContentTemplate = '<tr><td colspan="6"></td></tr>';
         var tr = null;
         var trContent = null;
@@ -579,11 +611,11 @@ var BC_RecentReviews = BoxController.extend({
         }
         
         if (data.filters && data.filters.status) {
-            boxController.loadHeaderFilters('status');
+            boxController.loadFilters('status');
         }
         
         if (data.filters && data.filters.source) {
-            boxController.loadHeaderFilters('source');
+            boxController.loadFilters('source');
         }
     },
     
@@ -929,7 +961,13 @@ boxManager = {
     },
     
     init: function () {
+        var self = this;
         this.initBoxes();
+        $('#range-form').submit(function () {
+            self.setRange($(this).serializeArray());
+            self.refresh();
+            return false;
+        });
         $( ".box" ).draggable({ 
             snap: ".box-container", 
             snapMode: 'inner',
@@ -975,7 +1013,6 @@ boxManager = {
                     $(this).append(ui.draggable);
                     
                     boxManager.moveEmptyToBottom();
-                    $(window).resize();
                 }
             });
         return this;
@@ -1004,6 +1041,14 @@ boxManager = {
         });
         return this;
     },
+    
+    refresh: function () {
+        for (i in this.collection) {
+            this.collection[i].refresh();
+        }
+        return this;
+    },
+    
     setDataProvider: function (dataProvider) {
         this.dataProvider = dataProvider;
         for (i in this.collection) {

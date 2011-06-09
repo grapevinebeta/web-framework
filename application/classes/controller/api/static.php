@@ -9,6 +9,9 @@ class Controller_Api_Static extends Controller {
     
     protected $apiRequest;
     
+    public function before() {
+        
+    }
     
     public function after()
     {
@@ -43,7 +46,7 @@ class Controller_Api_Static extends Controller {
                 'average' => 3.2
                 ),
             );
-            //sleep(2);
+            sleep(2);
         $this->apiResponse = array('sites' => $sites);
     }
 
@@ -65,7 +68,7 @@ class Controller_Api_Static extends Controller {
                 'percent' => 40,
                 ),
             );
-            //sleep(1);
+            sleep(1);
         $this->apiResponse = array('keywords' => $keywords);
     }
     

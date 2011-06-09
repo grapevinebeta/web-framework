@@ -1,6 +1,101 @@
 <div id="boxes-holder">
 
     <div class="box-container active box-container-left">
+        <div id="box-ogsi" class="box">
+            <div class="box-header">
+                <div class="box-header-right-buttons">
+                </div>
+                <div class="box-header-left-buttons">
+                </div>
+                <span class="box-header-title">
+                    <?php echo __('Grapevine OGSI'); ?>
+                </span>
+                <div class="clear"></div>
+            </div>
+            <div class="box-content">
+            </div>
+        </div>
+    </div>
+
+    <div class="box-container active box-container-right">
+        <div id="box-ogsi" class="box">
+            <div class="box-header">
+                <div class="box-header-right-buttons">
+                </div>
+                <div class="box-header-left-buttons">
+                </div>
+                <span class="box-header-title">
+                    <?php echo __('Competition Star Rating Recap'); ?>
+                </span>
+                <div class="clear"></div>
+            </div>
+            <div class="box-content">
+            </div>
+        </div>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <div class="box-container active">
+        <div id="box-recent-reviews" class="box">
+            <div class="box-header">
+                <div class="box-header-right-buttons">
+                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
+                        <?php echo html::image(
+                            'images/box/button/pin.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
+                </div>
+                <div class="box-header-left-buttons">
+                    <a class="box-header-button-move" href="#" title="Move">
+                        <?php echo html::image(
+                            'images/box/button/move.jpg', 
+                            array('alt' => '', 'title' => __('Move'))); 
+                        ?>
+                    </a>
+                </div>
+                <div style="margin: 0px 30px 0px 15px;">
+                    <div>
+                        <?php echo __('Review Status Filter'); ?>:
+                        <span id="box-header-status-filters"></span>
+                    </div>
+                    <!--<div>
+                        <?php echo __('Review Source Filter'); ?>:
+                        <span id="box-header-source-filters"></span>
+                    </div>-->
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="data-grid-holder" style="display: none;">
+                    <form action="">
+                        <table class="wide data-grid no-outer-border" style="padding: 5px;">
+                            <tbody>
+                                <tr>
+                                    <td class="col-checkbox"></td>
+                                    <td class="col-rating"></td>
+                                    <td class="col-submitted a-center"></td>
+                                    <td class="col-title"></td>
+                                    <td class="col-site"></td>
+                                    <td class="col-status a-right"></td>
+                                </tr>
+                                <tr style="display: none;">
+                                    <td colspan="6">
+                                        <div>
+                                            
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="box-container active box-container-left">
         <div id="box-review-sites" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
@@ -125,64 +220,6 @@
         </div>
     </div>
     <div class="clear"></div>
-    
-    <div class="box-container active">
-        <div id="box-recent-reviews" class="box">
-            <div class="box-header">
-                <div class="box-header-right-buttons">
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
-                        <?php echo html::image(
-                            'images/box/button/pin.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
-                </div>
-                <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">
-                        <?php echo html::image(
-                            'images/box/button/move.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
-                </div>
-                <div style="margin: 0px 30px 0px 15px;">
-                    <div>
-                        <?php echo __('Review Status Filter'); ?>:
-                        <span id="box-header-status-filters"></span>
-                    </div>
-                    <!--<div>
-                        <?php echo __('Review Source Filter'); ?>:
-                        <span id="box-header-source-filters"></span>
-                    </div>-->
-                </div>
-            </div>
-            <div class="box-content">
-                <div class="data-grid-holder" style="display: none;">
-                    <form action="">
-                        <table class="wide data-grid no-outer-border" style="padding: 5px;">
-                            <tbody>
-                                <tr>
-                                    <td class="col-checkbox"></td>
-                                    <td class="col-rating"></td>
-                                    <td class="col-submitted a-center"></td>
-                                    <td class="col-title"></td>
-                                    <td class="col-site"></td>
-                                    <td class="col-status a-right"></td>
-                                </tr>
-                                <tr style="display: none;">
-                                    <td colspan="6">
-                                        <div>
-                                            
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <div class="box-container active">
         <div id="box-social-activity" class="box">

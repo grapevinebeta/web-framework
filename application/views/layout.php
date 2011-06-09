@@ -25,7 +25,7 @@
     <div id="main-wrapper">
         <?php echo $header; ?>
         <div id="main-body">
-            <div style="margin: 10px">
+            <div style="margin: 24px">
                 <?php if (!empty($topOptions)): ?>
                     <?php echo $topOptions; ?>
                 <?php endif; ?>

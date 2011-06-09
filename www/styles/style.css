@@ -34,6 +34,8 @@ a:hover {
 
 #main-wrapper {
     background-color: white;
+    width: 960px;
+    margin: 0px auto;
 }
 
 #header-holder {
@@ -86,7 +88,7 @@ a:hover {
 }
 
 #main-body {
-    margin: 0px 10px 10px;
+    margin: 0px 5px 5px;
     min-width: 500px;
     border: 1px solid #D1D1D3;
     -moz-box-shadow: 2px 2px 2px #888;
@@ -95,7 +97,6 @@ a:hover {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    padding: 2px;
     /*width: 980px;*/
 }
 
@@ -162,7 +163,7 @@ a:hover {
 
 #boxes-holder {
     float: left;
-    width: 85%;
+    width: 720px;
     position: relative;
 }
 
@@ -197,12 +198,12 @@ a:hover {
 
 .box-container-left {
     float: left;
-    width: 49%;
+    width: 351px;
 }
 
 .box-container-right {
     float: right;
-    width: 49%;
+    width: 352px;
 }
 
 .box {
@@ -303,6 +304,7 @@ a:hover {
 
 #right-panel-holder {
     width: 14%;
+    width: 165px;
     float: right;
 }
 
