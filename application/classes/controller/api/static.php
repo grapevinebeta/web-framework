@@ -279,4 +279,29 @@ class Controller_Api_Static extends Controller {
             ),
         );
     }
+    
+    public function action_distribution() {
+        $distributions = array(
+            array(
+                'id' => 1,
+                'dealership' => 'Best',
+                'positive' => 30,
+                'negative' => 2,
+                'neutral' => 8,
+                'total' => 40,
+                'average' => 4.2
+            ),
+            array(
+                'id' => 2,
+                'dealership' => 'Classic',
+                'positive' => 20,
+                'negative' => 2,
+                'neutral' => 8,
+                'total' => 30,
+                'average' => 3.2
+            ),
+        );
+        //sleep(2);
+        $this->apiResponse = array('dists' => $distributions);
+    }
 }

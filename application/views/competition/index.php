@@ -76,7 +76,7 @@
     <div class="clear"></div>
 
     <div class="box-container active">
-        <div id="box-recent-reviews" class="box">
+        <div id="box-competition-distribution" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
                     <a class="box-header-button-dashboard-pin" href="#" title="<?php echo __('Pin to Dashboard'); ?>">
@@ -96,27 +96,31 @@
                 </div>
                 <div class="box-header-title-holder">
                     <div>
-                        <?php echo __('Review Status Filter'); ?>:
-                        <span id="box-header-status-filters"></span>
-                    </div>
-                    <div>
-                        <?php echo __('Review Source Filter'); ?>:
-                        <span id="box-header-source-filters"></span>
+                        <?php echo __('Reputation Distribution Filter'); ?>:
                     </div>
                 </div>
             </div>
             <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid no-outer-border" cellpadding="5">
+                        <thead>
+                            <tr>
+                                <th class="a-left"><?php echo __('Dealership'); ?></th>
+                                <th><?php echo __('Total'); ?></th>
+                                <th><?php echo __('Pos'); ?></th>
+                                <th><?php echo __('Neut'); ?></th>
+                                <th><?php echo __('Neg'); ?></th>
+                                <th><?php echo __('Avg'); ?></th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr>
-                                <td class="col-checkbox"></td>
-                                <td class="col-rating"></td>
-                                <td class="col-submitted a-center"></td>
-                                <td class="col-title"></td>
-                                <td class="col-site"></td>
-                                <td class="col-status a-right">
-                                </td>
+                                <td class="col-dealership"></td>
+                                <td class="col-total a-center"></td>
+                                <td class="col-positive a-center"></td>
+                                <td class="col-neutral a-center"></td>
+                                <td class="col-negative a-center"></td>
+                                <td class="col-average a-center"></td>
                             </tr>
                         </tbody>
                     </table>

@@ -15,7 +15,7 @@ Class.__asMethod__ = function(func, superClass) {
 
 Class.extend = function(def) {
     var classDef = function() {
-        if (arguments[0] !== Class && this.construct) { this.construct.apply(this, arguments); }
+        if (arguments[0] !== Class && this.construct) {this.construct.apply(this, arguments);}
     };
     
     var proto = new this(Class);
@@ -752,6 +752,57 @@ var BC_SocialReach = BoxController.extend({
     
 });
 
+var BC_CompetitionDistribution = BoxController.extend({
+ 
+    boxId: 'box-competition-distribution',
+ 
+    endpoint: 'distribution',
+ 
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        var table = boxController.getContentDom().find('.data-grid-holder > table');
+        
+        var trTemplate = table.find('tbody tr:first').clone();
+        var tr = null;
+        var trFooter = table.find('tfoot tr');
+        trFooter.find('th:not(:first)').text('0');
+        table.find('tbody tr').remove();
+        for (var i = 0; i < boxController.data.dists.length; i++) {
+            tr = trTemplate.clone();
+            for (n in boxController.data.dists[i]) {
+                var value = boxController.data.dists[i][n];
+                
+                console.log(value);
+                tr.find('td.col-' + n).text(value);
+                if (n != 'dealership') {
+                    var currentTotalValue = 0;
+                    if (n == 'average') {
+                        currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
+                    } else {
+                        currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
+                    }
+                    trFooter.find('th.col-' + n).text(value + currentTotalValue);
+                }
+            }
+            table.find('tbody').append(tr);
+        }
+        trFooter.find('th.col-average').text(
+            parseFloat(trFooter.find('th.col-average').text()) / 
+            boxController.data.dists.length
+            );
+                
+        boxController.afterLoadData();
+        
+
+    },
+ 
+    construct: function() {}
+ 
+ 
+ 
+});
+
 var BC_SocialActivityDetails = BoxController.extend({
 
     /**
@@ -1015,6 +1066,7 @@ $(document).ready(function () {
               .add(new BC_SocialActivity())
               .add(new BC_SocialReach())
               .add(new BC_SocialActivityDetails())
+              .add(new BC_CompetitionDistribution())
               .setDataProvider(new DataProvider())
               .init();
 });
