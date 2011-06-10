@@ -343,8 +343,10 @@ var GraphBoxController = BoxController.extend({
     /**
      * Will handle Ajax response of the loadGraphData
      */
-    loadGraphDataCallback: function () {
-        this.success.boxController.afterLoadGraphData();
+    loadGraphDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.graphData = data;
+        boxController.afterLoadGraphData();
     },
     
     loadGraphData: function() {
