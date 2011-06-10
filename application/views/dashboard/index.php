@@ -71,21 +71,21 @@
                     <form action="">
                         <table class="wide data-grid no-outer-border" style="padding: 5px;">
                             <tbody>
-                                <tr>
+                                <!--<tr>
                                     <td class="col-checkbox"></td>
                                     <td class="col-rating"></td>
                                     <td class="col-submitted a-center"></td>
                                     <td class="col-title"></td>
                                     <td class="col-site"></td>
                                     <td class="col-status a-right"></td>
-                                </tr>
-                                <tr style="display: none;">
+                                </tr>-->
+                                <!--<tr style="display: none;">
                                     <td colspan="6">
                                         <div>
                                             
                                         </div>
                                     </td>
-                                </tr>
+                                </tr>-->
                             </tbody>
                         </table>
                     </form>

@@ -76,6 +76,7 @@ class Controller_Api_Static extends Controller {
     
     public function action_reviews()
     {
+        sleep(2);
         $this->apiResponse = array(
             'reviews' => array(
                 array(
