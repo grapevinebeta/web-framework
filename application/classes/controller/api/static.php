@@ -10,23 +10,22 @@ class Controller_Api_Static extends Controller {
     protected $apiRequest;
     
     public function before() {
+        parent::before();
         if ($this->request->method() != 'POST') {
             throw new HTTP_Exception_405();
         }
-        $post = $this->request->post();
-        if (!empty($post)) {
+        $range = $this->request->post('range');
+        if (!empty($range)) {
             Session::instance()->set(
                 'viewingRange',
-                array(
-                    'date' => $this->request->post('date'),
-                    'period' => $this->request->post('period'),
-                )
+                $range
             ); 
         }
     }
     
     public function after()
     {
+        $this->response->headers('Content-Type', 'application/json');
         $this->response->body(json_encode($this->apiResponse));
         parent::after();
     }

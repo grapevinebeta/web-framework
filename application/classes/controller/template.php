@@ -13,7 +13,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         
         $viewingRange = Session::instance()->get('viewingRange');
         
-        if (!$viewingRange) {
+        if (empty($viewingRange)) {
             $viewingRange = array(
                 'period' => '1m',
                 'date' => date('m/d/Y'),

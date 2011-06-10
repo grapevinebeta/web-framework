@@ -243,6 +243,7 @@ var BoxController = Class.extend({
      * @return BoxController
      */
     setRange: function(range) {
+        this.range = range;
         return this;
     },
     
@@ -251,6 +252,7 @@ var BoxController = Class.extend({
      * @return BoxController
      */
     setDateInterval: function (dateInterval) {
+        this.dateInterval = dateInterval;
         return this;
     },
     
@@ -1342,6 +1344,8 @@ boxManager = {
     collection: {},
     
     dataProvider: null,
+
+    range: null,
     
     add: function (box) {
         if (
@@ -1377,7 +1381,17 @@ boxManager = {
     
     init: function () {
         var self = this;
+        
+        var rangeArray = $('#range-form').serializeArray();
+        var range = {};
+        
+        for (var i = 0; i < rangeArray.length; i++) {
+            range[rangeArray[i].name] = rangeArray[i].value;
+        }
+        this.setRange(range);
+        
         this.initBoxes();
+        
         $('#range-form').submit(function () {
             var range = {};
             var rangeArray = $(this).serializeArray();
@@ -1486,8 +1500,9 @@ boxManager = {
     },
 
     setRange: function(range) {
+        this.range = range;
         for (i in this.collection) {
-            this.collection[i].setRange(range);
+            this.collection[i].setRange(this.range);
         }
         return this;
     },

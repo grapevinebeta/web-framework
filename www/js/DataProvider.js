@@ -69,7 +69,7 @@ var DataProvider = function() {
             
             $.ajax({
                 type: "POST",
-                contentType: "application/json; charset=utf-8",
+                accepts: "application/json; charset=utf-8",
                 data: params,
                 dataType: "json",
                 url: ApiUrl + endpoint,

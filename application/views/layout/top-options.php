@@ -3,7 +3,6 @@
         <?php echo __('Viewing'); ?>:
         <?php echo html::anchor('#', html::image('images/icons/help.png', array('alt' => '', 'class'=> 'icon'))); ?>
         <?php $viewingRange = Session::instance()->get('viewingRange'); ?>
-        <?php //var_dump($viewingRange); ?>
         <?php echo form::select(
             'period', 
             array(
