@@ -25,7 +25,7 @@
                         ?>
                     </a>
                 </div>
-                <?php echo __('Competition comparision'); ?>:
+                <?php echo __('Competition comparision'); ?>
             </div>
             <div class="box-content">
                 <div id="box-competition-comparision-graph-holder" class="graph-holder"></div>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="box-header-title-holder">
                     <div>
-                        <?php echo __('Reputation Distribution'); ?>:
+                        <?php echo __('Reputation Distribution'); ?>
                     </div>
                 </div>
             </div>

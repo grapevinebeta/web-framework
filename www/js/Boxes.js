@@ -964,8 +964,8 @@ var BC_SocialReach = BoxController.extend({
 var BC_CompetitionComparision = GraphBoxController.extend({
    
     boxId: 'box-competition-comparision',
-    endpoint: 'comparision',
     series: [],
+    endpoint: 'comparision',
     seriesLabels: [],
     firstTimestamp: 0,
     dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
@@ -977,7 +977,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
             return this.firstTimestamp;
         
         for(var firstTimestamp in this.graphData.comparision) {
-            return this.firstTimestamp = Number(firstTimestamp); 
+            return this.firstTimestamp = parseInt(firstTimestamp, 10); 
         }
     },
     
@@ -1001,7 +1001,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                         name: comparisionObject.competition, 
                         data: [], 
                         pointInterval: this.dayInterval, 
-                        pointStart: Number(this.getFirstDate()) * 1000
+                        pointStart: parseInt(this.getFirstDate(), 10) * 1000
                     };
                     
                     seriesMappings[comparisionObject.competition] = this.series.length;
@@ -1009,7 +1009,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                 }
                 
                 this.series[seriesMappings[comparisionObject.competition]]
-                    .data.push(Number(comparisionObject.value));
+                    .data.push(parseInt(comparisionObject.value, 10));
                 
             }
             
@@ -1038,12 +1038,10 @@ var BC_CompetitionComparision = GraphBoxController.extend({
         
         var graphHolderId = this.boxId + '-graph-holder';
         
-        var graphHolder = $('#' + graphHolderId);
-        
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                defaultSeriesType: 'line'
+                type: 'spline'
             },
             title: {
                 text: this.getHeaderDom().find('.box-header-title').text()
@@ -1060,7 +1058,6 @@ var BC_CompetitionComparision = GraphBoxController.extend({
             '#B5CA92'
             ],
             xAxis: {
-//                categories: this.categories,
                 type: 'datetime',
                 title: {
                     text: null
@@ -1173,9 +1170,9 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
             }]
         }
         
-        for (var i = 0; i < this.data.dists.length; i++) {
-            var dist = this.data.dists[i];
-            options.xAxis.categories.push(dist.site);
+        for (var i = 0; i < this.graphData.length; i++) {
+            var dist = this.graphData[i];
+            options.xAxis.categories.push(dist.dealership);
             options.series[0].data.push(dist.average);
             options.series[1].data.push(dist.negative);
             options.series[2].data.push(dist.neutral);
@@ -1188,6 +1185,7 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.dists;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         
         var trTemplate = table.find('tbody tr:first').clone();
