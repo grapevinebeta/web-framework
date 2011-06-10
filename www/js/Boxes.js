@@ -975,7 +975,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
             return this.firstTimestamp;
         
         for(var firstTimestamp in this.graphData.comparision) {
-            return this.firstTimestamp = Number(firstTimestamp); 
+            return this.firstTimestamp = parseInt(firstTimestamp, 10); 
         }
     },
     
@@ -999,7 +999,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                         name: comparisionObject.competition, 
                         data: [], 
                         pointInterval: this.dayInterval, 
-                        pointStart: Number(this.getFirstDate()) * 1000
+                        pointStart: parseInt(this.getFirstDate(), 10) * 1000
                     };
                     
                     seriesMappings[comparisionObject.competition] = this.series.length;
@@ -1007,7 +1007,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                 }
                 
                 this.series[seriesMappings[comparisionObject.competition]]
-                    .data.push(Number(comparisionObject.value));
+                    .data.push(parseInt(comparisionObject.value, 10));
                 
             }
             
@@ -1035,8 +1035,6 @@ var BC_CompetitionComparision = GraphBoxController.extend({
         this.populateGraph();
         
         var graphHolderId = this.boxId + '-graph-holder';
-        
-        var graphHolder = $('#' + graphHolderId);
         
         var options = {
             chart: {
