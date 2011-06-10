@@ -1163,7 +1163,12 @@ boxManager = {
         var self = this;
         this.initBoxes();
         $('#range-form').submit(function () {
-            self.setRange($(this).serializeArray());
+            var range = {};
+            var rangeArray = $(this).serializeArray();
+            for (var i = 0; i < rangeArray.length; i++) {
+                range[rangeArray[i].name] = rangeArray[i].value;
+            }
+            self.setRange(range);
             self.refresh();
             return false;
         });

@@ -13,6 +13,16 @@ class Controller_Api_Static extends Controller {
         if ($this->request->method() != 'POST') {
             throw new HTTP_Exception_405();
         }
+        $post = $this->request->post();
+        if (!empty($post)) {
+            Session::instance()->set(
+                'viewingRange',
+                array(
+                    'date' => $this->request->post('date'),
+                    'period' => $this->request->post('period'),
+                )
+            ); 
+        }
     }
     
     public function after()
