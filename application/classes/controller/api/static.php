@@ -10,7 +10,9 @@ class Controller_Api_Static extends Controller {
     protected $apiRequest;
     
     public function before() {
-        
+        if ($this->request->method() != 'POST') {
+            throw new HTTP_Exception_405();
+        }
     }
     
     public function after()
