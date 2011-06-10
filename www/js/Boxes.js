@@ -975,14 +975,14 @@ var BC_CompetitionComparision = GraphBoxController.extend({
         
         var key;
         
-        for (key in this.data.comparision) {
+        for (key in this.graphData.comparision) {
             
             var date = new Date(key);
             
             this.categories.push(key);
         }
         
-        timeObject = this.data.comparision[key];
+        timeObject = this.graphData.comparision[key];
 
         for (var cKey in timeObject) {
 
@@ -1000,17 +1000,17 @@ var BC_CompetitionComparision = GraphBoxController.extend({
       
         var data = [];
         
-        for (var tKey in this.data.comparision) {
+        for (var tKey in this.graphData.comparision) {
             
             
-            timeObject = this.data.comparision[tKey];
+            timeObject = this.graphData.comparision[tKey];
             
             for (var cKey in timeObject) {
             
                 var comparisionObject = timeObject[cKey];
                 
                 if(comparisionObject.competition == competition) {
-                    data.push(comparisionObject["value"]);
+                    graphData.push(comparisionObject["value"]);
                 }
             }
         }
@@ -1032,10 +1032,15 @@ var BC_CompetitionComparision = GraphBoxController.extend({
       
     },
     
+    loadData: function() {
+      
+      this.loadGraphData();
+      
+    },
    
     prepareGraph: function() {
        
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         
