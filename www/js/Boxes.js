@@ -313,7 +313,6 @@ var GraphBoxController = BoxController.extend({
         if (dataGrid.css('display') != 'none') {
             dataGrid.hide();
             box.find('.graph-holder').show();
-            this.graph.redraw();
         }
         if (!box.find('.graph-holder').children().length) {
             this.prepareGraph();
@@ -964,74 +963,61 @@ var BC_CompetitionComparision = GraphBoxController.extend({
    
     boxId: 'box-competition-comparision',
     endpoint: 'comparision',
-    categories: [],
     series: [],
     seriesLabels: [],
-   
-  
-    /*
-     * We iterate throught the json populated object 1 time for x axis labels
-     * and second time form data set labels
-     */
-    prepareCategories: function() {
+    firstTimestamp: 0,
+    dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
+    tickInterval: 24 * 3600 * 1000 * 7,
+
+    getFirstDate: function()
+    {
+        if(this.firstTimestamp)
+            return this.firstTimestamp;
         
-        var key;
-        
-        for (key in this.graphData.comparision) {
-            
-            var date = new Date(key);
-            
-            this.categories.push(key);
+        for(var firstTimestamp in this.graphData.comparision) {
+            return this.firstTimestamp = Number(firstTimestamp); 
         }
-        
-        timeObject = this.graphData.comparision[key];
-
-        for (var cKey in timeObject) {
-
-            var comparisionObject = timeObject[cKey];
-            this.seriesLabels.push(comparisionObject['competition']);
-
-        }
-
-        
-
     },
     
-    prepareDataForSet: function(competition)
-    {
-      
-        var data = [];
-        
+    
+    populateGraph: function() {
+     
+        var seriesMappings = []; // maapping of label values to corresponding series index
+        var seriesMappingInited = false;
         for (var tKey in this.graphData.comparision) {
             
-            
-            timeObject = this.graphData.comparision[tKey];
+            var timeObject = this.graphData.comparision[tKey];
             
             for (var cKey in timeObject) {
             
                 var comparisionObject = timeObject[cKey];
                 
-                if(comparisionObject.competition == competition) {
-                    graphData.push(comparisionObject["value"]);
+                if(!seriesMappingInited)
+                {
+                    
+                    var set = {
+                        name: comparisionObject.competition, 
+                        data: [], 
+                        pointInterval: this.dayInterval, 
+                        pointStart: Number(this.getFirstDate()) * 1000
+                    };
+                    
+                    seriesMappings[comparisionObject.competition] = this.series.length;
+                    this.series.push(set);
                 }
+                
+                this.series[seriesMappings[comparisionObject.competition]]
+                    .data.push(Number(comparisionObject.value));
+                
             }
+            
+            if(!seriesMappingInited)
+                seriesMappingInited = true;
+            
+            
+            
         }
-        
-        
-        
-        var set = {name: competition, data: data};
-
-        this.series.push(set);
-      
-    },
-    
-    prepareSeries: function() {
-      
-        for (var key in this.seriesLabels) {
-
-            this.prepareDataForSet(this.seriesLabels[key]);
-        }
-      
+     
     },
     
     loadData: function() {
@@ -1046,8 +1032,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
             return;
         }
         
-        this.prepareCategories();
-        this.prepareSeries();
+        this.populateGraph();
         
         var graphHolderId = this.boxId + '-graph-holder';
         
@@ -1073,13 +1058,14 @@ var BC_CompetitionComparision = GraphBoxController.extend({
             '#B5CA92'
             ],
             xAxis: {
-                categories: this.categories,
+//                categories: this.categories,
+                type: 'datetime',
                 title: {
                     text: null
-                }
+                },
+                tickInterval: this.tickInterval
             },
             yAxis: {
-                min: 0,
                 title: {
                     text: this.getHeaderDom().find('.box-header-title').text(),
                     align: 'high'
@@ -1089,8 +1075,6 @@ var BC_CompetitionComparision = GraphBoxController.extend({
             series: this.series
         }
         
-        
-        console.log(options);
         this.graph = new Highcharts.Chart(options);
        
     },
