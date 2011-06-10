@@ -313,7 +313,6 @@ var GraphBoxController = BoxController.extend({
         if (dataGrid.css('display') != 'none') {
             dataGrid.hide();
             box.find('.graph-holder').show();
-            this.graph.redraw();
         }
         if (!box.find('.graph-holder').children().length) {
             this.prepareGraph();
@@ -960,11 +959,229 @@ var BC_SocialReach = BoxController.extend({
     
 });
 
-var BC_CompetitionDistribution = BoxController.extend({
+var BC_CompetitionComparision = GraphBoxController.extend({
+   
+    boxId: 'box-competition-comparision',
+    endpoint: 'comparision',
+    series: [],
+    seriesLabels: [],
+    firstTimestamp: 0,
+    dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
+    tickInterval: 24 * 3600 * 1000 * 7,
+
+    getFirstDate: function()
+    {
+        if(this.firstTimestamp)
+            return this.firstTimestamp;
+        
+        for(var firstTimestamp in this.graphData.comparision) {
+            return this.firstTimestamp = Number(firstTimestamp); 
+        }
+    },
+    
+    
+    populateGraph: function() {
+     
+        var seriesMappings = []; // maapping of label values to corresponding series index
+        var seriesMappingInited = false;
+        for (var tKey in this.graphData.comparision) {
+            
+            var timeObject = this.graphData.comparision[tKey];
+            
+            for (var cKey in timeObject) {
+            
+                var comparisionObject = timeObject[cKey];
+                
+                if(!seriesMappingInited)
+                {
+                    
+                    var set = {
+                        name: comparisionObject.competition, 
+                        data: [], 
+                        pointInterval: this.dayInterval, 
+                        pointStart: Number(this.getFirstDate()) * 1000
+                    };
+                    
+                    seriesMappings[comparisionObject.competition] = this.series.length;
+                    this.series.push(set);
+                }
+                
+                this.series[seriesMappings[comparisionObject.competition]]
+                    .data.push(Number(comparisionObject.value));
+                
+            }
+            
+            if(!seriesMappingInited)
+                seriesMappingInited = true;
+            
+            
+            
+        }
+     
+    },
+    
+    loadData: function() {
+      
+      this.loadGraphData();
+      
+    },
+   
+    prepareGraph: function() {
+       
+        if (!this.graphData) {
+            return;
+        }
+        
+        this.populateGraph();
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var graphHolder = $('#' + graphHolderId);
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                defaultSeriesType: 'line'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
+            ],
+            xAxis: {
+//                categories: this.categories,
+                type: 'datetime',
+                title: {
+                    text: null
+                },
+                tickInterval: this.tickInterval
+            },
+            yAxis: {
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            
+            series: this.series
+        }
+        
+        this.graph = new Highcharts.Chart(options);
+       
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        boxController.afterLoadData();
+        
+
+    },
+   
+    construct: function() {}
+   
+});
+
+var BC_CompetitionDistribution = GraphBoxController.extend({
  
     boxId: 'box-competition-distribution',
  
     endpoint: 'distribution',
+ 
+    prepareGraph: function () {
+        if (!this.data) {
+            return;
+        }
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var graphHolder = $('#' + graphHolderId);
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                type: 'bar'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+                '#80699B', 
+                '#AA4643', 
+                '#4572A7', 
+                '#89A54E', 
+                '#3D96AE', 
+                '#DB843D', 
+                '#92A8CD', 
+                '#A47D7C', 
+                '#B5CA92'
+            ],
+            xAxis: {
+                categories: [],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            legend: {
+                verticalAlign: 'bottom',
+                borderWidth: 1,
+                borderRadius: 0,
+                backgroundColor: '#FFFFFF',
+                shadow: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Average',
+                data: []
+            }, {
+                name: 'Negative',
+                data: []
+            }, {
+                name: 'Neutral',
+                data: []
+            }, {
+                name: 'Positive',
+                data: []
+            }]
+        }
+        
+        for (var i = 0; i < this.data.dists.length; i++) {
+            var dist = this.data.dists[i];
+            options.xAxis.categories.push(dist.site);
+            options.series[0].data.push(dist.average);
+            options.series[1].data.push(dist.negative);
+            options.series[2].data.push(dist.neutral);
+            options.series[3].data.push(dist.positive);
+        }
+        
+        this.graph = new Highcharts.Chart(options);
+    },
  
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
@@ -981,7 +1198,6 @@ var BC_CompetitionDistribution = BoxController.extend({
             for (n in boxController.data.dists[i]) {
                 var value = boxController.data.dists[i][n];
                 
-                console.log(value);
                 tr.find('td.col-' + n).text(value);
                 if (n != 'dealership') {
                     var currentTotalValue = 0;
@@ -1293,6 +1509,7 @@ $(document).ready(function () {
               .add(new BC_SocialReach())
               .add(new BC_SocialActivityDetails())
               .add(new BC_CompetitionDistribution())
+              .add(new BC_CompetitionComparision())
               .setDataProvider(new DataProvider())
               .init();
 });
