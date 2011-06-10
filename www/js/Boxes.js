@@ -162,12 +162,29 @@ var BoxController = Class.extend({
         return this.boxId;
     },
     
+    showContent: function () {
+        this.getContentDom().children(':first').show();
+        return this
+    },
+    
+    showLoader: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+        return this;
+    },
+    
+    hideLoader: function () {
+        this.getContentDom().find('.ajax-loader').remove();
+        return this;
+    },
+    
     /**
      * Called before ajax request, generaly used for set ajax-loader.gif
      */
     beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
+        this.data = null;
+        this.showLoader();
+        return this;
     },
     
     /**
@@ -175,8 +192,9 @@ var BoxController = Class.extend({
      * and show new data or display an error
      */
     afterLoadData: function () {
-        this.getContentDom().find('.ajax-loader').remove();
-        this.getContentDom().children(':first').show();
+        this.hideLoader();
+        this.showContent();
+        return this;
     },
     
     /**
@@ -194,9 +212,11 @@ var BoxController = Class.extend({
         if (!this.loadDataCallback.boxController) {
             this.loadDataCallback.boxController = this;
         }
-        this.data = null;
-        this.dataProvider.setEndpoint(this.endpoint);
-        this.dataProvider.setCallback(this.loadDataCallback);
+        this.dataProvider.setEndpoint(this.endpoint)
+            .setDateRange(this.range)
+            .setFilters(this.filters)
+            .setDateInterval(null)
+            .setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
         return this;
     },
@@ -241,14 +261,31 @@ var BoxController = Class.extend({
     refresh: function () {
         this.loadData();
         return this;
+    },
+    
+    /**
+     * Clears all stored data from ajax responses 
+     * @return BoxController
+     */
+    clearData: function () {
+        this.data = null;
+        return this;
     }
     
 });
 
 var GraphBoxController = BoxController.extend({
     
+    /**
+     * @var Object To store data from ajax responces for graph
+     */
+    graphData: null,
+    
     getGraphHolder: function () {
-        return $('#' + this.boxId + '-graph-holder'); 
+        if (!this._graphHolder) {
+            this._graphHolder = $('#' + this.boxId + '-graph-holder'); 
+        }
+        return this._graphHolder;
     },
     
     init: function () {
@@ -260,26 +297,44 @@ var GraphBoxController = BoxController.extend({
         }
     },
     
+    
+    
     beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
+        this.showLoader();
         if (this.graph) {
+            this.graphData = null;
             this.graph.destroy();
         }
     },
     
+    showGraph: function () {
+        var box = this.getContentDom();
+        var dataGrid = box.find('.data-grid-holder');
+        if (dataGrid.css('display') != 'none') {
+            dataGrid.hide();
+            box.find('.graph-holder').show();
+            this.graph.redraw();
+        }
+        if (!box.find('.graph-holder').children().length) {
+            this.prepareGraph();
+        }
+        return this;
+    },
+    
     toggleGraph: function () {
-        var boxControllerId = $(this).parents('.box:first').attr('id');
-        var boxController = boxManager.getBox(boxControllerId);
         var box = $(this).parents('.box:first');
+        var boxController = boxManager.getBox(box.attr('id'));
         var dataGrid = box.find('.data-grid-holder');
         if (dataGrid.css('display') != 'none') {
             dataGrid.hide();
             box.find('.graph-holder').show();
             if (!box.find('.graph-holder').children().length) {
-                boxController.prepareGraph();
+                if (!boxController.graphData) {
+                    boxController.loadGraphData();
+                } else {
+                    boxController.showGraph();
+                }
             }
-            //$(window).resize();
         } else {
             box.find('.graph-holder').hide();
             dataGrid.show();
@@ -288,9 +343,52 @@ var GraphBoxController = BoxController.extend({
         
     },
     
+    beforeLoadGraphData: function () {
+        if (this.graph) {
+            this.graph.destroy();
+        }
+        this.graphData = null;
+        this.getGraphHolder().append(this.getLoaderHtml());
+    },
+
+    /**
+     * Will handle Ajax response of the loadGraphData
+     */
+    loadGraphDataCallback: function () {
+        this.success.boxController.afterLoadGraphData();
+    },
+    
+    loadGraphData: function() {
+        this.beforeLoadGraphData();
+        this.graphData = null;
+        if (!this.loadGraphDataCallback.boxController) {
+            this.loadGraphDataCallback.boxController = this;
+        }
+        this.graphData = this.dataProvider
+            .setEndpoint(this.endpoint)
+            .setDateRange(this.range)
+            .setFilters(this.filters)
+            .setDateInterval(null)
+            .setCallback(this.loadGraphDataCallback)
+            .fetch();
+        return this;
+    },
+    
+    afterLoadGraphData: function () {
+        this.getGraphHolder().children().remove();
+        this.showGraph();
+        return this;
+    },
+    
     prepareGraph: function () {
         alert("'prepareGraph' is not implemented!!!");
+    },
+    
+    clearData: function () {
+        this.data = null;
+        this.graphData = null;
     }
+    
 });
 
 var BC_KeywordsAnalysis = GraphBoxController.extend({
@@ -307,7 +405,7 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
     
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         
@@ -351,10 +449,10 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
                  data: new Array()
              }]
         };
-        for (var i = 0; i < this.data.keywords.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.data.keywords[i].keyword,
-                this.data.keywords[i].percent
+                this.graphData[i].keyword,
+                this.graphData[i].percent
             ));
         }
         
@@ -364,6 +462,7 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.keywords;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
@@ -399,7 +498,7 @@ var BC_ReviewSites = GraphBoxController.extend({
     endpoint: 'sites',
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         
@@ -471,8 +570,8 @@ var BC_ReviewSites = GraphBoxController.extend({
             }]
         }
         
-        for (var i = 0; i < this.data.sites.length; i++) {
-            var site = this.data.sites[i];
+        for (var i = 0; i < this.graphData.length; i++) {
+            var site = this.graphData[i];
             options.xAxis.categories.push(site.site);
             options.series[0].data.push(site.average);
             options.series[1].data.push(site.negative);
@@ -486,6 +585,7 @@ var BC_ReviewSites = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.sites;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
@@ -681,7 +781,7 @@ var BC_SocialActivity = GraphBoxController.extend({
     
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         return;
@@ -720,10 +820,10 @@ var BC_SocialActivity = GraphBoxController.extend({
                  data: new Array()
              }]
         };
-        for (var i = 0; i < this.data.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.data.networks[i].keyword,
-                this.data.networks[i].percent
+                this.graphData[i].keyword,
+                this.graphData[i].percent
             ));
         }
         
@@ -734,8 +834,9 @@ var BC_SocialActivity = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.networks;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
@@ -775,7 +876,7 @@ var BC_SocialReach = BoxController.extend({
     endpoint: 'social/reach',
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         return;
@@ -814,10 +915,10 @@ var BC_SocialReach = BoxController.extend({
                  data: new Array()
              }]
         };
-        for (var i = 0; i < this.data.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.data.networks[i].keyword,
-                this.data.networks[i].percent
+                this.graphData[i].keyword,
+                this.graphData[i].percent
             ));
         }
         
@@ -828,8 +929,9 @@ var BC_SocialReach = BoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.networks;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
@@ -1173,7 +1275,7 @@ var BC_SocialActivityDetails = BoxController.extend({
     
     loadSocials: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var trContentTemplate = '<tr><td colspan="6"></td></tr>';
         var tr = null;
         var trContent = null;
