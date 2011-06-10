@@ -856,6 +856,149 @@ var BC_SocialReach = BoxController.extend({
     
 });
 
+var BC_CompetitionComparision = GraphBoxController.extend({
+   
+    boxId: 'box-competition-comparision',
+    endpoint: 'comparision',
+    categories: [],
+    series: [],
+    seriesLabels: [],
+   
+  
+    /*
+     * We iterate throught the json populated object 1 time for x axis labels
+     * and second time form data set labels
+     */
+    prepareCategories: function() {
+        
+        var key;
+        
+        for (key in this.data.comparision) {
+            
+            var date = new Date(key);
+            
+            this.categories.push(key);
+        }
+        
+        timeObject = this.data.comparision[key];
+
+        for (var cKey in timeObject) {
+
+            var comparisionObject = timeObject[cKey];
+            this.seriesLabels.push(comparisionObject['competition']);
+
+        }
+
+        
+
+    },
+    
+    prepareDataForSet: function(competition)
+    {
+      
+        var data = [];
+        
+        for (var tKey in this.data.comparision) {
+            
+            
+            timeObject = this.data.comparision[tKey];
+            
+            for (var cKey in timeObject) {
+            
+                var comparisionObject = timeObject[cKey];
+                
+                if(comparisionObject.competition == competition) {
+                    data.push(comparisionObject["value"]);
+                }
+            }
+        }
+        
+        
+        
+        var set = {name: competition, data: data};
+
+        this.series.push(set);
+      
+    },
+    
+    prepareSeries: function() {
+      
+        for (var key in this.seriesLabels) {
+
+            this.prepareDataForSet(this.seriesLabels[key]);
+        }
+      
+    },
+    
+   
+    prepareGraph: function() {
+       
+        if (!this.data) {
+            return;
+        }
+        
+        this.prepareCategories();
+        this.prepareSeries();
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var graphHolder = $('#' + graphHolderId);
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                defaultSeriesType: 'line'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
+            ],
+            xAxis: {
+                categories: this.categories,
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            
+            series: this.series
+        }
+        
+        
+        console.log(options);
+        this.graph = new Highcharts.Chart(options);
+       
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        boxController.afterLoadData();
+        
+
+    },
+   
+    construct: function() {}
+   
+});
+
 var BC_CompetitionDistribution = GraphBoxController.extend({
  
     boxId: 'box-competition-distribution',
@@ -1268,6 +1411,7 @@ $(document).ready(function () {
               .add(new BC_SocialReach())
               .add(new BC_SocialActivityDetails())
               .add(new BC_CompetitionDistribution())
+              .add(new BC_CompetitionComparision())
               .setDataProvider(new DataProvider())
               .init();
 });

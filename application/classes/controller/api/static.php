@@ -284,7 +284,8 @@ class Controller_Api_Static extends Controller {
         );
     }
     
-    public function action_distribution() {
+    public function action_distribution() 
+    {
         $distributions = array(
             array(
                 'id' => 1,
@@ -307,5 +308,49 @@ class Controller_Api_Static extends Controller {
         );
         //sleep(2);
         $this->apiResponse = array('dists' => $distributions);
+    }
+    
+    /**
+     * This methods is a mockup of data comes from competition comparision box
+     * from competition section
+     * 
+     * /api/dataPrivider/competition/comparision
+     * comparision:An object hashed by the unixtimestamp generated from <dateInterval> 
+     * keys will be an ArrayCollection of OGSICompetitionRatingObject
+	
+     */
+    public function action_comparision()
+    {
+        $comparision = array();
+        $date = time();
+        $dayOffset = 3600 * 24;
+        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
+        
+        $interval = 1;
+        
+        
+        for($i=-30; $i < 0; $i += $interval)
+        {
+            
+            foreach($competitors as $competitor) {
+                $rand = rand(1,5);
+                $index = $date + ($i-1) * $dayOffset;
+                $prev = $rand;
+                $change = $rand - $prev;
+                $comparision[$date + $i * $dayOffset][] = array(
+                    'competition' => $competitor,
+                    'value' => $rand,
+                    'change' => $change,
+                );
+            }
+        }
+       
+        
+        
+        $this->apiResponse = array('comparision' => $comparision);
+        
+        
+        
+        
     }
 }
