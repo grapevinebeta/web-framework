@@ -11,6 +11,16 @@ abstract class Controller_Template extends Kohana_Controller_Template
     {
         parent::before();
         
+        $viewingRange = Session::instance()->get('viewingRange');
+        
+        if (!$viewingRange) {
+            $viewingRange = array(
+                'period' => '1m',
+                'date' => date('m/d/Y'),
+                );
+            Session::instance()->set('viewingRange', $viewingRange);
+        }
+        
         $this->template->styles = array(
             'styles/common.css',
             'styles/style.css',
