@@ -1,29 +1,49 @@
 <div id="top-options-holder">
     <form id="range-form" action="<?php echo url::site(); ?>" method="post">
-        <?php echo __('Viewing'); ?>:
-        <?php echo html::anchor('#', html::image('images/icons/help.png', array('alt' => '', 'class'=> 'icon'))); ?>
+        <span><?php echo __('Viewing'); ?>:</span>
+        <?php echo html::anchor(
+            '#', 
+            html::image('images/icons/help.png', array('alt' => '')),
+            array(
+                'class' => 'tooltip',
+                'title' => __('some tip'),
+                )
+            ); ?>
         <?php $viewingRange = Session::instance()->get('viewingRange'); ?>
         <?php echo form::select(
-            'period', 
+            'period',
             array(
                 '1m' => '1m',
                 '3m' => '3m',
                 '6m' => '6m',
                 '1y' => '1y',
                 ),
-            $viewingRange['period']
+            $viewingRange['period'],
+            array(
+                'id' => 'period-selector',
+                )
             );
         ?>
+        <?php 
+            echo html::image('images/icons/pickdate.png', array('alt' => ''));
+            echo form::input(
+            'date', 
+            $viewingRange['date'], 
+            array(
+                'id' => 'top-option-date-picker', 
+                'class' => 'as-select with-icon', 
+                'style' => 'width: 65px;')); ?>
         
-        <?php echo __('Date Range'); ?>:
-        <?php echo form::input('date', $viewingRange['date'], array('id' => 'top-option-date-picker', 'style' => 'width: 75px;')); ?>
-        <?php echo form::submit('', __('Select')); ?>
-        
-        <?php echo html::anchor('#email', 'Email'); ?>
-        <?php echo html::anchor('#email', 'Export'); ?>
+        <?php 
+            echo html::image('images/icons/email.png', array('alt' => '')); 
+            echo html::anchor('#email', 'Email', array('class' => 'as-select with-icon')); ?>
+        <?php 
+            echo html::image('images/icons/export.png', array('alt' => '')); 
+            echo html::anchor('#email', 'Export', array('class' => 'as-select with-icon')); ?>
     </form>
 </div>
 
 <script type="text/javascript">
     $('#top-option-date-picker').datepicker();
+    $('#period-selector').selectbox();
 </script>

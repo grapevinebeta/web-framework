@@ -24,13 +24,16 @@ abstract class Controller_Template extends Kohana_Controller_Template
         $this->template->styles = array(
             'styles/common.css',
             'styles/style.css',
-            'styles/jqueryui/jquery-ui-1.8.13.custom.css'
+            'styles/jqueryui/jquery-ui-1.8.13.custom.css',
+            'styles/jquery.selectbox.css',
+            'styles/tipTip.css',
         );
         $this->template->scripts = array(
             'js/jquery-1.6.min.js',
             'js/highcharts/highcharts.src.js',
             'js/jquery-ui-1.8.13.custom.min.js',
             'js/jquery.tipTip.min.js',
+            'js/jquery.selectbox.js',
             'js/DataProvider.js',
             'js/Boxes.js',
             'js/common.js', // adds some common functions
