@@ -184,6 +184,7 @@ var BoxController = Class.extend({
     beforeLoadData: function () {
         this.data = null;
         this.showLoader();
+        this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
         return this;
     },
     
@@ -194,6 +195,7 @@ var BoxController = Class.extend({
     afterLoadData: function () {
         this.hideLoader();
         this.showContent();
+        this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
         return this;
     },
     
@@ -292,8 +294,8 @@ var GraphBoxController = BoxController.extend({
     
     init: function () {
         this.getContentDom().children().hide();
-        this.toggleGraph.boxController = this;
-        this.getContentDom().parent().find('.box-header-button-show-graph').click(this.toggleGraph);
+        this.getContentDom().parent().find('.box-header-button-show-graph').click(this.showGraph);
+        this.getContentDom().parent().find('.box-header-button-show-data').click(this.showData);
         if (this.getContentDom().length) {
             this.loadData();
         }
@@ -303,48 +305,63 @@ var GraphBoxController = BoxController.extend({
     
     beforeLoadData: function () {
         this.showLoader();
+        this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
+        this.data = null;
         if (this.graph) {
             this.graphData = null;
             this.graph.destroy();
         }
     },
     
-    showGraph: function () {
-        var box = this.getContentDom();
+    showData: function () {
+        var box = null;
+        if (this instanceof BoxController) {
+            box = this.getBoxDom();
+        } else {
+            box = $(this).parents('.box:first');
+        }
+        var boxContent = box.find('.box-content');
+        boxContent.children().hide();
+        box.find('.box-header-button').removeClass('active');
+        var boxController = boxManager.getBox(box.attr('id'));
         var dataGrid = box.find('.data-grid-holder');
-        if (dataGrid.css('display') != 'none') {
-            dataGrid.hide();
-            box.find('.graph-holder').show();
+        if (dataGrid.css('display') == 'none') {
+            dataGrid.show();
         }
-        if (!box.find('.graph-holder').children().length) {
-            this.prepareGraph();
-        }
-        return this;
+        box.find('.box-header-button-show-data').addClass('active');
+        return false;
     },
     
-    toggleGraph: function () {
-        var box = $(this).parents('.box:first');
+    showGraph: function () {
+        var box = null;
+        if (this instanceof BoxController) {
+            box = this.getBoxDom();
+        } else {
+            box = $(this).parents('.box:first');
+        }
+        var boxContent = box.find('.box-content');
         var boxController = boxManager.getBox(box.attr('id'));
         var dataGrid = box.find('.data-grid-holder');
         if (dataGrid.css('display') != 'none') {
             dataGrid.hide();
             box.find('.graph-holder').show();
+            boxController.getHeaderDom().find('.box-header-right-buttons a')
+                .removeClass('active')
+                .filter(':first')
+                .addClass('active');
             if (!box.find('.graph-holder').children().length) {
                 if (!boxController.graphData) {
                     boxController.loadGraphData();
                 } else {
-                    boxController.showGraph();
+                    boxController.prepareGraph();
                 }
             }
-        } else {
-            box.find('.graph-holder').hide();
-            dataGrid.show();
         }
         return false;
-        
     },
     
     beforeLoadGraphData: function () {
+        this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
         if (this.graph) {
             this.graph.destroy();
         }
@@ -379,6 +396,7 @@ var GraphBoxController = BoxController.extend({
     
     afterLoadGraphData: function () {
         this.getGraphHolder().children().remove();
+        this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-graph').addClass('active');
         this.showGraph();
         return this;
     },
@@ -986,6 +1004,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
      
         var seriesMappings = []; // maapping of label values to corresponding series index
         var seriesMappingInited = false;
+        this.series = [];
         for (var tKey in this.graphData.comparision) {
             
             var timeObject = this.graphData.comparision[tKey];
@@ -1013,11 +1032,9 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                 
             }
             
-            if(!seriesMappingInited)
+            if(!seriesMappingInited) {
                 seriesMappingInited = true;
-            
-            
-            
+            }
         }
      
     },
@@ -1397,8 +1414,11 @@ boxManager = {
                 range[rangeArray[i].name] = rangeArray[i].value;
             }
             self.setRange(range);
+            self.clearData();
             self.refresh();
             return false;
+        }).find('#period-selector, #date-selector').change(function () {
+            $(this).parents('form:first').submit();
         });
         $( ".box" ).draggable({ 
             snap: ".box-container", 
@@ -1508,6 +1528,13 @@ boxManager = {
     setDateInterval: function (dateInterval) {
         for (i in this.collection) {
             this.collection[i].setDateInterval(dateInterval);
+        }
+        return this;
+    },
+    
+    clearData: function () {
+        for (i in this.collection) {
+            this.collection[i].clearData();
         }
         return this;
     }

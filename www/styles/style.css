@@ -304,6 +304,31 @@ input[type=submit] {
     min-height: 50px;
 }
 
+.box-header-button {
+    display: inline-block;
+    width: 19px;
+    height: 17px;
+    background-repeat: no-repeat;
+    background-position: top left;
+}
+
+.box-header-button.active {
+    background-position: bottom left;
+}
+
+.box-header-button-show-graph {
+    background-image: url(../images/box/button/chart.png);
+}
+.box-header-button-show-data {
+    background-image: url(../images/box/button/data-grid.png);
+}
+.box-header-button-move {
+    background-image: url(../images/box/button/move.png);
+}
+.box-header-button-dashboard-pin {
+    background-image: url(../images/box/button/pin.png);
+}
+
 .light-box {
     background-color: white;
     border: 1px solid #BEC0BF;

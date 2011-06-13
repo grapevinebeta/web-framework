@@ -30,7 +30,7 @@
             'date', 
             $viewingRange['date'], 
             array(
-                'id' => 'top-option-date-picker', 
+                'id' => 'date-selector', 
                 'class' => 'as-select with-icon', 
                 'style' => 'width: 65px;')); ?>
         
@@ -44,6 +44,6 @@
 </div>
 
 <script type="text/javascript">
-    $('#top-option-date-picker').datepicker();
+    $('#top-options-holder #date-selector').datepicker();
     $('#period-selector').selectbox();
 </script>
