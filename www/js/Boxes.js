@@ -87,7 +87,7 @@ var BoxController = Class.extend({
     
     init: function () {
         if (this.boxId && this.getContentDom().length) {
-            this.loadData();
+            this.refresh();
             this.attachCommonEvents();
             this.attachBoxEvents();
         }
@@ -254,6 +254,8 @@ var BoxController = Class.extend({
      * @return BoxController
      */
     setDateInterval: function (dateInterval) {
+        
+        
         this.dateInterval = dateInterval;
         return this;
     },
@@ -297,19 +299,49 @@ var GraphBoxController = BoxController.extend({
         this.getContentDom().parent().find('.box-header-button-show-graph').click(this.showGraph);
         this.getContentDom().parent().find('.box-header-button-show-data').click(this.showData);
         if (this.getContentDom().length) {
-            this.loadData();
+            this.refresh();
         }
     },
     
-    
+    computeDateInterval: function() {
+      
+        var startPoint;
+        var multiplier;
+        switch(this.range['period']) {
+            case '1m':
+                startPoint = -30;
+                multiplier = 1;
+                break;
+            case '3m':
+                startPoint = -90;
+                multiplier = 3;
+                break;
+            case '6m':
+                startPoint = -180;
+                multiplier = 6;
+                break;
+            case '1y':
+                startPoint = -65;
+                multiplier = 12;
+                break;
+            default:
+                startPoint = -30;
+                multiplier = 1;
+                break;
+        }
+        return Math.floor((Math.abs(startPoint) * multiplier * 7)  / 30) +1;
+    },
     
     beforeLoadData: function () {
         this.showLoader();
         this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
         this.data = null;
+        
         if (this.graph) {
-            this.graphData = null;
+            
             this.graph.destroy();
+            this.graph = null;
+            this.graphData = null;
         }
     },
     
@@ -340,23 +372,28 @@ var GraphBoxController = BoxController.extend({
             box = $(this).parents('.box:first');
         }
         var boxContent = box.find('.box-content');
+        
+        boxContent.children().hide();
+        
+        var graphHolder = boxContent.find('.graph-holder');
         var boxController = boxManager.getBox(box.attr('id'));
-        var dataGrid = box.find('.data-grid-holder');
-        if (dataGrid.css('display') != 'none') {
-            dataGrid.hide();
-            box.find('.graph-holder').show();
-            boxController.getHeaderDom().find('.box-header-right-buttons a')
-                .removeClass('active')
-                .filter(':first')
-                .addClass('active');
-            if (!box.find('.graph-holder').children().length) {
-                if (!boxController.graphData) {
-                    boxController.loadGraphData();
-                } else {
-                    boxController.prepareGraph();
-                }
-            }
+        
+        box.find('.graph-holder').show();
+        boxController.getHeaderDom().find('.box-header-right-buttons a')
+        .removeClass('active')
+        .filter('.box-header-button-show-graph')
+        .addClass('active');
+        
+        if (!boxController.graphData) {
+            boxController.loadGraphData();
+
+        } else if (graphHolder.children().length){
+            graphHolder.children().show();
+        } else {
+            boxController.prepareGraph();
         }
+        
+        
         return false;
     },
     
@@ -364,6 +401,7 @@ var GraphBoxController = BoxController.extend({
         this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
         if (this.graph) {
             this.graph.destroy();
+            this.graph = null;
         }
         this.graphData = null;
         this.getGraphHolder().append(this.getLoaderHtml());
@@ -380,6 +418,7 @@ var GraphBoxController = BoxController.extend({
     
     loadGraphData: function() {
         this.beforeLoadGraphData();
+        
         this.graphData = null;
         if (!this.loadGraphDataCallback.boxController) {
             this.loadGraphDataCallback.boxController = this;
@@ -388,7 +427,7 @@ var GraphBoxController = BoxController.extend({
             .setEndpoint(this.endpoint)
             .setDateRange(this.range)
             .setFilters(this.filters)
-            .setDateInterval(null)
+            .setDateInterval(this.computeDateInterval())
             .setCallback(this.loadGraphDataCallback)
             .fetch();
         return this;
@@ -788,6 +827,10 @@ var BC_RecentReviews = BoxController.extend({
     
 });
 
+
+/**
+ * @TODO create base class for linar graph controllers
+ */
 var BC_SocialActivity = GraphBoxController.extend({
 
     /**
@@ -814,7 +857,6 @@ var BC_SocialActivity = GraphBoxController.extend({
     {
         
         var dates = [];
-        
         if(this.firstTimestamp)
             return this.firstTimestamp;
         
@@ -826,20 +868,18 @@ var BC_SocialActivity = GraphBoxController.extend({
                 break;
         }
         
-        
-        
         this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
         this.pointInterval = this.dayInterval * this.scaleFactor;
         
-        return dates[0];
+        return this.firstTimestamp;
         
     },
+    
     
     
     populateGraph: function() {
         // reset cached data
         this.reset();
-        
         var seriesMappings = []; // maapping of label values to corresponding series index
         var seriesMappingInited = false;
         this.series = [];
@@ -866,6 +906,8 @@ var BC_SocialActivity = GraphBoxController.extend({
                     this.series.push(set);
                 }
                 
+                console.log(comparisionObject.timestamp);
+                
                 this.maxValue = this.maxValue < comparisionObject.value 
                     ? comparisionObject.value : this.maxValue;
                 
@@ -881,11 +923,6 @@ var BC_SocialActivity = GraphBoxController.extend({
      
     },
     
-    loadData: function() {
-      
-      this.loadGraphData();
-      
-    },
     
     reset: function() {
       
@@ -897,6 +934,8 @@ var BC_SocialActivity = GraphBoxController.extend({
     },
    
     prepareGraph: function() {
+       
+        console.log("test");
        
         if (!this.graphData) {
             return;
@@ -938,7 +977,7 @@ var BC_SocialActivity = GraphBoxController.extend({
                     align: 'high'
                 },
                 min: 0,
-                max: this.maxValue +1
+                max: this.maxValue
             },
             
             series: this.series
@@ -948,10 +987,42 @@ var BC_SocialActivity = GraphBoxController.extend({
        
     },
     
+    
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = null;
+
+        var table = boxController.getContentDom().find('.data-grid-holder > table');
         
+        var trTemplate = table.find('tbody tr:first').clone();
+        var tr = null;
+        var trFooter = table.find('tfoot tr');
+        trFooter.find('th:not(:first)').text('0');
+        table.find('tbody tr').remove();
+        for (var i = 0; i < boxController.data.networks.length; i++) {
+            tr = trTemplate.clone();
+            for (n in boxController.data.networks[i]) {
+                var value = boxController.data.networks[i][n];
+                
+                tr.find('td.col-' + n).text(value);
+                if (n != 'network') {
+                    var currentTotalValue = 0;
+                    if (n == 'average') {
+                        currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
+                    } else {
+                        currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
+                    }
+                    trFooter.find('th.col-' + n).text(value + currentTotalValue);
+                }
+            }
+            table.find('tbody').append(tr);
+        }
+        trFooter.find('th.col-average').text(
+            parseFloat(trFooter.find('th.col-average').text()) / 
+            boxController.data.networks.length
+            );
+                
         boxController.afterLoadData();
         
 
@@ -1080,7 +1151,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
         for(var firstTimestamp in this.graphData.comparision) {
             dates.push(this.firstTimestamp = parseInt(firstTimestamp, 10));
             
-            
+            // we need two first dates to computer interval between them
             if(dates.length == 2)
                 break;
         }
@@ -1089,7 +1160,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
         
         this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
         this.pointInterval = this.dayInterval * this.scaleFactor;
-        
+
         return dates[0];
         
     },

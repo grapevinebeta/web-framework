@@ -169,10 +169,38 @@ class Controller_Api_Static extends Controller {
     public function action_social()
     {
         $id = $this->request->param('id');
+        $interval = $this->request->post('dateInterval');
         $networks = array();
         switch ($id) {
             case 'activity':
-                $networks = $this->getSocialActivityTimeSeries();
+                
+                if($interval)
+                    $networks = $this->getSocialActivityTimeSeries();
+                else 
+                {
+                    $networks[] = array(
+                        'network' => 'Facebook', //[string:required] - social network
+                        'action' => 'Likes', //[string:required] - type of activity, ex. tweet,checkin,upload
+                        'value' => 5, //[int:required] - activity value
+                        'change' => 4.0, //[decimal:required] - change amount
+                        'total' => 444, //[int:required] - total amount
+                    );
+                    $networks[] = array(
+                        'network' => 'Tweeter', //[string:required] - social network
+                        'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
+                        'value' => 5, //[int:required] - activity value
+                        'change' => 2.0, //[decimal:required] - change amount
+                        'total' => 123, //[int:required] - total amount
+                    );
+                    $networks[] = array(
+                        'network' => 'Flickr', //[string:required] - social network
+                        'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                        'value' => 5, //[int:required] - activity value
+                        'change' => 2.0, //[decimal:required] - change amount
+                        'total' => 23, //[int:required] - total amount
+                    );
+                }
+                
                 break;
             case 'reach':
                 $networks[] = array(
@@ -314,9 +342,9 @@ class Controller_Api_Static extends Controller {
     {
         $comparision = array();
         $range = $this->request->post('range');
+        $interval = $this->request->post('dateInterval');
         
         $date = $range === false ? time() : strtotime($range['date']);
-        
         $dayOffset = 3600 * 24;
         $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
         
@@ -339,7 +367,6 @@ class Controller_Api_Static extends Controller {
             
         }
         
-        $interval = floor((abs($startPoint) / 30));
         
         for($i=$startPoint; $i < 0; $i += $interval)
         {
@@ -373,6 +400,7 @@ class Controller_Api_Static extends Controller {
     {
         $timeSeries = array();
         $range = $this->request->post('range');
+        $interval = $this->request->post('dateInterval');
         
         $date = $range === false ? time() : strtotime($range['date']);
         
@@ -402,7 +430,6 @@ class Controller_Api_Static extends Controller {
             
         }
         
-        $interval = floor((abs($startPoint) / 30));
         
         $actions = array('tweet','checkin','upload');
         
