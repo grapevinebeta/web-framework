@@ -19,15 +19,15 @@
                         <th><?php echo __('Total'); ?></th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-network"></td>
-                        <td class="col-action"></td>
-                        <td class="col-value a-center"></td>
-                        <td class="col-change a-center"></td>
-                        <td class="col-total a-center"></td>
-                    </tr>
-                </tbody>
+                    <tbody>
+                        <tr>
+                            <td class="col-network"></td>
+                            <td class="col-action"></td>
+                            <td class="col-value a-center"></td>
+                            <td class="col-change a-center"></td>
+                            <td class="col-total a-center"></td>
+                        </tr>
+                    </tbody>
             </table>
         </div>
         <div id="box-social-activity-graph-holder" class="graph-holder"></div>

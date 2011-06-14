@@ -46,6 +46,7 @@ var DataProvider = function() {
         },
         
         setDateInterval: function (value) {
+            
             dateInterval = value;
             return this;
         },
