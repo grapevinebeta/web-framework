@@ -90,11 +90,11 @@ class Controller_Api_Static extends Controller {
             'reviews' => array(
                 array(
                     'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1306016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
                     'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '1', // [int:required] - id for content
+                    'id' => rand(1,1000000), // [int:required] - id for content
                     'review' => 'full text', // [text:optional] - full content
                     'category' => 'category', // [string:optional] - internal category
                     'notes' => 'notes', // [text:optional] - notes
@@ -105,11 +105,71 @@ class Controller_Api_Static extends Controller {
                     ),
                 array(
                     'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
                     'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '2', // [int:required] - id for content
+                    'id' => rand(1,1000000), // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    ),
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => rand(1,1000000), // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    ),
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => rand(1,1000000), // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    ),
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => rand(1,1000000), // [int:required] - id for content
+                    'review' => 'full text', // [text:optional] - full content
+                    'category' => 'category', // [string:optional] - internal category
+                    'notes' => 'notes', // [text:optional] - notes
+                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
+                    'title' => 'title of content', // [string:optional]  - title for content
+                    'link' => 'http://cars.com', // [string:optional] - link for content
+                    'author' => 'Author', // [string:optional] - author of the content
+                    ),
+                array(
+                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
+                    'except' => 'except', // [string:required] - excerpt of content
+                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
+                    'id' => rand(1,1000000), // [int:required] - id for content
                     'review' => 'full text', // [text:optional] - full content
                     'category' => 'category', // [string:optional] - internal category
                     'notes' => 'notes', // [text:optional] - notes
