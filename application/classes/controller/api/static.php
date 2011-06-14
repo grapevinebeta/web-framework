@@ -11,9 +11,9 @@ class Controller_Api_Static extends Controller {
     
     public function before() {
         parent::before();
-        if ($this->request->method() != 'POST') {
-            throw new HTTP_Exception_405();
-        }
+//        if ($this->request->method() != 'POST') {
+//            throw new HTTP_Exception_405();
+//        }
         $range = $this->request->post('range');
         if (!empty($range)) {
             Session::instance()->set(
@@ -172,27 +172,7 @@ class Controller_Api_Static extends Controller {
         $networks = array();
         switch ($id) {
             case 'activity':
-                $networks[] = array(
-                    'network' => 'Facebook' , //[string:required] - social network
-                    'action' => 'Interactions' , //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5 , //[int:required] - activity value
-                    'change' => 4.0 , //[decimal:required] - change amount
-                    'total' => 444 , //[int:required] - total amount
-                );
-                $networks[] = array(
-                    'network' => 'Tweeter', //[string:required] - social network
-                    'action' => 'Tweets', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
-                    'change' => 2.0, //[decimal:required] - change amount
-                    'total' => 123, //[int:required] - total amount
-                );
-                $networks[] = array(
-                    'network' => 'Flickr', //[string:required] - social network
-                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
-                    'change' => 2.0, //[decimal:required] - change amount
-                    'total' => 23, //[int:required] - total amount
-                );
+                $networks = $this->getSocialActivityTimeSeries();
                 break;
             case 'reach':
                 $networks[] = array(
@@ -381,8 +361,72 @@ class Controller_Api_Static extends Controller {
         
         $this->apiResponse = array('comparision' => $comparision);
         
+    }
+    
+    /**
+     * This methods helps to generate data series for Social Activity
+     * from competition section
+     * 
+	
+     */
+    private function getSocialActivityTimeSeries()
+    {
+        $timeSeries = array();
+        $range = $this->request->post('range');
+        
+        $date = $range === false ? time() : strtotime($range['date']);
+        
+        $dayOffset = 3600 * 24;
+        $networks = array('Facebook', 'Twitter', 'Foursquare', 
+            'Flickr', 'Youtube', 'Blogs');
         
         
+        switch($range['period'])
+        {
+            
+            case '1m':
+                $startPoint = -30;
+                break;
+            case '3m':
+                $startPoint = -90;
+                break;
+            case '6m':
+                $startPoint = -180;
+                break;
+            case '1y':
+                $startPoint = -365;
+                break;
+            default:
+                $startPoint = -30;
+                break;
+            
+        }
+        
+        $interval = floor((abs($startPoint) / 30));
+        
+        $actions = array('tweet','checkin','upload');
+        
+        for($i=$startPoint; $i < 0; $i += $interval)
+        {
+            
+            foreach($networks as $network) {
+                $rand = rand(1,200);
+                $index = $date + $i * $dayOffset;
+                $prev = $rand;
+                $change = $rand - $prev;
+                
+                $timeSeries[$index][] = array(
+                    'network' => $network,
+                    'action' => $actions[rand(0, 2)],
+                    'value' => $rand,
+                    'change' => $change,
+                    'total' => $change,
+                );
+                
+            }
+        }
+       
+        return $timeSeries;
         
     }
 }
