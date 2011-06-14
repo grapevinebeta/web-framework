@@ -17,6 +17,11 @@ var DataProvider = function() {
      * 
      */
     var range;
+
+    /**
+     * 
+     */
+    var dateInterval;
     
     /**
      * 
@@ -40,6 +45,11 @@ var DataProvider = function() {
             return this;
         },
         
+        setDateInterval: function (value) {
+            dateInterval = value;
+            return this;
+        },
+        
         setCallback: function(value) {
             callback = value;
             return this;
@@ -47,13 +57,20 @@ var DataProvider = function() {
         },
         
         fetch:function() {
+            
+            var params = {
+                range: range,
+                filters: filters
+            }
+            
+            if (dateInterval) {
+                params.dateInterval = dateInterval;
+            }
+            
             $.ajax({
                 type: "POST",
-                contentType: "application/json; charset=utf-8",
-                data: {
-                    range: range,
-                    filters: filters
-                    },
+                accepts: "application/json; charset=utf-8",
+                data: params,
                 dataType: "json",
                 url: ApiUrl + endpoint,
                 success: callback

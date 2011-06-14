@@ -15,21 +15,54 @@ textarea {
     border-style: solid;
 }
 
+input {
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    color: #593B7C;
+}
+
 img {
     border-width: 0px;
 }
 
 img.icon {
-    vertical-align: middle;
 }
 
 a {
     color: #573E77;
     text-decoration: none;
+    outline: none;
 }
 
 a:hover {
     text-decoration: underline;
+}
+
+.as-select {
+    padding: 3px 20px 4px 3px;
+    display: inline-block;
+    background-image: url(../images/as-select-bg.jpg);
+    background-position: right center;
+    background-repeat: no-repeat;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #D9DADD;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.as-select.with-icon {
+    border-width: 1px 1px 1px 0px;
+    -moz-border-radius: 0px 5px 5px 0px;
+    -webkit-border-radius: 0px 5px 5px 0px;
+    border-radius: 0px 5px 5px 0px;
+}
+
+input[type=submit] {
+    background-color: #D0CCDC;
 }
 
 #main-wrapper {
@@ -85,6 +118,12 @@ a:hover {
 .top-menu-item.active .top-menu-item-label {
     background-image: url(../images/top-menu-item-bg-active.jpg);
     color: #553979;
+}
+
+#top-options-holder form > * {
+    vertical-align: middle;
+    /*float: left;
+    display: inline-block;*/
 }
 
 #main-body {
@@ -265,6 +304,36 @@ a:hover {
 
 .box-content {
     min-height: 50px;
+}
+
+.box-header-button {
+    display: inline-block;
+    width: 19px;
+    height: 17px;
+    background-repeat: no-repeat;
+    background-position: top left;
+    margin-left: 3px;
+}
+
+.box-header-button:first-child {
+    margin-left: 0px;
+}
+
+.box-header-button.active {
+    background-position: bottom left;
+}
+
+.box-header-button-show-graph {
+    background-image: url(../images/box/button/chart.png);
+}
+.box-header-button-show-data {
+    background-image: url(../images/box/button/data-grid.png);
+}
+.box-header-button-move {
+    background-image: url(../images/box/button/move.png);
+}
+.box-header-button-dashboard-pin {
+    background-image: url(../images/box/button/pin.png);
 }
 
 .light-box {

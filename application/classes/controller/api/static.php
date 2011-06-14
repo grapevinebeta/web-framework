@@ -10,11 +10,22 @@ class Controller_Api_Static extends Controller {
     protected $apiRequest;
     
     public function before() {
-        
+        parent::before();
+        if ($this->request->method() != 'POST') {
+            throw new HTTP_Exception_405();
+        }
+        $range = $this->request->post('range');
+        if (!empty($range)) {
+            Session::instance()->set(
+                'viewingRange',
+                $range
+            ); 
+        }
     }
     
     public function after()
     {
+        $this->response->headers('Content-Type', 'application/json');
         $this->response->body(json_encode($this->apiResponse));
         parent::after();
     }
@@ -284,7 +295,8 @@ class Controller_Api_Static extends Controller {
         );
     }
     
-    public function action_distribution() {
+    public function action_distribution() 
+    {
         $distributions = array(
             array(
                 'id' => 1,
@@ -307,5 +319,70 @@ class Controller_Api_Static extends Controller {
         );
         //sleep(2);
         $this->apiResponse = array('dists' => $distributions);
+    }
+    
+    /**
+     * This methods is a mockup of data comes from competition comparision box
+     * from competition section
+     * 
+     * /api/dataPrivider/competition/comparision
+     * comparision:An object hashed by the unixtimestamp generated from <dateInterval> 
+     * keys will be an ArrayCollection of OGSICompetitionRatingObject
+	
+     */
+    public function action_comparision()
+    {
+        $comparision = array();
+        $range = $this->request->post('range');
+        
+        $date = $range === false ? time() : strtotime($range['date']);
+        
+        $dayOffset = 3600 * 24;
+        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
+        
+        
+        switch($range['period'])
+        {
+            
+            case '1m':
+                $startPoint = -30;
+                break;
+            case '3m':
+                $startPoint = -90;
+                break;
+            case '6m':
+                $startPoint = -180;
+                break;
+            case '1y':
+                $startPoint = -365;
+                break;
+            
+        }
+        
+        $interval = floor((abs($startPoint) / 30));
+        
+        for($i=$startPoint; $i < 0; $i += $interval)
+        {
+            
+            foreach($competitors as $competitor) {
+                $rand = rand(1,5);
+                $index = $date + ($i-1) * $dayOffset;
+                $prev = $rand;
+                $change = $rand - $prev;
+                $comparision[$date + $i * $dayOffset][] = array(
+                    'competition' => $competitor,
+                    'value' => $rand,
+                    'change' => $change,
+                );
+            }
+        }
+       
+        
+        
+        $this->apiResponse = array('comparision' => $comparision);
+        
+        
+        
+        
     }
 }

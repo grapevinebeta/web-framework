@@ -162,12 +162,30 @@ var BoxController = Class.extend({
         return this.boxId;
     },
     
+    showContent: function () {
+        this.getContentDom().children(':first').show();
+        return this
+    },
+    
+    showLoader: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+        return this;
+    },
+    
+    hideLoader: function () {
+        this.getContentDom().find('.ajax-loader').remove();
+        return this;
+    },
+    
     /**
      * Called before ajax request, generaly used for set ajax-loader.gif
      */
     beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
+        this.data = null;
+        this.showLoader();
+        this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
+        return this;
     },
     
     /**
@@ -175,8 +193,10 @@ var BoxController = Class.extend({
      * and show new data or display an error
      */
     afterLoadData: function () {
-        this.getContentDom().find('.ajax-loader').remove();
-        this.getContentDom().children(':first').show();
+        this.hideLoader();
+        this.showContent();
+        this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
+        return this;
     },
     
     /**
@@ -194,9 +214,11 @@ var BoxController = Class.extend({
         if (!this.loadDataCallback.boxController) {
             this.loadDataCallback.boxController = this;
         }
-        this.data = null;
-        this.dataProvider.setEndpoint(this.endpoint);
-        this.dataProvider.setCallback(this.loadDataCallback);
+        this.dataProvider.setEndpoint(this.endpoint)
+            .setDateRange(this.range)
+            .setFilters(this.filters)
+            .setDateInterval(null)
+            .setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
         return this;
     },
@@ -223,6 +245,7 @@ var BoxController = Class.extend({
      * @return BoxController
      */
     setRange: function(range) {
+        this.range = range;
         return this;
     },
     
@@ -231,6 +254,7 @@ var BoxController = Class.extend({
      * @return BoxController
      */
     setDateInterval: function (dateInterval) {
+        this.dateInterval = dateInterval;
         return this;
     },
     
@@ -241,56 +265,151 @@ var BoxController = Class.extend({
     refresh: function () {
         this.loadData();
         return this;
+    },
+    
+    /**
+     * Clears all stored data from ajax responses 
+     * @return BoxController
+     */
+    clearData: function () {
+        this.data = null;
+        return this;
     }
     
 });
 
 var GraphBoxController = BoxController.extend({
     
+    /**
+     * @var Object To store data from ajax responces for graph
+     */
+    graphData: null,
+    
     getGraphHolder: function () {
-        return $('#' + this.boxId + '-graph-holder'); 
+        if (!this._graphHolder) {
+            this._graphHolder = $('#' + this.boxId + '-graph-holder'); 
+        }
+        return this._graphHolder;
     },
     
     init: function () {
         this.getContentDom().children().hide();
-        this.toggleGraph.boxController = this;
-        this.getContentDom().parent().find('.box-header-button-show-graph').click(this.toggleGraph);
+        this.getContentDom().parent().find('.box-header-button-show-graph').click(this.showGraph);
+        this.getContentDom().parent().find('.box-header-button-show-data').click(this.showData);
         if (this.getContentDom().length) {
             this.loadData();
         }
     },
     
+    
+    
     beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
+        this.showLoader();
+        this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
+        this.data = null;
         if (this.graph) {
+            this.graphData = null;
             this.graph.destroy();
         }
     },
     
-    toggleGraph: function () {
-        var boxControllerId = $(this).parents('.box:first').attr('id');
-        var boxController = boxManager.getBox(boxControllerId);
-        var box = $(this).parents('.box:first');
+    showData: function () {
+        var box = null;
+        if (this instanceof BoxController) {
+            box = this.getBoxDom();
+        } else {
+            box = $(this).parents('.box:first');
+        }
+        var boxContent = box.find('.box-content');
+        boxContent.children().hide();
+        box.find('.box-header-button').removeClass('active');
+        var boxController = boxManager.getBox(box.attr('id'));
+        var dataGrid = box.find('.data-grid-holder');
+        if (dataGrid.css('display') == 'none') {
+            dataGrid.show();
+        }
+        box.find('.box-header-button-show-data').addClass('active');
+        return false;
+    },
+    
+    showGraph: function () {
+        var box = null;
+        if (this instanceof BoxController) {
+            box = this.getBoxDom();
+        } else {
+            box = $(this).parents('.box:first');
+        }
+        var boxContent = box.find('.box-content');
+        var boxController = boxManager.getBox(box.attr('id'));
         var dataGrid = box.find('.data-grid-holder');
         if (dataGrid.css('display') != 'none') {
             dataGrid.hide();
             box.find('.graph-holder').show();
+            boxController.getHeaderDom().find('.box-header-right-buttons a')
+                .removeClass('active')
+                .filter(':first')
+                .addClass('active');
             if (!box.find('.graph-holder').children().length) {
-                boxController.prepareGraph();
+                if (!boxController.graphData) {
+                    boxController.loadGraphData();
+                } else {
+                    boxController.prepareGraph();
+                }
             }
-            //$(window).resize();
-        } else {
-            box.find('.graph-holder').hide();
-            dataGrid.show();
         }
         return false;
-        
+    },
+    
+    beforeLoadGraphData: function () {
+        this.getHeaderDom().find('.box-header-right-buttons a').removeClass('active');
+        if (this.graph) {
+            this.graph.destroy();
+        }
+        this.graphData = null;
+        this.getGraphHolder().append(this.getLoaderHtml());
+    },
+
+    /**
+     * Will handle Ajax response of the loadGraphData
+     */
+    loadGraphDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.graphData = data;
+        boxController.afterLoadGraphData();
+    },
+    
+    loadGraphData: function() {
+        this.beforeLoadGraphData();
+        this.graphData = null;
+        if (!this.loadGraphDataCallback.boxController) {
+            this.loadGraphDataCallback.boxController = this;
+        }
+        this.graphData = this.dataProvider
+            .setEndpoint(this.endpoint)
+            .setDateRange(this.range)
+            .setFilters(this.filters)
+            .setDateInterval(null)
+            .setCallback(this.loadGraphDataCallback)
+            .fetch();
+        return this;
+    },
+    
+    afterLoadGraphData: function () {
+        this.getGraphHolder().children().remove();
+        this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-graph').addClass('active');
+        this.showGraph();
+        return this;
     },
     
     prepareGraph: function () {
         alert("'prepareGraph' is not implemented!!!");
+    },
+    
+    clearData: function () {
+        this.data = null;
+        this.graphData = null;
     }
+    
 });
 
 var BC_KeywordsAnalysis = GraphBoxController.extend({
@@ -307,7 +426,7 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
     
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         
@@ -351,10 +470,10 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
                  data: new Array()
              }]
         };
-        for (var i = 0; i < this.data.keywords.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.data.keywords[i].keyword,
-                this.data.keywords[i].percent
+                this.graphData[i].keyword,
+                this.graphData[i].percent
             ));
         }
         
@@ -364,6 +483,7 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.keywords;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
@@ -399,7 +519,7 @@ var BC_ReviewSites = GraphBoxController.extend({
     endpoint: 'sites',
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         
@@ -471,8 +591,8 @@ var BC_ReviewSites = GraphBoxController.extend({
             }]
         }
         
-        for (var i = 0; i < this.data.sites.length; i++) {
-            var site = this.data.sites[i];
+        for (var i = 0; i < this.graphData.length; i++) {
+            var site = this.graphData[i];
             options.xAxis.categories.push(site.site);
             options.series[0].data.push(site.average);
             options.series[1].data.push(site.negative);
@@ -486,6 +606,7 @@ var BC_ReviewSites = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.sites;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
@@ -681,7 +802,7 @@ var BC_SocialActivity = GraphBoxController.extend({
     
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         return;
@@ -720,10 +841,10 @@ var BC_SocialActivity = GraphBoxController.extend({
                  data: new Array()
              }]
         };
-        for (var i = 0; i < this.data.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.data.networks[i].keyword,
-                this.data.networks[i].percent
+                this.graphData[i].keyword,
+                this.graphData[i].percent
             ));
         }
         
@@ -734,8 +855,9 @@ var BC_SocialActivity = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.networks;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
@@ -775,7 +897,7 @@ var BC_SocialReach = BoxController.extend({
     endpoint: 'social/reach',
     
     prepareGraph: function () {
-        if (!this.data) {
+        if (!this.graphData) {
             return;
         }
         return;
@@ -814,10 +936,10 @@ var BC_SocialReach = BoxController.extend({
                  data: new Array()
              }]
         };
-        for (var i = 0; i < this.data.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.data.networks[i].keyword,
-                this.data.networks[i].percent
+                this.graphData[i].keyword,
+                this.graphData[i].percent
             ));
         }
         
@@ -828,8 +950,9 @@ var BC_SocialReach = BoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.networks;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
@@ -856,15 +979,260 @@ var BC_SocialReach = BoxController.extend({
     
 });
 
-var BC_CompetitionDistribution = BoxController.extend({
+var BC_CompetitionComparision = GraphBoxController.extend({
+   
+    boxId: 'box-competition-comparision',
+    series: [],
+    endpoint: 'comparision',
+    seriesLabels: [],
+    firstTimestamp: null,
+    pointInterval: null,
+    scaleFactor: null, // scale factor computed from date interval
+    dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
+    tickInterval: 24 * 3600 * 1000 * 5, // 7 days x-axis labels interval
+
+    getFirstDate: function()
+    {
+        
+        var dates = [];
+        
+        if(this.firstTimestamp)
+            return this.firstTimestamp;
+        
+        for(var firstTimestamp in this.graphData.comparision) {
+            dates.push(this.firstTimestamp = parseInt(firstTimestamp, 10));
+            
+            
+            if(dates.length == 2)
+                break;
+        }
+        
+        
+        
+        this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
+        this.pointInterval = this.dayInterval * this.scaleFactor;
+        
+        return dates[0];
+        
+    },
+    
+    
+    populateGraph: function() {
+        // reset cached data
+        this.reset();
+        
+        var seriesMappings = []; // maapping of label values to corresponding series index
+        var seriesMappingInited = false;
+        this.series = [];
+        for (var tKey in this.graphData.comparision) {
+            
+            var timeObject = this.graphData.comparision[tKey];
+            
+            for (var cKey in timeObject) {
+            
+                var comparisionObject = timeObject[cKey];
+                
+                if(!seriesMappingInited)
+                {
+                    // set specific options to each spline
+                    // all timestamps must be expand to miliseconds
+                    var set = {
+                        name: comparisionObject.competition, 
+                        data: [], 
+                        pointStart: parseInt(this.getFirstDate(), 10) * 1000,
+                        pointInterval: this.pointInterval
+                    };
+                    
+                    seriesMappings[comparisionObject.competition] = this.series.length;
+                    this.series.push(set);
+                }
+                
+                
+                this.series[seriesMappings[comparisionObject.competition]]
+                    .data.push(parseInt(comparisionObject.value, 10));
+                
+            }
+            
+            if(!seriesMappingInited) {
+                seriesMappingInited = true;
+            }
+        }
+     
+    },
+    
+    loadData: function() {
+      
+      this.loadGraphData();
+      
+    },
+    
+    reset: function() {
+      
+        this.firstTimestamp = undefined;
+        this.series = undefined;
+        this.seriesLabels = undefined;
+        this.scaleFactor = undefined;
+      
+    },
+   
+    prepareGraph: function() {
+       
+        if (!this.graphData) {
+            return;
+        }
+        
+        this.populateGraph();
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                type: 'spline'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
+            ],
+            xAxis: {
+                type: 'datetime',
+                title: {
+                    text: null
+                },
+                tickInterval: this.tickInterval * this.scaleFactor
+            },
+            yAxis: {
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            
+            series: this.series
+        }
+        
+        this.graph = new Highcharts.Chart(options);
+       
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        boxController.afterLoadData();
+        
+
+    },
+   
+    construct: function() {}
+   
+});
+
+var BC_CompetitionDistribution = GraphBoxController.extend({
  
     boxId: 'box-competition-distribution',
  
     endpoint: 'distribution',
  
+    prepareGraph: function () {
+        if (!this.data) {
+            return;
+        }
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var graphHolder = $('#' + graphHolderId);
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                type: 'bar'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+                '#80699B', 
+                '#AA4643', 
+                '#4572A7', 
+                '#89A54E', 
+                '#3D96AE', 
+                '#DB843D', 
+                '#92A8CD', 
+                '#A47D7C', 
+                '#B5CA92'
+            ],
+            xAxis: {
+                categories: [],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            legend: {
+                verticalAlign: 'bottom',
+                borderWidth: 1,
+                borderRadius: 0,
+                backgroundColor: '#FFFFFF',
+                shadow: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Average',
+                data: []
+            }, {
+                name: 'Negative',
+                data: []
+            }, {
+                name: 'Neutral',
+                data: []
+            }, {
+                name: 'Positive',
+                data: []
+            }]
+        }
+        
+        for (var i = 0; i < this.graphData.length; i++) {
+            var dist = this.graphData[i];
+            options.xAxis.categories.push(dist.dealership);
+            options.series[0].data.push(dist.average);
+            options.series[1].data.push(dist.negative);
+            options.series[2].data.push(dist.neutral);
+            options.series[3].data.push(dist.positive);
+        }
+        
+        this.graph = new Highcharts.Chart(options);
+    },
+ 
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
+        boxController.graphData = data.dists;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         
         var trTemplate = table.find('tbody tr:first').clone();
@@ -877,7 +1245,6 @@ var BC_CompetitionDistribution = BoxController.extend({
             for (n in boxController.data.dists[i]) {
                 var value = boxController.data.dists[i][n];
                 
-                console.log(value);
                 tr.find('td.col-' + n).text(value);
                 if (n != 'dealership') {
                     var currentTotalValue = 0;
@@ -946,7 +1313,7 @@ var BC_SocialActivityDetails = BoxController.extend({
     
     loadSocials: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr').clone();
+        var trTemplate = table.find('tbody tr:first').clone();
         var trContentTemplate = '<tr><td colspan="6"></td></tr>';
         var tr = null;
         var trContent = null;
@@ -1022,6 +1389,8 @@ boxManager = {
     collection: {},
     
     dataProvider: null,
+
+    range: null,
     
     add: function (box) {
         if (
@@ -1057,11 +1426,29 @@ boxManager = {
     
     init: function () {
         var self = this;
+        
+        var rangeArray = $('#range-form').serializeArray();
+        var range = {};
+        
+        for (var i = 0; i < rangeArray.length; i++) {
+            range[rangeArray[i].name] = rangeArray[i].value;
+        }
+        this.setRange(range);
+        
         this.initBoxes();
+        
         $('#range-form').submit(function () {
-            self.setRange($(this).serializeArray());
+            var range = {};
+            var rangeArray = $(this).serializeArray();
+            for (var i = 0; i < rangeArray.length; i++) {
+                range[rangeArray[i].name] = rangeArray[i].value;
+            }
+            self.setRange(range);
+            self.clearData();
             self.refresh();
             return false;
+        }).find('#period-selector, #date-selector').change(function () {
+            $(this).parents('form:first').submit();
         });
         $( ".box" ).draggable({ 
             snap: ".box-container", 
@@ -1161,8 +1548,9 @@ boxManager = {
     },
 
     setRange: function(range) {
+        this.range = range;
         for (i in this.collection) {
-            this.collection[i].setRange(range);
+            this.collection[i].setRange(this.range);
         }
         return this;
     },
@@ -1170,6 +1558,13 @@ boxManager = {
     setDateInterval: function (dateInterval) {
         for (i in this.collection) {
             this.collection[i].setDateInterval(dateInterval);
+        }
+        return this;
+    },
+    
+    clearData: function () {
+        for (i in this.collection) {
+            this.collection[i].clearData();
         }
         return this;
     }
@@ -1184,6 +1579,7 @@ $(document).ready(function () {
               .add(new BC_SocialReach())
               .add(new BC_SocialActivityDetails())
               .add(new BC_CompetitionDistribution())
+              .add(new BC_CompetitionComparision())
               .setDataProvider(new DataProvider())
               .init();
 });

@@ -115,6 +115,7 @@ table.data-grid td {
     border-style: solid;
     border-color: gray;
     border-collapse: collapse;
+    padding: 7px;
 }
 
 table.data-grid thead tr th {

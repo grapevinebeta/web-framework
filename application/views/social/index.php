@@ -4,26 +4,12 @@
         <div id="box-social-activity" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Chart">
-                        <?php echo html::image(
-                            'images/box/button/chart.png', 
-                            array('alt' => '', 'title' => __('Chart'))); 
-                        ?>
-                    </a>
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
-                        <?php echo html::image(
-                            'images/box/button/pin.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-show-graph" href="#" title="Chart"></a>
+                    <a class="box-header-button box-header-button-show-data" href="#" title="Data"></a>
+                    <a class="box-header-button box-header-button-dashboard-pin" href="#" title="Close"></a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">
-                        <?php echo html::image(
-                            'images/box/button/move.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-move" href="#" title="Move"></a>
                 </div>
                 <span class="box-header-title">
                     <?php echo __('Social Activity'); ?>
@@ -62,26 +48,12 @@
         <div id="box-social-reach" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-show-graph" href="#" title="Chart">
-                        <?php echo html::image(
-                            'images/box/button/chart.png', 
-                            array('alt' => '', 'title' => __('Chart'))); 
-                        ?>
-                    </a>
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
-                        <?php echo html::image(
-                            'images/box/button/pin.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-show-graph" href="#" title="Chart"></a>
+                    <a class="box-header-button box-header-button-show-data" href="#" title="Data"></a>
+                    <a class="box-header-button box-header-button-dashboard-pin" href="#" title="Close"></a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">
-                        <?php echo html::image(
-                            'images/box/button/move.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-move" href="#" title="Move"></a>
                 </div>
                 <span class="box-header-title">
                     <?php echo __('Social Reach'); ?>
@@ -120,20 +92,10 @@
         <div id="box-social-activity-details" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
-                        <?php echo html::image(
-                            'images/box/button/pin.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-dashboard-pin" href="#" title="Close"></a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">
-                        <?php echo html::image(
-                            'images/box/button/move.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-move" href="#" title="Move"></a>
                 </div>
                 <div style="margin: 0px 30px 0px 15px;">
                     <div>
@@ -178,20 +140,10 @@
         <div id="box-videos" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
-                        <?php echo html::image(
-                            'images/box/button/pin.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-dashboard-pin" href="#" title="Close"></a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">
-                        <?php echo html::image(
-                            'images/box/button/move.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-move" href="#" title="Move"></a>
                 </div>
                 <span class="box-header-title">
                     <?php echo __('Videos'); ?>
@@ -228,20 +180,10 @@
         <div id="box-photos" class="box">
             <div class="box-header">
                 <div class="box-header-right-buttons">
-                    <a class="box-header-button-dashboard-pin" href="#" title="Close">
-                        <?php echo html::image(
-                            'images/box/button/pin.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-dashboard-pin" href="#" title="Close"></a>
                 </div>
                 <div class="box-header-left-buttons">
-                    <a class="box-header-button-move" href="#" title="Move">
-                        <?php echo html::image(
-                            'images/box/button/move.jpg', 
-                            array('alt' => '', 'title' => __('Move'))); 
-                        ?>
-                    </a>
+                    <a class="box-header-button box-header-button-move" href="#" title="Move"></a>
                 </div>
                 <span class="box-header-title">
                     <?php echo __('Photos'); ?>

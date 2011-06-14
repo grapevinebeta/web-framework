@@ -11,5 +11,9 @@
 
     // pass globals
     window['log'] = log;
-
+    
 })();
+
+$(document).ready(function () {
+    $('.tooltip').tipTip();
+});
