@@ -2,35 +2,27 @@
 
     <div class="box-container active box-container-left">
         <div id="box-ogsi" class="box">
-            <div class="box-header">
-                <div class="box-header-right-buttons">
-                </div>
-                <div class="box-header-left-buttons">
-                </div>
-                <span class="box-header-title">
-                    <?php echo __('Grapevine OGSI'); ?>
-                </span>
-                <div class="clear"></div>
-            </div>
-            <div class="box-content">
-            </div>
+            <?php echo View::factory(
+                '_partials/box-header', 
+                array(
+                    'caption' => __('Grapevine OGSI'),
+                    )
+                ); 
+            ?>
+            <div class="box-content"></div>
         </div>
     </div>
 
     <div class="box-container active box-container-right">
         <div id="box-ogsi" class="box">
-            <div class="box-header">
-                <div class="box-header-right-buttons">
-                </div>
-                <div class="box-header-left-buttons">
-                </div>
-                <span class="box-header-title">
-                    <?php echo __('Competition Star Rating Recap'); ?>
-                </span>
-                <div class="clear"></div>
-            </div>
-            <div class="box-content">
-            </div>
+            <?php echo View::factory(
+                '_partials/box-header', 
+                array(
+                    'caption' => __('Competition Star Rating Recap'),
+                    )
+                ); 
+            ?>
+            <div class="box-content"></div>
         </div>
     </div>
     
@@ -87,20 +79,14 @@
     
     <div class="box-container active box-container-left">
         <div id="box-review-sites" class="box">
-            <div class="box-header">
-                <div class="box-header-right-buttons">
-                    <a class="box-header-button box-header-button-show-graph" href="#" title="Chart"></a>
-                    <a class="box-header-button box-header-button-show-data" href="#" title="Chart"></a>
-                    <a class="box-header-button box-header-button-dashboard-pin" href="#" title="Close"></a>
-                </div>
-                <div class="box-header-left-buttons">
-                    <a class="box-header-button box-header-button-move" href="#" title="Move"></a>
-                </div>
-                <span class="box-header-title">
-                    <?php echo __('Review Sites'); ?>
-                </span>
-                <div class="clear"></div>
-            </div>
+            <?php echo View::factory(
+                '_partials/box-header', 
+                array(
+                    'caption' => __('Review Sites'),
+                    'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
+                    )
+                ); 
+            ?>
             <div class="box-content">
                 <div class="data-grid-holder" style="display: none;">
                     <table class="wide data-grid">

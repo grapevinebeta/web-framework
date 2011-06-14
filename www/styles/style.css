@@ -17,6 +17,7 @@ textarea {
 
 input {
     font-family: Arial, Verdana, Helvetica, sans-serif;
+    color: #593B7C;
 }
 
 img {
@@ -29,6 +30,7 @@ img.icon {
 a {
     color: #573E77;
     text-decoration: none;
+    outline: none;
 }
 
 a:hover {
@@ -310,6 +312,11 @@ input[type=submit] {
     height: 17px;
     background-repeat: no-repeat;
     background-position: top left;
+    margin-left: 3px;
+}
+
+.box-header-button:first-child {
+    margin-left: 0px;
 }
 
 .box-header-button.active {
