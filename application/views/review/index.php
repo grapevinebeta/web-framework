@@ -9,7 +9,7 @@
     <div class="clear"></div>
     
     <div class="box-container active">
-        <?php echo view::factory('_partials/box/recent-review'); ?>
+        <?php echo view::factory('_partials/box/recent-reviews'); ?>
     </div>
     
     <div class="box-container empty box-container-left"></div>

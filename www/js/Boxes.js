@@ -306,30 +306,24 @@ var GraphBoxController = BoxController.extend({
     computeDateInterval: function() {
       
         var startPoint;
-        var multiplier;
         switch(this.range['period']) {
             case '1m':
                 startPoint = -30;
-                multiplier = 1;
                 break;
             case '3m':
                 startPoint = -90;
-                multiplier = 3;
                 break;
             case '6m':
                 startPoint = -180;
-                multiplier = 6;
                 break;
             case '1y':
                 startPoint = -65;
-                multiplier = 12;
                 break;
             default:
                 startPoint = -30;
-                multiplier = 1;
                 break;
         }
-        return Math.floor((Math.abs(startPoint) * multiplier * 7)  / 30) +1;
+        return Math.floor((Math.abs(startPoint)* 7)  / 30) +1;
     },
     
     beforeLoadData: function () {
@@ -1157,11 +1151,10 @@ var BC_CompetitionComparision = GraphBoxController.extend({
         }
         
         
-        
         this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
         this.pointInterval = this.dayInterval * this.scaleFactor;
-
-        return dates[0];
+        
+        return this.firstTimestamp;
         
     },
     
