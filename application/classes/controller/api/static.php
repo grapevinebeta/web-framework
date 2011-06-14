@@ -333,14 +333,35 @@ class Controller_Api_Static extends Controller {
     public function action_comparision()
     {
         $comparision = array();
-        $date = time();
+        $range = $this->request->post('range');
+        
+        $date = $range === false ? time() : strtotime($range['date']);
+        
         $dayOffset = 3600 * 24;
         $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
         
-        $interval = 1;
         
+        switch($range['period'])
+        {
+            
+            case '1m':
+                $startPoint = -30;
+                break;
+            case '3m':
+                $startPoint = -90;
+                break;
+            case '6m':
+                $startPoint = -180;
+                break;
+            case '1y':
+                $startPoint = -365;
+                break;
+            
+        }
         
-        for($i=-30; $i < 0; $i += $interval)
+        $interval = floor((abs($startPoint) / 30));
+        
+        for($i=$startPoint; $i < 0; $i += $interval)
         {
             
             foreach($competitors as $competitor) {

@@ -985,23 +985,42 @@ var BC_CompetitionComparision = GraphBoxController.extend({
     series: [],
     endpoint: 'comparision',
     seriesLabels: [],
-    firstTimestamp: 0,
+    firstTimestamp: null,
+    pointInterval: null,
+    scaleFactor: null, // scale factor computed from date interval
     dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
-    tickInterval: 24 * 3600 * 1000 * 7,
+    tickInterval: 24 * 3600 * 1000 * 5, // 7 days x-axis labels interval
 
     getFirstDate: function()
     {
+        
+        var dates = [];
+        
         if(this.firstTimestamp)
             return this.firstTimestamp;
         
         for(var firstTimestamp in this.graphData.comparision) {
-            return this.firstTimestamp = parseInt(firstTimestamp, 10); 
+            dates.push(this.firstTimestamp = parseInt(firstTimestamp, 10));
+            
+            
+            if(dates.length == 2)
+                break;
         }
+        
+        
+        
+        this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
+        this.pointInterval = this.dayInterval * this.scaleFactor;
+        
+        return dates[0];
+        
     },
     
     
     populateGraph: function() {
-     
+        // reset cached data
+        this.reset();
+        
         var seriesMappings = []; // maapping of label values to corresponding series index
         var seriesMappingInited = false;
         this.series = [];
@@ -1015,17 +1034,19 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                 
                 if(!seriesMappingInited)
                 {
-                    
+                    // set specific options to each spline
+                    // all timestamps must be expand to miliseconds
                     var set = {
                         name: comparisionObject.competition, 
                         data: [], 
-                        pointInterval: this.dayInterval, 
-                        pointStart: parseInt(this.getFirstDate(), 10) * 1000
+                        pointStart: parseInt(this.getFirstDate(), 10) * 1000,
+                        pointInterval: this.pointInterval
                     };
                     
                     seriesMappings[comparisionObject.competition] = this.series.length;
                     this.series.push(set);
                 }
+                
                 
                 this.series[seriesMappings[comparisionObject.competition]]
                     .data.push(parseInt(comparisionObject.value, 10));
@@ -1042,6 +1063,15 @@ var BC_CompetitionComparision = GraphBoxController.extend({
     loadData: function() {
       
       this.loadGraphData();
+      
+    },
+    
+    reset: function() {
+      
+        this.firstTimestamp = undefined;
+        this.series = undefined;
+        this.seriesLabels = undefined;
+        this.scaleFactor = undefined;
       
     },
    
@@ -1079,7 +1109,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                 title: {
                     text: null
                 },
-                tickInterval: this.tickInterval
+                tickInterval: this.tickInterval * this.scaleFactor
             },
             yAxis: {
                 title: {
