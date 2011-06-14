@@ -405,8 +405,58 @@ input[type=submit] {
 
 /* Styles for specific boxes */
 
+/* Review Inbox */
 #box-recent-reviews {}
 
     #box-recent-reviews tr.reviewSnippet {
         cursor: pointer;
     }
+
+    #box-recent-reviews .reviewRating {
+        background-image: url(../images/icons/review-stars.png);
+        background-position: 0px 0px;
+        background-repeat: no-repeat;
+        height: 18px;
+        position: relative;
+        width: 110px;
+    }
+
+        #box-recent-reviews .reviewRating .stars-0-of-5-front,
+        #box-recent-reviews .reviewRating .stars-1-of-5-front,
+        #box-recent-reviews .reviewRating .stars-2-of-5-front,
+        #box-recent-reviews .reviewRating .stars-3-of-5-front,
+        #box-recent-reviews .reviewRating .stars-4-of-5-front,
+        #box-recent-reviews .reviewRating .stars-5-of-5-front {
+            /* background-color: red; */
+            background-image: url(../images/icons/review-stars.png);
+            background-position: 0px -22px;
+            background-repeat: no-repeat;
+            height: 18px;
+            position: absolute;
+        }
+
+        #box-recent-reviews .reviewRating .stars-0-of-5-front {
+            width: 0px;
+        }
+
+        #box-recent-reviews .reviewRating .stars-1-of-5-front {
+            width: 22px;
+        }
+
+        #box-recent-reviews .reviewRating .stars-2-of-5-front {
+            width: 44px;
+        }
+
+        #box-recent-reviews .reviewRating .stars-3-of-5-front {
+            width: 66px;
+        }
+
+        #box-recent-reviews .reviewRating .stars-4-of-5-front {
+            width: 88px;
+        }
+
+        #box-recent-reviews .reviewRating .stars-5-of-5-front {
+            width: 110px;
+        }
+
+
