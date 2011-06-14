@@ -31,7 +31,8 @@
             $viewingRange['date'], 
             array(
                 'id' => 'date-selector', 
-                'class' => 'as-select with-icon', 
+                'class' => 'as-select with-icon',
+                'maxlength' => '10',
                 'style' => 'width: 65px;')); ?>
         
         <?php 
