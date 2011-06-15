@@ -286,6 +286,7 @@ var GraphBoxController = BoxController.extend({
      * @var Object To store data from ajax responces for graph
      */
     graphData: null,
+    // date format for different range @see getPeriodInDays
     
     getGraphHolder: function () {
         if (!this._graphHolder) {
@@ -303,27 +304,37 @@ var GraphBoxController = BoxController.extend({
         }
     },
     
-    computeDateInterval: function() {
-      
+    
+    getPeriodInDays: function() {
         var startPoint;
+ 
         switch(this.range['period']) {
             case '1m':
-                startPoint = -30;
+                startPoint = 30;
                 break;
             case '3m':
-                startPoint = -90;
+                startPoint = 90;
                 break;
             case '6m':
-                startPoint = -180;
+                startPoint = 180;
                 break;
             case '1y':
-                startPoint = -65;
+                startPoint = 365;
                 break;
             default:
-                startPoint = -30;
+                startPoint = 30;
                 break;
         }
-        return Math.floor((Math.abs(startPoint)* 7)  / 30) +1;
+        
+        return startPoint;
+      
+      
+    },
+    
+    computeDateInterval: function() {
+      
+
+        return Math.ceil((this.getPeriodInDays() * 7)  / 30);
     },
     
     beforeLoadData: function () {
@@ -846,29 +857,32 @@ var BC_SocialActivity = GraphBoxController.extend({
     firstTimestamp: null,
     pointInterval: null,
     scaleFactor: null, // scale factor computed from date interval
-    dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
-    tickInterval: 24 * 3600 * 1000 * 5, // 7 days x-axis labels interval
+    dayInterval: 3600 * 24, // day in seconds
     maxValue: null,
-
+    
     getFirstDate: function()
     {
         
-        var dates = [];
+
         if(this.firstTimestamp)
             return this.firstTimestamp;
         
-        for(var firstTimestamp in this.graphData.networks) {
-            dates.push(this.firstTimestamp = parseInt(firstTimestamp, 10));
-            
-            
-            if(dates.length == 2)
-                break;
+        for(var timestamp in this.graphData.networks){
+        
+            var parsed = parseInt(timestamp, 10);
+            break;
         }
         
-        this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
-        this.pointInterval = this.dayInterval * this.scaleFactor;
         
-        return this.firstTimestamp;
+        parsed = new Date(parsed * 1000);
+        
+        var offset = Math.floor(this.getPeriodInDays() / 30);
+        
+        this.firstTimestamp = 
+            new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate());
+        
+        // convert date to milliseconds
+        return this.firstTimestamp = Date.parse(this.firstTimestamp);
         
     },
     
@@ -895,21 +909,19 @@ var BC_SocialActivity = GraphBoxController.extend({
                     var set = {
                         name: comparisionObject.network, 
                         data: [], 
-                        pointStart: parseInt(this.getFirstDate(), 10) * 1000,
-                        pointInterval: this.pointInterval
+                        pointStart: this.getFirstDate(),
+                        pointInterval: (this.computeDateInterval()+1) * 24 * 3600 * 1000
                     };
                     
                     seriesMappings[comparisionObject.network] = this.series.length;
                     this.series.push(set);
                 }
                 
-                console.log(comparisionObject.timestamp);
-                
                 this.maxValue = this.maxValue < comparisionObject.value 
                     ? comparisionObject.value : this.maxValue;
                 
                 this.series[seriesMappings[comparisionObject.network]]
-                    .data.push(parseInt(comparisionObject.value, 10));
+                    .data.unshift(parseInt(comparisionObject.value, 10));
                 
             }
             
@@ -931,8 +943,6 @@ var BC_SocialActivity = GraphBoxController.extend({
     },
    
     prepareGraph: function() {
-       
-        console.log("test");
        
         if (!this.graphData) {
             return;
@@ -962,11 +972,34 @@ var BC_SocialActivity = GraphBoxController.extend({
             '#B5CA92'
             ],
             xAxis: {
+                
+                startOfWeek: 0,
                 type: 'datetime',
-                title: {
-                    text: null
-                },
-                tickInterval: this.tickInterval * this.scaleFactor
+                
+                labels: {
+                    formatter: function() {
+                        
+                        var dateFormat;
+                        var box = boxManager.getBox('box-social-activity');
+                        switch(box.range['period']) {
+                            case '1m':
+                                dateFormat = '%a %e';
+                                break;
+                            case '3m':
+                                dateFormat = '%d %b';
+                                break;
+                            case '6m':
+                                dateFormat = '%d %b';
+                                break;
+                            case '1y':
+                                dateFormat = '%b %Y';
+                                break;
+                        }
+                        
+                        return Highcharts.dateFormat(dateFormat, this.value);                  
+                    }        
+                }
+ 
             },
             yAxis: {
                 title: {

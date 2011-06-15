@@ -433,10 +433,11 @@ class Controller_Api_Static extends Controller {
             
             foreach($competitors as $competitor) {
                 $rand = rand(1,5);
-                $index = $date + ($i-1) * $dayOffset;
+                $index = $date - ($i * $dayOffset);
                 $prev = $rand;
                 $change = $rand - $prev;
-                $comparision[$date + $i * $dayOffset][] = array(
+                
+                $comparision[$index][] = array(
                     'competition' => $competitor,
                     'value' => $rand,
                     'change' => $change,
@@ -460,9 +461,11 @@ class Controller_Api_Static extends Controller {
     {
         $timeSeries = array();
         $range = $this->request->post('range');
-        $interval = $this->request->post('dateInterval');
+        $interval = (int) $this->request->post('dateInterval');
         
         $date = $range === false ? time() : strtotime($range['date']);
+        /* @var $date DateTime */
+        
         
         $dayOffset = 3600 * 24;
         $networks = array('Facebook', 'Twitter', 'Foursquare', 
@@ -473,32 +476,33 @@ class Controller_Api_Static extends Controller {
         {
             
             case '1m':
-                $startPoint = -30;
+                $startPoint = strtotime('-1 month', $date);
                 break;
             case '3m':
-                $startPoint = -90;
+                $startPoint = strtotime('-3 month', $date);
                 break;
             case '6m':
-                $startPoint = -180;
+                $startPoint = strtotime('-6 month', $date);
                 break;
             case '1y':
-                $startPoint = -365;
+                $startPoint = strtotime('-12 month', $date);
                 break;
             default:
-                $startPoint = -30;
+                $startPoint = strtotime('-1 month', $date);
                 break;
             
         }
         
         
         $actions = array('tweet','checkin','upload');
+        $startDays = ($date - $startPoint) / (3600 * 24);
         
-        for($i=$startPoint; $i < 0; $i += $interval)
+        for($i=0; $i <= $startDays; $i += $interval)
         {
-            
             foreach($networks as $network) {
                 $rand = rand(1,200);
                 $index = $date + $i * $dayOffset;
+                
                 $prev = $rand;
                 $change = $rand - $prev;
                 
@@ -509,10 +513,9 @@ class Controller_Api_Static extends Controller {
                     'change' => $change,
                     'total' => $change,
                 );
-                
             }
         }
-       
+
         return $timeSeries;
         
     }
