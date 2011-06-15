@@ -403,37 +403,37 @@ class Controller_Api_Static extends Controller {
         $comparision = array();
         $range = $this->request->post('range');
         $interval = $this->request->post('dateInterval');
-        
         $date = $range === false ? time() : strtotime($range['date']);
         $dayOffset = 3600 * 24;
-        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
-        
-        
-        switch($range['period'])
-        {
-            
+
+        switch ($range['period']) {
+
             case '1m':
-                $startPoint = -30;
+                $startPoint = strtotime('-1 month', $date);
                 break;
             case '3m':
-                $startPoint = -90;
+                $startPoint = strtotime('-3 month', $date);
                 break;
             case '6m':
-                $startPoint = -180;
+                $startPoint = strtotime('-6 month', $date);
                 break;
             case '1y':
-                $startPoint = -365;
+                $startPoint = strtotime('-12 month', $date);
                 break;
-            
+            default:
+                $startPoint = strtotime('-1 month', $date);
+                break;
         }
-        
-        
-        for($i=$startPoint; $i < 0; $i += $interval)
-        {
-            
-            foreach($competitors as $competitor) {
+
+
+        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
+        $startDays = ($date - $startPoint) / (3600 * 24);
+
+        for ($i = 0; $i <= $startDays; $i += $interval) {
+            foreach ($competitors as $competitor) {
+
                 $rand = rand(1,5);
-                $index = $date - ($i * $dayOffset);
+                $index = $date + ($i * $dayOffset);
                 $prev = $rand;
                 $change = $rand - $prev;
                 
@@ -444,8 +444,7 @@ class Controller_Api_Static extends Controller {
                 );
             }
         }
-       
-        
+
         
         $this->apiResponse = array('comparision' => $comparision);
         

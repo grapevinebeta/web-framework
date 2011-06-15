@@ -334,7 +334,7 @@ var GraphBoxController = BoxController.extend({
     computeDateInterval: function() {
       
 
-        return Math.ceil((this.getPeriodInDays() * 7)  / 30);
+        return Math.floor((this.getPeriodInDays() * 7)  / 30);
     },
     
     beforeLoadData: function () {
@@ -455,6 +455,145 @@ var GraphBoxController = BoxController.extend({
     }
     
 });
+
+
+/**
+ * Base class for all boxes that share linear graph functionality
+ * It all requires data indexed by timestamps in specific interval
+ *
+ */
+var LinearGraphBoxController = GraphBoxController.extend({
+    
+    /*
+     * @var Array holds all data series
+     */
+    series: [],
+    
+    /*
+     * @var Array holds all data labels
+     */
+    seriesLabels: [],
+    
+    /*
+     * @var int timestamp of first point that should begin the graph
+     */
+    firstTimestamp: null,
+    
+    /*
+     * @var Helper constant for computations
+     */
+    dayInterval: 3600 * 24, // day in seconds
+    
+    
+    /*
+     * @var Max value for proper graph drawing
+     */
+    maxValue: null,
+    
+    /*
+     * @var Callback for creating x label specyfic to range
+     */
+    formatterCallback: null,
+    
+    getFirstDate: function()
+    {
+        
+        if(this.firstTimestamp)
+            return this.firstTimestamp;
+        
+        for(var dataPrefix in this.graphData); 
+            
+        
+        for(var timestamp in this.graphData[dataPrefix]){
+        
+            var parsed = parseInt(timestamp, 10);
+            break;
+        }
+        
+        
+        parsed = new Date(parsed * 1000);
+        var offset = Math.floor(this.getPeriodInDays() / 30);
+        
+        return this.firstTimestamp = Date.parse(
+                new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate())
+        );
+        
+        
+    },
+    
+    populateGraph: function() {
+        alert("Must be implemented in extending class");
+    },
+    
+    
+    reset: function() {
+        this.firstTimestamp = null;
+        this.series = [];
+        this.seriesLabels = [];
+    },
+   
+    prepareGraph: function() {
+       
+        if (!this.graphData) {
+            return;
+        }
+        
+        // reset cached data
+        this.reset();
+        
+        this.populateGraph();
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                type: 'spline'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
+            ],
+            xAxis: {
+                
+                startOfWeek: 0,
+                type: 'datetime',
+                
+                labels: {
+                    formatter: this.formatterCallback     
+                }
+ 
+            },
+            yAxis: {
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                },
+                min: 0,
+                max: this.maxValue
+            },
+            
+            series: this.series
+        }
+        
+        this.graph = new Highcharts.Chart(options);
+       
+    },
+
+    construct: function() {}
+    
+});
+
 
 var BC_KeywordsAnalysis = GraphBoxController.extend({
 
@@ -839,7 +978,7 @@ var BC_RecentReviews = BoxController.extend({
 /**
  * @TODO create base class for linar graph controllers
  */
-var BC_SocialActivity = GraphBoxController.extend({
+var BC_SocialActivity = LinearGraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -851,49 +990,32 @@ var BC_SocialActivity = GraphBoxController.extend({
      */
     endpoint: 'social/activity',
     
-    
-    series: [],
-    seriesLabels: [],
-    firstTimestamp: null,
-    pointInterval: null,
-    scaleFactor: null, // scale factor computed from date interval
-    dayInterval: 3600 * 24, // day in seconds
-    maxValue: null,
-    
-    getFirstDate: function()
-    {
-        
-
-        if(this.firstTimestamp)
-            return this.firstTimestamp;
-        
-        for(var timestamp in this.graphData.networks){
-        
-            var parsed = parseInt(timestamp, 10);
-            break;
+    formatterCallback: function() {
+                        
+        var dateFormat;
+        var box = boxManager.getBox('box-social-activity');
+        switch(box.range['period']) {
+            case '1m':
+                dateFormat = '%a %e';
+                break;
+            case '3m':
+                dateFormat = '%d %b';
+                break;
+            case '6m':
+                dateFormat = '%d %b';
+                break;
+            case '1y':
+                dateFormat = '%b %Y';
+                break;
         }
-        
-        
-        parsed = new Date(parsed * 1000);
-        
-        var offset = Math.floor(this.getPeriodInDays() / 30);
-        
-        this.firstTimestamp = 
-            new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate());
-        
-        // convert date to milliseconds
-        return this.firstTimestamp = Date.parse(this.firstTimestamp);
-        
+                        
+        return Highcharts.dateFormat(dateFormat, this.value);                  
     },
     
-    
-    
     populateGraph: function() {
-        // reset cached data
-        this.reset();
-        var seriesMappings = []; // maapping of label values to corresponding series index
+        var seriesMappings = []; // mapping of label values to corresponding series index
         var seriesMappingInited = false;
-        this.series = [];
+        
         for (var tKey in this.graphData.networks) {
             
             var timeObject = this.graphData.networks[tKey];
@@ -906,117 +1028,34 @@ var BC_SocialActivity = GraphBoxController.extend({
                 {
                     // set specific options to each spline
                     // all timestamps must be expand to miliseconds
-                    var set = {
+                    
+                    seriesMappings[comparisionObject.network] = this.series.length;
+                    
+                    this.series.push({
                         name: comparisionObject.network, 
                         data: [], 
                         pointStart: this.getFirstDate(),
-                        pointInterval: (this.computeDateInterval()+1) * 24 * 3600 * 1000
-                    };
+                        pointInterval: (this.computeDateInterval()+1) * this.dayInterval * 1000
+                    });
                     
-                    seriesMappings[comparisionObject.network] = this.series.length;
-                    this.series.push(set);
                 }
                 
                 this.maxValue = this.maxValue < comparisionObject.value 
                     ? comparisionObject.value : this.maxValue;
                 
+                // add series single data to right place based on previously defined
+                // mappings
                 this.series[seriesMappings[comparisionObject.network]]
                     .data.unshift(parseInt(comparisionObject.value, 10));
                 
             }
             
-            if(!seriesMappingInited) {
+            if(!seriesMappingInited) 
                 seriesMappingInited = true;
-            }
+
         }
      
     },
-    
-    
-    reset: function() {
-      
-        this.firstTimestamp = undefined;
-        this.series = undefined;
-        this.seriesLabels = undefined;
-        this.scaleFactor = undefined;
-      
-    },
-   
-    prepareGraph: function() {
-       
-        if (!this.graphData) {
-            return;
-        }
-        
-        this.populateGraph();
-        
-        var graphHolderId = this.boxId + '-graph-holder';
-        
-        var options = {
-            chart: {
-                renderTo: graphHolderId,
-                type: 'spline'
-            },
-            title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
-            },
-            colors: [
-            '#80699B', 
-            '#AA4643', 
-            '#4572A7', 
-            '#89A54E', 
-            '#3D96AE', 
-            '#DB843D', 
-            '#92A8CD', 
-            '#A47D7C', 
-            '#B5CA92'
-            ],
-            xAxis: {
-                
-                startOfWeek: 0,
-                type: 'datetime',
-                
-                labels: {
-                    formatter: function() {
-                        
-                        var dateFormat;
-                        var box = boxManager.getBox('box-social-activity');
-                        switch(box.range['period']) {
-                            case '1m':
-                                dateFormat = '%a %e';
-                                break;
-                            case '3m':
-                                dateFormat = '%d %b';
-                                break;
-                            case '6m':
-                                dateFormat = '%d %b';
-                                break;
-                            case '1y':
-                                dateFormat = '%b %Y';
-                                break;
-                        }
-                        
-                        return Highcharts.dateFormat(dateFormat, this.value);                  
-                    }        
-                }
- 
-            },
-            yAxis: {
-                title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
-                    align: 'high'
-                },
-                min: 0,
-                max: this.maxValue
-            },
-            
-            series: this.series
-        }
-        
-        this.graph = new Highcharts.Chart(options);
-       
-    },
-    
     
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
@@ -1158,7 +1197,7 @@ var BC_SocialReach = BoxController.extend({
 });
 
 
-var BC_CompetitionComparision = GraphBoxController.extend({
+var BC_CompetitionComparision = LinearGraphBoxController.extend({
    
     boxId: 'box-competition-comparision',
     series: [],
@@ -1167,37 +1206,32 @@ var BC_CompetitionComparision = GraphBoxController.extend({
     firstTimestamp: null,
     pointInterval: null,
     scaleFactor: null, // scale factor computed from date interval
-    dayInterval: 1000 * 60 * 60 * 24, // day in miliseconds
-    tickInterval: 24 * 3600 * 1000 * 5, // 7 days x-axis labels interval
-
-    getFirstDate: function()
-    {
-        
-        var dates = [];
-        
-        if(this.firstTimestamp)
-            return this.firstTimestamp;
-        
-        for(var firstTimestamp in this.graphData.comparision) {
-            dates.push(this.firstTimestamp = parseInt(firstTimestamp, 10));
-            
-            // we need two first dates to computer interval between them
-            if(dates.length == 2)
+    dayInterval: 3600 * 24, // day in seconds
+    
+    formatterCallback: function() {
+                        
+        var dateFormat;
+        var box = boxManager.getBox('box-competition-comparision');
+        switch(box.range['period']) {
+            case '1m':
+                dateFormat = '%a %e';
+                break;
+            case '3m':
+                dateFormat = '%d %b';
+                break;
+            case '6m':
+                dateFormat = '%d %b';
+                break;
+            case '1y':
+                dateFormat = '%b %Y';
                 break;
         }
-        
-        
-        this.scaleFactor = (dates[1] - dates[0]) / (24 * 3600);
-        this.pointInterval = this.dayInterval * this.scaleFactor;
-        
-        return this.firstTimestamp;
-        
+                        
+        return Highcharts.dateFormat(dateFormat, this.value);                  
     },
     
     
     populateGraph: function() {
-        // reset cached data
-        this.reset();
         
         var seriesMappings = []; // maapping of label values to corresponding series index
         var seriesMappingInited = false;
@@ -1214,22 +1248,28 @@ var BC_CompetitionComparision = GraphBoxController.extend({
                 {
                     // set specific options to each spline
                     // all timestamps must be expand to miliseconds
-                    var set = {
-                        name: comparisionObject.competition, 
-                        data: [], 
-                        pointStart: parseInt(this.getFirstDate(), 10) * 1000,
-                        pointInterval: this.pointInterval
-                    };
                     
                     seriesMappings[comparisionObject.competition] = this.series.length;
-                    this.series.push(set);
+                    
+                    this.series.push({
+                        name: comparisionObject.competition, 
+                        data: [], 
+                        pointStart: this.getFirstDate(),
+                        pointInterval: (this.computeDateInterval()+1) * this.dayInterval * 1000
+                    });
+                    
                 }
                 
+                this.maxValue = this.maxValue < comparisionObject.value 
+                    ? comparisionObject.value : this.maxValue;
                 
+                // add series single data to right place based on previously defined
+                // mappings
                 this.series[seriesMappings[comparisionObject.competition]]
-                    .data.push(parseInt(comparisionObject.value, 10));
-                
+                    .data.unshift(parseInt(comparisionObject.value, 10));
+            
             }
+            
             
             if(!seriesMappingInited) {
                 seriesMappingInited = true;
@@ -1243,66 +1283,7 @@ var BC_CompetitionComparision = GraphBoxController.extend({
       this.loadGraphData();
       
     },
-    
-    reset: function() {
-      
-        this.firstTimestamp = undefined;
-        this.series = undefined;
-        this.seriesLabels = undefined;
-        this.scaleFactor = undefined;
-      
-    },
    
-    prepareGraph: function() {
-       
-        if (!this.graphData) {
-            return;
-        }
-        
-        this.populateGraph();
-        
-        var graphHolderId = this.boxId + '-graph-holder';
-        
-        var options = {
-            chart: {
-                renderTo: graphHolderId,
-                type: 'spline'
-            },
-            title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
-            },
-            colors: [
-            '#80699B', 
-            '#AA4643', 
-            '#4572A7', 
-            '#89A54E', 
-            '#3D96AE', 
-            '#DB843D', 
-            '#92A8CD', 
-            '#A47D7C', 
-            '#B5CA92'
-            ],
-            xAxis: {
-                type: 'datetime',
-                title: {
-                    text: null
-                },
-                tickInterval: this.tickInterval * this.scaleFactor
-            },
-            yAxis: {
-                title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
-                    align: 'high'
-                }
-            },
-            
-            series: this.series
-        }
-        
-        this.graph = new Highcharts.Chart(options);
-       
-    },
-    
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
