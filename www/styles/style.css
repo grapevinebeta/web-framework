@@ -458,5 +458,107 @@ input[type=submit] {
         #box-recent-reviews .reviewRating .stars-5-of-5-front {
             width: 110px;
         }
+        
+#box-ogsi {}
+
+    #box-ogsi #ogsi-score-bg-right {
+        background-image: url(../images/ogsi-bg.png);
+        background-position: right bottom;
+        background-repeat: no-repeat;
+        padding-right: 32px;
+    }
+    
+    #box-ogsi #ogsi-score-bg-left {
+        background-image: url(../images/ogsi-bg.png);
+        background-position: top left;
+        background-repeat: no-repeat;
+        padding-left: 10px;
+        height: 101px;
+    }
+    
+    #box-ogsi #ogsi-score-ogsi {
+        padding: 5px 0px 0px;
+        font-size: 20px;
+        text-align: center;
+    }
+    #box-ogsi #ogsi-rating-rating {
+        padding: 5px 0px 0px;
+        font-size: 20px;
+        text-align: center;
+        color: #F9AA21;
+    }
+    #box-ogsi #ogsi-reviews-reviews {
+        padding: 5px 0px 0px;
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    #box-ogsi #ogsi-score-value {
+        padding: 0px;
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 100%;
+    }
+    
+    #box-ogsi #ogsi-rating {
+        height: 101px;
+    }
+    
+    #box-ogsi #ogsi-rating-value {
+        padding: 0px;
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 100%;
+    }
+
+    #box-ogsi #ogsi-reviews {
+        height: 101px;
+    }
+    
+    #box-ogsi #ogsi-reviews-value {
+        padding: 0px;
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 100%;
+    }
+    
+    #box-ogsi .change-arrow {
+        display: inline-block;
+        width: 15px;
+        height: 14px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+    }
+    
+    #box-ogsi .change-arrow.positive {
+        background-image: url(../images/icons/arrow-up.png);
+    }
+
+    #box-ogsi .change-arrow.negative {
+        background-image: url(../images/icons/arrow-down.png);
+    }
+    
+    #box-ogsi #ogsi-rating #ogsi-rating-stars-off {
+        width: 110px;
+        height: 20px;
+        margin: 0px auto;
+        background-image: url(../images/icons/review-stars.png);
+        background-repeat: no-repeat;
+        background-position: top left;
+    }
+    #box-ogsi #ogsi-rating #ogsi-rating-stars-on {
+        width: 20px;
+        height: 20px;
+        background-image: url(../images/icons/review-stars.png);
+        background-repeat: no-repeat;
+        background-position: left -22px;
+    }
+    
+    #box-ogsi .change-value {
+        font-size: 14px;
+    }
 
 

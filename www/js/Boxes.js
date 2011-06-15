@@ -445,6 +445,53 @@ var GraphBoxController = BoxController.extend({
     
 });
 
+var BC_Ogsi = BoxController.extend({
+
+    /**
+     * @var String DOM id of the container div 
+     */
+    boxId: 'box-ogsi',
+    
+    /**
+     * @var String Name of the requested resource, used in Ajax URL
+     */
+    endpoint: 'ogsi',
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        var holder = boxController.getContentDom();
+        if (data.ogsi) {
+            holder.find('#ogsi-score-value').text(data.ogsi.ogsi.value);
+            holder.find('#ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+            holder.find('#ogsi-score-change .change-arrow')
+                .removeClass('positive')
+                .removeClass('negative')
+                .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+                
+            holder.find('#ogsi-rating-value').text(data.ogsi.rating.value);
+            holder.find('#ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('#ogsi-rating-change .change-arrow')
+                .removeClass('positive')
+                .removeClass('negative')
+                .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
+            holder.find('#ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+
+            holder.find('#ogsi-reviews-value').text(data.ogsi.reviews.value);
+            holder.find('#ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('#ogsi-reviews-change .change-arrow')
+                .removeClass('positive')
+                .removeClass('negative')
+                .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            holder.show();
+        }
+        boxController.afterLoadData();
+    },
+    
+    construct: function () {}
+    
+});
+
 var BC_KeywordsAnalysis = GraphBoxController.extend({
 
     /**
@@ -1718,6 +1765,7 @@ boxManager = {
 
 $(document).ready(function () {
     boxManager.add(new BC_KeywordsAnalysis())
+              .add(new BC_Ogsi())
               .add(new BC_ReviewSites())
               .add(new BC_RecentReviews())
               .add(new BC_SocialActivity())
