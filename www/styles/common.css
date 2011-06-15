@@ -103,6 +103,10 @@
     border: none !important
 }
 
+table.v-top td {
+    vertical-align: top;
+}
+
 table.data-grid {
     border: 0px solid gray;
     border-collapse: collapse;

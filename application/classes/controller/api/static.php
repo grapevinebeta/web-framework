@@ -35,6 +35,31 @@ class Controller_Api_Static extends Controller {
         
     }
     
+    public function action_ogsi() {
+        $this->apiResponse = array('ogsi'=> array(
+            'distribution' => array(  // OGSIDistributionObject,
+                'positive' => 5, //:[int:required] - positive count
+                'negative' => 2, //:[int:required] - negative count
+                'neutral' => 3, //:[int:required] - neutral count
+                'total' => 10, //:[int:required] - total count
+                'average' => 4, //:[decimal:required] - average count
+            ),
+            'ogsi' => array( // OGSIScoreObject,
+                'value' => 55.0, //:[decimal:required] - the ogsi percent
+                'change' => 5.0, //:[decimal:required] - the change in percentage
+            ),
+            'reviews' => array( // OGSIReviewsObject,
+                'value' => 5, //:[number:required] - the number of reviews
+                'change' => -2, //:[number:required] - the change in percentage
+            ),
+            'rating' => array( // OGSIRatingObect
+                'value' => 4.5, //:[decimal:required] - the current rating
+                'change' => 5.0, //:[decimal:required] - change in rating
+            ),
+            
+        ));
+    }
+    
     public function action_sites()
     {
         $sites = array(
