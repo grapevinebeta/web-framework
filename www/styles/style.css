@@ -459,4 +459,24 @@ input[type=submit] {
             width: 110px;
         }
 
+    #box-recent-reviews .reviewStatus {
+        background-image: url(../images/icons/review-status-icons.png);
+        background-position: 0px -91px;
+        background-repeat: no-repeat;
+        height: 25px;
+        width: 28px;
+    }
+
+        #box-recent-reviews .reviewStatus-closed {
+            background-position: 0px -31px;
+        }
+
+        #box-recent-reviews .reviewStatus-open {
+            background-position: 0px -91px;
+        }
+
+        #box-recent-reviews .reviewStatus-todo {
+            background-position: 0px 0px;
+        }
+
 

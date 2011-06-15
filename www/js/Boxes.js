@@ -793,6 +793,9 @@ var BC_RecentReviews = BoxController.extend({
                 } else if (n == 'rating') {
                     var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
                     tr.find('td.col-' + n).html(ratingStars);
+                } else if (n == 'status') {
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
+                    tr.find('td.col-' + n).html(reviewStatus);
                 } else {
                     tr.find('td.col-' + n).text(value);
                 }
