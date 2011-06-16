@@ -479,4 +479,31 @@ input[type=submit] {
             background-position: 0px 0px;
         }
 
+    /* Styling of the expanded review details */
+    #box-recent-reviews .reviewDetails {
+
+    }
+
+        #box-recent-reviews .reviewDetails td {
+            padding: 0;
+        }
+
+        #box-recent-reviews .recentReviewsDetails {
+            clear: both;
+            padding: 10px;
+        }
+
+            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsForm {
+                float: left;
+                width: 558px;
+            }
+
+            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsMenu {
+                float: left;
+                width: 125px;
+            }
+
+            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsButtons {
+                text-align: right;
+            }
 
