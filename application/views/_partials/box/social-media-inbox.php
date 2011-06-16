@@ -1,8 +1,8 @@
-<div id="box-social-activity-details" class="box">
+<div id="box-social-media-inbox" class="box">
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Social Activity Details'),
+            'caption' => __('Social Media Inbox'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
@@ -13,12 +13,10 @@
                 <table class="wide data-grid no-outer-border" style="padding: 5px;">
                     <tbody>
                         <tr>
-                            <td class="col-checkbox"></td>
-                            <td class="col-rating"></td>
+                            <td class="col-network"></td>
                             <td class="col-submitted a-center"></td>
                             <td class="col-title"></td>
                             <td class="col-site"></td>
-                            <td class="col-status a-right"></td>
                         </tr>
                         <tr style="display: none;">
                             <td colspan="6">

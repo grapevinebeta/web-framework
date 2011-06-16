@@ -8,6 +8,10 @@
     <div class="box-container active">
         <?php echo view::factory('_partials/box/competition-distribution'); ?>
     </div>
+    
+    <div class="box-container active">
+        <?php echo view::factory('_partials/box/competition-ledger'); ?>
+    </div>
 
     <div class="box-container empty box-container-left"></div>
     <div class="box-container empty box-container-right"></div>
