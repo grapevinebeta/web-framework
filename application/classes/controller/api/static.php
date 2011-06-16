@@ -35,6 +35,36 @@ class Controller_Api_Static extends Controller {
         
     }
     
+    public function action_ogsi() {
+        
+        $rands[] = rand(0, 10);
+        $rands[] = rand(0, 10);
+        $rands[] = rand(0, 10);
+        
+        $this->apiResponse = array('ogsi'=> array(
+            'distribution' => array(  // OGSIDistributionObject,
+                'positive' => $rands[0], //:[int:required] - positive count
+                'neutral' => $rands[1], //:[int:required] - neutral count
+                'negative' => $rands[2], //:[int:required] - negative count
+                'total' => array_sum($rands), //:[int:required] - total count
+                'average' => 4, //:[decimal:required] - average count
+            ),
+            'ogsi' => array( // OGSIScoreObject,
+                'value' => 55.0, //:[decimal:required] - the ogsi percent
+                'change' => 5.0, //:[decimal:required] - the change in percentage
+            ),
+            'reviews' => array( // OGSIReviewsObject,
+                'value' => 5, //:[number:required] - the number of reviews
+                'change' => -2, //:[number:required] - the change in percentage
+            ),
+            'rating' => array( // OGSIRatingObect
+                'value' => 4.5, //:[decimal:required] - the current rating
+                'change' => 5.0, //:[decimal:required] - change in rating
+            ),
+            
+        ));
+    }
+    
     public function action_sites()
     {
         $sites = array(
@@ -408,37 +438,37 @@ class Controller_Api_Static extends Controller {
         $comparision = array();
         $range = $this->request->post('range');
         $interval = $this->request->post('dateInterval');
-        
         $date = $range === false ? time() : strtotime($range['date']);
         $dayOffset = 3600 * 24;
-        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
-        
-        
-        switch($range['period'])
-        {
-            
+
+        switch ($range['period']) {
+
             case '1m':
-                $startPoint = -30;
+                $startPoint = strtotime('-1 month', $date);
                 break;
             case '3m':
-                $startPoint = -90;
+                $startPoint = strtotime('-3 month', $date);
                 break;
             case '6m':
-                $startPoint = -180;
+                $startPoint = strtotime('-6 month', $date);
                 break;
             case '1y':
-                $startPoint = -365;
+                $startPoint = strtotime('-12 month', $date);
                 break;
-            
+            default:
+                $startPoint = strtotime('-1 month', $date);
+                break;
         }
-        
-        
-        for($i=$startPoint; $i < 0; $i += $interval)
-        {
-            
-            foreach($competitors as $competitor) {
+
+
+        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
+        $startDays = ($date - $startPoint) / (3600 * 24);
+
+        for ($i = 0; $i <= $startDays; $i += $interval) {
+            foreach ($competitors as $competitor) {
+
                 $rand = rand(1,5);
-                $index = $date - ($i * $dayOffset);
+                $index = $date + ($i * $dayOffset);
                 $prev = $rand;
                 $change = $rand - $prev;
                 
@@ -449,8 +479,7 @@ class Controller_Api_Static extends Controller {
                 );
             }
         }
-       
-        
+
         
         $this->apiResponse = array('comparision' => $comparision);
         

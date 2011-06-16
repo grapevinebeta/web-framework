@@ -18,4 +18,3 @@
     <div class="box-container empty"></div>
     
 </div>
-<div class="clear"></div>
