@@ -3,7 +3,7 @@
         '_partials/box/header', 
         array(
             'caption' => __('Reputation Distribution'),
-            'buttons' => array('dashboard-pin', 'move'),
+            'buttons' => array('dashboard-pin', 'move', 'show-graph', 'show-data'),
             )
         ); 
     ?>
