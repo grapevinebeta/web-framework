@@ -347,14 +347,15 @@ class Controller_Api_Static extends Controller {
         
         for($i=0; $i < 8; $i++)
         {
+            $network = $competition[rand(0,6)];
             
             $socials[] = array(
-                'network' => $competition[rand(0,6)],
+                'network' => $network,
                 'status' => $status[rand(0,2)],
                 'rating' => rand(0, 5), // [decimal:optional] - review overall rating
                 'submitted' => rand(1300000000, time()),
                 'excerpt' => $excerpts[rand(0,6)],
-                'site' => $autor[rand(0, 6)],
+                'site' => $network,
                 'id' => rand(1, 1000000),
                 'review' => $excerpts[rand(0,6)],
                 'category' => 'category',
