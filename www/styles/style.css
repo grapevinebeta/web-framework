@@ -458,7 +458,55 @@ input[type=submit] {
         #box-recent-reviews .reviewRating .stars-5-of-5-front {
             width: 110px;
         }
-        
+
+    #box-recent-reviews .reviewStatus {
+        background-image: url(../images/icons/review-status-icons.png);
+        background-position: 0px -91px;
+        background-repeat: no-repeat;
+        height: 25px;
+        width: 28px;
+    }
+
+        #box-recent-reviews .reviewStatus-closed {
+            background-position: 0px -31px;
+        }
+
+        #box-recent-reviews .reviewStatus-open {
+            background-position: 0px -91px;
+        }
+
+        #box-recent-reviews .reviewStatus-todo {
+            background-position: 0px 0px;
+        }
+
+    /* Styling of the expanded review details */
+    #box-recent-reviews .reviewDetails {
+
+    }
+
+        #box-recent-reviews .reviewDetails td {
+            padding: 0;
+        }
+
+        #box-recent-reviews .recentReviewsDetails {
+            clear: both;
+            padding: 10px;
+        }
+
+            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsForm {
+                float: left;
+                width: 558px;
+            }
+
+            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsMenu {
+                float: left;
+                width: 125px;
+            }
+
+            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsButtons {
+                text-align: right;
+            }
+
 #box-ogsi {}
 
     #box-ogsi #ogsi-score-bg-right {

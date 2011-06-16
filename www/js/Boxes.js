@@ -929,7 +929,14 @@ var BC_RecentReviews = BoxController.extend({
             event.preventDefault();
             var review_id = $(this).attr('data-review-id');
             log('Toggling details of review with ID="' + review_id + '"');
-            self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails').toggle('slow');
+            var detailsBox = self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails .recentReviewsDetails');
+            if (detailsBox.css('display') == 'none') {
+                detailsBox.show();
+                log('showing...');
+            } else {
+                detailsBox.hide();
+                log('hiding...');
+            }
         });
     },
 
@@ -941,17 +948,53 @@ var BC_RecentReviews = BoxController.extend({
     },
 
     /**
+     * Get the table header
+     */
+    getHeader: function (review_id) {
+        return $('<thead>'
+            + '<tr>'
+            + '<th>Status</th>'
+            + '<th>Rating</th>'
+            + '<th>Date</th>'
+            + '<th>Review</th>'
+            + '<th>Source</th>'
+            + '</tr>'
+            + '</thead>');
+    },
+
+    /**
      * Get the template for details of specific review
      */
     getReviewDetailsTemplate: function (review_id) {
-        return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
-            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">some review '
-            + 'details placeholder, some review details placeholder, some review details placeholder, '
-            + 'some review details placeholder, some review details placeholder, some review details '
-            + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder, some review details placeholder, some review details '
-            + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder</td>'
+        return $('<tr data-review-id="' + review_id + '" class="reviewDetails">'
+            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">'
+                + '<div class="recentReviewsDetails" style="display: none;">'
+                    + '<div style="clear: both;">'
+                        + '<div class="recentReviewsDetailsForm">'
+                            + '<h2>Some review title</h2>'
+                            + '<p>Some review content Some review content Some review content Some review content '
+                            + 'Some review content Some review content Some review content Some review content '
+                            + 'Some review content Some review content Some review content Some review content '
+                            + 'Some review content Some review content Some review content Some review content '
+                            + 'Some review content Some review content Some review content Some review content '
+                            + 'Some review content Some review content Some review content Some review content </p>'
+                            + '<form action="" method="post">'
+                                + '<input type="text" value="asd" name="field1" /> '
+                                + '<input type="text" value="asd" name="field2" /><br />'
+                                + '<textarea type="text" name="content"></textarea>'
+                                + '<input type="submit" name="" value="Send" />'
+                            + '</form>'
+                        + '</div>'
+                        + '<div class="recentReviewsDetailsMenu">'
+                            + '<p>[status icon]</p>'
+                            + '<ul><li>Completed</li><li>Mark</li><li>ToDo</li><li>Email</li></ul>'
+                        + '</div>'
+                    + '</div>'
+                    + '<div class="recentReviewsDetailsButtons">'
+                        + 'some buttons'
+                    + '</div>'
+                + '</div>'
+            + '</td>'
             + '</tr>');
     },
 
@@ -993,6 +1036,7 @@ var BC_RecentReviews = BoxController.extend({
         var trContent = null;
         var current_id = null;
         table.find('tbody tr').remove();
+        table.prepend(this.getHeader()); // prepend header
         for (var i = 0; i < this.data.reviews.length; i++) {
             current_id = parseInt(this.data.reviews[i].id);
             log('Generating row for review with ID="' + current_id + '"');
@@ -1016,6 +1060,9 @@ var BC_RecentReviews = BoxController.extend({
                 } else if (n == 'rating') {
                     var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
                     tr.find('td.col-' + n).html(ratingStars);
+                } else if (n == 'status') {
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
+                    tr.find('td.col-' + n).html(reviewStatus);
                 } else {
                     tr.find('td.col-' + n).text(value);
                 }
