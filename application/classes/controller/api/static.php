@@ -115,11 +115,16 @@ class Controller_Api_Static extends Controller {
     
     public function action_reviews()
     {
+        $review_statuses = array(
+            'CLOSED',
+            'OPEN',
+            'TODO',
+        );
         sleep(2);
         $this->apiResponse = array(
             'reviews' => array(
                 array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
                     'rating' => rand(0,5), // [decimal:optional] - review overall rating
                     'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
@@ -134,7 +139,7 @@ class Controller_Api_Static extends Controller {
                     'author' => 'Author', // [string:optional] - author of the content
                     ),
                 array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
                     'rating' => rand(0,5), // [decimal:optional] - review overall rating
                     'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
@@ -149,7 +154,7 @@ class Controller_Api_Static extends Controller {
                     'author' => 'Author', // [string:optional] - author of the content
                     ),
                 array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
                     'rating' => rand(0,5), // [decimal:optional] - review overall rating
                     'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
@@ -164,7 +169,7 @@ class Controller_Api_Static extends Controller {
                     'author' => 'Author', // [string:optional] - author of the content
                     ),
                 array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
                     'rating' => rand(0,5), // [decimal:optional] - review overall rating
                     'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
@@ -179,7 +184,7 @@ class Controller_Api_Static extends Controller {
                     'author' => 'Author', // [string:optional] - author of the content
                     ),
                 array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
                     'rating' => rand(0,5), // [decimal:optional] - review overall rating
                     'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
@@ -194,7 +199,7 @@ class Controller_Api_Static extends Controller {
                     'author' => 'Author', // [string:optional] - author of the content
                     ),
                 array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
+                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
                     'rating' => rand(0,5), // [decimal:optional] - review overall rating
                     'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
                     'except' => 'except', // [string:required] - excerpt of content
