@@ -1271,6 +1271,10 @@ var BC_SocialReach = LinearGraphBoxController.extend({
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
+        
+        var trFooter = table.find('tfoot tr');
+        trFooter.find('.col-value, .col-total').text('0');
+        
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
             tr = trTemplate.clone();
@@ -1279,6 +1283,12 @@ var BC_SocialReach = LinearGraphBoxController.extend({
                 if (n == 'change') {
                     value = value + '%';
                 }
+                else if (n == 'value' || n == 'total') {
+                    var currentTotalValue = 0;
+                    currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
+                    trFooter.find('th.col-' + n).text(value + currentTotalValue);
+                }
+                
                 tr.find('td.col-' + n).text(value);
             }
             
