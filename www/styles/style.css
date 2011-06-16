@@ -560,6 +560,63 @@ input[type=submit] {
     #box-ogsi .change-value {
         font-size: 14px;
     }
+    
+    #box-ogsi #box-ogsi-review-distribution .title {
+        text-align: center;
+        padding: 5px;
+        background-color: #D1CDDD;
+        color: white;
+        font-weight: normal;
+        font-size: 18px;
+    }
+    
+    #box-ogsi #box-ogsi-review-distribution .bar-holder {
+        padding: 20px 50px;
+    }
+    
+    #box-ogsi .bar-value {
+        font-size: 13px;
+        color: white;
+        font-weight: bold;
+        display: inline-block;
+        padding-top: 4px;
+    }
+    
+    #box-ogsi .bar-negative {
+        height: 22px;
+        background-image: url(../images/box/ogsi/bar-negative-bg.jpg);
+        border: 1px solid #BC2B2C;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+    #box-ogsi .bar-neutral {
+        height: 22px;
+        margin-top: -1px;
+        margin-left: -1px;
+        float: left;
+        background-image: url(../images/box/ogsi/bar-neutral-bg.jpg);
+        border: 1px solid #D1BC30;
+        border-radius: 8px;
+    }
+
+    #box-ogsi .bar-neutral .bar-value {
+        color: black;
+    }
+
+    #box-ogsi .bar-positive {
+        height: 22px;
+        margin-top: -1px;
+        margin-left: -1px;
+        float: left;
+        background-image: url(../images/box/ogsi/bar-positive-bg.jpg);
+        border: 1px solid #18693C;
+        border-radius: 8px;
+    }
+
+    #box-ogsi .bar-positive .bar-value {
+        color: white;
+    }
 
     
 #box-social-media-inbox {}
@@ -595,7 +652,7 @@ input[type=submit] {
     #box-social-media-inbox tr td.col-network a.youtube {
         background-position: 0 -132px;
     }
-
+    
     #box-social-media-inbox tr td.col-network a.reddit {
         background-position: 0 -165px;
     }
@@ -615,6 +672,7 @@ input[type=submit] {
     #box-social-media-inbox tr td.col-network a.delicious {
         background-position: 0 -297px;
     }
+        
 
 /* Review Inbox */
 #box-competition-ledger {}

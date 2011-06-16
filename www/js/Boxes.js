@@ -633,6 +633,43 @@ var BC_Ogsi = BoxController.extend({
                 .removeClass('negative')
                 .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
             holder.show();
+            
+            var distribution = data.ogsi.distribution;
+            var barHolder = holder.find('#box-ogsi-review-distribution .bar-holder');
+            if (distribution.total) {
+                barHolder.show();
+                var bar = barHolder.find('.bar-negative');
+                bar.children('.bar-value').text('');
+                if (distribution.negative > 0) {
+                    bar.children('.bar-value').text(distribution.negative);
+                }
+                bar = barHolder.find('.bar-neutral');
+                bar.children('.bar-value').text('');
+                if (distribution.neutral > 0) {
+                    bar.children('.bar-value').text(distribution.neutral);
+                    bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
+                    bar.show();
+                } else if (distribution.positive > 0) {
+                    bar.css('width', ((distribution.positive)/distribution.total)*100+'%');
+                    bar.show();
+                } else {
+                    bar.hide();
+                }
+                bar = barHolder.find('.bar-positive');
+                bar.children('.bar-value').text('');
+                if (distribution.positive > 0) {
+                    bar.children('.bar-value').text(distribution.positive);
+                    bar.css('width', (distribution.positive/(distribution.neutral + distribution.positive))*100+'%');
+                    bar.show();
+                } else {
+                    bar.hide();
+                }
+                
+            } else {
+                barHolder.hide();
+            }
+            
+            
         }
         boxController.afterLoadData();
     },
