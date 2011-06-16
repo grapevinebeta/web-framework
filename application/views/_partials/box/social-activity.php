@@ -1,11 +1,11 @@
 <div id="box-social-activity" class="box">
-    <?php echo View::factory(
-        '_partials/box/header', 
-        array(
-            'caption' => __('Social Activity'),
-            'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
+    <?php
+    echo View::factory(
+            '_partials/box/header', array(
+        'caption' => __('Social Activity'),
+        'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
             )
-        ); 
+    );
     ?>
     <div class="box-content">
         <div class="data-grid-holder" style="display: none;">
@@ -19,15 +19,24 @@
                         <th><?php echo __('Total'); ?></th>
                     </tr>
                 </thead>
-                    <tbody>
-                        <tr>
-                            <td class="col-network"></td>
-                            <td class="col-action"></td>
-                            <td class="col-value a-center"></td>
-                            <td class="col-change a-center"></td>
-                            <td class="col-total a-center"></td>
-                        </tr>
-                    </tbody>
+                <tfoot>
+                    <tr>
+                        <th class="a-left"><?php echo __('Total'); ?></th>
+                        <th></th>
+                        <th class="col-value a-center"></th>
+                        <th></th>
+                        <th class="col-total a-center"></th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr>
+                        <td class="col-network"></td>
+                        <td class="col-action"></td>
+                        <td class="col-value a-center"></td>
+                        <td class="col-change a-center"></td>
+                        <td class="col-total a-center"></td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         <div id="box-social-activity-graph-holder" class="graph-holder"></div>

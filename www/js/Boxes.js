@@ -351,12 +351,16 @@ var GraphBoxController = BoxController.extend({
     },
     
     showData: function () {
+        
+        
         var box = null;
         if (this instanceof BoxController) {
             box = this.getBoxDom();
         } else {
             box = $(this).parents('.box:first');
         }
+        
+        
         var boxContent = box.find('.box-content');
         boxContent.children().hide();
         box.find('.box-header-button').removeClass('active');
@@ -417,17 +421,19 @@ var GraphBoxController = BoxController.extend({
      */
     loadGraphDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
+        
         boxController.graphData = data;
         boxController.afterLoadGraphData();
     },
     
     loadGraphData: function() {
         this.beforeLoadGraphData();
-        
+
+        console.log(this);
         this.graphData = null;
-        if (!this.loadGraphDataCallback.boxController) {
+//        if (!this.loadGraphDataCallback.boxController) {
             this.loadGraphDataCallback.boxController = this;
-        }
+//        }
         this.graphData = this.dataProvider
             .setEndpoint(this.endpoint)
             .setDateRange(this.range)
@@ -1198,7 +1204,7 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         var trFooter = table.find('tfoot tr');
-        trFooter.find('th:not(:first)').text('0');
+        trFooter.find('th.col-total, th.col-value').text('0');
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
             tr = trTemplate.clone();
