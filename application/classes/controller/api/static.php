@@ -36,12 +36,17 @@ class Controller_Api_Static extends Controller {
     }
     
     public function action_ogsi() {
+        
+        $rands[] = rand(0, 10);
+        $rands[] = rand(0, 10);
+        $rands[] = rand(0, 10);
+        
         $this->apiResponse = array('ogsi'=> array(
             'distribution' => array(  // OGSIDistributionObject,
-                'positive' => 5, //:[int:required] - positive count
-                'negative' => 2, //:[int:required] - negative count
-                'neutral' => 3, //:[int:required] - neutral count
-                'total' => 10, //:[int:required] - total count
+                'positive' => $rands[0], //:[int:required] - positive count
+                'neutral' => $rands[1], //:[int:required] - neutral count
+                'negative' => $rands[2], //:[int:required] - negative count
+                'total' => array_sum($rands), //:[int:required] - total count
                 'average' => 4, //:[decimal:required] - average count
             ),
             'ogsi' => array( // OGSIScoreObject,

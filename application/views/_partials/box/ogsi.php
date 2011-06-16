@@ -54,7 +54,15 @@
             <div id="box-ogsi-review-distribution">
                 <div class="title a-    center"><?php echo __('Review Distribution'); ?></div>
                 <div class="bar-holder">
-                    
+                    <div class="bar-negative">
+                        <div class="bar-neutral">
+                            <div class="bar-positive">
+                                <span class="bar-value">1</span>
+                            </div>
+                            <span class="bar-value">3</span>
+                        </div>
+                        <span class="bar-value">5</span>
+                    </div>
                 </div>
             </div>
         </div>

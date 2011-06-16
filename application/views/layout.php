@@ -53,8 +53,5 @@
                     )) ?>
         </div>
     </div>
-    <script type="text/javascript">
-        var b = BoxController();
-    </script>
 </body>
 </html> 
