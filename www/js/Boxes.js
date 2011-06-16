@@ -429,17 +429,18 @@ var GraphBoxController = BoxController.extend({
     loadGraphData: function() {
         this.beforeLoadGraphData();
 
-        console.log(this);
+        var callback = this.loadGraphDataCallback.clone();
+        
         this.graphData = null;
-//        if (!this.loadGraphDataCallback.boxController) {
-            this.loadGraphDataCallback.boxController = this;
-//        }
+        callback.boxController = this;
+        
+        
         this.graphData = this.dataProvider
             .setEndpoint(this.endpoint)
             .setDateRange(this.range)
             .setFilters(this.filters)
             .setDateInterval(this.computeDateInterval())
-            .setCallback(this.loadGraphDataCallback)
+            .setCallback(callback)
             .fetch();
         return this;
     },
