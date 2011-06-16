@@ -1931,7 +1931,7 @@ boxManager = {
         }).find('#period-selector, #date-selector').change(function () {
             $(this).parents('form:first').submit();
         });
-        $( ".box" ).draggable({ 
+        $( "#boxes-holder .box" ).draggable({ 
             snap: ".box-container", 
             snapMode: 'inner',
             handle: ".box-header-button-move",
