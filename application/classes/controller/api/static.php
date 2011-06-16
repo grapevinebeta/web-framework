@@ -298,27 +298,35 @@ class Controller_Api_Static extends Controller {
                 
                 break;
             case 'reach':
-                $networks[] = array(
-                    'network' => 'Facebook' , //[string:required] - social network
-                    'action' => 'Likes' , //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5 , //[int:required] - activity value
-                    'change' => 4.0 , //[decimal:required] - change amount
-                    'total' => 444 , //[int:required] - total amount
-                );
-                $networks[] = array(
-                    'network' => 'Tweeter', //[string:required] - social network
-                    'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
-                    'change' => 2.0, //[decimal:required] - change amount
-                    'total' => 123, //[int:required] - total amount
-                );
-                $networks[] = array(
-                    'network' => 'Flickr', //[string:required] - social network
-                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
-                    'change' => 2.0, //[decimal:required] - change amount
-                    'total' => 23, //[int:required] - total amount
-                );
+                
+                
+                if($interval)
+                    $networks = $this->getSocialActivityTimeSeries();
+                else {
+                
+                    $networks[] = array(
+                        'network' => 'Facebook' , //[string:required] - social network
+                        'action' => 'Likes' , //[string:required] - type of activity, ex. tweet,checkin,upload
+                        'value' => 5 , //[int:required] - activity value
+                        'change' => 4.0 , //[decimal:required] - change amount
+                        'total' => 444 , //[int:required] - total amount
+                    );
+                    $networks[] = array(
+                        'network' => 'Tweeter', //[string:required] - social network
+                        'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
+                        'value' => 5, //[int:required] - activity value
+                        'change' => 2.0, //[decimal:required] - change amount
+                        'total' => 123, //[int:required] - total amount
+                    );
+                    $networks[] = array(
+                        'network' => 'Flickr', //[string:required] - social network
+                        'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                        'value' => 5, //[int:required] - activity value
+                        'change' => 2.0, //[decimal:required] - change amount
+                        'total' => 23, //[int:required] - total amount
+                    );
+                
+                }
                 
                 break;
         }
@@ -326,41 +334,55 @@ class Controller_Api_Static extends Controller {
     }
 
     public function action_socials() {
+        
+        $status = array('OPEN', 'CLOSE', 'TODO');
+        $excerpts = array(
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+          'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+          'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+          'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+          'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+          'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+          'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'  
+        );
+        
+        $autor = array('DealerRater', 'Cars.com', 'Edmunds', 
+            'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+        $competition = array('Google','Twitter', 'YouTube', 'Facebook', 'Flickr', 
+            'Blogger', 'Rss', 'Delicious');
+        
+        $socials = array();
+        
+        for($i=0; $i < 8; $i++)
+        {
+            $network = $competition[rand(0,6)];
+            
+            $socials[] = array(
+                'network' => $network,
+                'status' => $status[rand(0,2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0,6)],
+                'site' => $network,
+                'id' => rand(1, 1000000),
+                'review' => $excerpts[rand(0,6)],
+                'category' => 'category',
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0,6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+
+            );
+            
+        }
+        
+        
         $this->apiResponse = array(
-            'socials' => array(
-                array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1306016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'facebook.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '1', // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    'network' => 'Facebook', //[string:required]  name of network from Social.Networks[....]
-                    ),
-                array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'tweeter.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '2', // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    'network' => 'Tweeter', //[string:required]  name of network from Social.Networks[....]
-                    ),
-            ),
+
+            'socials' => $socials, 
             'filters' => array(
                 'activity' => array(
                     array(
@@ -385,10 +407,10 @@ class Controller_Api_Static extends Controller {
                 ),
                 'network' => array(
                     array(
-                        'value' => 'DealerRater',
+                        'value' => 'Twitter',
                     ),
                     array(
-                        'value' => 'Cars.com',
+                        'value' => 'Facebook',
                     ),
                     array(
                         'value' => 'Google',
@@ -396,6 +418,7 @@ class Controller_Api_Static extends Controller {
                 ),
             ),
         );
+        
     }
     
     public function action_distribution() 
@@ -486,10 +509,8 @@ class Controller_Api_Static extends Controller {
     }
     
     /**
-     * This methods helps to generate data series for Social Activity
-     * from competition section
-     * 
-	
+     * Method for creating timeseries with social tab data for linear graphs
+     * @return type 
      */
     private function getSocialActivityTimeSeries()
     {
@@ -553,4 +574,106 @@ class Controller_Api_Static extends Controller {
         return $timeSeries;
         
     }
+    
+    /**
+     * Competition leger action form competition tab
+     * it is returning collection of json objects:
+     * CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObject
+     * @see api-dataProvider.txt
+     */
+    public function action_competition_ledger() 
+    {
+        
+        $status = array('OPEN', 'CLOSE', 'TODO');
+        $excerpts = array(
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+          'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+          'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+          'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+          'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+          'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+          'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'  
+        );
+        
+        $autor = array('DealerRater', 'Cars.com', 'Edmunds', 
+            'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+        $competition = array('Best','Classic', 'Bryan', 'Ross downing', 'Brian Harris', 'Mac', 'Batton Rouge');
+        
+        $source = array();
+        
+        foreach($competition as $competitor)
+        {
+            
+            $source[] = array('source' => $competitor);
+            
+        }
+        
+        $reviews = array();
+        
+        for($i=0; $i < 5; $i++)
+        {
+            
+            $reviews[] = array(
+                'competition' => $competition[rand(0,6)],
+                'status' => $status[rand(0,2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0,6)],
+                'site' => $autor[rand(0, 6)],
+                'id' => rand(1, 1000000),
+                'review' => $excerpts[rand(0,6)],
+                'category' => 'category',
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $autor[rand(0, 6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+
+            );
+            
+        }
+        
+        
+        $this->apiResponse = array(
+
+            'reviews' => $reviews, 
+            'filters' => array(
+                'status' => array(
+                    array(
+                        'total' => 67,
+                        'value' => 'Total',
+                    ),
+                    array(
+                        'total' => 4,
+                        'value' => 'New',
+                    ),
+                    array(
+                        'total' => 5,
+                        'value' => 'Neutral',
+                    ),
+                    array(
+                        'total' => 7,
+                        'value' => 'Positive',
+                    ),
+                    array(
+                        'total' => 1,
+                        'value' => 'Negative',
+                    ),
+                    array(
+                        'value' => 'Alert',
+                    ),
+                    array(
+                        'value' => 'Flagged',
+                    ),
+                    array(
+                        'value' => 'Completed',
+                    ),
+                ),
+                'source' => $source
+            ),
+        );
+    }
+    
 }

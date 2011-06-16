@@ -9,7 +9,7 @@
     </div>
 
     <div class="box-container active">
-        <?php echo view::factory('_partials/box/social-activity-details'); ?>
+        <?php echo view::factory('_partials/box/social-media-inbox'); ?>
     </div>
     
     <div class="box-container box-container-left active">

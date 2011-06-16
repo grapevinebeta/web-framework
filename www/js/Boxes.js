@@ -1232,7 +1232,7 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
     
 });
 
-var BC_SocialReach = BoxController.extend({
+var BC_SocialReach = LinearGraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1244,61 +1244,77 @@ var BC_SocialReach = BoxController.extend({
      */
     endpoint: 'social/reach',
     
-    prepareGraph: function () {
-        if (!this.graphData) {
-            return;
+    formatterCallback: function() {
+                        
+        var dateFormat;
+        var box = boxManager.getBox('box-social-activity');
+        switch(box.range['period']) {
+            case '1m':
+                dateFormat = '%a %e';
+                break;
+            case '3m':
+                dateFormat = '%d %b';
+                break;
+            case '6m':
+                dateFormat = '%d %b';
+                break;
+            case '1y':
+                dateFormat = '%b %Y';
+                break;
         }
-        return;
-        var graphHolder = this.getGraphHolder();
+                        
+        return Highcharts.dateFormat(dateFormat, this.value);                  
+    },
+    
+    populateGraph: function() {
+        var seriesMappings = []; // mapping of label values to corresponding series index
+        var seriesMappingInited = false;
         
-        var graphHolderId = graphHolder.attr('id');
-        
-        var options = {
-            chart: {
-                renderTo: graphHolderId,
-                margin: [10, 10, 10, 10],
-                animation: false,
-                defaultSeriesType: 'pie'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                       enabled: false
-                    },
-                    showInLegend: true
+        for (var tKey in this.graphData.networks) {
+            
+            var timeObject = this.graphData.networks[tKey];
+            
+            for (var cKey in timeObject) {
+            
+                var comparisionObject = timeObject[cKey];
+                
+                if(!seriesMappingInited)
+                {
+                    // set specific options to each spline
+                    // all timestamps must be expand to miliseconds
+                    
+                    seriesMappings[comparisionObject.network] = this.series.length;
+                    
+                    this.series.push({
+                        name: comparisionObject.network, 
+                        data: [], 
+                        pointStart: this.getFirstDate(),
+                        pointInterval: (this.computeDateInterval()+1) * this.dayInterval * 1000
+                    });
+                    
                 }
-            },
-            tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
-                }
-            },
-            legend: {
-                borderRadius: 0
-            },
-            series: [{
-                 type: 'pie',
-                 name: 'Browser share',
-                 data: new Array()
-             }]
-        };
-        for (var i = 0; i < this.graphData.length; i++) {
-            options.series[0].data.push(new Array(
-                this.graphData[i].keyword,
-                this.graphData[i].percent
-            ));
+                
+                this.maxValue = this.maxValue < comparisionObject.value 
+                    ? comparisionObject.value : this.maxValue;
+                
+                // add series single data to right place based on previously defined
+                // mappings
+                this.series[seriesMappings[comparisionObject.network]]
+                    .data.unshift(parseInt(comparisionObject.value, 10));
+                
+            }
+            
+            if(!seriesMappingInited) 
+                seriesMappingInited = true;
+
         }
-        
-        this.graph = new Highcharts.Chart(options);
-        
+     
     },
     
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
-        boxController.graphData = data.networks;
+        boxController.graphData = null;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
@@ -1321,6 +1337,155 @@ var BC_SocialReach = BoxController.extend({
             table.find('tbody').append(tr);
         }
         boxController.afterLoadData();
+    },
+    
+    construct: function () {}
+    
+});
+
+var BC_CompetitionLedger = BoxController.extend({
+
+    /**
+     * @var String DOM id of the container div 
+     */
+    boxId: 'box-competition-ledger',
+    
+    endpoint: 'competition_ledger',
+
+    /**
+     * Attach events associated with RecentReviews box, such as expanding review
+     * details when the review snippet is being clicked.
+     */
+    attachBoxEvents: function() {
+        var self = this;
+
+        // Attach event for expanding and collapsing review details
+        self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
+            event.preventDefault();
+            var review_id = $(this).attr('data-review-id');
+            log('Toggling details of review with ID="' + review_id + '"');
+            self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails').toggle('slow');
+        });
+    },
+
+    beforeLoadData: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+        this.getHeaderDom().find('#box-header-status-filters').html($(this.getLoaderHtml()).children());
+        this.getHeaderDom().find('#box-header-source-filters').html($(this.getLoaderHtml()).children());
+    },
+
+    /**
+     * Get the template for details of specific review
+     */
+    getReviewDetailsTemplate: function (review_id) {
+        return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
+            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">some review '
+            + 'details placeholder, some review details placeholder, some review details placeholder, '
+            + 'some review details placeholder, some review details placeholder, some review details '
+            + 'placeholder, some review details placeholder, some review details placeholder, some '
+            + 'review details placeholder, some review details placeholder, some review details '
+            + 'placeholder, some review details placeholder, some review details placeholder, some '
+            + 'review details placeholder</td>'
+            + '</tr>');
+    },
+
+    /**
+     * Get the snippet of specific review
+     */
+    getReviewSnippetTemplate: function (review_id) {
+        return $('<tr data-review-id="' + review_id + '" class="reviewSnippet">'
+            //+ '<td class="col-checkbox"></td>' // no need for checkbox
+            + '<td class="col-rating"></td>'
+            + '<td class="col-submitted a-center"></td>'
+            + '<td class="col-title"></td>'
+            + '<td class="col-competition a-right"></td>'
+            + '</tr>');
+    },
+    
+    loadFilters: function (filterType) {
+        if (filterType != 'status') {
+            return;
+        }
+        var filters = this.data.filters[filterType];
+        var filterHolder = this.getHeaderDom().find('#box-header-' + filterType + '-filters');
+        filterHolder.html('');
+        for (var i = 0; i < filters.length; i++) {
+            var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
+            if (filters[i].total) {
+                filterLink.text(filters[i].total +' ');
+            }
+            filterLink.text(filterLink.text() + filters[i].value);
+            filterHolder.append(filterLink);
+            filterHolder.append(' ');
+        }
+    },
+    
+    loadReviews: function () {
+        var table = this.getContentDom().find('.data-grid-holder table.data-grid');
+        var tr = null;
+        var trContent = null;
+        var current_id = null;
+        table.find('tbody tr').remove();
+        for (var i = 0; i < this.data.reviews.length; i++) {
+            current_id = parseInt(this.data.reviews[i].id);
+            log('Generating row for review with ID="' + current_id + '"');
+            tr = this.getReviewSnippetTemplate(current_id);
+            log('Generating content row for review with ID="' + current_id + '"');
+            trContent = this.getReviewDetailsTemplate(current_id);
+            
+            for (n in this.data.reviews[i]) {
+                var value = this.data.reviews[i][n];
+                if (n == 'submitted') {
+                    var tmpDate = new Date(value * 1000);
+                    tr.find('td.col-' + n).text(
+                        monthNames[tmpDate.getMonth()] +
+                        ' ' +
+                        tmpDate.getDate()
+                    );
+                } else if (n == 'title') {
+                    var titleLink = $('<a href="#"></a>');
+                    titleLink.text(value);
+                    tr.find('td.col-' + n).html(titleLink);
+                } else if (n == 'rating') {
+                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                    tr.find('td.col-' + n).html(ratingStars);
+                } else {
+                    tr.find('td.col-' + n).text(value);
+                }
+            }
+            
+            if (i % 2) {
+                tr.addClass('even');
+            } else {
+                tr.addClass('odd');
+            }
+            
+            var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
+            checkbox.attr('value', this.data.reviews[i].id);
+            tr.find('td.col-checkbox').html(checkbox);
+            
+            table.find('tbody').append(tr, trContent); // append two elements
+        }
+        this.getContentDom().find('.ajax-loader').remove();
+        this.getContentDom().find('.data-grid-holder').show();
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        if (data.reviews) {
+            boxController.loadReviews();
+        }
+        
+        if (data.filters && data.filters.status) {
+            boxController.loadFilters('status');
+        }
+        
+        if (data.filters && data.filters.source) {
+            boxController.loadFilters('source');
+        }
     },
     
     construct: function () {}
@@ -1564,12 +1729,12 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
  
 });
 
-var BC_SocialActivityDetails = BoxController.extend({
+var BC_SocialMediaInbox = BoxController.extend({
 
     /**
      * @var String DOM id of the container div 
      */
-    boxId: 'box-social-activity-details',
+    boxId: 'box-social-media-inbox',
 
     /**
      * @var String Name of the requested resource, used in Ajax URL
@@ -1628,7 +1793,17 @@ var BC_SocialActivityDetails = BoxController.extend({
                         return false;
                     });
                     tr.find('td.col-' + n).html(titleLink);
-                } else {
+                } 
+                else if(n == 'network')
+                {
+
+                    var titleLink = $('<a href="#"><span></span></a>');
+                    titleLink.attr('class', value.toLowerCase());
+                    titleLink.filter('span').text(value);
+                    tr.find('td.col-' + n).html(titleLink);
+
+                }
+                else {
                     tr.find('td.col-' + n).text(value);
                 }
             }
@@ -1868,9 +2043,10 @@ $(document).ready(function () {
               .add(new BC_RecentReviews())
               .add(new BC_SocialActivity())
               .add(new BC_SocialReach())
-              .add(new BC_SocialActivityDetails())
+              .add(new BC_SocialMediaInbox())
               .add(new BC_CompetitionDistribution())
               .add(new BC_CompetitionComparision())
+              .add(new BC_CompetitionLedger())
               .setDataProvider(new DataProvider())
               .init();
 });

@@ -1,32 +1,33 @@
-<div id="box-social-activity-details" class="box">
+ <div id="box-competition-ledger" class="box">
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Social Activity Details'),
+            'caption' => __('Competition ledger'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
+    
     ?>
     <div class="box-content">
         <div class="data-grid-holder" style="display: none;">
             <form action="">
                 <table class="wide data-grid no-outer-border" style="padding: 5px;">
                     <tbody>
-                        <tr>
+                        <!--<tr>
                             <td class="col-checkbox"></td>
                             <td class="col-rating"></td>
                             <td class="col-submitted a-center"></td>
                             <td class="col-title"></td>
                             <td class="col-site"></td>
                             <td class="col-status a-right"></td>
-                        </tr>
-                        <tr style="display: none;">
+                        </tr>-->
+                        <!--<tr style="display: none;">
                             <td colspan="6">
                                 <div>
                                     
                                 </div>
                             </td>
-                        </tr>
+                        </tr>-->
                     </tbody>
                 </table>
             </form>
