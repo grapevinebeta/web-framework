@@ -7,6 +7,15 @@
             )
         ); 
     ?>
+    
+    <?php echo View::factory(
+        '_partials/box/filters', 
+        array(
+            'filters' => array('status' => 'Status Filter', 'source' => 'Source Filter'),
+            )
+        ); 
+    ?>
+    
     <div class="box-content">
         <div class="data-grid-holder" style="display: none;">
             <form action="">

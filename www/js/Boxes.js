@@ -984,6 +984,8 @@ var BC_RecentReviews = BoxController.extend({
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
+        this.getFiltersDom().find('.box-filter-activity').html($(this.getLoaderHtml()).children());
+        this.getFiltersDom().find('.box-filter-network').html($(this.getLoaderHtml()).children());
     },
 
     /**
@@ -1028,21 +1030,22 @@ var BC_RecentReviews = BoxController.extend({
     },
     
     loadFilters: function (filterType) {
-        if (filterType != 'status') {
-            return;
-        }
+        
         var filters = this.data.filters[filterType];
-        var filterHolder = this.getHeaderDom().find('#box-' + filterType + '-filters');
+        
+        var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
+            
             var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
             if (filters[i].total) {
                 filterLink.text(filters[i].total +' ');
             }
             filterLink.text(filterLink.text() + filters[i].value);
+            filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
-            filterHolder.append(' ');
         }
+        
     },
     
     loadReviews: function () {
@@ -1082,12 +1085,10 @@ var BC_RecentReviews = BoxController.extend({
             boxController.loadReviews();
         }
         
-        if (data.filters && data.filters.status) {
-            boxController.loadFilters('status');
-        }
-        
-        if (data.filters && data.filters.source) {
-            boxController.loadFilters('source');
+        if(data.filters) {
+            for(var activeFilter in data.filters) {
+                boxController.loadFilters(activeFilter);
+            }
         }
     },
     
@@ -1750,9 +1751,7 @@ var BC_SocialMediaInbox = BoxController.extend({
     
     loadFilters: function (filterType) {
         
-        
         var filters = this.data.filters[filterType];
-        
         
         var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
         filterHolder.html('');
@@ -1820,11 +1819,11 @@ var BC_SocialMediaInbox = BoxController.extend({
             checkbox.attr('value', this.data.socials[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.find('tbody').append(tr);
+            table.children('tbody').append(tr);
             
             trContent = $(trContentTemplate);
             trContent.css('display', 'none').find('td').text('adsfsf fsadfsa');
-            table.find('tbody').append(trContent);
+            table.children('tbody').append(trContent);
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
