@@ -15,9 +15,17 @@ textarea {
     border-style: solid;
 }
 
+select {
+    background: white;
+    border-width: 1px;
+    border-style: solid;
+}
+
 input {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     color: #593B7C;
+    border-width: 1px;
+    border-style: solid;
 }
 
 img {
@@ -481,7 +489,7 @@ input[type=submit] {
 
     /* Styling of the expanded review details */
     #box-recent-reviews .reviewDetails {
-
+        display: none;
     }
 
         #box-recent-reviews .reviewDetails td {
@@ -493,17 +501,17 @@ input[type=submit] {
             padding: 10px;
         }
 
-            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsForm {
+            #box-recent-reviews .recentReviewDetails .recentReviewDetailsForm {
                 float: left;
                 width: 558px;
             }
 
-            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsMenu {
+            #box-recent-reviews .recentReviewDetails .recentReviewDetailsMenu {
                 float: left;
                 width: 125px;
             }
 
-            #box-recent-reviews .recentReviewsDetails .recentReviewsDetailsButtons {
+            #box-recent-reviews .recentReviewDetails .recentReviewDetailsButtons {
                 text-align: right;
             }
 
@@ -646,6 +654,7 @@ input[type=submit] {
         background-image: url(../images/box/ogsi/bar-neutral-bg.jpg);
         border: 1px solid #D1BC30;
         border-radius: 8px;
+        overflow: visible;
     }
 
     #box-ogsi .bar-neutral .bar-value {
@@ -653,6 +662,7 @@ input[type=submit] {
     }
 
     #box-ogsi .bar-positive {
+        overflow: visible;
         height: 22px;
         margin-top: -1px;
         margin-left: -1px;

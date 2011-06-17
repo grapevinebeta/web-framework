@@ -37,9 +37,9 @@ class Controller_Api_Static extends Controller {
     
     public function action_ogsi() {
         
-        $rands[] = rand(0, 10);
-        $rands[] = rand(0, 10);
-        $rands[] = rand(0, 10);
+        $rands[] = rand(0, 100);
+        $rands[] = rand(0, 100);
+        $rands[] = rand(0, 100);
         
         $this->apiResponse = array('ogsi'=> array(
             'distribution' => array(  // OGSIDistributionObject,
@@ -87,7 +87,7 @@ class Controller_Api_Static extends Controller {
                 'average' => 3.2
                 ),
             );
-            sleep(2);
+            // sleep(2);
         $this->apiResponse = array('sites' => $sites);
     }
 
@@ -109,7 +109,7 @@ class Controller_Api_Static extends Controller {
                 'percent' => 40,
                 ),
             );
-            sleep(1);
+            // sleep(1);
         $this->apiResponse = array('keywords' => $keywords);
     }
     
@@ -120,7 +120,7 @@ class Controller_Api_Static extends Controller {
             'OPEN',
             'TODO',
         );
-        sleep(2);
+        // sleep(2);
         $this->apiResponse = array(
             'reviews' => array(
                 array(

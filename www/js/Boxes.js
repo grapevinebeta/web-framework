@@ -934,15 +934,15 @@ var BC_RecentReviews = BoxController.extend({
         // Attach event for expanding and collapsing review details
         self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
             event.preventDefault();
-            var review_id = $(this).attr('data-review-id');
-            log('Toggling details of review with ID="' + review_id + '"');
-            var detailsBox = self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails .recentReviewsDetails');
+            var reviewId = $(this).attr('data-review-id');
+            var detailsBox = self.getBoxDom().find('tr[data-review-id="' + reviewId + '"].reviewDetails .recentReviewDetails');
+            
             if (detailsBox.css('display') == 'none') {
                 detailsBox.show();
-                log('showing...');
+                $(this).next().show();
             } else {
                 detailsBox.hide();
-                log('hiding...');
+                $(this).next().hide();
             }
         });
     },
@@ -950,73 +950,47 @@ var BC_RecentReviews = BoxController.extend({
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
-        this.getHeaderDom().find('#box-header-status-filters').html($(this.getLoaderHtml()).children());
-        this.getHeaderDom().find('#box-header-source-filters').html($(this.getLoaderHtml()).children());
-    },
-
-    /**
-     * Get the table header
-     */
-    getHeader: function (review_id) {
-        return $('<thead>'
-            + '<tr>'
-            + '<th>Status</th>'
-            + '<th>Rating</th>'
-            + '<th>Date</th>'
-            + '<th>Review</th>'
-            + '<th>Source</th>'
-            + '</tr>'
-            + '</thead>');
     },
 
     /**
      * Get the template for details of specific review
      */
-    getReviewDetailsTemplate: function (review_id) {
-        return $('<tr data-review-id="' + review_id + '" class="reviewDetails">'
-            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">'
-                + '<div class="recentReviewsDetails" style="display: none;">'
-                    + '<div style="clear: both;">'
-                        + '<div class="recentReviewsDetailsForm">'
-                            + '<h2>Some review title</h2>'
-                            + '<p>Some review content Some review content Some review content Some review content '
-                            + 'Some review content Some review content Some review content Some review content '
-                            + 'Some review content Some review content Some review content Some review content '
-                            + 'Some review content Some review content Some review content Some review content '
-                            + 'Some review content Some review content Some review content Some review content '
-                            + 'Some review content Some review content Some review content Some review content </p>'
-                            + '<form action="" method="post">'
-                                + '<input type="text" value="asd" name="field1" /> '
-                                + '<input type="text" value="asd" name="field2" /><br />'
-                                + '<textarea type="text" name="content"></textarea>'
-                                + '<input type="submit" name="" value="Send" />'
-                            + '</form>'
-                        + '</div>'
-                        + '<div class="recentReviewsDetailsMenu">'
-                            + '<p>[status icon]</p>'
-                            + '<ul><li>Completed</li><li>Mark</li><li>ToDo</li><li>Email</li></ul>'
-                        + '</div>'
-                    + '</div>'
-                    + '<div class="recentReviewsDetailsButtons">'
-                        + 'some buttons'
-                    + '</div>'
-                + '</div>'
-            + '</td>'
-            + '</tr>');
+    fillReviewDetailsTemplate: function (template, review) {
+        var tr = template.clone();
+        tr.attr('data-review-id', review.id);
+        return tr;
     },
 
     /**
      * Get the snippet of specific review
      */
-    getReviewSnippetTemplate: function (review_id) {
-        return $('<tr data-review-id="' + review_id + '" class="reviewSnippet">'
-            //+ '<td class="col-checkbox"></td>' // no need for checkbox
-            + '<td class="col-status"></td>'
-            + '<td class="col-rating"></td>'
-            + '<td class="col-submitted a-center"></td>'
-            + '<td class="col-title"></td>'
-            + '<td class="col-site a-right"></td>'
-            + '</tr>');
+    fillReviewSnippetTemplate: function (template, review) {
+        var tr = template.clone();
+        tr.attr('data-review-id', review.id);
+        for (n in review) {
+            var value = review[n];
+            if (n == 'submitted') {
+                var tmpDate = new Date(value * 1000);
+                tr.find('td.col-' + n).text(
+                    monthNames[tmpDate.getMonth()] +
+                    ' ' +
+                    tmpDate.getDate()
+                );
+            } else if (n == 'title') {
+                var titleLink = $('<a href="#"></a>');
+                titleLink.text(value);
+                tr.find('td.col-' + n).html(titleLink);
+            } else if (n == 'rating') {
+                var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                tr.find('td.col-' + n).html(ratingStars);
+            } else if (n == 'status') {
+                var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
+                tr.find('td.col-' + n).html(reviewStatus);
+            } else {
+                tr.find('td.col-' + n).text(value);
+            }
+        }
+        return tr;
     },
     
     loadFilters: function (filterType) {
@@ -1024,7 +998,7 @@ var BC_RecentReviews = BoxController.extend({
             return;
         }
         var filters = this.data.filters[filterType];
-        var filterHolder = this.getHeaderDom().find('#box-header-' + filterType + '-filters');
+        var filterHolder = this.getHeaderDom().find('#box-' + filterType + '-filters');
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
             var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
@@ -1041,51 +1015,26 @@ var BC_RecentReviews = BoxController.extend({
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
         var tr = null;
         var trContent = null;
-        var current_id = null;
+        var review = null;
+        var trTemplate = table.find('tbody:first > tr:first').clone().removeClass('odd even');
+        var trContentTemplate = table.find('tbody:first > tr:last').clone();
         table.find('tbody tr').remove();
-        table.prepend(this.getHeader()); // prepend header
         for (var i = 0; i < this.data.reviews.length; i++) {
-            current_id = parseInt(this.data.reviews[i].id);
-            log('Generating row for review with ID="' + current_id + '"');
-            tr = this.getReviewSnippetTemplate(current_id);
-            log('Generating content row for review with ID="' + current_id + '"');
-            trContent = this.getReviewDetailsTemplate(current_id);
-            
-            for (n in this.data.reviews[i]) {
-                var value = this.data.reviews[i][n];
-                if (n == 'submitted') {
-                    var tmpDate = new Date(value * 1000);
-                    tr.find('td.col-' + n).text(
-                        monthNames[tmpDate.getMonth()] +
-                        ' ' +
-                        tmpDate.getDate()
-                    );
-                } else if (n == 'title') {
-                    var titleLink = $('<a href="#"></a>');
-                    titleLink.text(value);
-                    tr.find('td.col-' + n).html(titleLink);
-                } else if (n == 'rating') {
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
-                    tr.find('td.col-' + n).html(ratingStars);
-                } else if (n == 'status') {
-                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
-                    tr.find('td.col-' + n).html(reviewStatus);
-                } else {
-                    tr.find('td.col-' + n).text(value);
-                }
-            }
+            review = this.data.reviews[i];
+            tr = this.fillReviewSnippetTemplate(trTemplate, review);
+            trContent = this.fillReviewDetailsTemplate(trContentTemplate, review);
             
             if (i % 2) {
-                tr.addClass('even');
-            } else {
                 tr.addClass('odd');
+            } else {
+                tr.addClass('even');
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
             checkbox.attr('value', this.data.reviews[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.find('tbody').append(tr, trContent); // append two elements
+            table.children('tbody').append(tr, trContent); // append two elements
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
@@ -1379,7 +1328,7 @@ var BC_CompetitionLedger = BoxController.extend({
         // Attach event for expanding and collapsing review details
         self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
             event.preventDefault();
-            var review_id = $(this).attr('data-review-id');
+            var reviIdid = $(this).attr('data-review-id');
             log('Toggling details of review with ID="' + review_id + '"');
             self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails').toggle('slow');
         });
@@ -1442,14 +1391,14 @@ var BC_CompetitionLedger = BoxController.extend({
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
         var tr = null;
         var trContent = null;
-        var current_id = null;
+        var currentId = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < this.data.reviews.length; i++) {
-            current_id = parseInt(this.data.reviews[i].id);
-            log('Generating row for review with ID="' + current_id + '"');
-            tr = this.getReviewSnippetTemplate(current_id);
-            log('Generating content row for review with ID="' + current_id + '"');
-            trContent = this.getReviewDetailsTemplate(current_id);
+            currentId = parseInt(this.data.reviews[i].id);
+            log('Generating row for review with ID="' + currentId + '"');
+            tr = this.getReviewSnippetTemplate(currentId);
+            log('Generating content row for review with ID="' + currentId + '"');
+            trContent = this.getReviewDetailsTemplate(currentId);
             
             for (n in this.data.reviews[i]) {
                 var value = this.data.reviews[i][n];
