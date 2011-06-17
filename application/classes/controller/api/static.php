@@ -1,5 +1,27 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+
+/**
+ * Specification of filters:
+ * 
+ *    Review Inbox filters:
+ *      Review Status Filter: Total, Positive, Neutral, Negative, Alert, Flagged, & Completed
+ *      Default filter is TOTAL
+ *      Source Filter: All, Industry Specific, General
+ *      Default filter is ALL
+ *    Social Inbox filters:
+ *      Activity Filter: Total, Posts & Mentions, Videos & Photos, Blogs & News
+ *      Default filter is TOTAL
+ *    Social Network Filter: All, Social, Location, Video & Photo, Flickr, Blog & News
+ *      Default filter is ALL 
+ *    Competition Review Inbox filters:
+ *      Activity Filter: Total, Positive, Neutral, Negative
+ *      Default filter is TOTAL
+ *    Competition filter: All, Competitor 1, Competitor 2, etc
+ *      Default filter is ALL competition selected ON 
+ * 
+ */
+
 class Controller_Api_Static extends Controller {
     
     /**

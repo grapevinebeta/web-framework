@@ -7,6 +7,15 @@
             )
         ); 
     ?>
+    
+    <?php echo View::factory(
+        '_partials/box/filters', 
+        array(
+            'filters' => array('activity' => 'Activity Filter', 'network' => 'Social Network Filter'),
+            )
+        ); 
+    ?>
+    
     <div class="box-content">
         <div class="data-grid-holder" style="display: none;">
             <form action="">
