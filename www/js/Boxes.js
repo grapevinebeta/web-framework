@@ -115,7 +115,12 @@ var BoxController = Class.extend({
         self.getBoxDom().delegate('a[data-filter-status]', 'click', function(event){
             event.preventDefault();
             var filter_value = $(this).attr('data-filter-status');
-            self.setFilter({'value': filter_value});
+            
+
+            var key = $(this).parent().attr('class');
+            key = key.replace("box-filter box-filter-", "");
+            
+            self.addFilter(key , filter_value);
             self.refresh();
         });
     },
@@ -148,6 +153,16 @@ var BoxController = Class.extend({
             this._headerDom = $('#' + this.boxId + ' .box-header:first');
         }
         return this._headerDom;
+    },
+
+/**
+     * @return jQuery DOM element which holds header of the box
+     */
+    getFiltersDom: function () {
+        if (!this._filterDom) {
+            this._filterDom = $('#' + this.boxId + ' .box-filters');
+        }
+        return this._filterDom;
     },
     
     getLoaderHtml: function () {
@@ -233,8 +248,27 @@ var BoxController = Class.extend({
      * where 'total' is optional (integer?) and 'value' is required string
      * @todo Actually set filter in compliance to API
      */
-    setFilter: function(filter) {
-        log('Filter status of "#' + this.boxId + '" set to "' + filter.value + '"');
+    addFilter: function(name, value) {
+        
+        var exists = false;
+        for(var cValue in this.filters[name])
+        {
+
+            if(this.filters[name] !== undefined && this.filters[name][cValue] == value)
+            {
+                this.filters[name].splice(cValue, 1);
+                exists = true;
+            }
+
+        }
+        
+        if(!exists)
+        {
+            if(this.filters[name] === undefined)
+                this.filters[name] = [];
+            
+            this.filters[name].push(value);
+        }
         return this;
     },
 
@@ -1761,31 +1795,33 @@ var BC_SocialMediaInbox = BoxController.extend({
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
-        this.getHeaderDom().find('#box-header-activity-filters').html($(this.getLoaderHtml()).children());
-        this.getHeaderDom().find('#box-header-network-filters').html($(this.getLoaderHtml()).children());
+        this.getFiltersDom().find('.box-filter-activity').html($(this.getLoaderHtml()).children());
+        this.getFiltersDom().find('.box-filter-network').html($(this.getLoaderHtml()).children());
     },
     
-    loadHeaderFilters: function (filterType) {
-        if (filterType != 'activity' && filterType != 'network') {
-            return;
-        }
+    loadFilters: function (filterType) {
+        
+        
         var filters = this.data.filters[filterType];
-        var filterHolder = this.getHeaderDom().find('#box-header-' + filterType + '-filters');
+        
+        
+        var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
-            var filterLink = $('<a href="#"></a>');
+            
+            var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
             if (filters[i].total) {
                 filterLink.text(filters[i].total +' ');
             }
             filterLink.text(filterLink.text() + filters[i].value);
+            filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
-            filterHolder.append(' ');
         }
     },
     
     loadSocials: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr:first').clone();
+        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
         var trContentTemplate = '<tr><td colspan="6"></td></tr>';
         var tr = null;
         var trContent = null;
@@ -1826,9 +1862,9 @@ var BC_SocialMediaInbox = BoxController.extend({
             }
             
             if (i % 2) {
-                tr.addClass('even');
-            } else {
                 tr.addClass('odd');
+            } else {
+                tr.addClass('even');
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
@@ -1853,13 +1889,16 @@ var BC_SocialMediaInbox = BoxController.extend({
             boxController.loadSocials();
         }
         
-        if (data.filters && data.filters.activity) {
-            boxController.loadHeaderFilters('activity');
+        if(data.filters) 
+        {
+
+            for(var activeFilter in data.filters) 
+            {
+                boxController.loadFilters(activeFilter); 
+            }
         }
-        
-        if (data.filters && data.filters.network) {
-            boxController.loadHeaderFilters('network');
-        }
+
+
     },
     
     construct: function () {}

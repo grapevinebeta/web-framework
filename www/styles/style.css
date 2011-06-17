@@ -669,6 +669,35 @@ input[type=submit] {
     
 #box-social-media-inbox {}
     
+    #box-social-media-inbox .box-filters .box-filters-inner
+    {
+        margin:10px 10px 0;
+    }
+    
+    #box-social-media-inbox .separator
+    {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+
+    #box-social-media-inbox .spacer {float:left; width:100%; margin-top:8px; clear:both;}
+    
+    .clear {clear:both;}
+
+    #box-social-media-inbox .box-filter-label {
+
+        font-weight: bold;
+        float:left;
+        
+    }
+    
+    #box-social-media-inbox .box-filter {
+
+        float:left
+        
+    }
+
     #box-social-media-inbox tr td.col-network a {
 
         display: block;
