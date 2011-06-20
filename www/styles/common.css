@@ -16,6 +16,10 @@
     text-decoration: underline !important;
 }
 
+.hidden-row {
+    display: none !important;
+}
+
 .left {
     float: left;
 }

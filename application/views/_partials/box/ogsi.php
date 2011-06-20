@@ -28,9 +28,7 @@
                         <div id="ogsi-rating">
                             <div id="ogsi-rating-rating"><?php echo __('Star Rating'); ?></div>
                             <div id="ogsi-rating-value"></div>
-                            <div id="ogsi-rating-stars-off">
-                                <div id="ogsi-rating-stars-on"></div>
-                            </div>
+                            <div id="ogsi-rating-stars-off"><div id="ogsi-rating-stars-on"></div></div>
                         </div>
                         <div id="ogsi-rating-change">
                             <span class="change-value"></span>

@@ -411,6 +411,47 @@ input[type=submit] {
     vertical-align: middle;
 }
 
+.reply-to-review-button {
+    display: inline-block;
+    width: 131px;
+    height: 28px;
+    vertical-align: middle;
+    background-image: url(../images/icons/reply-to-review.png);
+    background-repeat: no-repeat;
+}
+
+.close-button {
+    display: inline-block;
+    width: 70px;
+    height: 28px;
+    vertical-align: middle;
+    background-image: url(../images/icons/close.png);
+    background-repeat: no-repeat;
+}
+
+.mono-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    background-image: url(../images/icons/mono-icons.png);
+    background-repeat: no-repeat;
+}
+
+.mono-icon.icon-checkbox {
+    background-position: left 0px;
+}
+.mono-icon.icon-todo {
+    background-position: left -40px;
+}
+.mono-icon.icon-email {
+    background-position: left -20px;
+}
+.mono-icon.icon-goto {
+    width: 27px;
+    background-position: left -60px;
+}
+
 /* Styles for specific boxes */
 
 /* Review Inbox */
@@ -489,26 +530,27 @@ input[type=submit] {
 
     /* Styling of the expanded review details */
     #box-recent-reviews .reviewDetails {
-        display: none;
+        overflow: hidden;
     }
 
         #box-recent-reviews .reviewDetails td {
             padding: 0;
         }
 
-        #box-recent-reviews .recentReviewsDetails {
+        #box-recent-reviews .recentReviewDetails {
             clear: both;
             padding: 10px;
+            border-bottom: 1px solid #8974A0;
         }
 
             #box-recent-reviews .recentReviewDetails .recentReviewDetailsForm {
                 float: left;
-                width: 558px;
+                width: 542px;
             }
 
             #box-recent-reviews .recentReviewDetails .recentReviewDetailsMenu {
                 float: left;
-                width: 125px;
+                width: 150px;
             }
 
             #box-recent-reviews .recentReviewDetails .recentReviewDetailsButtons {
@@ -611,6 +653,8 @@ input[type=submit] {
         background-image: url(../images/icons/review-stars.png);
         background-repeat: no-repeat;
         background-position: left -22px;
+        margin: 0px;
+        float: left;
     }
     
     #box-ogsi .change-value {
@@ -676,6 +720,21 @@ input[type=submit] {
         color: white;
     }
 
+.box .box-filter-label {
+    font-weight: bold;
+    float:left;
+}
+
+.box .box-filter {
+    float:left
+}
+
+.box .spacer {
+    float:left; 
+    width:100%; 
+    margin-top:8px; 
+    clear:both;
+}
     
 #box-social-media-inbox {}
     
@@ -691,22 +750,7 @@ input[type=submit] {
     }
 
 
-    #box-social-media-inbox .spacer {float:left; width:100%; margin-top:8px; clear:both;}
     
-    .clear {clear:both;}
-
-    #box-social-media-inbox .box-filter-label {
-
-        font-weight: bold;
-        float:left;
-        
-    }
-    
-    #box-social-media-inbox .box-filter {
-
-        float:left
-        
-    }
 
     #box-social-media-inbox tr td.col-network a {
 
@@ -814,3 +858,34 @@ input[type=submit] {
         #box-competition-ledger .reviewRating .stars-5-of-5-front {
             width: 110px;
         }
+        
+#box-revent-review {
+    
+}
+
+#box-recent-reviews ul {
+    list-style-type: none;
+}
+
+    #box-recent-reviews .recent-review-status-icon {
+        display: inline-block;
+        width: 71px;
+        height: 65px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-image: url(../images/icons/review-status-icons-big.png);
+    }
+    
+    #box-recent-reviews .recent-review-status-icon.open {
+        background-position: center 0px;
+    }
+
+    #box-recent-reviews .recent-review-status-icon.closed {
+        background-position: center -260px;
+    }
+
+    #box-recent-reviews .recent-review-status-icon.todo {
+        background-position: center -130px;
+    }
+    
+    

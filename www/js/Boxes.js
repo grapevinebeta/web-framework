@@ -970,14 +970,16 @@ var BC_RecentReviews = BoxController.extend({
             event.preventDefault();
             var reviewId = $(this).attr('data-review-id');
             var detailsBox = self.getBoxDom().find('tr[data-review-id="' + reviewId + '"].reviewDetails .recentReviewDetails');
-            
-            if (detailsBox.css('display') == 'none') {
+            var detailsRow = $(this).next();
+            if (!detailsRow.height()) {
+                detailsRow.removeClass('hidden-row');
                 detailsBox.show();
-                $(this).next().show();
             } else {
+                detailsRow.addClass('hidden-row');
                 detailsBox.hide();
-                $(this).next().hide();
             }
+            //detailsBox.addClass('ieFixClassWhichDoesntExists');
+            //detailsBox.removeClass('ieFixClassWhichDoesntExists');
         });
     },
 
@@ -994,6 +996,15 @@ var BC_RecentReviews = BoxController.extend({
     fillReviewDetailsTemplate: function (template, review) {
         var tr = template.clone();
         tr.attr('data-review-id', review.id);
+        tr.find('.recent-review-status-icon')
+            .removeClass('open closed todo')
+            .addClass(review.status.toLowerCase());
+        tr.find('.review-details-title').text(review.title);
+        tr.find('.review-details-review').text(review.review);
+        tr.find('select[name="category"]').val(review.category);
+        tr.find('input[name="keywords"]').val(review.keywords.join(', '));
+        tr.find('textarea[name="notes"]').val(review.notes);
+        
         return tr;
     },
 
@@ -1071,7 +1082,8 @@ var BC_RecentReviews = BoxController.extend({
             checkbox.attr('value', this.data.reviews[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.children('tbody').append(tr, trContent); // append two elements
+            table.children('tbody').append(tr); // append two elements
+            table.children('tbody').append(trContent); // append two elements
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();

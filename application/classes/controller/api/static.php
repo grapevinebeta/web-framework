@@ -76,12 +76,12 @@ class Controller_Api_Static extends Controller {
                 'change' => 5.0, //:[decimal:required] - the change in percentage
             ),
             'reviews' => array( // OGSIReviewsObject,
-                'value' => 5, //:[number:required] - the number of reviews
-                'change' => -2, //:[number:required] - the change in percentage
+                'value' => rand(0,50)/10.0, //:[number:required] - the number of reviews
+                'change' => rand(-10, 10), //:[number:required] - the change in percentage
             ),
             'rating' => array( // OGSIRatingObect
-                'value' => 4.5, //:[decimal:required] - the current rating
-                'change' => 5.0, //:[decimal:required] - change in rating
+                'value' => rand(0,50)/10.0, //:[decimal:required] - the current rating
+                'change' => rand(-10,10), //:[decimal:required] - change in rating
             ),
             
         ));
