@@ -77,12 +77,12 @@
         
         d.setDate(d.getDate() - 1);
         
-        d = d.getMonth() + "/" + d.getDate() + "/" + d.getFullYear();
+        d = d.getMonth() + 1 + "/" + d.getDate() + "/" + d.getFullYear();
         
         var m = new Date();
         m.setMonth(m.getMonth() - period);
         
-        m = m.getMonth() + "/" + m.getDate() + "/" + m.getFullYear();
+        m = m.getMonth() + 1 + "/" + m.getDate() + "/" + m.getFullYear();
 
         $("#date-range").val(m + " - " + d)
         
@@ -115,8 +115,8 @@
                     minDate: min
                 });
                 
-                min = min.getMonth() + "/" + min.getDate() + "/" + min.getFullYear();
-                max = max.getMonth() + "/" + max.getDate() + "/" + max.getFullYear();
+                min = min.getMonth()+1 + "/" + min.getDate() + "/" + min.getFullYear();
+                max = min.getMonth()+1 + "/" + max.getDate() + "/" + max.getFullYear();
                 
                 $("#date-range").val(min + " - " + max);
                 
@@ -134,13 +134,13 @@
            
            var min = d.datepicker('getDate');
            
-           var max = min.getMonth() + "/" + min.getDate() + "/" + min.getFullYear();
+           var max = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
            
            min.setMonth(min.getMonth() - period);
            
            d.datepicker('option', 'minDate', min);
            
-           min = min.getMonth() + "/" + min.getDate() + "/" + min.getFullYear();
+           min = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
            $("#date-range").val(min + " - " + max);
            
             
