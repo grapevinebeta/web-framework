@@ -1757,8 +1757,9 @@ var BC_SocialMediaInbox = BoxController.extend({
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
-        this.getFiltersDom().find('.box-filter-activity').html($(this.getLoaderHtml()).children());
-        this.getFiltersDom().find('.box-filter-network').html($(this.getLoaderHtml()).children());
+        
+        this.getFiltersDom().find('.box-filter')
+        .html($(this.getLoaderHtml()).children());
     },
     
     loadFilters: function (filterType) {
@@ -1769,7 +1770,8 @@ var BC_SocialMediaInbox = BoxController.extend({
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
             
-            var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
+            var filterLink = $('<a href="#" data-filter-status="' + 
+                filters[i].value.toLowerCase() + '"></a>');
             if (filters[i].total) {
                 filterLink.text(filters[i].total +' ');
             }

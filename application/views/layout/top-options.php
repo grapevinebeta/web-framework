@@ -1,14 +1,7 @@
 <div id="top-options-holder">
     <form id="range-form" action="<?php echo url::site(); ?>" method="post">
         <span><?php echo __('Viewing'); ?>:</span>
-        <?php echo html::anchor(
-            '#', 
-            html::image('images/icons/help.png', array('alt' => '')),
-            array(
-                'class' => 'tooltip',
-                'title' => __('some tip'),
-                )
-            ); ?>
+
         <?php $viewingRange = Session::instance()->get('viewingRange'); ?>
         <?php echo form::select(
             'period',
@@ -31,9 +24,18 @@
             $viewingRange['date'], 
             array(
                 'id' => 'date-selector', 
+                'style' => 'display:none;'));
+            
+            echo form::input(
+            'date_range', 
+            null, 
+            array(
+                'id' => 'date-range', 
                 'class' => 'as-select with-icon',
                 'maxlength' => '10',
-                'style' => 'width: 65px;')); ?>
+                'style' => 'width: 65px;'));
+            
+            ?>
         
         <?php 
             echo html::image('images/icons/email.png', array('alt' => '')); 
@@ -45,6 +47,10 @@
 </div>
 
 <script type="text/javascript">
-    $('#top-options-holder #date-selector').datepicker();
+    $('#top-options-holder #date-selector').datepicker({
+        showOn: "button",
+        buttonImage: "images/as-select-bg.jpg",
+	buttonImageOnly: true
+    });
     $('#period-selector').selectbox();
 </script>

@@ -401,44 +401,31 @@ class Controller_Api_Static extends Controller {
             
         }
         
+        $postfilters = $this->request->post('filters');
+        $filters = array();
         
+        $data = array(
+            'activity' => array('New', 'FB Posts', 'Tweets', 'Photos', 'Alert'),
+            'network' => array('Twitter', 'Facebook', 'Google')
+        );
+        
+        foreach($data as $network => $f) {
+            
+            $filters[$network] = array();
+            
+            foreach($f as $filter) {
+                
+                $filters[$network][] = array('total' => rand(1,50), 'value' => $filter);
+                
+            }
+            
+        }
+        
+
         $this->apiResponse = array(
 
             'socials' => $socials, 
-            'filters' => array(
-                'activity' => array(
-                    array(
-                        'total' => 50,
-                        'value' => 'New',
-                    ),
-                    array(
-                        'total' => 5,
-                        'value' => 'FB Posts',
-                    ),
-                    array(
-                        'total' => 5,
-                        'value' => 'Tweets',
-                    ),
-                    array(
-                        'total' => 21,
-                        'value' => 'Photos',
-                    ),
-                    array(
-                        'value' => 'Alert',
-                    ),
-                ),
-                'network' => array(
-                    array(
-                        'value' => 'Twitter',
-                    ),
-                    array(
-                        'value' => 'Facebook',
-                    ),
-                    array(
-                        'value' => 'Google',
-                    ),
-                ),
-            ),
+            'filters' => $filters,
         );
         
     }

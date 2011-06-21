@@ -377,6 +377,7 @@ input[type=submit] {
 #top-options-holder {
     margin: 10px 0px;
     text-align: right;
+    position: relative;
 }
 
 #right-panel-holder {
@@ -735,7 +736,16 @@ input[type=submit] {
     margin-top:8px; 
     clear:both;
 }
-    
+
+#range-form .ui-datepicker-trigger {
+
+    position: absolute;
+    right: 172px;
+    top: 5px;
+    cursor: pointer;
+
+}
+
 #box-social-media-inbox {}
     
     #box-social-media-inbox .box-filters .box-filters-inner
@@ -887,5 +897,3 @@ input[type=submit] {
     #box-recent-reviews .recent-review-status-icon.todo {
         background-position: center -130px;
     }
-    
-    
