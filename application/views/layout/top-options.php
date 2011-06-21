@@ -84,7 +84,7 @@
         
         m = m.getMonth() + "/" + m.getDate() + "/" + m.getFullYear();
 
-        $("#date-range").val(d + " - " + m);
+        $("#date-range").val(m + " - " + d)
         
         var d = $('#top-options-holder #date-selector').datepicker({
             showOn: "button",
