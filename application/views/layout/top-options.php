@@ -33,7 +33,7 @@
                 'id' => 'date-range', 
                 'class' => 'as-select with-icon',
                 'maxlength' => '10',
-                'style' => 'width: 65px;'));
+                'style' => 'width: 120px;'));
             
             ?>
         
@@ -47,10 +47,106 @@
 </div>
 
 <script type="text/javascript">
-    $('#top-options-holder #date-selector').datepicker({
-        showOn: "button",
-        buttonImage: "images/as-select-bg.jpg",
-	buttonImageOnly: true
+    
+    function determineMonthDiff(period)
+    {
+        
+        switch(period) {
+            
+            case '1m':
+                return 1;
+            case '3m':
+                return 3;
+            case '6m':
+                return 6;
+            case '1y':
+                return 12;
+            
+        }
+        
+    }
+    
+    var selectValue = '<?php echo $viewingRange['period'] ?>';
+    var period = determineMonthDiff(selectValue);
+    var maxDate = $("#date-selector").val();
+    maxDate = maxDate.length ? maxDate : '-1d';
+    
+    $(document).ready(function() {
+        
+        var d = new Date();
+        
+        d.setDate(d.getDate() - 1);
+        
+        d = d.getMonth() + "/" + d.getDate() + "/" + d.getFullYear();
+        
+        var m = new Date();
+        m.setMonth(m.getMonth() - period);
+        
+        m = m.getMonth() + "/" + m.getDate() + "/" + m.getFullYear();
+
+        $("#date-range").val(d + " - " + m);
+        
+        var d = $('#top-options-holder #date-selector').datepicker({
+            showOn: "button",
+            buttonImage: "images/as-select-bg.jpg",
+            buttonImageOnly: true,
+            numberOfMonths: 2,
+            defaultDate: "-1d",
+            maxDate: maxDate,
+            minDate: -period + 'm',
+            onSelect: function(dateText, inst) {
+                
+                var max = new Date(dateText);
+                var current = new Date();
+                
+                if(max > current)
+                {
+
+                    max.setDate(max.getDate() -1);
+
+                }
+                
+                var min = new Date(max);
+                
+                min.setMonth(min.getMonth() - period);
+                
+                d.datepicker("option", {
+                    maxDate: max,
+                    minDate: min
+                });
+                
+                min = min.getMonth() + "/" + min.getDate() + "/" + min.getFullYear();
+                max = max.getMonth() + "/" + max.getDate() + "/" + max.getFullYear();
+                
+                $("#date-range").val(min + " - " + max);
+                
+            }
+            
+        });
+        
+        
+        
+        $('#period-selector').selectbox().bind('change', function() {
+
+           
+           selectValue = $(this).val();
+           period = determineMonthDiff(selectValue);
+           
+           var min = d.datepicker('getDate');
+           
+           var max = min.getMonth() + "/" + min.getDate() + "/" + min.getFullYear();
+           
+           min.setMonth(min.getMonth() - period);
+           
+           d.datepicker('option', 'minDate', min);
+           
+           min = min.getMonth() + "/" + min.getDate() + "/" + min.getFullYear();
+           $("#date-range").val(min + " - " + max);
+           
+            
+        });
+        
     });
-    $('#period-selector').selectbox();
+    
+    
 </script>
