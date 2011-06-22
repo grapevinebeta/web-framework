@@ -1920,7 +1920,10 @@ boxManager = {
         
         this.initBoxes();
         
-        $('#range-form').submit(function () {
+        
+        $('#range-form').submit(function (e) {
+            
+            e.preventDefault();
             var range = {};
             var rangeArray = $(this).serializeArray();
             for (var i = 0; i < rangeArray.length; i++) {
@@ -1929,10 +1932,11 @@ boxManager = {
             self.setRange(range);
             self.clearData();
             self.refresh();
-            return false;
+
         }).find('#period-selector, #date-selector').change(function () {
             $(this).parents('form:first').submit();
         });
+        
         $( "#boxes-holder .box" ).draggable({ 
             snap: ".box-container", 
             snapMode: 'inner',

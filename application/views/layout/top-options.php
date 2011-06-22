@@ -33,7 +33,8 @@
                 'id' => 'date-range', 
                 'class' => 'as-select with-icon',
                 'maxlength' => '10',
-                'style' => 'width: 120px;'));
+                'disabled' => 'disabled',
+                'style' => 'width: 120px; background: #fff;'));
             
             ?>
         
@@ -66,34 +67,56 @@
         
     }
     
-    var selectValue = '<?php echo $viewingRange['period'] ?>';
+    var startDate, endDate;
+    var selectValue = $("#period-selector").val();
     var period = determineMonthDiff(selectValue);
     var maxDate = $("#date-selector").val();
-    maxDate = maxDate.length ? maxDate : '-1d';
     
-    $(document).ready(function() {
+    
+    // default date = yesterday
+    maxDate = maxDate.length ? new Date(maxDate) : '-1d';
+    var minDate;
+    
+    if(maxDate instanceof Date) {
+        minDate = new Date(maxDate);
+        minDate.setMonth(minDate.getMonth() - period);
         
-        var d = new Date();
+        startDate = (minDate.getMonth() + 1) + "/" + minDate.getDate() + "/" + minDate.getFullYear();
+        endDate = (maxDate.getMonth() + 1) + "/" + maxDate.getDate() + "/" + maxDate.getFullYear();
         
-        d.setDate(d.getDate() - 1);
+    }
+    else {
         
-        d = d.getMonth() + 1 + "/" + d.getDate() + "/" + d.getFullYear();
-        
-        var m = new Date();
+        m = new Date();
         m.setMonth(m.getMonth() - period);
         
-        m = m.getMonth() + 1 + "/" + m.getDate() + "/" + m.getFullYear();
-
-        $("#date-range").val(m + " - " + d)
+        mx = new Date();
+        mx.setDate(m.getDay() -1);
         
-        var d = $('#top-options-holder #date-selector').datepicker({
+        startDate = (m.getMonth() + 1) + "/" + m.getDate() + "/" + m.getFullYear();
+        endDate = (mx.getMonth() + 1) + "/" + mx.getDate() + "/" + mx.getFullYear();
+        
+        minDate = - period + "m";
+        
+    }
+
+    
+    
+    var form = $("#range-form");
+    var dateRange = $("#date-range");
+    
+    $(document).ready(function() {
+
+        dateRange.val(startDate + " - " + endDate);
+        
+        var config = {
             showOn: "button",
             buttonImage: "images/as-select-bg.jpg",
             buttonImageOnly: true,
             numberOfMonths: 2,
-            defaultDate: "-1d",
-            maxDate: maxDate,
-            minDate: -period + 'm',
+            maxDate: '-1d',
+            defaultDate: maxDate,
+            minDate: minDate,
             onSelect: function(dateText, inst) {
                 
                 var max = new Date(dateText);
@@ -107,23 +130,26 @@
                 }
                 
                 var min = new Date(max);
-                
                 min.setMonth(min.getMonth() - period);
+                
                 
                 d.datepicker("option", {
                     maxDate: max,
                     minDate: min
                 });
                 
-                min = min.getMonth()+1 + "/" + min.getDate() + "/" + min.getFullYear();
-                max = min.getMonth()+1 + "/" + max.getDate() + "/" + max.getFullYear();
+                var minString = (min.getMonth() + 1 ) + "/" + min.getDate() + "/" + min.getFullYear();
+                var maxString = (min.getMonth() + 1 ) + "/" + max.getDate() + "/" + max.getFullYear();
                 
-                $("#date-range").val(min + " - " + max);
+                dateRange.val(minString + " - " + maxString);
+                
+                form.trigger('submit');
                 
             }
             
-        });
+        };
         
+        var d = $('#top-options-holder #date-selector').datepicker(config);
         
         
         $('#period-selector').selectbox().bind('change', function() {
@@ -141,8 +167,10 @@
            d.datepicker('option', 'minDate', min);
            
            min = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
-           $("#date-range").val(min + " - " + max);
+           dateRange.val(min + " - " + max);
            
+           
+           form.trigger('submit');
             
         });
         
