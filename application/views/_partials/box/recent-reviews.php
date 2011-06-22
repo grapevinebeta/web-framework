@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Review Inbox'),
+            'caption' => __('Reviews Inbox'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 

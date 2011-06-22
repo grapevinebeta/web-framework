@@ -48,38 +48,53 @@
 </div>
 
 <script type="text/javascript">
-    
-    function determineMonthDiff(period)
-    {
-        
-        switch(period) {
-            
-            case '1m':
-                return 1;
-            case '3m':
-                return 3;
-            case '6m':
-                return 6;
-            case '1y':
-                return 12;
-            
-        }
-        
-    }
-    
+
     var startDate, endDate;
     var periodSelector = $("#period-selector");
     var dateSelector = $("#date-selector");
     var selectValue = periodSelector.val();
     var period = determineMonthDiff(selectValue);
+    var minDate;
     var maxDate = dateSelector.val();
     var form = $("#range-form");
     var dateRange = $("#date-range");
+    var datapicker;
     
+    var config = {
+        showOn: "button",
+        buttonImage: "images/as-select-bg.jpg",
+        buttonImageOnly: true,
+        numberOfMonths: 2,
+        maxDate: '-1d',
+        minDate: minDate,
+        onSelect: function(dateText, inst) {
+            
+            maxDate = new Date(dateText);
+            
+            minDate.setMonth(maxDate.getMonth() - period);
+            
+            datapicker.datepicker("option", {
+                maxDate: maxDate,
+                minDate: minDate
+            });
+            
+            var minString = (minDate.getMonth() + 1 ) 
+                + "/" + minDate.getDate() 
+                + "/" + minDate.getFullYear();
+            var maxString = (maxDate.getMonth() + 1 ) 
+                + "/" + maxDate.getDate() 
+                + "/" + maxDate.getFullYear();
+            
+            dateRange.val(minString + " - " + maxString);
+            
+            form.trigger('submit');
+            
+        }
+        
+    };
     
     // default date = yesterday
     maxDate = maxDate.length ? new Date(maxDate) : '-1d';
-    var minDate;
     
     if(maxDate instanceof Date) {
         minDate = new Date(maxDate);
@@ -108,59 +123,21 @@
     $(document).ready(function() {
 
         dateRange.val(startDate + " - " + endDate);
-        
-        var config = {
-            showOn: "button",
-            buttonImage: "images/as-select-bg.jpg",
-            buttonImageOnly: true,
-            numberOfMonths: 2,
-            maxDate: '-1d',
-            minDate: minDate,
-            onSelect: function(dateText, inst) {
-                
-                maxDate = new Date(dateText);
-                
-                minDate.setMonth(maxDate.getMonth() - period);
-                
-                d.datepicker("option", {
-                    maxDate: maxDate,
-                    minDate: minDate
-                });
-                
-                var minString = (minDate.getMonth() + 1 ) 
-                    + "/" + minDate.getDate() 
-                    + "/" + minDate.getFullYear();
-                var maxString = (maxDate.getMonth() + 1 ) 
-                    + "/" + maxDate.getDate() 
-                    + "/" + maxDate.getFullYear();
-                
-                dateRange.val(minString + " - " + maxString);
-                
-                form.trigger('submit');
-                
-            }
-            
-        };
-        
-        var d = dateSelector.datepicker(config);
-
+        datapicker = dateSelector.datepicker(config);
         periodSelector.selectbox().bind('change', function() {
          
            selectValue = $(this).val();
            period = determineMonthDiff(selectValue);
            
-           var min = d.datepicker('getDate');
-           
+           var min = datapicker.datepicker('getDate');
            var max = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
-           
            min.setMonth(min.getMonth() - period);
-           
-           d.datepicker('option', 'minDate', min);
-           
            min = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+           
+           datapicker.datepicker('option', 'minDate', min);
+           
            dateRange.val(min + " - " + max);
-           
-           
+
            form.trigger('submit');
             
         });

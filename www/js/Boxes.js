@@ -949,7 +949,7 @@ var BC_ReviewSites = GraphBoxController.extend({
     
 });
 
-var BC_RecentReviews = BoxController.extend({
+var BC_ReviewsInbox = BoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1043,20 +1043,32 @@ var BC_RecentReviews = BoxController.extend({
     loadFilters: function (filterType) {
         
         var filters = this.data.filters[filterType];
-        
+        var activeCount = 0;
         var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
             
-            var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
+            var filterLink = $('<a href="#" data-filter-status="' + 
+                filters[i].value.toLowerCase() + '"></a>');
             if (filters[i].total) {
                 filterLink.text(filters[i].total +' ');
             }
+            
+            if(filters[i].active == 1) {
+                filterLink.addClass('active');
+                activeCount++;
+            }
+            
             filterLink.text(filterLink.text() + filters[i].value);
             filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
         }
         
+        if(!activeCount) {
+            
+            filterHolder.find('a').addClass('active');
+            
+        }
     },
     
     loadReviews: function () {
@@ -1775,6 +1787,10 @@ var BC_SocialMediaInbox = BoxController.extend({
             if (filters[i].total) {
                 filterLink.text(filters[i].total +' ');
             }
+            
+            if(filters[i].active == 1)
+                filterLink.addClass('active');
+            
             filterLink.text(filterLink.text() + filters[i].value);
             filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
@@ -2062,7 +2078,7 @@ $(document).ready(function () {
     boxManager.add(new BC_KeywordsAnalysis())
               .add(new BC_Ogsi())
               .add(new BC_ReviewSites())
-              .add(new BC_RecentReviews())
+              .add(new BC_ReviewsInbox())
               .add(new BC_SocialActivity())
               .add(new BC_SocialReach())
               .add(new BC_SocialMediaInbox())
