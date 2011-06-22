@@ -776,6 +776,10 @@ background: -webkit-gradient(
 }
 
 
+.box-filter {
+    position: relative;
+}
+
 .box-filters .box-filters-inner
 {
     margin:10px 10px 0;
@@ -786,6 +790,14 @@ background: -webkit-gradient(
 {
     margin-left: 4px;
     margin-right: 4px;
+}
+
+.box-filters .pager {
+    
+    position: absolute;
+    right: 15px;
+    top: 44px;
+    
 }
 
 

@@ -1969,6 +1969,11 @@ var BC_SocialMediaInbox = BoxController.extend({
                 boxController.loadFilters(activeFilter); 
             }
         }
+        
+        var pagerHolder = boxController.getFiltersDom().find('.pager');
+        
+        pagerHolder.find('.page').text(data.pagination.page);
+        pagerHolder.find('.pageCount').text(data.pagination.pagesCount);
 
 
     },
