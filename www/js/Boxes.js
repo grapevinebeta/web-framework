@@ -117,8 +117,13 @@ var BoxController = Class.extend({
             var filter_value = $(this).attr('data-filter-status');
             
 
+
             var key = $(this).parent().attr('class');
             key = key.replace("box-filter box-filter-", "");
+            
+            if($(this).hasClass('show-all')) {
+                self.resetFilters(key);
+            }
             
             self.addFilter(key , filter_value);
             self.refresh();
@@ -240,6 +245,12 @@ var BoxController = Class.extend({
     
     setDataProvider: function (dataProvider) {
         this.dataProvider = new DataProvider();
+    },
+    
+    resetFilters: function(name) {
+        
+      this.filters[name]  = [];
+        
     },
 
     /**
@@ -986,8 +997,9 @@ var BC_ReviewsInbox = BoxController.extend({
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
-        this.getFiltersDom().find('.box-filter-activity').html($(this.getLoaderHtml()).children());
-        this.getFiltersDom().find('.box-filter-network').html($(this.getLoaderHtml()).children());
+        
+        this.getFiltersDom().find('.box-filter')
+        .html($(this.getLoaderHtml()).children());
     },
 
     /**
@@ -1016,6 +1028,8 @@ var BC_ReviewsInbox = BoxController.extend({
         tr.attr('data-review-id', review.id);
         for (n in review) {
             var value = review[n];
+            var col = tr.find('td.col-' + n);
+            
             if (n == 'submitted') {
                 var tmpDate = new Date(value * 1000);
                 tr.find('td.col-' + n).text(
@@ -1026,7 +1040,13 @@ var BC_ReviewsInbox = BoxController.extend({
             } else if (n == 'title') {
                 var titleLink = $('<a href="#"></a>');
                 titleLink.text(value);
-                tr.find('td.col-' + n).html(titleLink);
+                
+                    
+                 col = col.find('div');
+                    
+                 col.html(titleLink);
+                 col.prepend('<a href="#" class="expand"></a>');
+  
             } else if (n == 'rating') {
                 var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
                 tr.find('td.col-' + n).html(ratingStars);
@@ -1058,6 +1078,10 @@ var BC_ReviewsInbox = BoxController.extend({
                 filterLink.addClass('active');
                 activeCount++;
             }
+
+            if(i === 0) {
+                filterLink.addClass('show-all');
+            }
             
             filterLink.text(filterLink.text() + filters[i].value);
             filterHolder.append('<span class="separator">|</span> ');
@@ -1066,7 +1090,7 @@ var BC_ReviewsInbox = BoxController.extend({
         
         if(!activeCount) {
             
-            filterHolder.find('a').addClass('active');
+            filterHolder.find('.show-all').addClass('active');
             
         }
     },
@@ -1774,10 +1798,35 @@ var BC_SocialMediaInbox = BoxController.extend({
         .html($(this.getLoaderHtml()).children());
     },
     
+    
+    /**
+     * Attach events associated with RecentReviews box, such as expanding review
+     * details when the review snippet is being clicked.
+     */
+    attachBoxEvents: function() {
+        var self = this;
+
+        // Attach event for expanding and collapsing review details
+        self.getBoxDom().delegate('table tr[data-row-id].excerpt', 'click', 
+        function(event){
+            event.preventDefault();
+            var rowId = $(this).attr('data-row-id');
+            var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].reviewDetails .recentReviewDetails');
+            var detailsRow = $(this).next();
+            if (!detailsRow.height()) {
+                detailsRow.removeClass('hidden-row');
+                detailsBox.show();
+            } else {
+                detailsRow.addClass('hidden-row');
+                detailsBox.hide();
+            }
+        });
+    },
+    
     loadFilters: function (filterType) {
         
         var filters = this.data.filters[filterType];
-        
+        var activeCount = 0;
         var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
         filterHolder.html('');
         for (var i = 0; i < filters.length; i++) {
@@ -1788,56 +1837,102 @@ var BC_SocialMediaInbox = BoxController.extend({
                 filterLink.text(filters[i].total +' ');
             }
             
-            if(filters[i].active == 1)
+            if(filters[i].active == 1) {
+                
                 filterLink.addClass('active');
+                activeCount++;
+            }
+            
+            if(i === 0) {
+                filterLink.addClass('show-all');
+            }
             
             filterLink.text(filterLink.text() + filters[i].value);
             filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
         }
+        
+        if(!activeCount)
+        {
+            filterHolder.find('.show-all').addClass('active');
+        }
+        
+    },
+    
+    prepareMessage: function(template, message) {
+        
+        template = template.clone();
+        template.addClass('excerpt').attr('data-row-id', message.id);
+        
+        for(key in message)
+        {
+
+            var value = message[key];
+            var col = template.find('td.col-' + key);
+            
+            switch(key) {
+                
+                case 'submitted':
+                    var tmpDate = new Date(value * 1000);
+                    var formatted = monthNames[tmpDate.getMonth()] +
+                        ' ' + tmpDate.getDate();
+                    col.text(formatted);
+                    break;
+                case 'title':
+                    var titleLink = $('<a href="#"></a>');
+                    titleLink.text(value);
+                    
+                    col = col.find('div');
+                    
+                    col.html(titleLink);
+                    col.prepend('<a href="#" class="expand"></a>');
+                    break;
+                case 'network':
+                    var titleLink = $('<a href="#"><span></span></a>');
+                    titleLink.attr('class', value.toLowerCase());
+                    titleLink.filter('span').text(value);
+                    col.html(titleLink);
+                    break;
+                default:
+                    col.text(value);
+                    break;
+                
+            }
+
+        }
+        
+        return template
+        
+    },
+    
+    prepareDetailsView: function(template, message) {
+      
+        var tr = template.clone();
+        tr.attr('data-row-id', message.id);
+        tr.find('.recent-review-status-icon')
+            .removeClass('open closed todo')
+            .addClass(message.status.toLowerCase());
+        tr.find('.review-details-title').text(message.title);
+        tr.find('.review-details-review').text(message.review);
+        tr.find('select[name="category"]').val(message.category);
+        tr.find('input[name="keywords"]').val(message.keywords.join(', '));
+        tr.find('textarea[name="notes"]').val(message.notes);
+        
+        return tr;
+      
     },
     
     loadSocials: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
         var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
-        var trContentTemplate = '<tr><td colspan="6"></td></tr>';
+        var trContentTemplate = table.find('tbody:first > tr:last').clone();
         var tr = null;
         var trContent = null;
         table.find('tbody tr').remove();
         for (var i = 0; i < this.data.socials.length; i++) {
-            tr = trTemplate.clone();
             
-            for (n in this.data.socials[i]) {
-                var value = this.data.socials[i][n];
-                if (n == 'submitted') {
-                    var tmpDate = new Date(value * 1000);
-                    tr.find('td.col-' + n).text(
-                        monthNames[tmpDate.getMonth()] +
-                        ' ' +
-                        tmpDate.getDate()
-                    );
-                } else if (n == 'title') {
-                    var titleLink = $('<a href="#"></a>');
-                    titleLink.text(value);
-                    titleLink.click(function () {
-                        $(this).parents('tr:first').next().toggle('slow');
-                        return false;
-                    });
-                    tr.find('td.col-' + n).html(titleLink);
-                } 
-                else if(n == 'network')
-                {
-
-                    var titleLink = $('<a href="#"><span></span></a>');
-                    titleLink.attr('class', value.toLowerCase());
-                    titleLink.filter('span').text(value);
-                    tr.find('td.col-' + n).html(titleLink);
-
-                }
-                else {
-                    tr.find('td.col-' + n).text(value);
-                }
-            }
+            tr =this.prepareMessage(trTemplate, this.data.socials[i]);
+            trContent = this.prepareDetailsView(trContentTemplate, this.data.socials[i]);
             
             if (i % 2) {
                 tr.addClass('odd');
@@ -1845,15 +1940,14 @@ var BC_SocialMediaInbox = BoxController.extend({
                 tr.addClass('even');
             }
             
+            
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
             checkbox.attr('value', this.data.socials[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.children('tbody').append(tr);
+            table.children('tbody').append(tr); // append two elements
+            table.children('tbody').append(trContent); // append two elements
             
-            trContent = $(trContentTemplate);
-            trContent.css('display', 'none').find('td').text('adsfsf fsadfsa');
-            table.children('tbody').append(trContent);
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();

@@ -35,7 +35,7 @@
                         <td class="col-status"></td>
                         <td class="col-rating"></td>
                         <td class="col-submitted a-center"></td>
-                        <td class="col-title"></td>
+                        <td class="col-title"><div></div></td>
                         <td class="col-site a-right"></td>
                     </tr>
                     <tr data-review-id="" class="reviewDetails">

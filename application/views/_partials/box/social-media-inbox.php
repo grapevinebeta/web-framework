@@ -11,7 +11,7 @@
     <?php echo View::factory(
         '_partials/box/filters', 
         array(
-            'filters' => array('activity' => 'Activity Filter', 'network' => 'Social Network Filter'),
+            'filters' => array('activity' => 'Activity Filter'),
             )
         ); 
     ?>
@@ -24,16 +24,12 @@
                         <tr>
                             <td class="col-network"></td>
                             <td class="col-submitted a-center"></td>
-                            <td class="col-title"></td>
+                            <td class="col-title"><div></div></td>
                             <td class="col-site"></td>
                         </tr>
-                        <tr style="display: none;">
-                            <td colspan="6">
-                                <div>
-                                    
-                                </div>
-                            </td>
-                        </tr>
+                        
+                        <?php echo View::factory('_partials/box/row-detail'); ?>
+
                     </tbody>
                 </table>
             </form>

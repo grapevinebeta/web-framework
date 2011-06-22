@@ -529,6 +529,10 @@ input[type=submit] {
             background-position: 0px 0px;
         }
 
+           #box-recent-reviews .col-title div {
+        position: relative;
+    }
+        
     /* Styling of the expanded review details */
     #box-recent-reviews .reviewDetails {
         overflow: hidden;
@@ -839,6 +843,69 @@ background: -webkit-gradient(
     #box-social-media-inbox tr td.col-network a.delicious {
         background-position: 0 -297px;
     }
+    
+    /* Styling of the expanded review details */
+    #box-social-media-inbox .reviewDetails {
+        overflow: hidden;
+    }
+
+    #box-social-media-inbox .col-2 {
+        
+        float:left;
+        clear:both;
+        width:100%;
+        margin-top:15px;
+        
+    }
+    
+    #box-social-media-inbox .reviewDetails td { padding: 0; }
+    
+    #box-social-media-inbox .recentReviewDetails {
+        border-bottom: 1px solid #8974A0;
+        clear: both;
+        padding: 10px;
+    }
+    
+    #box-social-media-inbox .col-2 .leftCol {
+        
+        width:100%;
+        float:left;
+    }
+    
+
+    #box-social-media-inbox .expand, #box-recent-reviews .expand {
+        background: url("../images/icons/expand-icon.png") no-repeat scroll 0 0 transparent;
+        bottom: -21px;
+        display: block;
+        height: 15px;
+        position: absolute;
+        right: 0px;
+        width: 55px;
+    }
+    
+    
+    #box-social-media-inbox .col-title div {
+        position: relative;
+    }
+    
+    #box-social-media-inbox .col-2 h2 {
+        margin:0;
+    }
+    
+    #box-social-media-inbox .col-2 .leftCol .inner {
+        
+        margin-right: 200px;
+        
+    }
+    
+    #box-social-media-inbox .col-2 .rightCol {
+        
+        float:right;
+        width:200px;
+        margin-left: -200px;
+        
+    }
+    
         
 
 /* Review Inbox */

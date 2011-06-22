@@ -402,8 +402,7 @@ class Controller_Api_Static extends Controller {
         
         
         $data = array(
-            'activity' => array('New', 'FB Posts', 'Tweets', 'Photos', 'Alert'),
-            'network' => array('Twitter', 'Facebook', 'Google')
+            'activity' => array('All', 'Facebook', 'Twitter', 'Check-ins', 'Blogs', 'Other')
         );
         
         foreach($data as $network => $f) {
