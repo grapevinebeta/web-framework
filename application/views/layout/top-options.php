@@ -68,9 +68,13 @@
     }
     
     var startDate, endDate;
-    var selectValue = $("#period-selector").val();
+    var periodSelector = $("#period-selector");
+    var dateSelector = $("#date-selector");
+    var selectValue = periodSelector.val();
     var period = determineMonthDiff(selectValue);
-    var maxDate = $("#date-selector").val();
+    var maxDate = dateSelector.val();
+    var form = $("#range-form");
+    var dateRange = $("#date-range");
     
     
     // default date = yesterday
@@ -100,11 +104,7 @@
         
     }
 
-    
-    
-    var form = $("#range-form");
-    var dateRange = $("#date-range");
-    
+
     $(document).ready(function() {
 
         dateRange.val(startDate + " - " + endDate);
@@ -115,31 +115,24 @@
             buttonImageOnly: true,
             numberOfMonths: 2,
             maxDate: '-1d',
-            defaultDate: maxDate,
             minDate: minDate,
             onSelect: function(dateText, inst) {
                 
-                var max = new Date(dateText);
-                var current = new Date();
+                maxDate = new Date(dateText);
                 
-                if(max > current)
-                {
-
-                    max.setDate(max.getDate() -1);
-
-                }
-                
-                var min = new Date(max);
-                min.setMonth(min.getMonth() - period);
-                
+                minDate.setMonth(maxDate.getMonth() - period);
                 
                 d.datepicker("option", {
-                    maxDate: max,
-                    minDate: min
+                    maxDate: maxDate,
+                    minDate: minDate
                 });
                 
-                var minString = (min.getMonth() + 1 ) + "/" + min.getDate() + "/" + min.getFullYear();
-                var maxString = (min.getMonth() + 1 ) + "/" + max.getDate() + "/" + max.getFullYear();
+                var minString = (minDate.getMonth() + 1 ) 
+                    + "/" + minDate.getDate() 
+                    + "/" + minDate.getFullYear();
+                var maxString = (maxDate.getMonth() + 1 ) 
+                    + "/" + maxDate.getDate() 
+                    + "/" + maxDate.getFullYear();
                 
                 dateRange.val(minString + " - " + maxString);
                 
@@ -149,12 +142,10 @@
             
         };
         
-        var d = $('#top-options-holder #date-selector').datepicker(config);
-        
-        
-        $('#period-selector').selectbox().bind('change', function() {
+        var d = dateSelector.datepicker(config);
 
-           
+        periodSelector.selectbox().bind('change', function() {
+         
            selectValue = $(this).val();
            period = determineMonthDiff(selectValue);
            
@@ -175,6 +166,5 @@
         });
         
     });
-    
     
 </script>
