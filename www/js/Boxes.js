@@ -160,14 +160,27 @@ var BoxController = Class.extend({
         return this._headerDom;
     },
 
-/**
-     * @return jQuery DOM element which holds header of the box
+    /**
+     * @return jQuery DOM element which holds filters of the box
      */
     getFiltersDom: function () {
         if (!this._filterDom) {
             this._filterDom = $('#' + this.boxId + ' .box-filters');
         }
         return this._filterDom;
+    },
+    
+    /**
+     * @return jQuery DOM element which holds pager of the box
+     */
+    
+    getPagerHolder: function() {
+        
+       if (!this._pagerDom) {
+            this._pagerDom = $('#' + this.boxId + ' .box-pager');
+        }
+        return this._pagerDom;
+        
     },
     
     getLoaderHtml: function () {
@@ -645,6 +658,140 @@ var LinearGraphBoxController = GraphBoxController.extend({
     
 });
 
+/**
+ * More generic class for inbox funtionalities, includes filters, pagers and
+ * more readable data preparation
+ * 
+ */
+
+var BC_Inbox = BoxController.extend({
+    
+    currentPage: null,
+    totalPages: null,
+    
+    beforeLoadData: function () {
+        this.getContentDom().children().hide();
+        this.getContentDom().append(this.getLoaderHtml());
+        
+        this.getFiltersDom().find('.box-filter')
+        .html($(this.getLoaderHtml()).children());
+    },
+    
+    
+    /**
+     * Attach events associated with RecentReviews box, such as expanding review
+     * details when the review snippet is being clicked.
+     */
+    attachBoxEvents: function() {
+        var self = this;
+
+        // Attach event for expanding and collapsing review details
+        self.getBoxDom().delegate('table tr[data-row-id].collapsed', 'click', 
+        function(event){
+            event.preventDefault();
+            var rowId = $(this).attr('data-row-id');
+            var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');
+            var detailsRow = $(this).next();
+            if (!detailsRow.height()) {
+                detailsRow.removeClass('hidden-row');
+                detailsBox.show();
+            } else {
+                detailsRow.addClass('hidden-row');
+                detailsBox.hide();
+            }
+        });
+    },
+    
+    loadFilters: function (filterType) {
+        
+        var filters = this.data.filters[filterType];
+        var activeCount = 0;
+        var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
+        filterHolder.html('');
+        for (var i = 0; i < filters.length; i++) {
+            
+            var filterLink = $('<a href="#" data-filter-status="' + 
+                filters[i].value.toLowerCase() + '"></a>');
+            if (filters[i].total) {
+                filterLink.text(filters[i].total +' ');
+            }
+            
+            if(filters[i].active == 1) {
+                
+                filterLink.addClass('active');
+                activeCount++;
+            }
+            
+            if(i === 0) {
+                filterLink.addClass('show-all');
+            }
+            
+            filterLink.text(filterLink.text() + filters[i].value);
+            filterHolder.append('<span class="separator">|</span> ');
+            filterHolder.append(filterLink);
+        }
+        
+        if(!activeCount)
+        {
+            filterHolder.find('.show-all').addClass('active');
+        }
+        
+    },
+    
+    loadInboxData: function() {
+        alert('You must implement it by yourself');
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        boxController.loadInboxData();
+        
+        if(data.filters) 
+        {
+
+            for(var activeFilter in data.filters) 
+            {
+                boxController.loadFilters(activeFilter); 
+            }
+        }
+            
+        boxController.initPager();
+
+
+    },
+    
+    initPager: function() {
+      
+        var pager = this.data.pagination;
+        
+        this.currentPage = pager.page;
+        this.totalPages = pager.pagesCount;
+      
+        if(this.getPagerHolder()) {
+            
+            
+            this.getPagerHolder().find('.page').text(pager.page);
+            this.getPagerHolder().find('.pageCount').text(pager.pagesCount);
+            this.getPagerHolder().find('.prev, .next').delegate('click', function(e) {
+                
+                e.preventDefault();
+                
+                
+            });
+            
+        }
+        
+        
+        
+        return;
+      
+    },
+    
+    construct: function () {}
+    
+});
 
 var BC_Ogsi = BoxController.extend({
 
@@ -1778,7 +1925,7 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
  
 });
 
-var BC_SocialMediaInbox = BoxController.extend({
+var BC_SocialMediaInbox = BC_Inbox.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1790,86 +1937,17 @@ var BC_SocialMediaInbox = BoxController.extend({
      */
     endpoint: 'socials',
     
-    beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
-        
-        this.getFiltersDom().find('.box-filter')
-        .html($(this.getLoaderHtml()).children());
-    },
-    
-    
-    /**
-     * Attach events associated with RecentReviews box, such as expanding review
-     * details when the review snippet is being clicked.
-     */
-    attachBoxEvents: function() {
-        var self = this;
 
-        // Attach event for expanding and collapsing review details
-        self.getBoxDom().delegate('table tr[data-row-id].excerpt', 'click', 
-        function(event){
-            event.preventDefault();
-            var rowId = $(this).attr('data-row-id');
-            var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].reviewDetails .recentReviewDetails');
-            var detailsRow = $(this).next();
-            if (!detailsRow.height()) {
-                detailsRow.removeClass('hidden-row');
-                detailsBox.show();
-            } else {
-                detailsRow.addClass('hidden-row');
-                detailsBox.hide();
-            }
-        });
-    },
-    
-    loadFilters: function (filterType) {
-        
-        var filters = this.data.filters[filterType];
-        var activeCount = 0;
-        var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
-        filterHolder.html('');
-        for (var i = 0; i < filters.length; i++) {
-            
-            var filterLink = $('<a href="#" data-filter-status="' + 
-                filters[i].value.toLowerCase() + '"></a>');
-            if (filters[i].total) {
-                filterLink.text(filters[i].total +' ');
-            }
-            
-            if(filters[i].active == 1) {
-                
-                filterLink.addClass('active');
-                activeCount++;
-            }
-            
-            if(i === 0) {
-                filterLink.addClass('show-all');
-            }
-            
-            filterLink.text(filterLink.text() + filters[i].value);
-            filterHolder.append('<span class="separator">|</span> ');
-            filterHolder.append(filterLink);
-        }
-        
-        if(!activeCount)
-        {
-            filterHolder.find('.show-all').addClass('active');
-        }
-        
-    },
-    
     prepareMessage: function(template, message) {
         
         template = template.clone();
-        template.addClass('excerpt').attr('data-row-id', message.id);
+        template.addClass('collapsed').attr('data-row-id', message.id);
         
         for(key in message)
         {
-
             var value = message[key];
             var col = template.find('td.col-' + key);
-            
+            var titleLink;
             switch(key) {
                 
                 case 'submitted':
@@ -1879,7 +1957,7 @@ var BC_SocialMediaInbox = BoxController.extend({
                     col.text(formatted);
                     break;
                 case 'title':
-                    var titleLink = $('<a href="#"></a>');
+                    titleLink = $('<a href="#"></a>');
                     titleLink.text(value);
                     
                     col = col.find('div');
@@ -1888,7 +1966,7 @@ var BC_SocialMediaInbox = BoxController.extend({
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
                 case 'network':
-                    var titleLink = $('<a href="#"><span></span></a>');
+                    titleLink = $('<a href="#"><span></span></a>');
                     titleLink.attr('class', value.toLowerCase());
                     titleLink.filter('span').text(value);
                     col.html(titleLink);
@@ -1909,20 +1987,14 @@ var BC_SocialMediaInbox = BoxController.extend({
       
         var tr = template.clone();
         tr.attr('data-row-id', message.id);
-        tr.find('.recent-review-status-icon')
-            .removeClass('open closed todo')
-            .addClass(message.status.toLowerCase());
-        tr.find('.review-details-title').text(message.title);
-        tr.find('.review-details-review').text(message.review);
-        tr.find('select[name="category"]').val(message.category);
-        tr.find('input[name="keywords"]').val(message.keywords.join(', '));
-        tr.find('textarea[name="notes"]').val(message.notes);
+        tr.find('.details-title').text(message.title);
+        tr.find('.details-review').text(message.review);
         
         return tr;
       
     },
     
-    loadSocials: function () {
+    loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
         var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
         var trContentTemplate = table.find('tbody:first > tr:last').clone();
@@ -1951,31 +2023,6 @@ var BC_SocialMediaInbox = BoxController.extend({
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
-    },
-    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        
-        if (data.socials) {
-            boxController.loadSocials();
-        }
-        
-        if(data.filters) 
-        {
-
-            for(var activeFilter in data.filters) 
-            {
-                boxController.loadFilters(activeFilter); 
-            }
-        }
-        
-        var pagerHolder = boxController.getFiltersDom().find('.pager');
-        
-        pagerHolder.find('.page').text(data.pagination.page);
-        pagerHolder.find('.pageCount').text(data.pagination.pagesCount);
-
-
     },
     
     construct: function () {}

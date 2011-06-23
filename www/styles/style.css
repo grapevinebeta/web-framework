@@ -792,7 +792,7 @@ background: -webkit-gradient(
     margin-right: 4px;
 }
 
-.box-filters .pager {
+.box .box-pager {
     
     position: absolute;
     right: 15px;
@@ -857,7 +857,7 @@ background: -webkit-gradient(
     }
     
     /* Styling of the expanded review details */
-    #box-social-media-inbox .reviewDetails {
+    tr.expanded {
         overflow: hidden;
     }
 
@@ -870,9 +870,9 @@ background: -webkit-gradient(
         
     }
     
-    #box-social-media-inbox .reviewDetails td { padding: 0; }
+    tr.expanded td { padding: 0; }
     
-    #box-social-media-inbox .recentReviewDetails {
+    tr .details {
         border-bottom: 1px solid #8974A0;
         clear: both;
         padding: 10px;

@@ -12,6 +12,7 @@
         '_partials/box/filters', 
         array(
             'filters' => array('activity' => 'Activity Filter'),
+            'has_pager' => true
             )
         ); 
     ?>

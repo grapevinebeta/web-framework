@@ -51,6 +51,13 @@ var DataProvider = function() {
             return this;
         },
         
+        setPage: function (value) {
+            
+            page = value;
+            return this;
+            
+        },
+        
         setCallback: function(value) {
             callback = value;
             return this;
@@ -66,6 +73,10 @@ var DataProvider = function() {
             
             if (dateInterval) {
                 params.dateInterval = dateInterval;
+            }
+            
+            if (page) {
+                params.page = page;
             }
             
             $.ajax({

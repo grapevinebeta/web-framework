@@ -12,6 +12,7 @@
         '_partials/box/filters', 
         array(
             'filters' => array('status' => 'Status Filter', 'source' => 'Source Filter'),
+            'has_pager' => true
             )
         ); 
     ?>

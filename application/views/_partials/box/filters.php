@@ -8,10 +8,11 @@
         <?php endforeach; ?>
         <div class="clear"></div>
     </div>
-    <div class="pager">
-        <a href="#">&lt;</a>
-        Page <span class="page">1</span> of <span class="pageCount">1</span>
-        <a href="#">&gt;</a>
-        
-    </div>
 </div>
+<?php if(isset($has_pager)): ?>
+<div class="box-pager">
+    <a class="prev" href="#">&lt;</a>
+    Page <span class="page">1</span> of <span class="pageCount">1</span>
+    <a class="next" href="#">&gt;</a>
+</div>
+<?php endif; ?>

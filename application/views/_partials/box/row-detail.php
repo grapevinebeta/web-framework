@@ -1,14 +1,14 @@
-<tr class="reviewDetails">
+<tr class="expanded">
     <td colspan="5">
         <form action="">
-            <div class="recentReviewDetails" style="display: none;">
+            <div class="details" style="display: none;">
                 <div style="clear: both;">
 
                     <div class="col-2">
                         <div class="leftCol">
                             <div class="inner">
-                                <h2 class="review-details-title"></h2>
-                                <p class="review-details-review"></p>
+                                <h2 class="details-title"></h2>
+                                <p class="details-review"></p>
                             </div>
                         </div>
                         
@@ -28,9 +28,9 @@
                     
                     
                 </div>
-                <p class="recentReviewDetailsButtons a-right">
-                    <a class="close-button" href=""></a>
-                </p>
+                <div>
+                    <a class="close-button"></a>
+                </div>
             </div>
         </form>
     </td>
