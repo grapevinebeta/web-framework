@@ -53,12 +53,40 @@
     var periodSelector = $("#period-selector");
     var dateSelector = $("#date-selector");
     var selectValue = periodSelector.val();
+    
     var period = determineMonthDiff(selectValue);
     var minDate;
     var maxDate = dateSelector.val();
     var form = $("#range-form");
     var dateRange = $("#date-range");
     var datapicker;
+    
+        
+    // default date = yesterday
+    maxDate = maxDate.length ? new Date(maxDate) : '-1d';
+    
+    if(maxDate instanceof Date) {
+        minDate = new Date(maxDate);
+        minDate.setMonth(minDate.getMonth() - period);
+        
+        startDate = (minDate.getMonth() + 1) + "/" + minDate.getDate() + "/" + minDate.getFullYear();
+        endDate = (maxDate.getMonth() + 1) + "/" + maxDate.getDate() + "/" + maxDate.getFullYear();
+        
+    }
+    else {
+        m = new Date();
+        m.setMonth(m.getMonth() - period);
+        
+        mx = new Date();
+        mx.setDate(m.getDay() -1);
+        
+        startDate = (m.getMonth() + 1) + "/" + m.getDate() + "/" + m.getFullYear();
+        endDate = (mx.getMonth() + 1) + "/" + mx.getDate() + "/" + mx.getFullYear();
+        
+        minDate = - period + "m";
+        
+    }
+
     
     var config = {
         showOn: "button",
@@ -92,33 +120,6 @@
         }
         
     };
-    
-    // default date = yesterday
-    maxDate = maxDate.length ? new Date(maxDate) : '-1d';
-    
-    if(maxDate instanceof Date) {
-        minDate = new Date(maxDate);
-        minDate.setMonth(minDate.getMonth() - period);
-        
-        startDate = (minDate.getMonth() + 1) + "/" + minDate.getDate() + "/" + minDate.getFullYear();
-        endDate = (maxDate.getMonth() + 1) + "/" + maxDate.getDate() + "/" + maxDate.getFullYear();
-        
-    }
-    else {
-        
-        m = new Date();
-        m.setMonth(m.getMonth() - period);
-        
-        mx = new Date();
-        mx.setDate(m.getDay() -1);
-        
-        startDate = (m.getMonth() + 1) + "/" + m.getDate() + "/" + m.getFullYear();
-        endDate = (mx.getMonth() + 1) + "/" + mx.getDate() + "/" + mx.getFullYear();
-        
-        minDate = - period + "m";
-        
-    }
-
 
     $(document).ready(function() {
 

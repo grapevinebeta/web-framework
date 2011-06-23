@@ -698,4 +698,26 @@ class Controller_Api_Static extends Controller {
         );
     }
     
+    public function action_random_movie()
+    {
+        
+        $collection = array();
+        
+        $pattern = '/src=["]?((?:.(?!["]?\s+(?:\S+)=|[>"]))+.)["]?/';
+        
+        for($i=0; $i < 5; $i++) {
+            $content = file_get_contents("http://flyhour.tv/bots/api/index.php?type=2&countries=US&category=Music&views=75000");
+            $results = array();
+            preg_match($pattern, $content, $results);
+            
+            $collection[] = $results[1];
+            
+        }
+        $this->apiResponse = array('movies' => $collection);
+        
+        
+        
+        
+    }
+    
 }
