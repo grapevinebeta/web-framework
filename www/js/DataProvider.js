@@ -27,6 +27,11 @@ var DataProvider = function() {
      * 
      */
     var callback;
+    
+    /**
+     * @var Integer page number
+     */
+    var page;
 
     return {
         

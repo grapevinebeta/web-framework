@@ -276,7 +276,7 @@ class Controller_Api_Static extends Controller {
                     ),
             ),
             'filters' => $filters,
-            'pagination' => array('page' => rand(1,5), 'pagesCount' => 30)
+            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
         );
     }
 
@@ -439,7 +439,7 @@ class Controller_Api_Static extends Controller {
 
             'socials' => $socials, 
             'filters' => $filters,
-            'pagination' => array('page' => rand(1,5), 'pagesCount' => 30)
+            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
         );
         
     }

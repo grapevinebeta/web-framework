@@ -251,6 +251,7 @@ var BoxController = Class.extend({
             .setDateRange(this.range)
             .setFilters(this.filters)
             .setDateInterval(null)
+            
             .setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
         return this;
@@ -666,7 +667,7 @@ var LinearGraphBoxController = GraphBoxController.extend({
 
 var BC_Inbox = BoxController.extend({
     
-    currentPage: null,
+    currentPage: 1,
     totalPages: null,
     
     beforeLoadData: function () {
@@ -684,6 +685,25 @@ var BC_Inbox = BoxController.extend({
      */
     attachBoxEvents: function() {
         var self = this;
+
+        
+        self.getPagerHolder().delegate('.prev, .next','click', function(e) {
+            
+            e.preventDefault();
+            
+            if($(this).hasClass('next')) {
+                
+                self.currentPage++;
+                
+            }
+            if($(this).hasClass('prev')) {
+                self.currentPage--;
+            }
+            
+            self.loadData();
+            
+            
+        });
 
         // Attach event for expanding and collapsing review details
         self.getBoxDom().delegate('table tr[data-row-id].collapsed', 'click', 
@@ -756,10 +776,27 @@ var BC_Inbox = BoxController.extend({
                 boxController.loadFilters(activeFilter); 
             }
         }
-            
+
         boxController.initPager();
 
-
+    },
+    
+    /**
+     * Load Data by Ajax
+     */
+    loadData: function () {
+        this.beforeLoadData();
+        if (!this.loadDataCallback.boxController) {
+            this.loadDataCallback.boxController = this;
+        }
+        this.dataProvider.setEndpoint(this.endpoint)
+            .setDateRange(this.range)
+            .setFilters(this.filters)
+            .setDateInterval(null)
+            .setPage(this.currentPage)            
+            .setCallback(this.loadDataCallback);
+        this.data = this.dataProvider.fetch();
+        return this;
     },
     
     initPager: function() {
@@ -768,18 +805,13 @@ var BC_Inbox = BoxController.extend({
         
         this.currentPage = pager.page;
         this.totalPages = pager.pagesCount;
+        this.pagerInited = true;
       
         if(this.getPagerHolder()) {
             
             
             this.getPagerHolder().find('.page').text(pager.page);
             this.getPagerHolder().find('.pageCount').text(pager.pagesCount);
-            this.getPagerHolder().find('.prev, .next').delegate('click', function(e) {
-                
-                e.preventDefault();
-                
-                
-            });
             
         }
         
