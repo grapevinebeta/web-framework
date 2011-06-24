@@ -1139,7 +1139,10 @@ var BC_ReviewSites = GraphBoxController.extend({
     
 });
 
-var BC_ReviewsInbox = BoxController.extend({
+/**
+ * @TODO make html markup more generic, correcponding to row-detail partial
+ */
+var BC_ReviewsInbox = BC_Inbox.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1154,6 +1157,24 @@ var BC_ReviewsInbox = BoxController.extend({
      */
     attachBoxEvents: function() {
         var self = this;
+
+        self.getPagerHolder().delegate('.prev, .next','click', function(e) {
+            
+            e.preventDefault();
+            
+            if($(this).hasClass('next')) {
+                
+                self.currentPage++;
+                
+            }
+            if($(this).hasClass('prev')) {
+                self.currentPage--;
+            }
+            
+            self.loadData();
+            
+            
+        });
 
         // Attach event for expanding and collapsing review details
         self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
@@ -1171,14 +1192,6 @@ var BC_ReviewsInbox = BoxController.extend({
             //detailsBox.addClass('ieFixClassWhichDoesntExists');
             //detailsBox.removeClass('ieFixClassWhichDoesntExists');
         });
-    },
-
-    beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
-        
-        this.getFiltersDom().find('.box-filter')
-        .html($(this.getLoaderHtml()).children());
     },
 
     /**
@@ -1239,42 +1252,8 @@ var BC_ReviewsInbox = BoxController.extend({
         return tr;
     },
     
-    loadFilters: function (filterType) {
-        
-        var filters = this.data.filters[filterType];
-        var activeCount = 0;
-        var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
-        filterHolder.html('');
-        for (var i = 0; i < filters.length; i++) {
-            
-            var filterLink = $('<a href="#" data-filter-status="' + 
-                filters[i].value.toLowerCase() + '"></a>');
-            if (filters[i].total) {
-                filterLink.text(filters[i].total +' ');
-            }
-            
-            if(filters[i].active == 1) {
-                filterLink.addClass('active');
-                activeCount++;
-            }
-
-            if(i === 0) {
-                filterLink.addClass('show-all');
-            }
-            
-            filterLink.text(filterLink.text() + filters[i].value);
-            filterHolder.append('<span class="separator">|</span> ');
-            filterHolder.append(filterLink);
-        }
-        
-        if(!activeCount) {
-            
-            filterHolder.find('.show-all').addClass('active');
-            
-        }
-    },
     
-    loadReviews: function () {
+    loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
         var tr = null;
         var trContent = null;
@@ -1302,21 +1281,6 @@ var BC_ReviewsInbox = BoxController.extend({
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
-    },
-    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        
-        if (data.reviews) {
-            boxController.loadReviews();
-        }
-        
-        if(data.filters) {
-            for(var activeFilter in data.filters) {
-                boxController.loadFilters(activeFilter);
-            }
-        }
     },
     
     construct: function () {}
@@ -1571,7 +1535,7 @@ var BC_SocialReach = LinearGraphBoxController.extend({
     
 });
 
-var BC_CompetitionLedger = BoxController.extend({
+var BC_CompetitionLedger = BC_Inbox.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1579,44 +1543,6 @@ var BC_CompetitionLedger = BoxController.extend({
     boxId: 'box-competition-ledger',
     
     endpoint: 'competition_ledger',
-
-    /**
-     * Attach events associated with RecentReviews box, such as expanding review
-     * details when the review snippet is being clicked.
-     */
-    attachBoxEvents: function() {
-        var self = this;
-
-        // Attach event for expanding and collapsing review details
-        self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
-            event.preventDefault();
-            var reviIdid = $(this).attr('data-review-id');
-            log('Toggling details of review with ID="' + review_id + '"');
-            self.getBoxDom().find('tr[data-review-id="' + review_id + '"].reviewDetails').toggle('slow');
-        });
-    },
-
-    beforeLoadData: function () {
-        this.getContentDom().children().hide();
-        this.getContentDom().append(this.getLoaderHtml());
-        this.getHeaderDom().find('#box-header-status-filters').html($(this.getLoaderHtml()).children());
-        this.getHeaderDom().find('#box-header-source-filters').html($(this.getLoaderHtml()).children());
-    },
-
-    /**
-     * Get the template for details of specific review
-     */
-    getReviewDetailsTemplate: function (review_id) {
-        return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
-            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">some review '
-            + 'details placeholder, some review details placeholder, some review details placeholder, '
-            + 'some review details placeholder, some review details placeholder, some review details '
-            + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder, some review details placeholder, some review details '
-            + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder</td>'
-            + '</tr>');
-    },
 
     /**
      * Get the snippet of specific review
@@ -1630,26 +1556,23 @@ var BC_CompetitionLedger = BoxController.extend({
             + '<td class="col-competition a-right"></td>'
             + '</tr>');
     },
-    
-    loadFilters: function (filterType) {
-        if (filterType != 'status') {
-            return;
-        }
-        var filters = this.data.filters[filterType];
-        var filterHolder = this.getHeaderDom().find('#box-header-' + filterType + '-filters');
-        filterHolder.html('');
-        for (var i = 0; i < filters.length; i++) {
-            var filterLink = $('<a href="#" data-filter-status="' + filters[i].value.toLowerCase() + '"></a>');
-            if (filters[i].total) {
-                filterLink.text(filters[i].total +' ');
-            }
-            filterLink.text(filterLink.text() + filters[i].value);
-            filterHolder.append(filterLink);
-            filterHolder.append(' ');
-        }
+
+        /**
+     * Get the template for details of specific review
+     */
+    getReviewDetailsTemplate: function (review_id) {
+        return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
+            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">some review '
+            + 'details placeholder, some review details placeholder, some review details placeholder, '
+            + 'some review details placeholder, some review details placeholder, some review details '
+            + 'placeholder, some review details placeholder, some review details placeholder, some '
+            + 'review details placeholder, some review details placeholder, some review details '
+            + 'placeholder, some review details placeholder, some review details placeholder, some '
+            + 'review details placeholder</td>'
+            + '</tr>');
     },
     
-    loadReviews: function () {
+    loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
         var tr = null;
         var trContent = null;
@@ -1697,23 +1620,6 @@ var BC_CompetitionLedger = BoxController.extend({
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
-    },
-    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        
-        if (data.reviews) {
-            boxController.loadReviews();
-        }
-        
-        if (data.filters && data.filters.status) {
-            boxController.loadFilters('status');
-        }
-        
-        if (data.filters && data.filters.source) {
-            boxController.loadFilters('source');
-        }
     },
     
     construct: function () {}

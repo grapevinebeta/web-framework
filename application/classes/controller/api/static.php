@@ -633,6 +633,42 @@ class Controller_Api_Static extends Controller {
             
         }
         
+        $postfilters = $this->request->post('filters');
+        $filters = array();
+        
+        
+        $data = array(
+            'activity' => array('All', 'Facebook', 'Twitter', 'Check-ins', 'Blogs', 'Other')
+        );
+        
+        foreach($data as $network => $f) {
+            
+            $filters[$network] = array();
+            
+            $inversed = array();
+            
+            if(isset($postfilters[$network])) {
+                $keys = array_values($postfilters[$network]);
+                $values = array_keys($postfilters[$network]);
+
+                $inversed = array_combine($keys, $values);
+            }
+            
+            foreach($f as $filter) {
+                
+                $filters[$network][] = array(
+                    'total' => rand(1,50), 
+                    'value' => $filter, 
+                    'active' => isset($inversed[strtolower($filter)])
+                    
+                    );
+                
+            }
+            
+            Kohana::$log->instance()->add(Log::DEBUG, $filters);
+            
+        }
+        
         $reviews = array();
         
         for($i=0; $i < 5; $i++)
@@ -661,41 +697,10 @@ class Controller_Api_Static extends Controller {
         
         $this->apiResponse = array(
 
-            'reviews' => $reviews, 
-            'filters' => array(
-                'status' => array(
-                    array(
-                        'total' => 67,
-                        'value' => 'Total',
-                    ),
-                    array(
-                        'total' => 4,
-                        'value' => 'New',
-                    ),
-                    array(
-                        'total' => 5,
-                        'value' => 'Neutral',
-                    ),
-                    array(
-                        'total' => 7,
-                        'value' => 'Positive',
-                    ),
-                    array(
-                        'total' => 1,
-                        'value' => 'Negative',
-                    ),
-                    array(
-                        'value' => 'Alert',
-                    ),
-                    array(
-                        'value' => 'Flagged',
-                    ),
-                    array(
-                        'value' => 'Completed',
-                    ),
-                ),
-                'source' => $source
-            ),
+                'reviews' => $reviews, 
+                'source' => $source,
+                'filters' => $filters,
+                'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
         );
     }
     
