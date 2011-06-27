@@ -422,11 +422,20 @@ input[type=submit] {
 }
 
 .close-button {
-    display: inline-block;
+    display: block;
     width: 70px;
     height: 28px;
     vertical-align: middle;
     background-image: url(../images/icons/close.png);
+    background-repeat: no-repeat;
+}
+
+.save-button {
+    display: inline-block;
+    width: 70px;
+    height: 28px;
+    vertical-align: middle;
+    background-image: url(../images/icons/save.png);
     background-repeat: no-repeat;
 }
 
@@ -898,7 +907,9 @@ background: -webkit-gradient(
         position: absolute;
         right: 0px;
         width: 55px;
+        display: none;
     }
+    .show { display:block !important;}
     
     
     
@@ -926,7 +937,8 @@ background: -webkit-gradient(
     .box .col-2 .rightCol {
         
         float:right;
-        width:200px;
+        padding-right: 10px;
+        padding-bottom: 10px;
         margin-left: -200px;
         
     }

@@ -707,9 +707,26 @@ var BC_Inbox = BoxController.extend({
             
         });
 
+        self.getBoxDom().delegate('tr.collapsed', 'hover', function(e) {
+            
+            $(this).find('.expand').toggleClass('show');
+            
+        });
+
+         self.getBoxDom().delegate('.close-button, .save-button', 'click', function(e) {
+          
+          e.preventDefault();
+          var detailsBox = $(this).parents('tr.expanded .details');
+          var detailsRow = $(this).next();
+          detailsRow.addClass('hidden-row');
+          detailsBox.hide();
+          
+         });
+
         // Attach event for expanding and collapsing review details
         self.getBoxDom().delegate('table tr[data-row-id].collapsed', 'click', 
         function(event){
+            
             event.preventDefault();
             var rowId = $(this).attr('data-row-id');
             var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');

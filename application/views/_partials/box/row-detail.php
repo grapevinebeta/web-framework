@@ -22,14 +22,15 @@
                                 <span class="mono-icon icon-goto"></span>
                                 <?php echo __('Go to Posting'); ?>
                             </div>
+                            <div class="v-padding-2">
+                            <a class="close-button" href="#" style="float:right;">&nbsp;</a>
+                            <div class="clear:both;"></div>
+                            </div>
                             
                         </div>
                     </div>
                     
                     
-                </div>
-                <div>
-                    <a class="close-button"></a>
                 </div>
             </div>
         </form>
