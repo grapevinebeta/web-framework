@@ -10,7 +10,7 @@
     </div>
     
     <div class="box-container active">
-        <?php echo view::factory('_partials/box/competition-ledger'); ?>
+        <?php echo view::factory('_partials/box/competition-review-inbox'); ?>
     </div>
 
     <div class="box-container empty box-container-left"></div>

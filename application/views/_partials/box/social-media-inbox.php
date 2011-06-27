@@ -25,7 +25,7 @@
                         <tr>
                             <td class="col-network"></td>
                             <td class="col-submitted a-center"></td>
-                            <td class="col-title"><div></div></td>
+                            <td class="col-title"><div class="wrapper"><div class="in"></div></div></td>
                             <td class="col-site"></td>
                         </tr>
                         

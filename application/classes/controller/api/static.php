@@ -686,9 +686,9 @@ class Controller_Api_Static extends Controller {
                 'category' => 'category',
                 'notes' => 'notes',
                 'keywords' => array('keyword', 'car'),
-                'title' => $autor[rand(0, 6)],
+                'title' => $excerpts[rand(0, 7)],
                 'link' => $autor[rand(0, 6)],
-                'autor' => $autor[rand(0, 6)]
+                'author' => $autor[rand(0, 6)]
 
             );
             

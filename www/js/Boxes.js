@@ -645,7 +645,7 @@ var LinearGraphBoxController = GraphBoxController.extend({
                     align: 'high'
                 },
                 min: 0,
-                max: this.maxValue
+                max: this.maxValue + 0.0005
             },
             
             series: this.series
@@ -697,7 +697,9 @@ var BC_Inbox = BoxController.extend({
                 
             }
             if($(this).hasClass('prev')) {
-                self.currentPage--;
+                
+                if(self.currentPage > 1)
+                    self.currentPage--;
             }
             
             self.loadData();
@@ -1142,7 +1144,7 @@ var BC_ReviewSites = GraphBoxController.extend({
 /**
  * @TODO make html markup more generic, correcponding to row-detail partial
  */
-var BC_ReviewsInbox = BC_Inbox.extend({
+var BC_ReviewInbox = BC_Inbox.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1151,120 +1153,87 @@ var BC_ReviewsInbox = BC_Inbox.extend({
     
     endpoint: 'reviews',
 
-    /**
-     * Attach events associated with RecentReviews box, such as expanding review
-     * details when the review snippet is being clicked.
-     */
-    attachBoxEvents: function() {
-        var self = this;
 
-        self.getPagerHolder().delegate('.prev, .next','click', function(e) {
-            
-            e.preventDefault();
-            
-            if($(this).hasClass('next')) {
-                
-                self.currentPage++;
-                
-            }
-            if($(this).hasClass('prev')) {
-                self.currentPage--;
-            }
-            
-            self.loadData();
-            
-            
-        });
-
-        // Attach event for expanding and collapsing review details
-        self.getBoxDom().delegate('table tr[data-review-id].reviewSnippet', 'click', function(event){
-            event.preventDefault();
-            var reviewId = $(this).attr('data-review-id');
-            var detailsBox = self.getBoxDom().find('tr[data-review-id="' + reviewId + '"].reviewDetails .recentReviewDetails');
-            var detailsRow = $(this).next();
-            if (!detailsRow.height()) {
-                detailsRow.removeClass('hidden-row');
-                detailsBox.show();
-            } else {
-                detailsRow.addClass('hidden-row');
-                detailsBox.hide();
-            }
-            //detailsBox.addClass('ieFixClassWhichDoesntExists');
-            //detailsBox.removeClass('ieFixClassWhichDoesntExists');
-        });
-    },
-
-    /**
-     * Get the template for details of specific review
-     */
-    fillReviewDetailsTemplate: function (template, review) {
-        var tr = template.clone();
-        tr.attr('data-review-id', review.id);
-        tr.find('.recent-review-status-icon')
-            .removeClass('open closed todo')
-            .addClass(review.status.toLowerCase());
-        tr.find('.review-details-title').text(review.title);
-        tr.find('.review-details-review').text(review.review);
-        tr.find('select[name="category"]').val(review.category);
-        tr.find('input[name="keywords"]').val(review.keywords.join(', '));
-        tr.find('textarea[name="notes"]').val(review.notes);
+    prepareMessage: function(template, message) {
         
-        return tr;
-    },
-
-    /**
-     * Get the snippet of specific review
-     */
-    fillReviewSnippetTemplate: function (template, review) {
-        var tr = template.clone();
-        tr.attr('data-review-id', review.id);
-        for (n in review) {
-            var value = review[n];
-            var col = tr.find('td.col-' + n);
-            
-            if (n == 'submitted') {
-                var tmpDate = new Date(value * 1000);
-                tr.find('td.col-' + n).text(
-                    monthNames[tmpDate.getMonth()] +
-                    ' ' +
-                    tmpDate.getDate()
-                );
-            } else if (n == 'title') {
-                var titleLink = $('<a href="#"></a>');
-                titleLink.text(value);
+        template = template.clone();
+        var currentId = parseInt(message.id);
+        template.addClass('collapsed').attr('data-row-id', currentId);
+        
+        for(key in message)
+        {
+            var value = message[key];
+            var col = template.find('td.col-' + key);
+            var titleLink;
+            switch(key) {
                 
+                case 'submitted':
+                    var tmpDate = new Date(value * 1000);
+                    var formatted = monthNames[tmpDate.getMonth()] +
+                        ' ' + tmpDate.getDate();
+                    col.text(formatted);
+                    break;
+                case 'title':
+                    titleLink = $('<a href="#" class="title"></a>');
+                    titleLink.text(value);
                     
-                 col = col.find('div');
+                    col = col.find('div.in');
                     
-                 col.html(titleLink);
-                 col.prepend('<a href="#" class="expand"></a>');
-  
-            } else if (n == 'rating') {
-                var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
-                tr.find('td.col-' + n).html(ratingStars);
-            } else if (n == 'status') {
-                var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
-                tr.find('td.col-' + n).html(reviewStatus);
-            } else {
-                tr.find('td.col-' + n).text(value);
+                    col.html(titleLink);
+                    col.prepend('<a href="#" class="expand"></a>');
+                    break;
+                case 'rating':
+                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                    col.html(ratingStars);
+                    break;
+                case 'status':
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
+                    col.html(reviewStatus);
+                    break;
+                default:
+                    col.text(value);
+                    break;
+                
             }
+
         }
+        
+        return template
+        
+    },
+    
+    prepareDetailsView: function(template, message) {
+      
+        var tr = template.clone();
+        var currentId = parseInt(message.id);
+        tr.attr('data-row-id', currentId);
+
+        tr.find('.recent-review-status-icon')
+        .removeClass('open closed todo')
+        .addClass(message.status.toLowerCase());
+        tr.find('.review-details-title').text(message.title);
+        tr.find('.review-details-review').text(message.review);
+        tr.find('select[name="category"]').val(message.category);
+        tr.find('input[name="keywords"]').val(message.keywords.join(', '));
+        tr.find('textarea[name="notes"]').val(message.notes);
+        
         return tr;
     },
     
     
     loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
+        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
+        var trContentTemplate = table.find('tbody:first > tr:last').clone();
         var tr = null;
         var trContent = null;
-        var review = null;
-        var trTemplate = table.find('tbody:first > tr:first').clone().removeClass('odd even');
-        var trContentTemplate = table.find('tbody:first > tr:last').clone();
         table.find('tbody tr').remove();
-        for (var i = 0; i < this.data.reviews.length; i++) {
-            review = this.data.reviews[i];
-            tr = this.fillReviewSnippetTemplate(trTemplate, review);
-            trContent = this.fillReviewDetailsTemplate(trContentTemplate, review);
+        var data = this.data.reviews;
+        for (var i = 0; i < data.length; i++) {
+            
+            trContent = this.prepareDetailsView(trContentTemplate, data[i]);
+            tr = this.prepareMessage(trTemplate, data[i]);
+            
             
             if (i % 2) {
                 tr.addClass('odd');
@@ -1273,11 +1242,10 @@ var BC_ReviewsInbox = BC_Inbox.extend({
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
-            checkbox.attr('value', this.data.reviews[i].id);
+            checkbox.attr('value', data[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.children('tbody').append(tr); // append two elements
-            table.children('tbody').append(trContent); // append two elements
+            table.find('tbody:first').append(tr, trContent); // append two elements
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
@@ -1535,76 +1503,88 @@ var BC_SocialReach = LinearGraphBoxController.extend({
     
 });
 
-var BC_CompetitionLedger = BC_Inbox.extend({
+var BC_CompetitionReviewInbox = BC_Inbox.extend({
 
     /**
      * @var String DOM id of the container div 
      */
-    boxId: 'box-competition-ledger',
+    boxId: 'box-competition-review-inbox',
     
     endpoint: 'competition_ledger',
 
-    /**
-     * Get the snippet of specific review
-     */
-    getReviewSnippetTemplate: function (review_id) {
-        return $('<tr data-review-id="' + review_id + '" class="reviewSnippet">'
-            //+ '<td class="col-checkbox"></td>' // no need for checkbox
-            + '<td class="col-rating"></td>'
-            + '<td class="col-submitted a-center"></td>'
-            + '<td class="col-title"></td>'
-            + '<td class="col-competition a-right"></td>'
-            + '</tr>');
-    },
+    
+    prepareMessage: function(template, message) {
+        
+        template = template.clone();
+        var currentId = parseInt(message.id);
+        template.addClass('collapsed').attr('data-row-id', currentId);
+        
+        for(key in message)
+        {
+            var value = message[key];
+            var col = template.find('td.col-' + key);
+            var titleLink;
+            switch(key) {
+                
+                case 'submitted':
+                    var tmpDate = new Date(value * 1000);
+                    var formatted = monthNames[tmpDate.getMonth()] +
+                        ' ' + tmpDate.getDate();
+                    col.text(formatted);
+                    break;
+                case 'title':
+                    titleLink = $('<a href="#" class="title"></a>');
+                    titleLink.text(value);
+                    
+                    col = col.find('div.in');
+                    
+                    col.html(titleLink);
+                    col.prepend('<a href="#" class="expand"></a>');
+                    break;
+                case 'rating':
+                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                    col.html(ratingStars);
+                    break;
+                default:
+                    col.text(value);
+                    break;
+                
+            }
 
-        /**
-     * Get the template for details of specific review
-     */
-    getReviewDetailsTemplate: function (review_id) {
-        return $('<tr data-review-id="' + review_id + '" class="reviewDetails" style="display: none;">'
-            + '<td colspan="' + this.getReviewSnippetTemplate().find('td').length + '">some review '
-            + 'details placeholder, some review details placeholder, some review details placeholder, '
-            + 'some review details placeholder, some review details placeholder, some review details '
-            + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder, some review details placeholder, some review details '
-            + 'placeholder, some review details placeholder, some review details placeholder, some '
-            + 'review details placeholder</td>'
-            + '</tr>');
+        }
+        
+        return template
+        
+    },
+    
+    prepareDetailsView: function(template, message) {
+      
+        var tr = template.clone();
+        var currentId = parseInt(message.id);
+        tr.attr('data-row-id', currentId);
+        tr.find('.details-title').text(message.title);
+        tr.find('.details-review').text(message.review);
+        
+        return tr;
+      
     },
     
     loadInboxData: function () {
+        
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
+        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
+        var trContentTemplate = table.find('tbody:first > tr:last').clone();
+
         var tr = null;
         var trContent = null;
-        var currentId = null;
         table.find('tbody tr').remove();
-        for (var i = 0; i < this.data.reviews.length; i++) {
-            currentId = parseInt(this.data.reviews[i].id);
-            log('Generating row for review with ID="' + currentId + '"');
-            tr = this.getReviewSnippetTemplate(currentId);
-            log('Generating content row for review with ID="' + currentId + '"');
-            trContent = this.getReviewDetailsTemplate(currentId);
+        
+        var data = this.data.reviews;
+        
+        for (var i = 0; i < data.length; i++) {
             
-            for (n in this.data.reviews[i]) {
-                var value = this.data.reviews[i][n];
-                if (n == 'submitted') {
-                    var tmpDate = new Date(value * 1000);
-                    tr.find('td.col-' + n).text(
-                        monthNames[tmpDate.getMonth()] +
-                        ' ' +
-                        tmpDate.getDate()
-                    );
-                } else if (n == 'title') {
-                    var titleLink = $('<a href="#"></a>');
-                    titleLink.text(value);
-                    tr.find('td.col-' + n).html(titleLink);
-                } else if (n == 'rating') {
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
-                    tr.find('td.col-' + n).html(ratingStars);
-                } else {
-                    tr.find('td.col-' + n).text(value);
-                }
-            }
+            trContent = this.prepareDetailsView(trContentTemplate, data[i]);
+            tr = this.prepareMessage(trTemplate, data[i]);
             
             if (i % 2) {
                 tr.addClass('even');
@@ -1613,7 +1593,7 @@ var BC_CompetitionLedger = BC_Inbox.extend({
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
-            checkbox.attr('value', this.data.reviews[i].id);
+            checkbox.attr('value', data[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
             table.find('tbody').append(tr, trContent); // append two elements
@@ -1895,10 +1875,10 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
                     col.text(formatted);
                     break;
                 case 'title':
-                    titleLink = $('<a href="#"></a>');
+                    titleLink = $('<a href="#" class="title"></a>');
                     titleLink.text(value);
                     
-                    col = col.find('div');
+                    col = col.find('div.in');
                     
                     col.html(titleLink);
                     col.prepend('<a href="#" class="expand"></a>');
@@ -2162,13 +2142,13 @@ $(document).ready(function () {
     boxManager.add(new BC_KeywordsAnalysis())
               .add(new BC_Ogsi())
               .add(new BC_ReviewSites())
-              .add(new BC_ReviewsInbox())
+              .add(new BC_ReviewInbox())
               .add(new BC_SocialActivity())
               .add(new BC_SocialReach())
               .add(new BC_SocialMediaInbox())
               .add(new BC_CompetitionDistribution())
               .add(new BC_CompetitionComparision())
-              .add(new BC_CompetitionLedger())
+              .add(new BC_CompetitionReviewInbox())
               .setDataProvider(new DataProvider())
               .init();
 });
