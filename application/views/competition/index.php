@@ -4,17 +4,12 @@
         <?php echo view::factory('_partials/box/competition-comparition'); ?>
     </div>
     <div class="clear"></div>
-
-    <div class="box-container active">
-        <?php echo view::factory('_partials/box/competition-score'); ?>
-    </div>
-    <div class="clear"></div>
     
     <div class="box-container active">
         <?php echo view::factory('_partials/box/competition-distribution'); ?>
     </div>
     
-    <div class="box-container active">
+    <div class="box-container active ignore">
         <?php echo view::factory('_partials/box/competition-review-inbox'); ?>
     </div>
 

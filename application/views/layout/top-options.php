@@ -43,7 +43,7 @@
             echo html::anchor('#email', 'Email', array('class' => 'as-select with-icon')); ?>
         <?php 
             echo html::image('images/icons/export.png', array('alt' => '')); 
-            echo html::anchor('#email', 'Export', array('class' => 'as-select with-icon')); ?>
+            echo html::anchor('#email', 'Export', array('class' => 'as-select with-icon export')); ?>
     </form>
 </div>
 
@@ -125,6 +125,29 @@
 
         dateRange.val(startDate + " - " + endDate);
         datapicker = dateSelector.datepicker(config);
+        
+        $('.export').bind('click', function() {
+            
+            var template = $('<h2></h2><div class="content"></div>');
+            
+            var code = $('<div id="page"></div>');
+            
+            $('.box-container').not('.ignore').find('.box').each(function() {
+                
+                var title = $("<h2/>").text($(this).find('.box-header-title').text());
+                var table = $(this).find('.data-grid-holder').html();
+                
+                
+                code.append(title);
+                code.append(table);
+                
+            });
+            
+            
+            console.log(code);
+            
+        });
+        
         periodSelector.selectbox().bind('change', function() {
          
            selectValue = $(this).val();

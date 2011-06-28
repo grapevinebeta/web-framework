@@ -8,7 +8,7 @@
         <?php echo view::factory('_partials/box/social-reach'); ?>
     </div>
     <div class="clear"></div>
-    <div class="box-container active">
+    <div class="box-container active ignore">
         <?php echo view::factory('_partials/box/social-media-inbox'); ?>
     </div>
     
