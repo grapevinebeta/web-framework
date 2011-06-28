@@ -16,7 +16,6 @@
                         <th class="a-left"></th>
                         <th><?php echo __('Activity'); ?></th>
                         <th><?php echo __('Change'); ?></th>
-                        <th><?php echo __('Total'); ?></th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -25,7 +24,6 @@
                         <th></th>
                         <th class="col-value a-center"></th>
                         <th></th>
-                        <th class="col-total a-center"></th>
                     </tr>
                 </tfoot>
                 <tbody>
@@ -34,7 +32,6 @@
                         <td class="col-action"></td>
                         <td class="col-value a-center"></td>
                         <td class="col-change a-center"></td>
-                        <td class="col-total a-center"></td>
                     </tr>
                 </tbody>
             </table>

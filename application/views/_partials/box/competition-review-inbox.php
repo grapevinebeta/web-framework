@@ -25,7 +25,7 @@
                         <tr>
                             <td class="col-rating"></td>
                             <td class="col-submitted a-center"></td>
-                            <td class="col-title"><div class="wrapper"><div class="in"></div></div></td>
+                            <td class="col-title" width="72%"><div class="wrapper"><div class="in"></div></div></td>
                             <td class="col-author a-right"></td>
                             <td class="col-competition a-right"></td>
                         </tr>

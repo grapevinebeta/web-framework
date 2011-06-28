@@ -419,6 +419,7 @@ input[type=submit] {
     vertical-align: middle;
     background-image: url(../images/icons/reply-to-review.png);
     background-repeat: no-repeat;
+    margin-right: 13px;
 }
 
 .close-button {
@@ -555,13 +556,19 @@ input[type=submit] {
         }
 
             #box-recent-reviews .details .recentReviewDetailsForm {
-                float: left;
-                width: 542px;
+                
+                width:auto;
+                float:left;
             }
+            
+            #box-recent-reviews .details .recentReviewDetailsForm .innerForm {
+                margin-right:170px;
+            } 
 
             #box-recent-reviews .details .recentReviewDetailsMenu {
-                float: left;
+                float: right;
                 width: 150px;
+                margin-left: -150px;
             }
 
             #box-recent-reviews .details .recentReviewDetailsButtons {
@@ -897,7 +904,6 @@ background: -webkit-gradient(
     .collapsed .col-title {
         font-weight: bold;
         font-style: italic; 
-        width: 90%;
         vertical-align: text-top;
         height: 28px;
     }

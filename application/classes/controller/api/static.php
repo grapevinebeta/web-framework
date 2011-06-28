@@ -241,64 +241,57 @@ class Controller_Api_Static extends Controller {
         switch ($id) {
             case 'activity':
                 
-                if($interval)
-                    $networks = $this->getSocialActivityTimeSeries();
-                else 
-                {
-                    $networks[] = array(
-                        'network' => 'Facebook', //[string:required] - social network
-                        'action' => 'Likes', //[string:required] - type of activity, ex. tweet,checkin,upload
-                        'value' => 5, //[int:required] - activity value
-                        'change' => 4.0, //[decimal:required] - change amount
-                        'total' => 444, //[int:required] - total amount
-                    );
-                    $networks[] = array(
-                        'network' => 'Tweeter', //[string:required] - social network
-                        'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
-                        'value' => 5, //[int:required] - activity value
-                        'change' => 2.0, //[decimal:required] - change amount
-                        'total' => 123, //[int:required] - total amount
-                    );
-                    $networks[] = array(
-                        'network' => 'Flickr', //[string:required] - social network
-                        'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
-                        'value' => 5, //[int:required] - activity value
-                        'change' => 2.0, //[decimal:required] - change amount
-                        'total' => 23, //[int:required] - total amount
-                    );
-                }
+                srand(time());
+
+                $networks[] = array(
+                    'network' => 'Facebook', //[string:required] - social network
+                    'action' => 'Likes', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 4.0, //[decimal:required] - change amount
+                    'total' => 444, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Tweeter', //[string:required] - social network
+                    'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 123, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Flickr', //[string:required] - social network
+                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 23, //[int:required] - total amount
+                );
                 
                 break;
             case 'reach':
                 
+                srand(time());
                 
-                if($interval)
-                    $networks = $this->getSocialActivityTimeSeries();
-                else {
+                $networks[] = array(
+                    'network' => 'Facebook' , //[string:required] - social network
+                    'action' => 'Likes' , //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1,99) , //[int:required] - activity value
+                    'change' => 4.0 , //[decimal:required] - change amount
+                    'total' => 444 , //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Tweeter', //[string:required] - social network
+                    'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1,99), //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 123, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Flickr', //[string:required] - social network
+                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1,99), //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 23, //[int:required] - total amount
+                );
                 
-                    $networks[] = array(
-                        'network' => 'Facebook' , //[string:required] - social network
-                        'action' => 'Likes' , //[string:required] - type of activity, ex. tweet,checkin,upload
-                        'value' => 5 , //[int:required] - activity value
-                        'change' => 4.0 , //[decimal:required] - change amount
-                        'total' => 444 , //[int:required] - total amount
-                    );
-                    $networks[] = array(
-                        'network' => 'Tweeter', //[string:required] - social network
-                        'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
-                        'value' => 5, //[int:required] - activity value
-                        'change' => 2.0, //[decimal:required] - change amount
-                        'total' => 123, //[int:required] - total amount
-                    );
-                    $networks[] = array(
-                        'network' => 'Flickr', //[string:required] - social network
-                        'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
-                        'value' => 5, //[int:required] - activity value
-                        'change' => 2.0, //[decimal:required] - change amount
-                        'total' => 23, //[int:required] - total amount
-                    );
-                
-                }
                 
                 break;
         }

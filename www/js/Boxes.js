@@ -1,4 +1,3 @@
-
 function Class() { }
 
 Class.prototype.construct = function() {};
@@ -394,8 +393,10 @@ var GraphBoxController = BoxController.extend({
     
     computeDateInterval: function() {
       
+        var number = (this.getPeriodInDays() )  / 6;
+      
 
-        return Math.floor((this.getPeriodInDays() * 7)  / 30);
+        return Math.floor(number) + 1;
     },
     
     beforeLoadData: function () {
@@ -1058,7 +1059,7 @@ var BC_ReviewSites = GraphBoxController.extend({
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                type: 'bar'
+                defaultSeriesType: 'bar'
             },
             title: {
                 text: this.getHeaderDom().find('.box-header-title').text()
@@ -1088,10 +1089,8 @@ var BC_ReviewSites = GraphBoxController.extend({
                 }
             },
             plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: true
-                    }
+                series: {
+                    stacking: 'normal'
                 }
             },
             legend: {
@@ -1105,27 +1104,29 @@ var BC_ReviewSites = GraphBoxController.extend({
                 enabled: false
             },
             series: [{
-                name: 'Average',
-                data: []
-            }, {
                 name: 'Negative',
-                data: []
+                data: [],
+                color: '#be1622',
+                shadow: false
             }, {
                 name: 'Neutral',
-                data: []
+                data: [],
+                color: 'rgb(243,190,0)',
+                shadow: false
             }, {
                 name: 'Positive',
-                data: []
+                data: [],
+                color: '#218D48',
+                shadow: false
             }]
         }
         
         for (var i = 0; i < this.graphData.length; i++) {
             var site = this.graphData[i];
             options.xAxis.categories.push(site.site);
-            options.series[0].data.push(site.average);
-            options.series[1].data.push(site.negative);
-            options.series[2].data.push(site.neutral);
-            options.series[3].data.push(site.positive);
+            options.series[0].data.push(site.negative);
+            options.series[1].data.push(site.neutral);
+            options.series[2].data.push(site.positive);
         }
         
         this.graph = new Highcharts.Chart(options);
@@ -1298,85 +1299,94 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
      * @var String Name of the requested resource, used in Ajax URL
      */
     endpoint: 'social/activity',
-    
-    formatterCallback: function() {
-                        
-        var dateFormat;
-        var box = boxManager.getBox('box-social-activity');
-        switch(box.range['period']) {
-            case '1m':
-                dateFormat = '%a %e';
-                break;
-            case '3m':
-                dateFormat = '%d %b';
-                break;
-            case '6m':
-                dateFormat = '%d %b';
-                break;
-            case '1y':
-                dateFormat = '%b %Y';
-                break;
-        }
-                        
-        return Highcharts.dateFormat(dateFormat, this.value);                  
-    },
-    
-    populateGraph: function() {
-        var seriesMappings = []; // mapping of label values to corresponding series index
-        var seriesMappingInited = false;
-        
-        for (var tKey in this.graphData.networks) {
-            
-            var timeObject = this.graphData.networks[tKey];
-            
-            for (var cKey in timeObject) {
-            
-                var comparisionObject = timeObject[cKey];
-                
-                if(!seriesMappingInited)
-                {
-                    // set specific options to each spline
-                    // all timestamps must be expand to miliseconds
-                    
-                    seriesMappings[comparisionObject.network] = this.series.length;
-                    
-                    this.series.push({
-                        name: comparisionObject.network, 
-                        data: [], 
-                        pointStart: this.getFirstDate(),
-                        pointInterval: (this.computeDateInterval()+1) * this.dayInterval * 1000
-                    });
-                    
-                }
-                
-                this.maxValue = this.maxValue < comparisionObject.value 
-                ? comparisionObject.value : this.maxValue;
-                
-                // add series single data to right place based on previously defined
-                // mappings
-                this.series[seriesMappings[comparisionObject.network]]
-                .data.unshift(parseInt(comparisionObject.value, 10));
-                
-            }
-            
-            if(!seriesMappingInited) 
-                seriesMappingInited = true;
 
+    prepareGraph: function () {
+        if (!this.graphData) {
+            return;
         }
-     
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                defaultSeriesType: 'bar'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
+            ],
+            xAxis: {
+                categories: [],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            legend: {
+                    enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            series: []
+        }
+         
+        var data = [];
+        
+
+        
+        for (var i = 0; i < this.graphData.networks.length; i++) {
+            
+            var site = this.graphData.networks[i];
+            
+            data.push(site.value);
+            options.xAxis.categories.push(site.network);
+            
+            
+        }
+        
+        options.series.push({
+            name: 'value',
+            data: data
+        });
+        
+        
+        this.graph = new Highcharts.Chart(options);
     },
+
     
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
-        boxController.graphData = null;
 
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         var trFooter = table.find('tfoot tr');
-        trFooter.find('th.col-total, th.col-value').text('0');
+        trFooter.find('th.col-value').text('0');
         table.find('tbody tr').remove();
         for (var i = 0; i < boxController.data.networks.length; i++) {
             tr = trTemplate.clone();
@@ -1410,7 +1420,7 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
     
 });
 
-var BC_SocialReach = LinearGraphBoxController.extend({
+var BC_SocialSubscribers = GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1422,77 +1432,86 @@ var BC_SocialReach = LinearGraphBoxController.extend({
      */
     endpoint: 'social/reach',
     
-    formatterCallback: function() {
-                        
-        var dateFormat;
-        var box = boxManager.getBox('box-social-activity');
-        switch(box.range['period']) {
-            case '1m':
-                dateFormat = '%a %e';
-                break;
-            case '3m':
-                dateFormat = '%d %b';
-                break;
-            case '6m':
-                dateFormat = '%d %b';
-                break;
-            case '1y':
-                dateFormat = '%b %Y';
-                break;
-        }
-                        
-        return Highcharts.dateFormat(dateFormat, this.value);                  
-    },
     
-    populateGraph: function() {
-        var seriesMappings = []; // mapping of label values to corresponding series index
-        var seriesMappingInited = false;
-        
-        for (var tKey in this.graphData.networks) {
-            
-            var timeObject = this.graphData.networks[tKey];
-            
-            for (var cKey in timeObject) {
-            
-                var comparisionObject = timeObject[cKey];
-                
-                if(!seriesMappingInited)
-                {
-                    // set specific options to each spline
-                    // all timestamps must be expand to miliseconds
-                    
-                    seriesMappings[comparisionObject.network] = this.series.length;
-                    
-                    this.series.push({
-                        name: comparisionObject.network, 
-                        data: [], 
-                        pointStart: this.getFirstDate(),
-                        pointInterval: (this.computeDateInterval()+1) * this.dayInterval * 1000
-                    });
-                    
-                }
-                
-                this.maxValue = this.maxValue < comparisionObject.value 
-                ? comparisionObject.value : this.maxValue;
-                
-                // add series single data to right place based on previously defined
-                // mappings
-                this.series[seriesMappings[comparisionObject.network]]
-                .data.unshift(parseInt(comparisionObject.value, 10));
-                
-            }
-            
-            if(!seriesMappingInited) 
-                seriesMappingInited = true;
-
+    prepareGraph: function () {
+        if (!this.graphData) {
+            return;
         }
-     
+        
+        var graphHolderId = this.boxId + '-graph-holder';
+        
+        var options = {
+            chart: {
+                renderTo: graphHolderId,
+                defaultSeriesType: 'bar'
+            },
+            title: {
+                text: this.getHeaderDom().find('.box-header-title').text()
+            },
+            colors: [
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
+            ],
+            xAxis: {
+                categories: [],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    align: 'high'
+                }
+            },
+            legend: {
+                    enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    colorByPoint: true
+                }
+            },
+            series: []
+        }
+         
+        var data = [];
+        
+
+        
+        for (var i = 0; i < this.graphData.networks.length; i++) {
+            
+            var site = this.graphData.networks[i];
+            
+            data.push(site.value);
+            options.xAxis.categories.push(site.network);
+            
+            
+        }
+        
+        options.series.push({
+            name: 'value',
+            data: data
+        });
+        
+        
+        this.graph = new Highcharts.Chart(options);
     },
     
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
-        boxController.graphData = null;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
@@ -1693,7 +1712,7 @@ var BC_CompetitionComparision = LinearGraphBoxController.extend({
                         name: comparisionObject.competition, 
                         data: [], 
                         pointStart: this.getFirstDate(),
-                        pointInterval: (this.computeDateInterval()+1) * this.dayInterval * 1000
+                        pointInterval: (this.computeDateInterval()) * this.dayInterval * 1000
                     });
                     
                 }
@@ -2172,7 +2191,7 @@ $(document).ready(function () {
     .add(new BC_ReviewSites())
     .add(new BC_ReviewInbox())
     .add(new BC_SocialActivity())
-    .add(new BC_SocialReach())
+    .add(new BC_SocialSubscribers())
     .add(new BC_SocialMediaInbox())
     .add(new BC_CompetitionDistribution())
     .add(new BC_CompetitionComparision())

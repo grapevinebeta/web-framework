@@ -24,9 +24,9 @@
                     <tbody>
                         <tr>
                             <td class="col-network"></td>
-                            <td class="col-submitted a-center"></td>
-                            <td class="col-title"><div class="wrapper"><div class="in"></div></div></td>
-                            <td class="col-site"></td>
+                            <td class="col-submitted a-center" width="13%"></td>
+                            <td class="col-title" width="72%"><div class="wrapper"><div class="in"></div></div></td>
+                            <td class="col-site" width="15%"></td>
                         </tr>
                         
                         <?php echo View::factory('_partials/box/row-detail'); ?>

@@ -3,8 +3,8 @@
 
         <form action="">
             <div class="details" style="display: none;">
-                <div style="clear: both;">
                     <div class="recentReviewDetailsForm">
+                        <div class="innerForm">
                         <h2 class="review-details-title"></h2>
                         <p class="review-details-review"></p>
                         <form action="" method="post">
@@ -39,33 +39,34 @@
                                 </tr>
                             </table>
                         </form>
+                        </div>
                     </div>
                     <div class="recentReviewDetailsMenu">
                         <p></p>
-                        <div class="a-center v-padding-2">
+                        <div class="a-center v-padding-5">
                             <span class="recent-review-status-icon open"></span>
                             <p>
                                 (<?php echo __('After responding to a review check the completed box'); ?>)
                             </p>
                         </div>
-                        <div class="v-padding-2">
+                        <div class="v-padding-5">
                             <span class="mono-icon icon-checkbox"></span>
                             <?php echo __('Completed'); ?>
                         </div>
-                        <div class="v-padding-2">
+                        <div class="v-padding-5">
                             <span class="mono-icon icon-email"></span>
                             Email
                         </div>
-                        <div class="v-padding-2">
+                        <div class="v-padding-5">
                             <span class="mono-icon icon-todo"></span>
                             <?php echo __('Flag "To Do"'); ?>
                         </div>
-                        <div class="v-padding-2">
+                        <div class="v-padding-5">
                             <span class="mono-icon icon-goto"></span>
                             <?php echo __('Go to Review'); ?>
                         </div>
                     </div>
-                </div>
+                <div class="clear"></div>
                 <p class="recentReviewDetailsButtons a-right">
                     <a class="reply-to-review-button" href=""></a>
                     <a class="save-button" href=""></a>
