@@ -15,7 +15,9 @@ Class.__asMethod__ = function(func, superClass) {
 
 Class.extend = function(def) {
     var classDef = function() {
-        if (arguments[0] !== Class && this.construct) {this.construct.apply(this, arguments);}
+        if (arguments[0] !== Class && this.construct) {
+            this.construct.apply(this, arguments);
+        }
     };
     
     var proto = new this(Class);
@@ -99,7 +101,7 @@ var BoxController = Class.extend({
      * method or attach events that will not require re-attachment.
      */
     attachBoxEvents: function() {
-        // this method can be safely overriden by any of the inheriting classes
+    // this method can be safely overriden by any of the inheriting classes
     },
 
     /**
@@ -176,7 +178,7 @@ var BoxController = Class.extend({
     
     getPagerHolder: function() {
         
-       if (!this._pagerDom) {
+        if (!this._pagerDom) {
             this._pagerDom = $('#' + this.boxId + ' .box-pager');
         }
         return this._pagerDom;
@@ -248,11 +250,11 @@ var BoxController = Class.extend({
             this.loadDataCallback.boxController = this;
         }
         this.dataProvider.setEndpoint(this.endpoint)
-            .setDateRange(this.range)
-            .setFilters(this.filters)
-            .setDateInterval(null)
+        .setDateRange(this.range)
+        .setFilters(this.filters)
+        .setDateInterval(null)
             
-            .setCallback(this.loadDataCallback);
+        .setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
         return this;
     },
@@ -263,7 +265,7 @@ var BoxController = Class.extend({
     
     resetFilters: function(name) {
         
-      this.filters[name]  = [];
+        this.filters[name]  = [];
         
     },
 
@@ -495,12 +497,12 @@ var GraphBoxController = BoxController.extend({
         
         
         this.graphData = this.dataProvider
-            .setEndpoint(this.endpoint)
-            .setDateRange(this.range)
-            .setFilters(this.filters)
-            .setDateInterval(this.computeDateInterval())
-            .setCallback(callback)
-            .fetch();
+        .setEndpoint(this.endpoint)
+        .setDateRange(this.range)
+        .setFilters(this.filters)
+        .setDateInterval(this.computeDateInterval())
+        .setCallback(callback)
+        .fetch();
         return this;
     },
     
@@ -580,8 +582,8 @@ var LinearGraphBoxController = GraphBoxController.extend({
         var offset = Math.floor(this.getPeriodInDays() / 30);
         
         return this.firstTimestamp = Date.parse(
-                new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate())
-        );
+            new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate())
+            );
         
         
     },
@@ -700,45 +702,54 @@ var BC_Inbox = BoxController.extend({
                 
                 if(self.currentPage > 1)
                     self.currentPage--;
-            }
+            } 
             
             self.loadData();
             
             
         });
 
+        // show expand button on hover
         self.getBoxDom().delegate('tr.collapsed', 'hover', function(e) {
             
             $(this).find('.expand').toggleClass('show');
             
         });
 
-         self.getBoxDom().delegate('.close-button, .save-button', 'click', function(e) {
+        // close row detail on close or save button
+        self.getBoxDom().delegate('.close-button, .save-button', 'click', function(e) {
           
-          e.preventDefault();
-          var detailsBox = $(this).parents('tr.expanded .details');
-          var detailsRow = $(this).next();
-          detailsRow.addClass('hidden-row');
-          detailsBox.hide();
+            e.preventDefault();
+            $(this).parents('tr.expanded')
+            .addClass('hidden-row')
+            .prev()
+            .removeClass('border')
+            .find('.details')
+            .hide();
+
           
-         });
+        });
 
         // Attach event for expanding and collapsing review details
         self.getBoxDom().delegate('table tr[data-row-id].collapsed', 'click', 
-        function(event){
+            function(event){
             
-            event.preventDefault();
-            var rowId = $(this).attr('data-row-id');
-            var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');
-            var detailsRow = $(this).next();
-            if (!detailsRow.height()) {
-                detailsRow.removeClass('hidden-row');
-                detailsBox.show();
-            } else {
-                detailsRow.addClass('hidden-row');
-                detailsBox.hide();
-            }
-        });
+                event.preventDefault();
+            
+                $(this).toggleClass('border');
+            
+                var rowId = $(this).attr('data-row-id');
+                var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');
+                var detailsRow = $(this).next();
+                if (!detailsRow.height()) {
+                    detailsRow.removeClass('hidden-row');
+                    detailsBox.show();
+                } else {
+                    detailsRow.addClass('hidden-row');
+                    detailsBox.hide();
+                
+                }
+            });
     },
     
     loadFilters: function (filterType) {
@@ -809,11 +820,11 @@ var BC_Inbox = BoxController.extend({
             this.loadDataCallback.boxController = this;
         }
         this.dataProvider.setEndpoint(this.endpoint)
-            .setDateRange(this.range)
-            .setFilters(this.filters)
-            .setDateInterval(null)
-            .setPage(this.currentPage)            
-            .setCallback(this.loadDataCallback);
+        .setDateRange(this.range)
+        .setFilters(this.filters)
+        .setDateInterval(null)
+        .setPage(this.currentPage)            
+        .setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
         return this;
     },
@@ -864,24 +875,24 @@ var BC_Ogsi = BoxController.extend({
             holder.find('#ogsi-score-value').text(data.ogsi.ogsi.value);
             holder.find('#ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
             holder.find('#ogsi-score-change .change-arrow')
-                .removeClass('positive')
-                .removeClass('negative')
-                .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            .removeClass('positive')
+            .removeClass('negative')
+            .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
                 
             holder.find('#ogsi-rating-value').text(data.ogsi.rating.value);
             holder.find('#ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
             holder.find('#ogsi-rating-change .change-arrow')
-                .removeClass('positive')
-                .removeClass('negative')
-                .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
+            .removeClass('positive')
+            .removeClass('negative')
+            .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
             holder.find('#ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
 
             holder.find('#ogsi-reviews-value').text(data.ogsi.reviews.value);
             holder.find('#ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
             holder.find('#ogsi-reviews-change .change-arrow')
-                .removeClass('positive')
-                .removeClass('negative')
-                .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            .removeClass('positive')
+            .removeClass('negative')
+            .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
             holder.show();
             
             var distribution = data.ogsi.distribution;
@@ -963,7 +974,7 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
-                       enabled: false
+                        enabled: false
                     },
                     showInLegend: true
                 }
@@ -982,16 +993,16 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
                 borderRadius: 0
             },
             series: [{
-                 type: 'pie',
-                 name: 'Browser share',
-                 data: new Array()
-             }]
+                type: 'pie',
+                name: 'Browser share',
+                data: new Array()
+            }]
         };
         for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
                 this.graphData[i].keyword,
                 this.graphData[i].percent
-            ));
+                ));
         }
         
         this.graph = new Highcharts.Chart(options);
@@ -1053,15 +1064,15 @@ var BC_ReviewSites = GraphBoxController.extend({
                 text: this.getHeaderDom().find('.box-header-title').text()
             },
             colors: [
-                '#80699B', 
-                '#AA4643', 
-                '#4572A7', 
-                '#89A54E', 
-                '#3D96AE', 
-                '#DB843D', 
-                '#92A8CD', 
-                '#A47D7C', 
-                '#B5CA92'
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
             ],
             xAxis: {
                 categories: [],
@@ -1150,7 +1161,7 @@ var BC_ReviewSites = GraphBoxController.extend({
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
             boxController.data.sites.length
-        );
+            );
         boxController.afterLoadData();
     },
     
@@ -1187,7 +1198,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 case 'submitted':
                     var tmpDate = new Date(value * 1000);
                     var formatted = monthNames[tmpDate.getMonth()] +
-                        ' ' + tmpDate.getDate();
+                    ' ' + tmpDate.getDate();
                     col.text(formatted);
                     break;
                 case 'title':
@@ -1339,12 +1350,12 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
                 }
                 
                 this.maxValue = this.maxValue < comparisionObject.value 
-                    ? comparisionObject.value : this.maxValue;
+                ? comparisionObject.value : this.maxValue;
                 
                 // add series single data to right place based on previously defined
                 // mappings
                 this.series[seriesMappings[comparisionObject.network]]
-                    .data.unshift(parseInt(comparisionObject.value, 10));
+                .data.unshift(parseInt(comparisionObject.value, 10));
                 
             }
             
@@ -1462,12 +1473,12 @@ var BC_SocialReach = LinearGraphBoxController.extend({
                 }
                 
                 this.maxValue = this.maxValue < comparisionObject.value 
-                    ? comparisionObject.value : this.maxValue;
+                ? comparisionObject.value : this.maxValue;
                 
                 // add series single data to right place based on previously defined
                 // mappings
                 this.series[seriesMappings[comparisionObject.network]]
-                    .data.unshift(parseInt(comparisionObject.value, 10));
+                .data.unshift(parseInt(comparisionObject.value, 10));
                 
             }
             
@@ -1546,7 +1557,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                 case 'submitted':
                     var tmpDate = new Date(value * 1000);
                     var formatted = monthNames[tmpDate.getMonth()] +
-                        ' ' + tmpDate.getDate();
+                    ' ' + tmpDate.getDate();
                     col.text(formatted);
                     break;
                 case 'title':
@@ -1688,12 +1699,12 @@ var BC_CompetitionComparision = LinearGraphBoxController.extend({
                 }
                 
                 this.maxValue = this.maxValue < comparisionObject.value 
-                    ? comparisionObject.value : this.maxValue;
+                ? comparisionObject.value : this.maxValue;
                 
                 // add series single data to right place based on previously defined
                 // mappings
                 this.series[seriesMappings[comparisionObject.competition]]
-                    .data.unshift(parseInt(comparisionObject.value, 10));
+                .data.unshift(parseInt(comparisionObject.value, 10));
             
             }
             
@@ -1707,7 +1718,7 @@ var BC_CompetitionComparision = LinearGraphBoxController.extend({
     
     loadData: function() {
       
-      this.loadGraphData();
+        this.loadGraphData();
       
     },
    
@@ -1748,15 +1759,15 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
                 text: this.getHeaderDom().find('.box-header-title').text()
             },
             colors: [
-                '#80699B', 
-                '#AA4643', 
-                '#4572A7', 
-                '#89A54E', 
-                '#3D96AE', 
-                '#DB843D', 
-                '#92A8CD', 
-                '#A47D7C', 
-                '#B5CA92'
+            '#80699B', 
+            '#AA4643', 
+            '#4572A7', 
+            '#89A54E', 
+            '#3D96AE', 
+            '#DB843D', 
+            '#92A8CD', 
+            '#A47D7C', 
+            '#B5CA92'
             ],
             xAxis: {
                 categories: [],
@@ -1888,7 +1899,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
                 case 'submitted':
                     var tmpDate = new Date(value * 1000);
                     var formatted = monthNames[tmpDate.getMonth()] +
-                        ' ' + tmpDate.getDate();
+                    ' ' + tmpDate.getDate();
                     col.text(formatted);
                     break;
                 case 'title':
@@ -1979,7 +1990,7 @@ boxManager = {
             && box.endpoint 
             && box.getContentDom().length
             )
-        {
+            {
             if (!box.dataProvider && this.dataProvider) {
                 box.setDataProvider(this.dataProvider);
             }
@@ -2050,37 +2061,37 @@ boxManager = {
             start: function(event, ui) {
                 $(this).css({});
                 $('.box-container.empty').addClass('box-dropable')
-                    .css('min-height', $(this).height());
+                .css('min-height', $(this).height());
             },
             stop: function (event, ui) {
                 $(this).css({
-                        top: 0,
-                        left: 0,
-                        width: 'auto'
-                        });
+                    top: 0,
+                    left: 0,
+                    width: 'auto'
+                });
                 $('.box-container').css('min-height', '');
                 $('.box-container.empty').removeClass('box-dropable');
             }
         });
         $('.box-container')
-            .droppable({
-                accept: '.box',
-                activeClass: "box-dropable",
-                hoverClass: "box-drag-over",
-                drop: function (event, ui) {
-                    var oldBox = $(this);
-                    var fromContainer = ui.draggable.parent();
-                    if (oldBox.children().length > 0) {
-                        ui.draggable.parent().append(oldBox.children());
-                    } else {
-                        ui.draggable.parent().addClass('empty').removeClass('active');
-                    }
-                    $(this).removeClass('empty').addClass('active');
-                    $(this).append(ui.draggable);
-                    
-                    boxManager.moveEmptyToBottom();
+        .droppable({
+            accept: '.box',
+            activeClass: "box-dropable",
+            hoverClass: "box-drag-over",
+            drop: function (event, ui) {
+                var oldBox = $(this);
+                var fromContainer = ui.draggable.parent();
+                if (oldBox.children().length > 0) {
+                    ui.draggable.parent().append(oldBox.children());
+                } else {
+                    ui.draggable.parent().addClass('empty').removeClass('active');
                 }
-            });
+                $(this).removeClass('empty').addClass('active');
+                $(this).append(ui.draggable);
+                    
+                boxManager.moveEmptyToBottom();
+            }
+        });
         return this;
     },
     
@@ -2094,11 +2105,11 @@ boxManager = {
             if (!box.children().length) {
                 if (box.hasClass('box-container-left')
                     && !box.next().hasClass('active')) {
-                        var tmp = box.next();
-                        tmp.next('.clear').remove();
-                        boxesHolder.append(box);
-                        boxesHolder.append(tmp);
-                        boxesHolder.append('<div class="clear"></div>');
+                    var tmp = box.next();
+                    tmp.next('.clear').remove();
+                    boxesHolder.append(box);
+                    boxesHolder.append(tmp);
+                    boxesHolder.append('<div class="clear"></div>');
                 } else if (!box.hasClass('box-container-left')
                     && !box.hasClass('box-container-right')) {
                     box.nextAll(':last').after(box);
@@ -2157,33 +2168,33 @@ boxManager = {
 
 $(document).ready(function () {
     boxManager.add(new BC_KeywordsAnalysis())
-              .add(new BC_Ogsi())
-              .add(new BC_ReviewSites())
-              .add(new BC_ReviewInbox())
-              .add(new BC_SocialActivity())
-              .add(new BC_SocialReach())
-              .add(new BC_SocialMediaInbox())
-              .add(new BC_CompetitionDistribution())
-              .add(new BC_CompetitionComparision())
-              .add(new BC_CompetitionReviewInbox())
-              .setDataProvider(new DataProvider())
-              .init();
+    .add(new BC_Ogsi())
+    .add(new BC_ReviewSites())
+    .add(new BC_ReviewInbox())
+    .add(new BC_SocialActivity())
+    .add(new BC_SocialReach())
+    .add(new BC_SocialMediaInbox())
+    .add(new BC_CompetitionDistribution())
+    .add(new BC_CompetitionComparision())
+    .add(new BC_CompetitionReviewInbox())
+    .setDataProvider(new DataProvider())
+    .init();
 });
 
 
 var monthNames = [
-    'Jan',
-    'Feb',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'Aug',
-    'Sept',
-    'Oct',
-    'Nov',
-    'Dec'
-    ];
+'Jan',
+'Feb',
+'March',
+'April',
+'May',
+'June',
+'July',
+'Aug',
+'Sept',
+'Oct',
+'Nov',
+'Dec'
+];
 
 

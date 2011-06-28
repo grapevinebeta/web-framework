@@ -33,9 +33,9 @@ class Controller_Api_Static extends Controller {
     
     public function before() {
         parent::before();
-//        if ($this->request->method() != 'POST') {
-//            throw new HTTP_Exception_405();
-//        }
+        if ($this->request->method() != 'POST') {
+            throw new HTTP_Exception_405();
+        }
         $range = $this->request->post('range');
         if (!empty($range)) {
             Session::instance()->set(
@@ -136,13 +136,11 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array('keywords' => $keywords);
     }
     
+    /**
+     * Reviews inbox endpoint
+     */
     public function action_reviews()
     {
-        $review_statuses = array(
-            'CLOSED',
-            'OPEN',
-            'TODO',
-        );
         
         $postfilters = $this->request->post('filters');
         $filters = array();
@@ -179,107 +177,62 @@ class Controller_Api_Static extends Controller {
 
         }
 
-        Kohana::$log->instance()->add(Log::DEBUG, $filters);
+//        Kohana::$log->instance()->add(Log::DEBUG, $filters);
         
-        // sleep(2);
+        $status = array('OPEN', 'CLOSED', 'TODO');
+        $excerpts = array(
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+          'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+          'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+          'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+          'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+          'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+          'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'  
+        );
+        
+        $autor = array('DealerRater', 'Cars.com', 'Edmunds', 
+            'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+        $competition = array('Google','Twitter', 'YouTube', 'Facebook', 'Flickr', 
+            'Blogger', 'Rss', 'Delicious');
+        
+        $reviews = array();
+        
+        for($i=0; $i < 10; $i++)
+        {
+            $network = $competition[rand(0,6)];
+            
+            $reviews[] = array(
+                'status' => $status[rand(0,2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0,6)],
+                'site' => $network,
+                'id' => rand(1, 1000000),
+                'review' => $excerpts[rand(0,6)],
+                'category' => 'category',
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0,6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+
+            );
+            
+        }
+        
+        
         $this->apiResponse = array(
-            'reviews' => array(
-                array(
-                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => rand(1,1000000), // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-                array(
-                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => rand(1,1000000), // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-                array(
-                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => rand(1,1000000), // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-                array(
-                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => rand(1,1000000), // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-                array(
-                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => rand(1,1000000), // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-                array(
-                    'status' => $review_statuses[array_rand($review_statuses)], //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => rand(0,5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000,time()), // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => rand(1,1000000), // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-            ),
+            'reviews' => $reviews,
             'filters' => $filters,
             'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
         );
     }
 
+    /**
+     * social graph
+     */
     public function action_social()
     {
         $id = $this->request->param('id');
@@ -352,9 +305,13 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array('networks' => $networks);
     }
 
+    
+    /**
+     * social inbox
+     */
     public function action_socials() {
         
-        $status = array('OPEN', 'CLOSE', 'TODO');
+        $status = array('OPEN', 'CLOSED', 'TODO');
         $excerpts = array(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
           'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
@@ -374,7 +331,7 @@ class Controller_Api_Static extends Controller {
         
         $socials = array();
         
-        for($i=0; $i < 8; $i++)
+        for($i=0; $i < 10; $i++)
         {
             $network = $competition[rand(0,6)];
             
@@ -599,7 +556,7 @@ class Controller_Api_Static extends Controller {
     }
     
     /**
-     * Competition leger action form competition tab
+     * Competition review inbox action form competition tab
      * it is returning collection of json objects:
      * CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObject
      * @see api-dataProvider.txt
@@ -671,7 +628,7 @@ class Controller_Api_Static extends Controller {
         
         $reviews = array();
         
-        for($i=0; $i < 5; $i++)
+        for($i=0; $i < 10; $i++)
         {
             
             $reviews[] = array(

@@ -869,8 +869,6 @@ background: -webkit-gradient(
 
     .box .col-2 {
         
-        float:left;
-        clear:both;
         width:100%;
         margin-top:15px;
         
@@ -889,7 +887,12 @@ background: -webkit-gradient(
         width:100%;
         float:left;
     }
-   
+    
+    tr.border {
+    
+        border: 1px solid #000;
+        
+    }
     
     .collapsed .col-title {
         font-weight: bold;

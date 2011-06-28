@@ -2,7 +2,6 @@
     <td colspan="5">
         <form action="">
             <div class="details" style="display: none;">
-                <div style="clear: both;">
 
                     <div class="col-2">
                         <div class="leftCol">
@@ -28,7 +27,8 @@
                             </div>
                             
                         </div>
-                    </div>
+                        
+                        <div class="clear"></div>
                     
                     
                 </div>
