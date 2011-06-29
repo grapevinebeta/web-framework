@@ -47,10 +47,10 @@ class Controller_Api_Static extends Controller {
     }
     
     public function after()
-    {
-        $this->response->headers('Content-Type', 'application/json');
-        $this->response->body(json_encode($this->apiResponse));
-        parent::after();
+    { 
+            $this->response->headers('Content-Type', 'application/json');
+            $this->response->body(json_encode($this->apiResponse));
+            parent::after();
     }
 
     public function action_index()
@@ -86,6 +86,68 @@ class Controller_Api_Static extends Controller {
             ),
             
         ));
+    }
+    
+    public function action_highchart()
+    {
+        
+        $url = $this->request->post('url');
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            'filename' => $this->request->post('filename'),
+            'svg' => $this->request->post('svg'),
+            'type' => $this->request->post('type'),
+            'width' => $this->request->post('width'),
+        ));
+
+
+        $chart = curl_exec($ch);
+        
+        $chart = 'data:image/jpeg;base64,' . base64_encode($chart);
+
+ 
+        $markup = View::factory('_partials/export_template', array(
+           'tabular_data' =>  $this->request->post('extra'),
+           'chart_data' =>  $chart,
+        ));
+        
+        curl_close($ch);
+        
+        
+        $ch = curl_init();
+
+        $api_key = "ccgXj8JFWYAXX7fkM8uB";
+        $url = "https://docraptor.com/docs?user_credentials=$api_key";
+        $name = substr(md5(time()),0,7).'.pdf';
+        
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            'doc[document_content]' => $markup,
+            'doc[document_type]' => 'pdf',
+            'doc[name]' => $name,
+            'doc[test]' => true,
+        ));
+
+
+        $result = curl_exec($ch);
+        
+        header('Content-type: application/pdf');
+        header('Content-disposition: attachment; filename="' . $name . '"');
+
+        
+        die($result);
+       
+
+        
     }
     
     public function action_sites()
@@ -380,7 +442,7 @@ class Controller_Api_Static extends Controller {
                 
             }
             
-            Kohana::$log->instance()->add(Log::DEBUG, $filters);
+//            Kohana::$log->instance()->add(Log::DEBUG, $filters);
             
         }
         

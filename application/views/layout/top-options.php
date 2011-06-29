@@ -123,28 +123,56 @@
 
     $(document).ready(function() {
 
+
         dateRange.val(startDate + " - " + endDate);
         datapicker = dateSelector.datepicker(config);
         
         $('.export').bind('click', function() {
             
-            var template = $('<h2></h2><div class="content"></div>');
+            var template = $('<div class="block"><div class="inner"></div></div>');
             
             var code = $('<div id="page"></div>');
             
             $('.box-container').not('.ignore').find('.box').each(function() {
                 
+                var t = template.clone();
+                
                 var title = $("<h2/>").text($(this).find('.box-header-title').text());
-                var table = $(this).find('.data-grid-holder').html();
+                var table = $(this).find('.data-grid-holder table');
                 
                 
-                code.append(title);
-                code.append(table);
+                title.clone().appendTo(t.find('.inner'));
+                table.clone().appendTo(t.find('.inner'));
+                
+                code.append(t);
                 
             });
             
-            
             console.log(code);
+            
+            
+            
+            for(var id in boxManager.collection)
+            {
+
+                if(id.indexOf('inbox')) {
+                    
+                    var box = boxManager.collection[id];
+                    if(box.hasOwnProperty('graph')) {
+                        
+                        box.graph.exportChart({
+                                type: 'image/jpeg',
+                                width: 380,
+                                extra: code.html()
+                        });
+                        
+                    }
+                    
+                }
+
+            }
+            
+            
             
         });
         

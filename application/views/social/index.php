@@ -12,10 +12,10 @@
         <?php echo view::factory('_partials/box/social-media-inbox'); ?>
     </div>
     
-    <div class="box-container box-container-left active">
+    <div class="box-container box-container-left active ignore">
         <?php echo view::factory('_partials/box/videos'); ?>
     </div>
-    <div class="box-container box-container-right active">
+    <div class="box-container box-container-right active ignore">
         <?php echo view::factory('_partials/box/photos'); ?>
     </div>
     <div class="clear"></div>
