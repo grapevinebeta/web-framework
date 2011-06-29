@@ -190,7 +190,7 @@ extend(Chart.prototype, {
 			doc.createElementNS = function(ns, tagName) {
 				var elem = doc.createElement(tagName);
 				elem.getBBox = function() {
-					return HC.Renderer.prototype.Element.prototype.getBBox.apply({element: elem});
+					return HC.Renderer.prototype.Element.prototype.getBBox.apply({ element: elem });
 				};
 				return elem;
 			};
@@ -340,20 +340,21 @@ extend(Chart.prototype, {
 			
 		// merge the options
 		options = merge(chart.options.exporting, options);
-                
 		
 		// create the form
 		form = createElement('form', {
 			method: 'post',
-			action: "/api/static/highchart"
+			action: options.url
 		}, {
 			display: NONE
 		}, doc.body);
 		
                 
                 
+                
+                
 		// add the values
-		each(['filename', 'type', 'width', 'svg', 'extra','url'], function(name) {
+		each(['filename', 'type', 'width', 'svg'], function(name) {
 			createElement('input', {
 				type: HIDDEN,
 				name: name,
@@ -361,15 +362,12 @@ extend(Chart.prototype, {
 					filename: options.filename || 'chart', 
 					type: options.type, 
 					width: options.width, 
-					svg: svg,
-                                        extra: options.extra,
-                                        url: options.url
+					svg: svg 
 				}[name]
 			}, null, form);
 		});
 		
 		// submit
-                
 		form.submit();
 		
 		// clean up
@@ -472,7 +470,7 @@ extend(Chart.prototype, {
 			
 			// hide on mouse out
 			hide = function() {
-				css(menu, {display: NONE});
+				css(menu, { display: NONE });
 			};
 			
 			addEvent(menu, 'mouseleave', hide);
@@ -505,7 +503,7 @@ extend(Chart.prototype, {
 			chart.exportMenuHeight = menu.offsetHeight;
 		}
 		
-		menuStyle = {display: 'block'};
+		menuStyle = { display: 'block' };
 		
 		// if outside right, right align it
 		if (x + chart.exportMenuWidth > chartWidth) {

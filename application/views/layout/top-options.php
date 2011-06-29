@@ -49,6 +49,75 @@
 
 <script type="text/javascript">
 
+    $.extend(Highcharts.Chart.prototype, {
+        addChart: function(formParams) {
+            var form,
+            chart = this,
+            svg = chart.getSVG();
+            
+            var options = chart.options.exporting;
+            
+            options.width = 380;
+            options.type = 'image/jpeg';
+            
+            if(formParams.charts.length == 0) {
+                
+                formParams.options = options;
+                
+                formParams.submit = function() {
+                    
+                    var form = Highcharts.createElement('form', {
+                        method: 'post',
+                        action: "/api/static/highchart"
+                    }, {
+                        display: 'NONE'
+                    }, document.body);
+                    
+                    var self = this;
+                    
+                    $.each(["filename", "type", "width", "url", "extra"], function(index, name) {
+                        
+                        Highcharts.createElement('input', {
+                            type: 'HIDDEN',
+                            name: name,
+                            value: { 
+                                filename: self.options.filename || 'chart', 
+                                type: self.options.type, 
+                                width: self.options.width, 
+                                url: self.options.url,
+                                extra: self.extra
+                            }
+                            [name]
+                        }, null, form);
+                    });
+                    
+                    
+                    $.each(this.charts, function(svg) {
+                        
+                        Highcharts.createElement('input', {
+                            type: 'HIDDEN',
+                            name: 'svg[]',
+                            value: self.charts[svg]
+                        }, null, form);
+                        
+                    });
+                    
+                    
+                    
+                    form.submit();
+                    
+                    form = null;
+                    
+                    
+                }
+                
+                
+            }
+            
+            formParams.charts.push(svg);
+        }
+    });
+
     var startDate, endDate;
     var periodSelector = $("#period-selector");
     var dateSelector = $("#date-selector");
@@ -148,9 +217,13 @@
                 
             });
             
-            console.log(code);
-            
-            
+            var formParams = {
+              
+              extra: code.html(),
+              charts: [],
+              submit: null // callback function
+              
+            };
             
             for(var id in boxManager.collection)
             {
@@ -159,18 +232,16 @@
                     
                     var box = boxManager.collection[id];
                     if(box.hasOwnProperty('graph')) {
-                        
-                        box.graph.exportChart({
-                                type: 'image/jpeg',
-                                width: 380,
-                                extra: code.html()
-                        });
-                        
+                        box.graph.addChart(formParams);   
                     }
                     
                 }
 
             }
+            
+            
+            console.log(formParams);
+            formParams.submit();
             
             
             

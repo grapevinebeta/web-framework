@@ -36,7 +36,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/jquery.tipTip.min.js',
             'js/jquery.selectbox.js',
             'js/DataProvider.js',
-            'js/highcharts/modules/exporting.src.js',
+            'js/highcharts/modules/exporting.js',
             'js/Boxes.js',
             'js/common.js', // adds some common functions
         );

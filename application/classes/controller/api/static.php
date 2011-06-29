@@ -93,31 +93,40 @@ class Controller_Api_Static extends Controller {
         
         $url = $this->request->post('url');
 
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-            'filename' => $this->request->post('filename'),
-            'svg' => $this->request->post('svg'),
-            'type' => $this->request->post('type'),
-            'width' => $this->request->post('width'),
-        ));
-
-
-        $chart = curl_exec($ch);
+        $svgs = $this->request->post('svg');
         
-        $chart = 'data:image/jpeg;base64,' . base64_encode($chart);
+        $post = array(
+                'filename' => $this->request->post('filename'),
+                'type' => $this->request->post('type'),
+                'width' => $this->request->post('width')
+            );
+        
+        
+        
+        $chartsEncoded = array();
+        
+        foreach($svgs as $svg) {
+            
+            $ch = curl_init();
 
- 
+            $post['svg'] = $svg;
+            
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+
+            $chart = curl_exec($ch);
+            $chartsEncoded[] = 'data:image/jpeg;base64,' . base64_encode($chart);
+            curl_close($ch);
+        }      
+        
         $markup = View::factory('_partials/export_template', array(
            'tabular_data' =>  $this->request->post('extra'),
-           'chart_data' =>  $chart,
+           'chart_data' =>  $chartsEncoded,
         ));
-        
-        curl_close($ch);
         
         
         $ch = curl_init();
@@ -300,10 +309,13 @@ class Controller_Api_Static extends Controller {
         $id = $this->request->param('id');
         $interval = $this->request->post('dateInterval');
         $networks = array();
+        
+        srand(floor(time() / (1000 * 60*60*24)));
+        
         switch ($id) {
             case 'activity':
                 
-                srand(time());
+                
 
                 $networks[] = array(
                     'network' => 'Facebook', //[string:required] - social network
@@ -329,8 +341,6 @@ class Controller_Api_Static extends Controller {
                 
                 break;
             case 'reach':
-                
-                srand(time());
                 
                 $networks[] = array(
                     'network' => 'Facebook' , //[string:required] - social network
