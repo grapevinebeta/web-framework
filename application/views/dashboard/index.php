@@ -8,7 +8,7 @@
 
 <div id="boxes-holder">
 
-    <div class="box-container active">
+    <div class="box-container active ignore">
         <?php echo view::factory('_partials/box/reviews-inbox'); ?>
     </div>
 
