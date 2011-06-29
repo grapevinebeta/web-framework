@@ -119,7 +119,7 @@ class Controller_Api_Static extends Controller {
 
 
             $chart = curl_exec($ch);
-            $chartsEncoded[] = 'data:image/jpeg;base64,' . base64_encode($chart);
+            $chartsEncoded[] = 'data:image/png;base64,' . base64_encode($chart);
             curl_close($ch);
         }      
         

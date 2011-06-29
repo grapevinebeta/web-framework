@@ -58,7 +58,7 @@
             var options = chart.options.exporting;
             
             options.width = 380;
-            options.type = 'image/jpeg';
+            options.type = 'image/png';
             
             if(formParams.charts.length == 0) {
                 
@@ -239,8 +239,6 @@
 
             }
             
-            
-            console.log(formParams);
             formParams.submit();
             
             
