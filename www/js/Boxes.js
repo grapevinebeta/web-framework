@@ -236,6 +236,13 @@ var BoxController = Class.extend({
         this.hideLoader();
         this.showContent();
         this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
+        
+        if(!this.getContentDom().find('.data-grid-holder table tbody tr').length) {
+           this.getContentDom().find('.data-grid-holder')
+           .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>');
+
+        }
+        
         return this;
     },
     
@@ -514,9 +521,29 @@ var GraphBoxController = BoxController.extend({
     },
     
     afterLoadGraphData: function () {
+        
+        
+        
         this.getGraphHolder().children().remove();
         this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-graph').addClass('active');
-        this.showGraph();
+        
+        
+        for(var key in this.graphData) 
+        {
+
+        }
+        
+        
+        
+        if(this.graphData[key] == false) {
+            
+            this.getContentDom().find('.graph-holder')
+            .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>')
+            .show();
+        }
+        else
+            this.showGraph();
+        
         return this;
     },
     
@@ -816,6 +843,7 @@ var BC_Inbox = BoxController.extend({
         }
 
         boxController.initPager();
+        boxController.afterLoadData();
 
     },
     
@@ -1844,7 +1872,10 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
-        boxController.graphData = data.dists;
+        
+        var distribution = data.distribution;
+        
+        boxController.graphData = distribution;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         
         var trTemplate = table.find('tbody tr:first').clone();
@@ -1852,10 +1883,10 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
         var trFooter = table.find('tfoot tr');
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.dists.length; i++) {
+        for (var i = 0; i < distribution.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.dists[i]) {
-                var value = boxController.data.dists[i][n];
+            for (n in distribution[i]) {
+                var value = distribution[i][n];
                 
                 tr.find('td.col-' + n).text(value);
                 if (n != 'dealership') {
@@ -1872,7 +1903,7 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
         }
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
-            boxController.data.dists.length
+            distribution.length
             );
                 
         boxController.afterLoadData();
@@ -2320,7 +2351,9 @@ var Exporter = {
             
             form.submit();
             
-            form = null;
+            
+            H.discardElement(form);
+            
             this.template.container = $('<div id="page"></div>');
 
         }

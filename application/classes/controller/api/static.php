@@ -443,6 +443,7 @@ class Controller_Api_Static extends Controller {
     
     public function action_distribution() 
     {
+        
         $distributions = array(
             array(
                 'id' => 1,
@@ -464,7 +465,7 @@ class Controller_Api_Static extends Controller {
             ),
         );
         //sleep(2);
-        $this->apiResponse = array('dists' => $distributions);
+        $this->apiResponse = array('distribution' => $distributions);
     }
     
     /**
@@ -603,7 +604,6 @@ class Controller_Api_Static extends Controller {
      */
     public function action_competition_ledger() 
     {
-        
         $status = array('OPEN', 'CLOSE', 'TODO');
         $excerpts = array(
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
