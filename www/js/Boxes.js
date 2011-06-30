@@ -2218,7 +2218,9 @@ boxManager = {
             }
             
             
-            title.add(content).appendTo(block.find('.inner')).appendTo(this.exporter.template.container);
+            title.add(content).appendTo(block.find('.inner'));
+            
+            block.appendTo(this.exporter.template.container);
             
             
         }
