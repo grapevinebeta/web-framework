@@ -84,6 +84,12 @@ var BoxController = Class.extend({
     
     dateInterval: null,
     
+    /**
+     * @var Boolean this variable is responsible for export control
+     *
+     */
+    ignore: false,
+    
     construct: function () {},
     
     init: function () {
@@ -672,6 +678,7 @@ var BC_Inbox = BoxController.extend({
     
     currentPage: 1,
     totalPages: null,
+    ignore: true,
     
     beforeLoadData: function () {
         this.getContentDom().children().hide();
@@ -2197,7 +2204,13 @@ boxManager = {
       
         for (i in this.collection) {
             
+            
+            
             var box = this.collection[i];
+            
+            
+            if(box.ignore)
+                continue;
             
             var block = Exporter.template.block.clone();
             var content;
@@ -2208,16 +2221,19 @@ boxManager = {
             
             if(box.hasOwnProperty('graph')) {
                 
-                content = $(box.graph.getSvg());
-                
-            }
-            else {
-                
-                content = box.getContentDom().find('.data-grid-holder table').clone();
+                var block2 = Exporter.template.block.clone();
+                var content2 = box.graph.getSVG();
+                var title2 = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+            
+                title2.add(content2).appendTo(block2.find('.inner'));
+
+                block2.appendTo(this.exporter.template.container);
                 
             }
             
-            
+                
+            content = box.getContentDom().find('.data-grid-holder table').clone();
+
             title.add(content).appendTo(block.find('.inner'));
             
             block.appendTo(this.exporter.template.container);
@@ -2225,9 +2241,9 @@ boxManager = {
             
         }
         
+
         
-        console.log(this.exporter);
-//        this.exporter.submit();
+        this.exporter.submit();
   
   
  
@@ -2272,7 +2288,7 @@ var monthNames = [
 var Exporter = {
 
         options: {
-            action: "/api/static/highchart",
+            action: "/api/static/export",
             width: 380
         },
         
@@ -2282,10 +2298,9 @@ var Exporter = {
             container: $('<div id="page"></div>')
             
         },
-        
-        submit: function(e) {
+       
+        submit: function() {
             
-            e.preventDefault();
             
             var H = Highcharts;
             var self = this;
@@ -2293,32 +2308,24 @@ var Exporter = {
             var options = H.merge(this.options, H.getOptions()['exporting']);
             
             var form = H.createElement('form', {
-                method: 'post',
+                method: 'POST',
                 action: options.action
             }, {
                 display: 'NONE'
             }, document.body);
             
             
-            $.each(["template"], function(index, name) {
-                
-                H.createElement('input', {
+            H.createElement('input', {
                     type: 'HIDDEN',
-                    name: name,
-                    value: { 
-                        template: self.template.container
-                    }
-                    [name]
+                    name: 'html',
+                    value: self.template.container.html()
                 }, null, form);
-            });
-            
-            
             
             form.submit();
             
             form = null;
-            
-            
+            this.template.container = $('<div id="page"></div>');
+
         }
     
 };

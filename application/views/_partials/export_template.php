@@ -1,8 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<!DOCTYPE html PUBLIC
+    "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"
+    "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Grapevine Export Document</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <style type="text/css">
@@ -84,6 +85,12 @@ h2
 
 margin-bottom:10px;
 
+}
+
+img {
+    
+prince-image-resolution: 96dpi;        /* 1 image pixel maps to 1px unit */
+    
 }
 
     </style>
@@ -309,13 +316,7 @@ uDz5I5OjRrkCpWD3JOAo/XjRo0akCpX/2Q==" alt="Grapevine Manage Your Reviews" />
       <div id="main">
        <div id="page">
            
-           <?php echo $tabular_data; ?>
-           <div style="clear:both;"></div>
-           
-           <?php foreach($chart_data as $data): ?>
-           <div class="block"><div class="inner"><img src="<?php echo $data; ?>" alt="graph" /></div></div>
-           <?php endforeach; ?>
-           <div style="clear:both;"></div>
+           <?php echo $html; ?>
        </div>
       </div>
     </div>

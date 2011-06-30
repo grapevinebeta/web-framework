@@ -44,6 +44,10 @@ class Controller_Api_Static extends Controller {
             ); 
         }
         
+                
+        list( $msecs, $uts ) = explode(' ', microtime());
+        srand(floor(($uts+$msecs)*1000));
+        
     }
     
     public function after()
@@ -88,44 +92,14 @@ class Controller_Api_Static extends Controller {
         ));
     }
     
-    public function action_highchart()
+    public function action_export()
     {
         
-        $url = $this->request->post('url');
-
-        $svgs = $this->request->post('svg');
-        
-        $post = array(
-                'filename' => $this->request->post('filename'),
-                'type' => $this->request->post('type'),
-                'width' => $this->request->post('width')
-            );
-        
-        
-        
-        $chartsEncoded = array();
-        
-        foreach($svgs as $svg) {
-            
-            $ch = curl_init();
-
-            $post['svg'] = $svg;
-            
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-
-
-            $chart = curl_exec($ch);
-            $chartsEncoded[] = 'data:image/png;base64,' . base64_encode($chart);
-            curl_close($ch);
-        }      
+          
         
         $markup = View::factory('_partials/export_template', array(
-           'tabular_data' =>  $this->request->post('extra'),
-           'chart_data' =>  $chartsEncoded,
+           'html' =>  $this->request->post('html'),
+           
         ));
         
         
@@ -144,16 +118,19 @@ class Controller_Api_Static extends Controller {
             'doc[document_type]' => 'pdf',
             'doc[name]' => $name,
             'doc[test]' => true,
+            'doc[strict]' => 'none',
         ));
 
 
         $result = curl_exec($ch);
+        curl_close($ch);
         
         header('Content-type: application/pdf');
         header('Content-disposition: attachment; filename="' . $name . '"');
 
         
         die($result);
+        
        
 
         
@@ -309,8 +286,6 @@ class Controller_Api_Static extends Controller {
         $id = $this->request->param('id');
         $interval = $this->request->post('dateInterval');
         $networks = array();
-        
-        srand(floor(time() / (1000 * 60*60*24)));
         
         switch ($id) {
             case 'activity':
