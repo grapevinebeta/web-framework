@@ -1784,17 +1784,6 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
             title: {
                 text: this.getHeaderDom().find('.box-header-title').text()
             },
-            colors: [
-            '#80699B', 
-            '#AA4643', 
-            '#4572A7', 
-            '#89A54E', 
-            '#3D96AE', 
-            '#DB843D', 
-            '#92A8CD', 
-            '#A47D7C', 
-            '#B5CA92'
-            ],
             xAxis: {
                 categories: [],
                 title: {
@@ -1809,10 +1798,8 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
                 }
             },
             plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: true
-                    }
+                series: {
+                    stacking: 'normal'
                 }
             },
             legend: {
@@ -1826,27 +1813,29 @@ var BC_CompetitionDistribution = GraphBoxController.extend({
                 enabled: false
             },
             series: [{
-                name: 'Average',
-                data: []
-            }, {
                 name: 'Negative',
-                data: []
+                data: [],
+                color: '#be1622',
+                shadow: false
             }, {
                 name: 'Neutral',
-                data: []
+                data: [],
+                color: 'rgb(243,190,0)',
+                shadow: false
             }, {
                 name: 'Positive',
-                data: []
+                data: [],
+                color: '#218D48',
+                shadow: false
             }]
         }
         
         for (var i = 0; i < this.graphData.length; i++) {
             var dist = this.graphData[i];
             options.xAxis.categories.push(dist.dealership);
-            options.series[0].data.push(dist.average);
-            options.series[1].data.push(dist.negative);
-            options.series[2].data.push(dist.neutral);
-            options.series[3].data.push(dist.positive);
+            options.series[0].data.push(dist.negative);
+            options.series[1].data.push(dist.neutral);
+            options.series[2].data.push(dist.positive);
         }
         
         this.graph = new Highcharts.Chart(options);
@@ -2205,23 +2194,27 @@ boxManager = {
         for (i in this.collection) {
             
             
-            
+            var block;
+            var content;
             var box = this.collection[i];
             
             
             if(box.ignore)
                 continue;
             
-            var block = Exporter.template.block.clone();
-            var content;
             
+            if(!box.getBoxDom().is('box-container-left, box-container-right')) {
+                
+                block = Exporter.template.blockWide.clone();
+                
+            }
+            else
+                block = Exporter.template.block.clone();
             
-            var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
-            
-            
+
             if(box.hasOwnProperty('graph')) {
                 
-                var block2 = Exporter.template.block.clone();
+                var block2 = block.clone();
                 var content2 = box.graph.getSVG();
                 var title2 = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
             
@@ -2233,10 +2226,13 @@ boxManager = {
             
                 
             content = box.getContentDom().find('.data-grid-holder table').clone();
-
-            title.add(content).appendTo(block.find('.inner'));
             
-            block.appendTo(this.exporter.template.container);
+            
+            if(content.length) {
+                var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+                title.add(content).appendTo(block.find('.inner'));
+                block.appendTo(this.exporter.template.container);
+            }
             
             
         }
@@ -2295,6 +2291,7 @@ var Exporter = {
         template: {
             
             block: $('<div class="block"><div class="inner"></div></div>'),
+            blockWide: $('<div class="block2"><div class="inner"></div></div>'),
             container: $('<div id="page"></div>')
             
         },

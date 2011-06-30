@@ -66,7 +66,13 @@ table.data-grid {
     width:50%;
 }
 
-.block .inner {
+.block2 {
+    float:none;
+    width:100%;
+    clear:both;
+}
+
+.block .inner, .block2 .inner {
     margin:10px;
 }
 
