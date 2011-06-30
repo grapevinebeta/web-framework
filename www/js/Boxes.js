@@ -2217,14 +2217,18 @@ boxManager = {
                 
             }
             
-            console.log(title.add(content))
-//            console.log(title.add(content).appendTo(block.find('inner')));
+            
+            title.add(content).appendTo(block.find('.inner')).appendTo(this.exporter.template.container);
+            
+            
         }
         
         
         console.log(this.exporter);
 //        this.exporter.submit();
-            
+  
+  
+ 
         
     }
 };
