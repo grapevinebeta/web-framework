@@ -2002,6 +2002,8 @@ boxManager = {
 
     range: null,
     
+    exporter: null, // exporter class for dynamic exporting
+    
     add: function (box) {
         if (
             (box instanceof BoxController) 
@@ -2033,7 +2035,7 @@ boxManager = {
         }
         return this;
     },
-    
+
     init: function () {
         var self = this;
         
@@ -2153,6 +2155,14 @@ boxManager = {
         return this;
     },
     
+    setExporter: function (exporter) {
+      
+      this.exporter = exporter;
+      
+      return this;
+      
+    },
+    
     
     setFilter: function(filters) {
         for (i in this.collection) {
@@ -2181,6 +2191,41 @@ boxManager = {
             this.collection[i].clearData();
         }
         return this;
+    },
+    
+    exportBoxes: function () {
+      
+        for (i in this.collection) {
+            
+            var box = this.collection[i];
+            
+            var block = Exporter.template.block.clone();
+            var content;
+            
+            
+            var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+            
+            
+            if(box.hasOwnProperty('graph')) {
+                
+                content = $(box.graph.getSvg());
+                
+            }
+            else {
+                
+                content = box.getContentDom().find('.data-grid-holder table').clone();
+                
+            }
+            
+            console.log(title.add(content))
+//            console.log(title.add(content).appendTo(block.find('inner')));
+        }
+        
+        
+        console.log(this.exporter);
+//        this.exporter.submit();
+            
+        
     }
 };
 
@@ -2197,6 +2242,7 @@ $(document).ready(function () {
     .add(new BC_CompetitionComparision())
     .add(new BC_CompetitionReviewInbox())
     .setDataProvider(new DataProvider())
+    .setExporter(Exporter)
     .init();
 });
 
@@ -2217,3 +2263,56 @@ var monthNames = [
 ];
 
 
+var Exporter = {
+
+        options: {
+            action: "/api/static/highchart",
+            width: 380
+        },
+        
+        template: {
+            
+            block: $('<div class="block"><div class="inner"></div></div>'),
+            container: $('<div id="page"></div>')
+            
+        },
+        
+        submit: function(e) {
+            
+            e.preventDefault();
+            
+            var H = Highcharts;
+            var self = this;
+            
+            var options = H.merge(this.options, H.getOptions()['exporting']);
+            
+            var form = H.createElement('form', {
+                method: 'post',
+                action: options.action
+            }, {
+                display: 'NONE'
+            }, document.body);
+            
+            
+            $.each(["template"], function(index, name) {
+                
+                H.createElement('input', {
+                    type: 'HIDDEN',
+                    name: name,
+                    value: { 
+                        template: self.template.container
+                    }
+                    [name]
+                }, null, form);
+            });
+            
+            
+            
+            form.submit();
+            
+            form = null;
+            
+            
+        }
+    
+};

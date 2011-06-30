@@ -49,75 +49,6 @@
 
 <script type="text/javascript">
 
-    $.extend(Highcharts.Chart.prototype, {
-        addChart: function(formParams) {
-            var form,
-            chart = this,
-            svg = chart.getSVG();
-            
-            var options = chart.options.exporting;
-            
-            options.width = 380;
-            options.type = 'image/png';
-            
-            if(formParams.charts.length == 0) {
-                
-                formParams.options = options;
-                
-                formParams.submit = function() {
-                    
-                    var form = Highcharts.createElement('form', {
-                        method: 'post',
-                        action: "/api/static/highchart"
-                    }, {
-                        display: 'NONE'
-                    }, document.body);
-                    
-                    var self = this;
-                    
-                    $.each(["filename", "type", "width", "url", "extra"], function(index, name) {
-                        
-                        Highcharts.createElement('input', {
-                            type: 'HIDDEN',
-                            name: name,
-                            value: { 
-                                filename: self.options.filename || 'chart', 
-                                type: self.options.type, 
-                                width: self.options.width, 
-                                url: self.options.url,
-                                extra: self.extra
-                            }
-                            [name]
-                        }, null, form);
-                    });
-                    
-                    
-                    $.each(this.charts, function(svg) {
-                        
-                        Highcharts.createElement('input', {
-                            type: 'HIDDEN',
-                            name: 'svg[]',
-                            value: self.charts[svg]
-                        }, null, form);
-                        
-                    });
-                    
-                    
-                    
-                    form.submit();
-                    
-                    form = null;
-                    
-                    
-                }
-                
-                
-            }
-            
-            formParams.charts.push(svg);
-        }
-    });
-
     var startDate, endDate;
     var periodSelector = $("#period-selector");
     var dateSelector = $("#date-selector");
@@ -198,50 +129,7 @@
         
         $('.export').bind('click', function() {
             
-            var template = $('<div class="block"><div class="inner"></div></div>');
-            
-            var code = $('<div id="page"></div>');
-            
-            $('.box-container').not('.ignore').find('.box').each(function() {
-                
-                var t = template.clone();
-                
-                var title = $("<h2/>").text($(this).find('.box-header-title').text());
-                var table = $(this).find('.data-grid-holder table');
-                
-                
-                title.clone().appendTo(t.find('.inner'));
-                table.clone().appendTo(t.find('.inner'));
-                
-                code.append(t);
-                
-            });
-            
-            var formParams = {
-              
-              extra: code.html(),
-              charts: [],
-              submit: null // callback function
-              
-            };
-            
-            for(var id in boxManager.collection)
-            {
-
-                if(id.indexOf('inbox')) {
-                    
-                    var box = boxManager.collection[id];
-                    if(box.hasOwnProperty('graph')) {
-                        box.graph.addChart(formParams);   
-                    }
-                    
-                }
-
-            }
-            
-            formParams.submit();
-            
-            
+            boxManager.exportBoxes();
             
         });
         
