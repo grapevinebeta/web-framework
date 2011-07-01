@@ -1266,6 +1266,37 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
     },
     
+    genericRequest: function(endpoint, data) {
+                 
+        $.ajax({
+            type: "POST",
+            accepts: "application/json; charset=utf-8",
+            data: data,
+            dataType: "json",
+            url: ApiUrl + endpoint
+        });
+      
+    },
+
+    
+    
+    // callback wrapper to pass extra params to callback scope
+    callbackWrapper: function(currentId, endpoint, name, context) {
+        return function(e)
+        {
+            var data = {};
+            data[name] = $(this).val();
+            
+            
+            e.preventDefault();
+            
+            endpoint = endpoint + "/id/" + currentId;
+            
+            context.genericRequest(endpoint, data);
+        }
+
+    },
+    
     prepareDetailsView: function(template, message) {
       
         var tr = template.clone();
@@ -1277,9 +1308,19 @@ var BC_ReviewInbox = BC_Inbox.extend({
         .addClass(message.status.toLowerCase());
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-review').text(message.review);
-        tr.find('select[name="category"]').val(message.category);
-        tr.find('input[name="keywords"]').val(message.keywords.join(', '));
-        tr.find('textarea[name="notes"]').val(message.notes);
+        tr.find('select[name="category"]').val(message.category).bind('change', this.callbackWrapper(currentId, 'review/category', 'category' , this));
+        tr.find('input[name="keywords"]').val(message.keywords.join(', ')).bind('save', this.callbackWrapper(currentId, 'review/keyword', 'keyword', this));
+        tr.find('textarea[name="notes"]').val(message.notes).bind('save', this.callbackWrapper(currentId, 'review/notes', 'notes', this));
+        
+        tr.find('.save-button').bind('click', function(e) {
+            
+            $.each(['keywords', 'notes'], function() {
+               
+               tr.find('*[name=' + this + ']').trigger('save');
+               
+            });
+            
+        });
         
         return tr;
     },
@@ -2022,7 +2063,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
 });
 
 boxManager = {
-    
+    revert: false,
     collection: {},
     
     dataProvider: null,
@@ -2103,7 +2144,7 @@ boxManager = {
                 top: 10, 
                 left: 100 
             },
-            revert: 'invalid',
+            revert: function(){if(boxManager.revert == false){return 'invalid';} else{boxManager.revert = false;}},
             appendTo: 'body',
             zIndex: 10,
             start: function(event, ui) {
@@ -2128,11 +2169,22 @@ boxManager = {
             hoverClass: "box-drag-over",
             drop: function (event, ui) {
                 var oldBox = $(this);
+                
                 var fromContainer = ui.draggable.parent();
+                
+                // prevent of switching between small box to widebox
+                if(fromContainer.is('.box-container-left, .box-container-right')) {
+                    
+                    if(!$(this).is('.box-container-left, .box-container-right')) {
+                        boxManager.revert = true;
+                        return this;
+                    }   
+                }
+                
                 if (oldBox.children().length > 0) {
-                    ui.draggable.parent().append(oldBox.children());
+                    fromContainer.append(oldBox.children());
                 } else {
-                    ui.draggable.parent().addClass('empty').removeClass('active');
+                    fromContainer.addClass('empty').removeClass('active');
                 }
                 $(this).removeClass('empty').addClass('active');
                 $(this).append(ui.draggable);
@@ -2223,16 +2275,13 @@ boxManager = {
     exportBoxes: function () {
       
         for (i in this.collection) {
-            
-            
+
             var block;
             var content;
             var box = this.collection[i];
             
-            
             if(box.ignore)
                 continue;
-            
             
             if(!box.getBoxDom().is('box-container-left, box-container-right')) {
                 
@@ -2255,9 +2304,7 @@ boxManager = {
                 
             }
             
-                
             content = box.getContentDom().find('.data-grid-holder table').clone();
-            
             
             if(content.length) {
                 var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
@@ -2269,7 +2316,6 @@ boxManager = {
         }
         
 
-        
         this.exporter.submit();
   
   
