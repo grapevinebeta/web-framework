@@ -238,8 +238,8 @@ var BoxController = Class.extend({
         this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
         
         if(!this.getContentDom().find('.data-grid-holder table tbody tr').length) {
-           this.getContentDom().find('.data-grid-holder')
-           .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>');
+            this.getContentDom().find('.data-grid-holder')
+            .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>');
 
         }
         
@@ -531,7 +531,7 @@ var GraphBoxController = BoxController.extend({
         for(var key in this.graphData) 
         {
 
-        }
+            }
         
         
         
@@ -749,6 +749,7 @@ var BC_Inbox = BoxController.extend({
             
             $(this).find('.expand').toggleClass('show');
             
+            
         });
 
         // close row detail on close or save button
@@ -771,19 +772,22 @@ var BC_Inbox = BoxController.extend({
             
                 event.preventDefault();
             
-                $(this).toggleClass('border');
             
                 var rowId = $(this).attr('data-row-id');
                 var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');
                 var detailsRow = $(this).next();
-                if (!detailsRow.height()) {
+                if (!$(this).hasClass('border')) {
                     detailsRow.removeClass('hidden-row');
                     detailsBox.show();
+
+                    detailsRow.trigger('expand');
+                    
                 } else {
                     detailsRow.addClass('hidden-row');
                     detailsBox.hide();
                 
                 }
+                $(this).toggleClass('border');
             });
     },
     
@@ -1266,63 +1270,124 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
     },
     
-    genericRequest: function(endpoint, data) {
+    genericRequest: function(endpoint, data, callback) {
                  
         $.ajax({
             type: "POST",
             accepts: "application/json; charset=utf-8",
             data: data,
             dataType: "json",
-            url: ApiUrl + endpoint
+            url: ApiUrl + endpoint,
+            success: callback
         });
       
     },
 
-    
-    
-    // callback wrapper to pass extra params to callback scope
-    callbackWrapper: function(currentId, endpoint, name, context) {
-        return function(e)
+    /**
+     * callback that returns the proper js event function and has data variable
+     * accesible from local scope
+     */
+    genericCallbackEventWrapper: function(callback, data) {
+        
+        return function (e)
         {
-            var data = {};
-            data[name] = $(this).val();
+            callback(e, data);            
             
-            
-            e.preventDefault();
-            
-            endpoint = endpoint + "/id/" + currentId;
-            
-            context.genericRequest(endpoint, data);
         }
-
+        
     },
     
-    prepareDetailsView: function(template, message) {
-      
-        var tr = template.clone();
-        var currentId = parseInt(message.id);
-        tr.attr('data-row-id', currentId);
+    reviewEndpointCallback: function(e, data) {
+        
+        e.preventDefault();
+        
+        var param = {};
+        param[data.name] = $(e.target).val();
+        
 
+        var endpoint = data.endpoint + '/' + data.reviewId;
+
+        data.context.genericRequest(endpoint, param);
+        
+    },
+    
+    populateFields: function(text, data) 
+    {
+        var message = text.review;
+        
+        var tr = $(data.trContext);
+        
         tr.find('.recent-review-status-icon')
         .removeClass('open closed todo')
         .addClass(message.status.toLowerCase());
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-review').text(message.review);
-        tr.find('select[name="category"]').val(message.category).bind('change', this.callbackWrapper(currentId, 'review/category', 'category' , this));
-        tr.find('input[name="keywords"]').val(message.keywords.join(', ')).bind('save', this.callbackWrapper(currentId, 'review/keyword', 'keyword', this));
-        tr.find('textarea[name="notes"]').val(message.notes).bind('save', this.callbackWrapper(currentId, 'review/notes', 'notes', this));
+        
+        
+        tr.find('select[name="category"]').val(message.category)
+        .bind('change', 
+            data.context.genericCallbackEventWrapper(
+                data.context.reviewEndpointCallback, 
+                {
+                    reviewId: data.reviewId,
+                    endpoint: 'review/category',
+                    name: 'category',
+                    context: data.context
+                }
+                )
+            );
+
+        tr.find('input[name="keywords"]').val(message.keywords.join(', '))
+        .bind('save', 
+            data.context.genericCallbackEventWrapper(
+                data.context.reviewEndpointCallback, 
+                {
+                    reviewId: data.reviewId,
+                    endpoint: 'review/keywords',
+                    name: 'keywords',
+                    context: data.context
+                }
+                )
+            );
+        tr.find('textarea[name="notes"]').val(message.notes)
+        .bind('save', 
+            data.context.genericCallbackEventWrapper(
+                data.context.reviewEndpointCallback, 
+                {
+                    reviewId: data.reviewId,
+                    endpoint: 'review/notes',
+                    name: 'notes',
+                    context: data.context
+                }
+                )
+            );
+        
+        var self = tr;
         
         tr.find('.save-button').bind('click', function(e) {
             
             $.each(['keywords', 'notes'], function() {
                
-               tr.find('*[name=' + this + ']').trigger('save');
+                self.find('*[name=' + this + ']').trigger('save');
                
             });
             
         });
         
-        return tr;
+    },
+    
+    reviewPopulate: function(e, data) 
+    {
+        
+        data.trContext = $(e.target);
+        
+
+        data.context.genericRequest('review' + '/expand/' + data.reviewId, {}, 
+            data.context.genericCallbackEventWrapper(
+                data.context.populateFields, 
+                data
+                ));
+            
     },
     
     
@@ -1336,7 +1401,18 @@ var BC_ReviewInbox = BC_Inbox.extend({
         var data = this.data.reviews;
         for (var i = 0; i < data.length; i++) {
             
-            trContent = this.prepareDetailsView(trContentTemplate, data[i]);
+            var currentId = parseInt(data[i].id);
+                      
+            trContent = trContentTemplate.clone().attr('data-row-id', currentId)
+            .bind('expand',this.genericCallbackEventWrapper(
+                this.reviewPopulate, 
+                {
+                    context:this, 
+                    reviewId: currentId
+                }
+                )
+            );
+            
             tr = this.prepareMessage(trTemplate, data[i]);
             
             
@@ -1347,13 +1423,15 @@ var BC_ReviewInbox = BC_Inbox.extend({
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
-            checkbox.attr('value', data[i].id);
+            checkbox.attr('value', currentId);
             tr.find('td.col-checkbox').html(checkbox);
             
             table.find('tbody:first').append(tr, trContent); // append two elements
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
+        
+        
     },
     
     construct: function () {}
@@ -1416,7 +1494,7 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
                 }
             },
             legend: {
-                    enabled: false
+                enabled: false
             },
             credits: {
                 enabled: false
@@ -1549,7 +1627,7 @@ var BC_SocialSubscribers = GraphBoxController.extend({
                 }
             },
             legend: {
-                    enabled: false
+                enabled: false
             },
             credits: {
                 enabled: false
@@ -1695,7 +1773,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
     loadInboxData: function () {
         
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
+        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even border');
         var trContentTemplate = table.find('tbody:first > tr:last').clone();
 
         var tr = null;
@@ -2029,7 +2107,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     
     loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
+        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even border');
         var trContentTemplate = table.find('tbody:first > tr:last').clone();
         var tr = null;
         var trContent = null;
@@ -2144,184 +2222,190 @@ boxManager = {
                 top: 10, 
                 left: 100 
             },
-            revert: function(){if(boxManager.revert == false){return 'invalid';} else{boxManager.revert = false;}},
-            appendTo: 'body',
-            zIndex: 10,
-            start: function(event, ui) {
-                $(this).css({});
-                $('.box-container.empty').addClass('box-dropable')
-                .css('min-height', $(this).height());
+            revert: function(){
+                if(boxManager.revert == false){
+                    return 'invalid';
+                } else{
+                    boxManager.revert = false;
+                }
             },
-            stop: function (event, ui) {
-                $(this).css({
-                    top: 0,
-                    left: 0,
-                    width: 'auto'
-                });
-                $('.box-container').css('min-height', '');
-                $('.box-container.empty').removeClass('box-dropable');
-            }
+        appendTo: 'body',
+        zIndex: 10,
+        start: function(event, ui) {
+            $(this).css({});
+            $('.box-container.empty').addClass('box-dropable')
+            .css('min-height', $(this).height());
+        },
+        stop: function (event, ui) {
+            $(this).css({
+                top: 0,
+                left: 0,
+                width: 'auto'
+            });
+            $('.box-container').css('min-height', '');
+            $('.box-container.empty').removeClass('box-dropable');
+        }
         });
-        $('.box-container')
-        .droppable({
-            accept: '.box',
-            activeClass: "box-dropable",
-            hoverClass: "box-drag-over",
-            drop: function (event, ui) {
-                var oldBox = $(this);
+    $('.box-container')
+    .droppable({
+        accept: '.box',
+        activeClass: "box-dropable",
+        hoverClass: "box-drag-over",
+        drop: function (event, ui) {
+            var oldBox = $(this);
                 
-                var fromContainer = ui.draggable.parent();
+            var fromContainer = ui.draggable.parent();
                 
-                // prevent of switching between small box to widebox
-                if(fromContainer.is('.box-container-left, .box-container-right')) {
+            // prevent of switching between small box to widebox
+            if(fromContainer.is('.box-container-left, .box-container-right')) {
                     
-                    if(!$(this).is('.box-container-left, .box-container-right')) {
-                        boxManager.revert = true;
-                        return this;
-                    }   
-                }
+                if(!$(this).is('.box-container-left, .box-container-right')) {
+                    boxManager.revert = true;
+                    return this;
+                }   
+            }
                 
-                if (oldBox.children().length > 0) {
-                    fromContainer.append(oldBox.children());
-                } else {
-                    fromContainer.addClass('empty').removeClass('active');
-                }
-                $(this).removeClass('empty').addClass('active');
-                $(this).append(ui.draggable);
+            if (oldBox.children().length > 0) {
+                fromContainer.append(oldBox.children());
+            } else {
+                fromContainer.addClass('empty').removeClass('active');
+            }
+            $(this).removeClass('empty').addClass('active');
+            $(this).append(ui.draggable);
                     
-                boxManager.moveEmptyToBottom();
-            }
-        });
-        return this;
-    },
+            boxManager.moveEmptyToBottom();
+        }
+    });
+    return this;
+},
     
-    moveEmptyToBottom: function () {
+moveEmptyToBottom: function () {
         
-        var boxesHolder = $('#boxes-holder');
-        var boxes = $('#boxes-holder .box-container');
+    var boxesHolder = $('#boxes-holder');
+    var boxes = $('#boxes-holder .box-container');
         
-        boxes.each(function (index) {
-            var box = $(this);
-            if (!box.children().length) {
-                if (box.hasClass('box-container-left')
-                    && !box.next().hasClass('active')) {
-                    var tmp = box.next();
-                    tmp.next('.clear').remove();
-                    boxesHolder.append(box);
-                    boxesHolder.append(tmp);
-                    boxesHolder.append('<div class="clear"></div>');
-                } else if (!box.hasClass('box-container-left')
-                    && !box.hasClass('box-container-right')) {
-                    box.nextAll(':last').after(box);
-                }
+    boxes.each(function (index) {
+        var box = $(this);
+        if (!box.children().length) {
+            if (box.hasClass('box-container-left')
+                && !box.next().hasClass('active')) {
+                var tmp = box.next();
+                tmp.next('.clear').remove();
+                boxesHolder.append(box);
+                boxesHolder.append(tmp);
+                boxesHolder.append('<div class="clear"></div>');
+            } else if (!box.hasClass('box-container-left')
+                && !box.hasClass('box-container-right')) {
+                box.nextAll(':last').after(box);
             }
-        });
-        return this;
-    },
-    
-    refresh: function () {
-        for (i in this.collection) {
-            this.collection[i].refresh();
         }
-        return this;
-    },
+    });
+    return this;
+},
     
-    setDataProvider: function (dataProvider) {
-        this.dataProvider = dataProvider;
-        for (i in this.collection) {
-            this.collection[i].setDataProvider(dataProvider);
-        }
-        return this;
-    },
+refresh: function () {
+    for (i in this.collection) {
+        this.collection[i].refresh();
+    }
+    return this;
+},
     
-    setExporter: function (exporter) {
+setDataProvider: function (dataProvider) {
+    this.dataProvider = dataProvider;
+    for (i in this.collection) {
+        this.collection[i].setDataProvider(dataProvider);
+    }
+    return this;
+},
+    
+setExporter: function (exporter) {
       
-      this.exporter = exporter;
+    this.exporter = exporter;
       
-      return this;
+    return this;
       
-    },
+},
     
     
-    setFilter: function(filters) {
-        for (i in this.collection) {
-            this.collection[i].setFilter(filters);
-        }
-        return this;
-    },
+setFilter: function(filters) {
+    for (i in this.collection) {
+        this.collection[i].setFilter(filters);
+    }
+    return this;
+},
 
-    setRange: function(range) {
-        this.range = range;
-        for (i in this.collection) {
-            this.collection[i].setRange(this.range);
-        }
-        return this;
-    },
+setRange: function(range) {
+    this.range = range;
+    for (i in this.collection) {
+        this.collection[i].setRange(this.range);
+    }
+    return this;
+},
     
-    setDateInterval: function (dateInterval) {
-        for (i in this.collection) {
-            this.collection[i].setDateInterval(dateInterval);
-        }
-        return this;
-    },
+setDateInterval: function (dateInterval) {
+    for (i in this.collection) {
+        this.collection[i].setDateInterval(dateInterval);
+    }
+    return this;
+},
     
-    clearData: function () {
-        for (i in this.collection) {
-            this.collection[i].clearData();
-        }
-        return this;
-    },
+clearData: function () {
+    for (i in this.collection) {
+        this.collection[i].clearData();
+    }
+    return this;
+},
     
-    exportBoxes: function () {
+exportBoxes: function () {
       
-        for (i in this.collection) {
+    for (i in this.collection) {
 
-            var block;
-            var content;
-            var box = this.collection[i];
+        var block;
+        var content;
+        var box = this.collection[i];
             
-            if(box.ignore)
-                continue;
+        if(box.ignore)
+            continue;
             
-            if(!box.getBoxDom().is('box-container-left, box-container-right')) {
+        if(!box.getBoxDom().is('box-container-left, box-container-right')) {
                 
-                block = Exporter.template.blockWide.clone();
+            block = Exporter.template.blockWide.clone();
                 
-            }
-            else
-                block = Exporter.template.block.clone();
-            
-
-            if(box.hasOwnProperty('graph')) {
-                
-                var block2 = block.clone();
-                var content2 = box.graph.getSVG();
-                var title2 = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
-            
-                title2.add(content2).appendTo(block2.find('.inner'));
-
-                block2.appendTo(this.exporter.template.container);
-                
-            }
-            
-            content = box.getContentDom().find('.data-grid-holder table').clone();
-            
-            if(content.length) {
-                var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
-                title.add(content).appendTo(block.find('.inner'));
-                block.appendTo(this.exporter.template.container);
-            }
-            
-            
         }
+        else
+            block = Exporter.template.block.clone();
+            
+
+        if(box.hasOwnProperty('graph')) {
+                
+            var block2 = block.clone();
+            var content2 = box.graph.getSVG();
+            var title2 = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+            
+            title2.add(content2).appendTo(block2.find('.inner'));
+
+            block2.appendTo(this.exporter.template.container);
+                
+        }
+            
+        content = box.getContentDom().find('.data-grid-holder table').clone();
+            
+        if(content.length) {
+            var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+            title.add(content).appendTo(block.find('.inner'));
+            block.appendTo(this.exporter.template.container);
+        }
+            
+            
+    }
         
 
-        this.exporter.submit();
+    this.exporter.submit();
   
   
  
         
-    }
+}
 };
 
 
@@ -2360,48 +2444,48 @@ var monthNames = [
 
 var Exporter = {
 
-        options: {
-            action: "/api/static/export",
-            width: 380
-        },
+    options: {
+        action: "/api/static/export",
+        width: 380
+    },
         
-        template: {
+    template: {
             
-            block: $('<div class="block"><div class="inner"></div></div>'),
-            blockWide: $('<div class="block2"><div class="inner"></div></div>'),
-            container: $('<div id="page"></div>')
+        block: $('<div class="block"><div class="inner"></div></div>'),
+        blockWide: $('<div class="block2"><div class="inner"></div></div>'),
+        container: $('<div id="page"></div>')
             
-        },
+    },
        
-        submit: function() {
+    submit: function() {
             
             
-            var H = Highcharts;
-            var self = this;
+        var H = Highcharts;
+        var self = this;
             
-            var options = H.merge(this.options, H.getOptions()['exporting']);
+        var options = H.merge(this.options, H.getOptions()['exporting']);
             
-            var form = H.createElement('form', {
-                method: 'POST',
-                action: options.action
-            }, {
-                display: 'NONE'
-            }, document.body);
-            
-            
-            H.createElement('input', {
-                    type: 'HIDDEN',
-                    name: 'html',
-                    value: self.template.container.html()
-                }, null, form);
-            
-            form.submit();
+        var form = H.createElement('form', {
+            method: 'POST',
+            action: options.action
+        }, {
+            display: 'NONE'
+        }, document.body);
             
             
-            H.discardElement(form);
+        H.createElement('input', {
+            type: 'HIDDEN',
+            name: 'html',
+            value: self.template.container.html()
+        }, null, form);
             
-            this.template.container = $('<div id="page"></div>');
+        form.submit();
+            
+            
+        H.discardElement(form);
+            
+        this.template.container = $('<div id="page"></div>');
 
-        }
+    }
     
 };
