@@ -1287,7 +1287,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     
     loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
-        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even');
+        var trTemplate = table.find('tbody tr:first').clone().removeClass('odd even border');
         var trContentTemplate = table.find('tbody:first > tr:last').clone();
         var tr = null;
         var trContent = null;

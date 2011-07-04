@@ -146,6 +146,9 @@ Route::set('social', 'social')
 Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(api)'
 	));
+Route::set('api_rest', '<directory>(/<controller>(/<action>/<field>(/<id>)))', array(
+		'directory' => '(api)'
+	));
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'dashboard',

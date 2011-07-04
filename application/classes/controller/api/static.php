@@ -33,9 +33,9 @@ class Controller_Api_Static extends Controller {
     
     public function before() {
         parent::before();
-        if ($this->request->method() != 'POST') {
-            throw new HTTP_Exception_405();
-        }
+//        if ($this->request->method() != 'POST') {
+//            throw new HTTP_Exception_405();
+//        }
         $range = $this->request->post('range');
         if (!empty($range)) {
             Session::instance()->set(
@@ -719,6 +719,27 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array('movies' => $collection);
         
         
+        
+        
+    }
+    
+    public function action_review()
+    {
+        
+        $id = $this->request->param('id');
+        $field = $this->request->param('field');
+        
+        switch($field) {
+            
+            case 'category':
+                
+                break;
+            case 'notes':
+                break;
+            case 'tags':
+                break;
+            
+        }
         
         
     }
