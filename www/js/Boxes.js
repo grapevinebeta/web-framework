@@ -889,6 +889,79 @@ var BC_Inbox = BoxController.extend({
       
     },
     
+    genericRequest: function(endpoint, data, callback) {
+                 
+        $.ajax({
+            type: "POST",
+            accepts: "application/json; charset=utf-8",
+            data: data,
+            dataType: "json",
+            url: ApiUrl + endpoint,
+            success: callback
+        });
+      
+    },
+
+    /**
+     * callback that returns the proper js event function and has data variable
+     * accesible from local scope
+     */
+    genericCallbackEventWrapper: function(callback, data) {
+        
+        
+        return function (e)
+        {
+            callback(e, data);            
+            
+        }
+        
+    },
+    
+    expandEndpointCallback: function(e, data) {
+        
+        e.preventDefault();
+        
+        var param = {};
+        param[data.name] = $(e.target).val();
+        
+
+        var endpoint = data.endpoint + '/' + data.id;
+
+        data.context.genericRequest(endpoint, param);
+        
+    },
+    
+    populateFields: function(text, data) 
+    {
+        var tr = $(data.trContext);
+        
+        data.context.customPopulateFields(text, data);
+        
+        
+        tr.removeClass('hidden-row');
+        tr.find('.details').show();
+        
+    },
+    
+    expandedPopulate: function(e, data) 
+    {
+        // reset all handlers to prevent event double
+        e.target.innerHTML = $(e.target).clone(false).html();
+        
+        data.trContext = $(e.target);
+        
+        data.context.expandedPopulateCallback(data);
+        
+        
+            
+    },
+    
+    expandedPopulateCallback: function(data) {
+      
+      alert('not implemented');
+      
+    },
+    
     construct: function () {}
     
 });
@@ -1267,50 +1340,14 @@ var BC_ReviewInbox = BC_Inbox.extend({
         return template
         
     },
-    
-    genericRequest: function(endpoint, data, callback) {
-                 
-        $.ajax({
-            type: "POST",
-            accepts: "application/json; charset=utf-8",
-            data: data,
-            dataType: "json",
-            url: ApiUrl + endpoint,
-            success: callback
-        });
-      
-    },
 
     /**
-     * callback that returns the proper js event function and has data variable
-     * accesible from local scope
+     * redefinie this function on every class to ensure population of data from
+     * callback
+     *
      */
-    genericCallbackEventWrapper: function(callback, data) {
+    customPopulateFields: function(text, data) {
         
-        return function (e)
-        {
-            callback(e, data);            
-            
-        }
-        
-    },
-    
-    reviewEndpointCallback: function(e, data) {
-        
-        e.preventDefault();
-        
-        var param = {};
-        param[data.name] = $(e.target).val();
-        
-
-        var endpoint = data.endpoint + '/' + data.reviewId;
-
-        data.context.genericRequest(endpoint, param);
-        
-    },
-    
-    populateFields: function(text, data) 
-    {
         var message = text.review;
         
         var tr = $(data.trContext);
@@ -1325,22 +1362,22 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('select[name="category"]').val(message.category)
         .bind('change', 
             data.context.genericCallbackEventWrapper(
-                data.context.reviewEndpointCallback, 
+                data.context.expandEndpointCallback, 
                 {
-                    reviewId: data.reviewId,
+                    id: data.id,
                     endpoint: 'review/category',
                     name: 'category',
                     context: data.context
                 }
                 )
             );
-
+        
         tr.find('input[name="keywords"]').val(message.keywords.join(', '))
         .bind('save', 
             data.context.genericCallbackEventWrapper(
-                data.context.reviewEndpointCallback, 
+                data.context.expandEndpointCallback, 
                 {
-                    reviewId: data.reviewId,
+                    id: data.id,
                     endpoint: 'review/keywords',
                     name: 'keywords',
                     context: data.context
@@ -1350,9 +1387,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('textarea[name="notes"]').val(message.notes)
         .bind('save', 
             data.context.genericCallbackEventWrapper(
-                data.context.reviewEndpointCallback, 
+                data.context.expandEndpointCallback, 
                 {
-                    reviewId: data.reviewId,
+                    id: data.id,
                     endpoint: 'review/notes',
                     name: 'notes',
                     context: data.context
@@ -1365,27 +1402,19 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('.save-button').bind('click', function(e) {
             
             $.each(['keywords', 'notes'], function() {
-               
+                
                 self.find('*[name=' + this + ']').trigger('save');
-               
+                
             });
             
         });
         
-        tr.removeClass('hidden-row');
-        tr.find('.details').show();
-        
     },
-    
-    reviewPopulate: function(e, data) 
-    {
-        // reset all handlers to prevent event double
-        e.target.innerHTML = $(e.target).clone(false).html();
-        
-        data.trContext = $(e.target);
-        
-        data.context.genericRequest('review' + '/categories', {}, function(response) {
-        
+
+    expandedPopulateCallback: function(data) {
+      
+      // we need to populate selectbox before we fetch another data
+      data.context.genericRequest('review' + '/categories', {}, function(response) {
         
             var select = data.trContext.find('.review-categories').empty();
             var option = $('<option />');
@@ -1395,16 +1424,16 @@ var BC_ReviewInbox = BC_Inbox.extend({
                
             });
             
-            data.context.genericRequest('review' + '/expand/' + data.reviewId, {}, 
+            data.customPopulateFields = this.reviewPopulate;
+            
+            data.context.genericRequest('review' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data
                 ));
         
         });
-        
-        
-            
+      
     },
     
     
@@ -1422,10 +1451,10 @@ var BC_ReviewInbox = BC_Inbox.extend({
                       
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
-                this.reviewPopulate, 
+                this.expandedPopulate, 
                 {
                     context:this, 
-                    reviewId: currentId
+                    id: currentId
                 }
                 )
             );
@@ -2111,16 +2140,32 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         
     },
     
-    prepareDetailsView: function(template, message) {
-      
-        var tr = template.clone();
-        tr.attr('data-row-id', message.id);
-        tr.find('.details-title').text(message.title);
+    /**
+     * redefinie this function on every class to ensure population of data from
+     * callback
+     *
+     */
+    customPopulateFields: function(text, data) {
+        
+        var message = text.review;
+        
+        var tr = $(data.trContext);
+        
+         tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
         
-        return tr;
+    },
+
+    expandedPopulateCallback: function(data) {
+
+            
+            data.context.genericRequest('social' + '/expand/' + data.id, {}, 
+            data.context.genericCallbackEventWrapper(
+                data.context.populateFields, 
+                data));
       
     },
+    
     
     loadInboxData: function () {
         var table = this.getContentDom().find('.data-grid-holder table.data-grid');
@@ -2131,8 +2176,19 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         table.find('tbody tr').remove();
         for (var i = 0; i < this.data.socials.length; i++) {
             
+            var currentId = parseInt(data[i].id);
+            
+            trContent = trContentTemplate.clone().attr('data-row-id', currentId)
+            .bind('expand',this.genericCallbackEventWrapper(
+                this.expandedPopulate, 
+                {
+                    context:this, 
+                    id: currentId
+                }
+                )
+            );
+            
             tr =this.prepareMessage(trTemplate, this.data.socials[i]);
-            trContent = this.prepareDetailsView(trContentTemplate, this.data.socials[i]);
             
             if (i % 2) {
                 tr.addClass('odd');

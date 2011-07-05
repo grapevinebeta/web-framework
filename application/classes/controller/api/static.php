@@ -284,10 +284,60 @@ class Controller_Api_Static extends Controller {
     public function action_social()
     {
         $id = $this->request->param('id');
+        $field = $this->request->param('field');
         $interval = $this->request->post('dateInterval');
         $networks = array();
         
+        
+        
         switch ($id) {
+            
+            case 'expand':
+                
+                $status = array('OPEN', 'CLOSED', 'TODO');
+                $excerpts = array(
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+                    'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+                    'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+                    'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+                    'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+                    'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+                    'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+                );
+
+                $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+                    'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+                $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
+                    'Blogger', 'Rss', 'Delicious');
+
+                $network = $competition[rand(0, 6)];
+
+                $review = array(
+                    'status' => $status[rand(0, 2)],
+                    'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000, time()),
+                    'excerpt' => $excerpts[rand(0, 6)],
+                    'site' => $network,
+                    'id' => $id,
+                    'review' => $excerpts[rand(0, 6)],
+                    'category' => "important",
+                    'notes' => 'notes',
+                    'keywords' => array('keyword', 'car'),
+                    'title' => $excerpts[rand(0, 6)],
+                    'link' => $autor[rand(0, 6)],
+                    'autor' => $autor[rand(0, 6)]
+                );
+
+
+                $this->apiResponse = array(
+                    'social' => $review,
+                );
+                
+                
+                break;
+            
             case 'activity':
                 
                 
