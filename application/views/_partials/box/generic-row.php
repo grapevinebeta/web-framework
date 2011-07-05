@@ -14,10 +14,7 @@
                                         <?php echo __('Categorize'); ?>:
                                     </td>
                                     <td class="a-left">
-                                        <select name="category">
-                                            <option value=""></option>
-                                            <option value="category 1">category 1</option>
-                                            <option value="category 2">category 2</option>
+                                        <select name="category" class="review-categories">
                                         </select>
                                     </td>
                                     <td class="a-right">

@@ -777,9 +777,7 @@ var BC_Inbox = BoxController.extend({
                 var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');
                 var detailsRow = $(this).next();
                 if (!$(this).hasClass('border')) {
-                    detailsRow.removeClass('hidden-row');
-                    detailsBox.show();
-
+                    
                     detailsRow.trigger('expand');
                     
                 } else {
@@ -1374,19 +1372,38 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
         });
         
+        tr.removeClass('hidden-row');
+        tr.find('.details').show();
+        
     },
     
     reviewPopulate: function(e, data) 
     {
+        // reset all handlers to prevent event double
+        e.target.innerHTML = $(e.target).clone(false).html();
         
         data.trContext = $(e.target);
         
+        data.context.genericRequest('review' + '/categories', {}, function(response) {
+        
+        
+            var select = data.trContext.find('.review-categories').empty();
+            var option = $('<option />');
+            $.each(response.categories, function(i, item) {
 
-        data.context.genericRequest('review' + '/expand/' + data.reviewId, {}, 
+               select.append(option.clone().val(i).text(item));
+               
+            });
+            
+            data.context.genericRequest('review' + '/expand/' + data.reviewId, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data
                 ));
+        
+        });
+        
+        
             
     },
     

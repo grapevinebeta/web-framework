@@ -725,9 +725,16 @@ class Controller_Api_Static extends Controller {
     
     public function action_review()
     {
-        
         $id = $this->request->param('id');
         $field = $this->request->param('field');
+        
+        if('categories' === $id)
+        {
+            $this->apiResponse = array('categories' =>
+            array(1 => 'shopping', 2 => 'important', 3 => 'it', 4 => 'travel', 5 => 'sport'));
+            
+        }
+        
         
         switch($field) {
             
@@ -768,14 +775,14 @@ class Controller_Api_Static extends Controller {
                 'site' => $network,
                 'id' => $id,
                 'review' => $excerpts[rand(0,6)],
-                'category' => 'category',
+                'category' => "important",
                 'notes' => 'notes',
                 'keywords' => array('keyword', 'car'),
                 'title' => $excerpts[rand(0,6)],
                 'link' => $autor[rand(0, 6)],
                 'autor' => $autor[rand(0, 6)]
 
-            );
+        );
         
         
         $this->apiResponse = array(
