@@ -6,9 +6,16 @@
 	 - filter [array:optional] : data key to filter against
 	 - dateInterval [number:optional] In some cases we need to break the returned data set into date interval, this will be set to do so
 	 so we can break our data into every <dateInterval> days
+	 - For pagination pass the paramaters 
+		-page : page to fetch
+		- limit : max results to return
+	Pagination request will return 
+			pagination:{page:current_page,pages:total_pages}
+	
 Returned:
 	- data [object:required]
 	- error[optional:object]
+	
 
 Format:	
 <endpoint>
@@ -44,10 +51,17 @@ Format:
 /api/dataProvider/review/email/<id>
 
 
+/api/dataProvider/review/category/<id>
 
 /api/dataProvider/review/status/<id>
 	-status :[string:required] "references Reviews.Status[OPEN|CLOSED|TODO]"
 
+/api/dataProvider/review/notes/<id>
+	notes:[string:required]
+	
+/ap/dataProvider/review/tags/<id>
+	tags:[array:required]
+	
 
 
 
@@ -70,18 +84,31 @@ Note: returns numeric data only
 /api/dataProvider/social/reach
 Note: returns numeric data only
 {
-	networks:ArrayCollection of SocialReachObject
+	networks:ArrayCollection of SocialReachObject // if <dataInterval> is provided the results will be an object hashed by the unixtimestamp generated from <dataInterval> (all normalized to midnight)
 }
 
 
 
 /api/dataProvider/socials
 {
-	socials:ArrayCollection of SocialContentObject
+	socials:ArrayCollection of SocialContentObject // if <dataInterval> is provided the results will be an object hashed by the unixtimestamp generated from <dataInterval> (all normalized to midnight)
 	filters:{
 		status:ArrayCollection of FilterObject
 		source:ArrayCollection of FilterObject
 	}		
+}
+
+
+/api/dataProvider/scoreboard
+{
+	scoreboard:ScoreBoardObject
+
+}
+
+/api/dataProvider/competition/ogsi
+{
+	ogsi:An object hashed by OGSIObject.competition ( the name of the competator)
+		values will be an instance of OGSIObject
 }
 
 
@@ -96,17 +123,13 @@ Note: returns numeric data only
 @TODO
 
 
-
-Node: added to api static controller to continue work on competition tab
 /api/dataProvider/competition/distribution
 {
-	distribution:ArrayCollection of OGSIDistributionObject
+	distribution:ArrayCollection of OGSICompetitionDistributionObject
 
 }
 
-
-
-/api/dataProvider/competition/ledger
+/api/dataProvider/competition/inbox
 {
 	reviews:ArrayCollection of CompetitionReviewObject
 }
@@ -184,11 +207,13 @@ KeywordObject
 FilterObject{
 	total: [optional]
 	value: string - value that will be passed to "filter" array when requesting a dataSet
+	active:[boolean]
 
 }
 
 OGSIObject{
-
+       
+	   
 	   distribution:OGSIDistributionObject,
 	   ogsi:OGSIScoreObject,
 	   reviews:OGSIReviewsObject,
@@ -197,7 +222,7 @@ OGSIObject{
 OGSIScoreObject{
 			
 		   value:[decimal:required] - the ogsi percent
-		   change:[decimal:required] - the change in percentage
+		   rank:OGSIRank
 }
 OGSIDistributionObject{
 	   positive:[int:required] - positive count
@@ -206,13 +231,17 @@ OGSIDistributionObject{
 	   total:[int:required] - total count
 	   average:[decimal:required] - average count
 }
+OGSIRank{
+	value:[int:required] - ranking value
+	out:[int:required] -number of competitors
+	}
 OGSIReviewsObject {
-		value:[number:required] - the number of reviews
-		change:[number:required] - the change in percentage
+	value:[number:required] - the number of reviews
+	rank:OGSIRank
 }
 OGSIRatingObect {
-		value:[decimal:required] - the current rating
-		change:[decimal:required] - change in rating
+	value:[decimal:required] - the current rating
+    rank:OGSIRank
 }
 
 IOGISBaseCompetitionObject{
@@ -232,3 +261,17 @@ CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObj
 {
 
 }
+
+ScoreBoardObject{
+	ogsi:[number:required] - 
+	rating:{
+		negative:[int:required] - number of negative
+		positive:[int:required] - number of positive
+		neutral:[int:required] - number of neutral 
+		score:[int:required] - computed star rating
+		}
+	reviews:[int:required]
+
+}
+
+

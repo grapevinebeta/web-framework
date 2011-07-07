@@ -1,4 +1,5 @@
 <div id="right-panel-holder">
+<?php if('/dashboard' !== Kohana_Request::detect_uri()): ?>
     <div class="light-box">
         <div class="light-box-header">
             <?php echo __('All Time Snapshot'); ?>
@@ -15,8 +16,8 @@
             <h3>OGSI 115%</h3>
         </div>
     </div>
-
-    <div class="light-box">
+<?php endif; ?>
+    <div class="light-box" id="box-social-activity-mini">
         <div class="light-box-header">
             <?php echo __('Recent Activity'); ?>
             <?php echo html::anchor(
@@ -28,8 +29,16 @@
                     )
                 ); ?>
         </div>
-        <div class="light-box-content">
-            test content
+        <div class="light-box-content box-content">
+            <div class="data-grid-holder">
+                <div class="row">
+                    <span class="date"></span>
+                    <span class="network"></span>
+                    <h5 class="title"></h5>
+                    <a href="#" class="reply">Reply</a>
+                    <div class="clear"></div>
+                </div>
+            </div>
         </div>
     </div>
 

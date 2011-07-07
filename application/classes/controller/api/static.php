@@ -254,7 +254,7 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array(
             'reviews' => $reviews,
             'filters' => $filters,
-            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
+            'pagination' => array('page' => $this->request->post('page'), 'pages' => 30)
         );
     }
 
@@ -265,6 +265,8 @@ class Controller_Api_Static extends Controller {
         $id = $this->request->param('id');
         $field = $this->request->param('field');
         $interval = $this->request->post('dateInterval');
+        $limit = $this->request->post('limit');
+        $limit = $limit ? $limit : 10;
         $networks = array();
 
 
@@ -344,7 +346,7 @@ class Controller_Api_Static extends Controller {
                 );
 
                 break;
-            case 'reach':
+            case 'subscribers':
 
                 $networks[] = array(
                     'network' => 'Facebook', //[string:required] - social network
@@ -399,7 +401,10 @@ class Controller_Api_Static extends Controller {
 
         $socials = array();
 
-        for ($i = 0; $i < 10; $i++) {
+        $limit = $this->request->post('limit');
+        $limit = $limit ? $limit : 10;
+        
+        for ($i = 0; $i < $limit; $i++) {
             $network = $competition[rand(0, 6)];
 
             $socials[] = array(
@@ -421,6 +426,7 @@ class Controller_Api_Static extends Controller {
         }
 
         $postfilters = $this->request->post('filters');
+        
         $filters = array();
 
 
@@ -457,7 +463,7 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array(
             'socials' => $socials,
             'filters' => $filters,
-            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
+            'pagination' => array('page' => $this->request->post('page'), 'pages' => 30)
         );
     }
 
@@ -755,7 +761,7 @@ class Controller_Api_Static extends Controller {
             'competitions' => $reviews,
             'source' => $source,
             'filters' => $filters,
-            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
+            'pagination' => array('page' => $this->request->post('page'), 'pages' => 30)
         );
     }
 

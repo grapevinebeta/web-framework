@@ -237,7 +237,7 @@ var BoxController = Class.extend({
         this.showContent();
         this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
         
-        if(!this.getContentDom().find('.data-grid-holder table tbody tr').length) {
+        if(!this.getContentDom().find('.data-grid-holder table tbody tr, .data-grid-holder .row').length) {
             this.getContentDom().find('.data-grid-holder')
             .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>');
 
@@ -352,6 +352,84 @@ var BoxController = Class.extend({
     }
     
 });
+
+
+var BC_SocialActivityMini = BoxController.extend({
+
+/**
+     * @var String DOM id of the container div 
+     */
+    boxId: 'box-social-activity-mini',
+    
+    /**
+     * @var String Name of the requested resource, used in Ajax URL
+     */
+    endpoint: 'socials',
+    
+    limit: 4,
+    
+    
+    prepareMessage: function(template, data) {
+      
+        template = template.clone();
+      
+        template.find('.title').text(data.title);
+      
+        var tmpDate = new Date(data.submitted * 1000);
+        var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
+        '/' + tmpDate.getYear();
+      
+        template.find('.date').text(formatted);
+      
+        titleLink = $('<a href="#"><span></span></a>');
+        titleLink.attr('class', data.network.toLowerCase());
+        titleLink.filter('span').text(value);
+        template.find('.network').html(titleLink);
+      
+        return template;
+      
+    },
+    
+    /**
+     * Load Data by Ajax
+     */
+    loadData: function () {
+        this.beforeLoadData();
+        if (!this.loadDataCallback.boxController) {
+            this.loadDataCallback.boxController = this;
+        }
+        this.dataProvider.setEndpoint(this.endpoint)
+        .setDateRange(this.range)
+        .setFilters(this.filters)
+        .setDateInterval(null)
+        .setLimit(this.limit)
+        .setCallback(this.loadDataCallback);
+        this.data = this.dataProvider.fetch();
+        return this;
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        var content = boxController.getContentDom().find('.data-grid-holder');
+        var rowTemplate = content.find('.row:first').clone();
+        content.find('.row').remove();
+        var row;
+        var social = data.socials;
+        for (var i = 0; i < social.length; i++) {
+
+            row = boxController.prepareMessage(rowTemplate, social[i]);   
+            content.append(row); // append two elements
+            
+        }
+        boxController.afterLoadData();
+    },
+    
+    construct: function () {}
+
+});
+
 
 var GraphBoxController = BoxController.extend({
     
@@ -705,6 +783,7 @@ var BC_Inbox = BoxController.extend({
     
     currentPage: 1,
     totalPages: null,
+    limit: 10,
     ignore: true,
     
     beforeLoadData: function () {
@@ -861,7 +940,8 @@ var BC_Inbox = BoxController.extend({
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(null)
-        .setPage(this.currentPage)            
+        .setPage(this.currentPage)
+        .setLimit(this.limit)
         .setCallback(this.loadDataCallback);
         this.data = this.dataProvider.fetch();
         return this;
@@ -1604,6 +1684,13 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
                     trFooter.find('th.col-' + n).text(value + currentTotalValue);
                 }
             }
+            
+            if (i % 2) {
+                tr.addClass('even');
+            } else {
+                tr.addClass('odd');
+            }
+            
             table.find('tbody').append(tr);
         }
         trFooter.find('th.col-average').text(
@@ -1630,7 +1717,7 @@ var BC_SocialSubscribers = GraphBoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'social/reach',
+    endpoint: 'social/subscribers',
     
     
     prepareGraph: function () {
@@ -2465,7 +2552,7 @@ exportBoxes: function () {
         if(box.ignore)
             continue;
             
-        if(!box.getBoxDom().is('box-container-left, box-container-right')) {
+        if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
                 
             block = Exporter.template.blockWide.clone();
                 
@@ -2486,10 +2573,11 @@ exportBoxes: function () {
                 
         }
             
-        content = box.getContentDom().find('.data-grid-holder table').clone();
+        content = box.getContentDom().find('.data-grid-holder table').filter(':visible').clone();
             
         if(content.length) {
-            var title = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+            var title = $("<h2/>").text(box.getHeaderDom()
+            .find('.box-header-title').text());
             title.add(content).appendTo(block.find('.inner'));
             block.appendTo(this.exporter.template.container);
         }
@@ -2507,6 +2595,8 @@ exportBoxes: function () {
 };
 
 
+
+
 $(document).ready(function () {
     boxManager.add(new BC_KeywordsAnalysis())
     .add(new BC_Ogsi())
@@ -2518,6 +2608,7 @@ $(document).ready(function () {
     .add(new BC_CompetitionDistribution())
     .add(new BC_CompetitionComparision())
     .add(new BC_CompetitionReviewInbox())
+    .add(new BC_SocialActivityMini())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter)
     .init();

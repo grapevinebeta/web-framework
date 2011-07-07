@@ -43,8 +43,12 @@
 
 
 table.data-grid thead tr th {
-    background-color: #573975;
-    color: white;
+    background-color: #EFDFEF;
+    color: #000;
+}
+
+tr.even {
+   background-color: #EFDFEF; 
 }
 
 table.data-grid th, table.data-grid td {
@@ -59,6 +63,10 @@ table.data-grid {
     border: 0 solid gray;
     border-collapse: collapse;
     border-radius: 0 0 9px 9px;
+}
+
+tfoot tr th {
+    background-color: #EFDFEF;
 }
 
 .block {

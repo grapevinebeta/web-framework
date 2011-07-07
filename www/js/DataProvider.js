@@ -32,6 +32,8 @@ var DataProvider = function() {
      * @var Integer page number
      */
     var page;
+    
+    var limit;
 
     return {
         
@@ -63,6 +65,13 @@ var DataProvider = function() {
             
         },
         
+        setLimit: function (value) {
+            
+            limit = value;
+            return this;
+            
+        },
+        
         setCallback: function(value) {
             callback = value;
             return this;
@@ -82,6 +91,10 @@ var DataProvider = function() {
             
             if (page) {
                 params.page = page;
+            }
+
+            if (limit) {
+                params.limit = limit;
             }
             
             $.ajax({

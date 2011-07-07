@@ -816,7 +816,7 @@ background: -webkit-gradient(
 #box-social-media-inbox {}
     
 
-    #box-social-media-inbox tr td.col-network a {
+    #box-social-media-inbox tr td.col-network a, .network a {
 
         display: block;
         background-image: url(../images/icons/social_icons.png);
@@ -824,47 +824,47 @@ background: -webkit-gradient(
         height: 24px;
     }
     
-    #box-social-media-inbox tr td.col-network a span {
+    #box-social-media-inbox tr td.col-network a span, .network a span {
         display:none;
     }
     
-    #box-social-media-inbox tr td.col-network a.facebook {
+    #box-social-media-inbox tr td.col-network a.facebook, .network a.facebook {
         background-position: 0 0;
     }
     
-    #box-social-media-inbox tr td.col-network a.flickr {
+    #box-social-media-inbox tr td.col-network a.flickr, .network a.flickr {
         background-position: 0 -33px;
     }
 
-    #box-social-media-inbox tr td.col-network a.twitter {
+    #box-social-media-inbox tr td.col-network a.twitter, .network a.twitter {
         background-position: 0 -66px;
     }
 
-    #box-social-media-inbox tr td.col-network a.google {
+    #box-social-media-inbox tr td.col-network a.google, .network a.google {
         background-position: 0 -99px;
     }
 
-    #box-social-media-inbox tr td.col-network a.youtube {
+    #box-social-media-inbox tr td.col-network a.youtube, .network a.youtube {
         background-position: 0 -132px;
     }
     
-    #box-social-media-inbox tr td.col-network a.reddit {
+    #box-social-media-inbox tr td.col-network a.reddit, .network a.reddit {
         background-position: 0 -165px;
     }
     
-    #box-social-media-inbox tr td.col-network a.stumbleupon {
+    #box-social-media-inbox tr td.col-network a.stumbleupon, .network a.stumbleupon {
         background-position: 0 -198px;
     }
 
-    #box-social-media-inbox tr td.col-network a.rss {
+    #box-social-media-inbox tr td.col-network a.rss, .network a.rss {
         background-position: 0 -231px;
     }
 
-    #box-social-media-inbox tr td.col-network a.blogger {
+    #box-social-media-inbox tr td.col-network a.blogger, .network a.blogger {
         background-position: 0 -264px;
     }
     
-    #box-social-media-inbox tr td.col-network a.delicious {
+    #box-social-media-inbox tr td.col-network a.delicious, .network a.delicious {
         background-position: 0 -297px;
     }
     
@@ -1034,4 +1034,39 @@ background: -webkit-gradient(
 
     #box-recent-reviews .recent-review-status-icon.todo {
         background-position: center -130px;
+    }
+    
+    .row {
+        
+        margin-bottom: 20px;
+        
+    }
+    
+    .row .title {
+        float: right;
+        margin: 0;
+        width: 119px;
+        font-weight: normal;
+        font-size: 11px;
+    }
+    
+    .row .network {
+        float:left;
+    }
+    
+    .row .date {
+        clear:both;
+        display:block;
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+    
+    .row .reply {
+        clear:both;
+        float: right;
+        background: url(/images/icons/reply.png) top left no-repeat;
+        padding: 2px 0 0 20px;
+        height: 24px;
+        display: block;
+        margin-top: 4px;
     }
