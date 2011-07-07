@@ -1,3 +1,26 @@
+Function.prototype.clone = function() {
+    var that = this;
+    var temp = function temporary() { return that.apply(this, arguments); };
+    for( key in this ) {
+        temp[key] = this[key];
+    }
+    return temp;
+};
+
+function determineMonthDiff(period)
+{
+    switch(period) {
+        case '1m':
+            return 1;
+        case '3m':
+            return 3;
+        case '6m':
+            return 6;
+        case '1y':
+            return 12;   
+    }
+}
+
 (function(){
 
     // logging function

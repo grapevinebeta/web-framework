@@ -27,6 +27,11 @@ var DataProvider = function() {
      * 
      */
     var callback;
+    
+    /**
+     * @var Integer page number
+     */
+    var page;
 
     return {
         
@@ -46,8 +51,16 @@ var DataProvider = function() {
         },
         
         setDateInterval: function (value) {
+            
             dateInterval = value;
             return this;
+        },
+        
+        setPage: function (value) {
+            
+            page = value;
+            return this;
+            
         },
         
         setCallback: function(value) {
@@ -65,6 +78,10 @@ var DataProvider = function() {
             
             if (dateInterval) {
                 params.dateInterval = dateInterval;
+            }
+            
+            if (page) {
+                params.page = page;
             }
             
             $.ajax({

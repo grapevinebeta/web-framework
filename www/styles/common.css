@@ -16,6 +16,10 @@
     text-decoration: underline !important;
 }
 
+.hidden-row {
+    display: none !important;
+}
+
 .left {
     float: left;
 }
@@ -101,6 +105,10 @@
 
 .no-border {
     border: none !important
+}
+
+table.v-top td {
+    vertical-align: top;
 }
 
 table.data-grid {

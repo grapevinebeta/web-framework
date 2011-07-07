@@ -1,42 +1,130 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
 
+defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * Specification of filters:
+ * 
+ *    Review Inbox filters:
+ *      Review Status Filter: Total, Positive, Neutral, Negative, Alert, Flagged, & Completed
+ *      Default filter is TOTAL
+ *      Source Filter: All, Industry Specific, General
+ *      Default filter is ALL
+ *    Social Inbox filters:
+ *      Activity Filter: Total, Posts & Mentions, Videos & Photos, Blogs & News
+ *      Default filter is TOTAL
+ *    Social Network Filter: All, Social, Location, Video & Photo, Flickr, Blog & News
+ *      Default filter is ALL 
+ *    Competition Review Inbox filters:
+ *      Activity Filter: Total, Positive, Neutral, Negative
+ *      Default filter is TOTAL
+ *    Competition filter: All, Competitor 1, Competitor 2, etc
+ *      Default filter is ALL competition selected ON 
+ * 
+ */
 class Controller_Api_Static extends Controller {
-    
+
     /**
      * @var 
-     **/
+     * */
     protected $apiResponse;
-    
     protected $apiRequest;
-    
+
     public function before() {
         parent::before();
-        if ($this->request->method() != 'POST') {
-            throw new HTTP_Exception_405();
-        }
+//        if ($this->request->method() != 'POST') {
+//            throw new HTTP_Exception_405();
+//        }
         $range = $this->request->post('range');
         if (!empty($range)) {
             Session::instance()->set(
-                'viewingRange',
-                $range
-            ); 
+                    'viewingRange', $range
+            );
         }
+
+
+        list( $msecs, $uts ) = explode(' ', microtime());
+        srand(floor(($uts + $msecs) * 1000));
     }
-    
-    public function after()
-    {
+
+    public function after() {
         $this->response->headers('Content-Type', 'application/json');
         $this->response->body(json_encode($this->apiResponse));
         parent::after();
     }
 
-    public function action_index()
-    {
+    public function action_index() {
         
     }
-    
-    public function action_sites()
-    {
+
+    public function action_ogsi() {
+
+        $rands[] = rand(0, 100);
+        $rands[] = rand(0, 100);
+        $rands[] = rand(0, 100);
+
+        $this->apiResponse = array('ogsi' => array(
+                'distribution' => array(// OGSIDistributionObject,
+                    'positive' => $rands[0], //:[int:required] - positive count
+                    'neutral' => $rands[1], //:[int:required] - neutral count
+                    'negative' => $rands[2], //:[int:required] - negative count
+                    'total' => array_sum($rands), //:[int:required] - total count
+                    'average' => 4, //:[decimal:required] - average count
+                ),
+                'ogsi' => array(// OGSIScoreObject,
+                    'value' => 55.0, //:[decimal:required] - the ogsi percent
+                    'change' => 5.0, //:[decimal:required] - the change in percentage
+                ),
+                'reviews' => array(// OGSIReviewsObject,
+                    'value' => rand(0, 50) / 10.0, //:[number:required] - the number of reviews
+                    'change' => rand(-10, 10), //:[number:required] - the change in percentage
+                ),
+                'rating' => array(// OGSIRatingObect
+                    'value' => rand(0, 50) / 10.0, //:[decimal:required] - the current rating
+                    'change' => rand(-10, 10), //:[decimal:required] - change in rating
+                ),
+                ));
+    }
+
+    public function action_export() {
+
+
+
+        $markup = View::factory('_partials/export_template', array(
+                    'html' => $this->request->post('html'),
+                ));
+
+
+        $ch = curl_init();
+
+        $api_key = "ccgXj8JFWYAXX7fkM8uB";
+        $url = "https://docraptor.com/docs?user_credentials=$api_key";
+        $name = substr(md5(time()), 0, 7) . '.pdf';
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            'doc[document_content]' => $markup,
+            'doc[document_type]' => 'pdf',
+            'doc[name]' => $name,
+            'doc[test]' => true,
+            'doc[strict]' => 'none',
+        ));
+
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        header('Content-type: application/pdf');
+        header('Content-disposition: attachment; filename="' . $name . '"');
+
+
+        die($result);
+    }
+
+    public function action_sites() {
         $sites = array(
             array(
                 'id' => 1,
@@ -46,7 +134,7 @@ class Controller_Api_Static extends Controller {
                 'neutral' => 8,
                 'total' => 40,
                 'average' => 4.2
-                ),
+            ),
             array(
                 'id' => 2,
                 'site' => 'carss.com',
@@ -55,14 +143,13 @@ class Controller_Api_Static extends Controller {
                 'neutral' => 8,
                 'total' => 30,
                 'average' => 3.2
-                ),
-            );
-            sleep(2);
+            ),
+        );
+        // sleep(2);
         $this->apiResponse = array('sites' => $sites);
     }
 
-    public function action_keywords()
-    {
+    public function action_keywords() {
         $keywords = array(
             array(
                 'id' => 1,
@@ -70,233 +157,312 @@ class Controller_Api_Static extends Controller {
                 'used' => 30,
                 'rating' => 2,
                 'percent' => 60,
-                ),
+            ),
             array(
                 'id' => 2,
                 'keyword' => 'bad location',
                 'used' => 20,
                 'rating' => 2,
                 'percent' => 40,
-                ),
-            );
-            sleep(1);
+            ),
+        );
+        // sleep(1);
         $this->apiResponse = array('keywords' => $keywords);
     }
-    
-    public function action_reviews()
-    {
-        sleep(2);
+
+    /**
+     * Reviews inbox endpoint
+     */
+    public function action_reviews() {
+
+        $postfilters = $this->request->post('filters');
+        $filters = array();
+
+
+        $data = array(
+            'status' => array('Total', 'Neutral', 'Positive',
+                'Negative', 'Alert', 'Flagged', 'Completed'),
+            'source' => array('Total', 'Industry Specific', 'General')
+        );
+
+        foreach ($data as $network => $f) {
+
+            $filters[$network] = array();
+
+            $inversed = array();
+
+            if (isset($postfilters[$network])) {
+                $keys = array_values($postfilters[$network]);
+                $values = array_keys($postfilters[$network]);
+
+                $inversed = array_combine($keys, $values);
+            }
+
+            foreach ($f as $filter) {
+
+                $filters[$network][] = array(
+                    'total' => rand(1, 50),
+                    'value' => $filter,
+                    'active' => isset($inversed[strtolower($filter)])
+                );
+            }
+        }
+
+//        Kohana::$log->instance()->add(Log::DEBUG, $filters);
+
+        $status = array('OPEN', 'CLOSED', 'TODO');
+        $excerpts = array(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+            'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+            'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+            'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+            'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+            'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+            'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+        );
+
+        $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+            'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+        $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
+            'Blogger', 'Rss', 'Delicious');
+
+        $reviews = array();
+
+        for ($i = 0; $i < 10; $i++) {
+            $network = $competition[rand(0, 6)];
+
+            $reviews[] = array(
+                'status' => $status[rand(0, 2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0, 6)],
+                'site' => $network,
+                'id' => rand(1, 1000000),
+                'review' => $excerpts[rand(0, 6)],
+                'category' => 'category',
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0, 6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+            );
+        }
+
+
         $this->apiResponse = array(
-            'reviews' => array(
-                array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1306016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '1', // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-                array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'cars.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '2', // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    ),
-            ),
-            'filters' => array(
-                'status' => array(
-                    array(
-                        'total' => 67,
-                        'value' => 'Total',
-                    ),
-                    array(
-                        'total' => 4,
-                        'value' => 'New',
-                    ),
-                    array(
-                        'total' => 5,
-                        'value' => 'Neutral',
-                    ),
-                    array(
-                        'total' => 7,
-                        'value' => 'Positive',
-                    ),
-                    array(
-                        'total' => 1,
-                        'value' => 'Negative',
-                    ),
-                    array(
-                        'value' => 'Alert',
-                    ),
-                    array(
-                        'value' => 'Flagged',
-                    ),
-                    array(
-                        'value' => 'Completed',
-                    ),
-                ),
-                'source' => array(
-                    array(
-                        'value' => 'DealerRater',
-                    ),
-                    array(
-                        'value' => 'Cars.com',
-                    ),
-                    array(
-                        'value' => 'Google',
-                    ),
-                ),
-            ),
+            'reviews' => $reviews,
+            'filters' => $filters,
+            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
         );
     }
 
-    public function action_social()
-    {
+    /**
+     * social graph
+     */
+    public function action_social() {
         $id = $this->request->param('id');
+        $field = $this->request->param('field');
+        $interval = $this->request->post('dateInterval');
         $networks = array();
+
+
+        if ($field == 'expand') {
+
+            $status = array('OPEN', 'CLOSED', 'TODO');
+            $excerpts = array(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+                'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+                'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+                'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+                'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+                'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+                'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+            );
+
+            $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+                'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+            $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
+                'Blogger', 'Rss', 'Delicious');
+
+            $network = $competition[rand(0, 6)];
+
+            $review = array(
+                'status' => $status[rand(0, 2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0, 6)],
+                'site' => $network,
+                'id' => $id,
+                'review' => $excerpts[rand(0, 6)],
+                'category' => "important",
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0, 6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+            );
+
+
+            $this->apiResponse = array(
+                'social' => $review,
+            );
+
+            return;
+        }
+
+
         switch ($id) {
+
             case 'activity':
+
+
+
                 $networks[] = array(
-                    'network' => 'Facebook' , //[string:required] - social network
-                    'action' => 'Interactions' , //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5 , //[int:required] - activity value
-                    'change' => 4.0 , //[decimal:required] - change amount
-                    'total' => 444 , //[int:required] - total amount
-                );
-                $networks[] = array(
-                    'network' => 'Tweeter', //[string:required] - social network
-                    'action' => 'Tweets', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
-                    'change' => 2.0, //[decimal:required] - change amount
-                    'total' => 123, //[int:required] - total amount
-                );
-                $networks[] = array(
-                    'network' => 'Flickr', //[string:required] - social network
-                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
-                    'change' => 2.0, //[decimal:required] - change amount
-                    'total' => 23, //[int:required] - total amount
-                );
-                break;
-            case 'reach':
-                $networks[] = array(
-                    'network' => 'Facebook' , //[string:required] - social network
-                    'action' => 'Likes' , //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5 , //[int:required] - activity value
-                    'change' => 4.0 , //[decimal:required] - change amount
-                    'total' => 444 , //[int:required] - total amount
+                    'network' => 'Facebook', //[string:required] - social network
+                    'action' => 'Likes', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 4.0, //[decimal:required] - change amount
+                    'total' => 444, //[int:required] - total amount
                 );
                 $networks[] = array(
                     'network' => 'Tweeter', //[string:required] - social network
                     'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
+                    'value' => rand(1, 99), //[int:required] - activity value
                     'change' => 2.0, //[decimal:required] - change amount
                     'total' => 123, //[int:required] - total amount
                 );
                 $networks[] = array(
                     'network' => 'Flickr', //[string:required] - social network
                     'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
-                    'value' => 5, //[int:required] - activity value
+                    'value' => rand(1, 99), //[int:required] - activity value
                     'change' => 2.0, //[decimal:required] - change amount
                     'total' => 23, //[int:required] - total amount
                 );
-                
+
+                break;
+            case 'reach':
+
+                $networks[] = array(
+                    'network' => 'Facebook', //[string:required] - social network
+                    'action' => 'Likes', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 4.0, //[decimal:required] - change amount
+                    'total' => 444, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Tweeter', //[string:required] - social network
+                    'action' => 'Followers', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 123, //[int:required] - total amount
+                );
+                $networks[] = array(
+                    'network' => 'Flickr', //[string:required] - social network
+                    'action' => '', //[string:required] - type of activity, ex. tweet,checkin,upload
+                    'value' => rand(1, 99), //[int:required] - activity value
+                    'change' => 2.0, //[decimal:required] - change amount
+                    'total' => 23, //[int:required] - total amount
+                );
+
+
                 break;
         }
         $this->apiResponse = array('networks' => $networks);
     }
 
+    /**
+     * social inbox
+     */
     public function action_socials() {
+
+        $status = array('OPEN', 'CLOSED', 'TODO');
+        $excerpts = array(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+            'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+            'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+            'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+            'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+            'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+            'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+        );
+
+        $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+            'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+        $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
+            'Blogger', 'Rss', 'Delicious');
+
+        $socials = array();
+
+        for ($i = 0; $i < 10; $i++) {
+            $network = $competition[rand(0, 6)];
+
+            $socials[] = array(
+                'network' => $network,
+                'status' => $status[rand(0, 2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0, 6)],
+                'site' => $network,
+                'id' => rand(1, 1000000),
+                'review' => $excerpts[rand(0, 6)],
+                'category' => 'category',
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0, 6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+            );
+        }
+
+        $postfilters = $this->request->post('filters');
+        $filters = array();
+
+
+        $data = array(
+            'activity' => array('All', 'Facebook', 'Twitter', 'Check-ins', 'Blogs', 'Other')
+        );
+
+        foreach ($data as $network => $f) {
+
+            $filters[$network] = array();
+
+            $inversed = array();
+
+            if (isset($postfilters[$network])) {
+                $keys = array_values($postfilters[$network]);
+                $values = array_keys($postfilters[$network]);
+
+                $inversed = array_combine($keys, $values);
+            }
+
+            foreach ($f as $filter) {
+
+                $filters[$network][] = array(
+                    'total' => rand(1, 50),
+                    'value' => $filter,
+                    'active' => isset($inversed[strtolower($filter)])
+                );
+            }
+
+//            Kohana::$log->instance()->add(Log::DEBUG, $filters);
+        }
+
+
         $this->apiResponse = array(
-            'socials' => array(
-                array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1306016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'facebook.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '1', // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    'network' => 'Facebook', //[string:required]  name of network from Social.Networks[....]
-                    ),
-                array(
-                    'status' => 'OPEN', //refs: Content.Status[OPEN|CLOSED|TODO] - current status of review
-                    'rating' => 3, // [decimal:optional] - review overall rating
-                    'submitted' => 1307016438, // [int:required] - unixtimestamp - date review was submitted , note indexed
-                    'except' => 'except', // [string:required] - excerpt of content
-                    'site' => 'tweeter.com', // [string:required] - site keyvalue, will need to lookup from Content.Sites.getKey(site) to get the human text value
-                    'id' => '2', // [int:required] - id for content
-                    'review' => 'full text', // [text:optional] - full content
-                    'category' => 'category', // [string:optional] - internal category
-                    'notes' => 'notes', // [text:optional] - notes
-                    'keywords' => array('keyword', 'car'), // [array:optional] - keywords as string
-                    'title' => 'title of content', // [string:optional]  - title for content
-                    'link' => 'http://cars.com', // [string:optional] - link for content
-                    'author' => 'Author', // [string:optional] - author of the content
-                    'network' => 'Tweeter', //[string:required]  name of network from Social.Networks[....]
-                    ),
-            ),
-            'filters' => array(
-                'activity' => array(
-                    array(
-                        'total' => 50,
-                        'value' => 'New',
-                    ),
-                    array(
-                        'total' => 5,
-                        'value' => 'FB Posts',
-                    ),
-                    array(
-                        'total' => 5,
-                        'value' => 'Tweets',
-                    ),
-                    array(
-                        'total' => 21,
-                        'value' => 'Photos',
-                    ),
-                    array(
-                        'value' => 'Alert',
-                    ),
-                ),
-                'network' => array(
-                    array(
-                        'value' => 'DealerRater',
-                    ),
-                    array(
-                        'value' => 'Cars.com',
-                    ),
-                    array(
-                        'value' => 'Google',
-                    ),
-                ),
-            ),
+            'socials' => $socials,
+            'filters' => $filters,
+            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
         );
     }
-    
-    public function action_distribution() 
-    {
+
+    public function action_distribution() {
+
         $distributions = array(
             array(
                 'id' => 1,
@@ -318,7 +484,61 @@ class Controller_Api_Static extends Controller {
             ),
         );
         //sleep(2);
-        $this->apiResponse = array('dists' => $distributions);
+        $this->apiResponse = array('distribution' => $distributions);
+    }
+
+    public function action_competition() {
+
+
+        $field = $this->request->param('field');
+        $id = $this->request->param('id');
+
+        if ($field == 'expand') {
+
+
+            $status = array('OPEN', 'CLOSED', 'TODO');
+            $excerpts = array(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+                'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+                'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+                'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+                'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+                'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+                'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+            );
+
+            $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+                'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+            $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
+                'Blogger', 'Rss', 'Delicious');
+
+            $network = $competition[rand(0, 6)];
+
+            $review = array(
+                'status' => $status[rand(0, 2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0, 6)],
+                'site' => $network,
+                'id' => $id,
+                'review' => $excerpts[rand(0, 6)],
+                'category' => "important",
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0, 6)],
+                'link' => $autor[rand(0, 6)],
+                'autor' => $autor[rand(0, 6)]
+            );
+
+
+            $this->apiResponse = array(
+                'competition' => $review,
+            );
+
+            return;
+        }
     }
     
     /**
@@ -328,61 +548,297 @@ class Controller_Api_Static extends Controller {
      * /api/dataPrivider/competition/comparision
      * comparision:An object hashed by the unixtimestamp generated from <dateInterval> 
      * keys will be an ArrayCollection of OGSICompetitionRatingObject
-	
+
      */
-    public function action_comparision()
-    {
+    public function action_comparision() {
         $comparision = array();
         $range = $this->request->post('range');
-        
+        $interval = $this->request->post('dateInterval');
         $date = $range === false ? time() : strtotime($range['date']);
-        
         $dayOffset = 3600 * 24;
-        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
+
+       
         
-        
-        switch($range['period'])
-        {
-            
+        switch ($range['period']) {
+
             case '1m':
-                $startPoint = -30;
+                $startPoint = strtotime('-1 month', $date);
                 break;
             case '3m':
-                $startPoint = -90;
+                $startPoint = strtotime('-3 month', $date);
                 break;
             case '6m':
-                $startPoint = -180;
+                $startPoint = strtotime('-6 month', $date);
                 break;
             case '1y':
-                $startPoint = -365;
+                $startPoint = strtotime('-12 month', $date);
                 break;
-            
+            default:
+                $startPoint = strtotime('-1 month', $date);
+                break;
         }
-        
-        $interval = floor((abs($startPoint) / 30));
-        
-        for($i=$startPoint; $i < 0; $i += $interval)
-        {
-            
-            foreach($competitors as $competitor) {
-                $rand = rand(1,5);
-                $index = $date + ($i-1) * $dayOffset;
+
+
+        $competitors = array('Best', 'Classic', 'Bryan', 'Mac', 'Baton Rogue');
+        $startDays = ($date - $startPoint) / (3600 * 24);
+
+        for ($i = 0; $i <= $startDays; $i += $interval) {
+            foreach ($competitors as $competitor) {
+
+                $rand = rand(1, 5);
+                $index = $date + ($i * $dayOffset);
                 $prev = $rand;
                 $change = $rand - $prev;
-                $comparision[$date + $i * $dayOffset][] = array(
+
+                $comparision[$index][] = array(
                     'competition' => $competitor,
                     'value' => $rand,
                     'change' => $change,
                 );
             }
         }
-       
-        
-        
+
+
         $this->apiResponse = array('comparision' => $comparision);
-        
-        
-        
-        
     }
+
+    /**
+     * Method for creating timeseries with social tab data for linear graphs
+     * @return type 
+     */
+    private function getSocialActivityTimeSeries() {
+        $timeSeries = array();
+        $range = $this->request->post('range');
+        $interval = (int) $this->request->post('dateInterval');
+
+        $date = $range === false ? time() : strtotime($range['date']);
+        /* @var $date DateTime */
+
+
+        $dayOffset = 3600 * 24;
+        $networks = array('Facebook', 'Twitter', 'Foursquare',
+            'Flickr', 'Youtube', 'Blogs');
+
+
+        switch ($range['period']) {
+
+            case '1m':
+                $startPoint = strtotime('-1 month', $date);
+                break;
+            case '3m':
+                $startPoint = strtotime('-3 month', $date);
+                break;
+            case '6m':
+                $startPoint = strtotime('-6 month', $date);
+                break;
+            case '1y':
+                $startPoint = strtotime('-12 month', $date);
+                break;
+            default:
+                $startPoint = strtotime('-1 month', $date);
+                break;
+        }
+
+
+        $actions = array('tweet', 'checkin', 'upload');
+        $startDays = ($date - $startPoint) / (3600 * 24);
+
+        for ($i = 0; $i <= $startDays; $i += $interval) {
+            foreach ($networks as $network) {
+                $rand = rand(1, 200);
+                $index = $date + $i * $dayOffset;
+
+                $prev = $rand;
+                $change = $rand - $prev;
+
+                $timeSeries[$index][] = array(
+                    'network' => $network,
+                    'action' => $actions[rand(0, 2)],
+                    'value' => $rand,
+                    'change' => $change,
+                    'total' => $change,
+                );
+            }
+        }
+
+        return $timeSeries;
+    }
+
+    /**
+     * Competition review inbox action form competition tab
+     * it is returning collection of json objects:
+     * CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObject
+     * @see api-dataProvider.txt
+     */
+    public function action_competition_ledger() {
+        $status = array('OPEN', 'CLOSE', 'TODO');
+        $excerpts = array(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+            'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+            'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+            'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+            'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+            'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+            'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+        );
+
+        $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+            'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+        $competition = array('Best', 'Classic', 'Bryan', 'Ross downing', 'Brian Harris', 'Mac', 'Batton Rouge');
+
+        $source = array();
+
+        foreach ($competition as $competitor) {
+
+            $source[] = array('source' => $competitor);
+        }
+
+        $postfilters = $this->request->post('filters');
+        $filters = array();
+
+
+        $data = array(
+            'activity' => array('All', 'Facebook', 'Twitter', 'Check-ins', 'Blogs', 'Other')
+        );
+
+        foreach ($data as $network => $f) {
+
+            $filters[$network] = array();
+
+            $inversed = array();
+
+            if (isset($postfilters[$network])) {
+                $keys = array_values($postfilters[$network]);
+                $values = array_keys($postfilters[$network]);
+
+                $inversed = array_combine($keys, $values);
+            }
+
+            foreach ($f as $filter) {
+
+                $filters[$network][] = array(
+                    'total' => rand(1, 50),
+                    'value' => $filter,
+                    'active' => isset($inversed[strtolower($filter)])
+                );
+            }
+
+            Kohana::$log->instance()->add(Log::DEBUG, $filters);
+        }
+
+        $reviews = array();
+
+        for ($i = 0; $i < 10; $i++) {
+
+            $reviews[] = array(
+                'competition' => $competition[rand(0, 6)],
+                'status' => $status[rand(0, 2)],
+                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                'submitted' => rand(1300000000, time()),
+                'excerpt' => $excerpts[rand(0, 6)],
+                'site' => $autor[rand(0, 6)],
+                'id' => rand(1, 1000000),
+                'review' => $excerpts[rand(0, 6)],
+                'category' => 'category',
+                'notes' => 'notes',
+                'keywords' => array('keyword', 'car'),
+                'title' => $excerpts[rand(0, 7)],
+                'link' => $autor[rand(0, 6)],
+                'author' => $autor[rand(0, 6)]
+            );
+        }
+
+
+        $this->apiResponse = array(
+            'competitions' => $reviews,
+            'source' => $source,
+            'filters' => $filters,
+            'pagination' => array('page' => $this->request->post('page'), 'pagesCount' => 30)
+        );
+    }
+
+    public function action_random_movie() {
+
+        $collection = array();
+
+        $pattern = '/src=["]?((?:.(?!["]?\s+(?:\S+)=|[>"]))+.)["]?/';
+
+        for ($i = 0; $i < 5; $i++) {
+            $content = file_get_contents("http://flyhour.tv/bots/api/index.php?type=2&countries=US&category=Music&views=75000");
+            $results = array();
+            preg_match($pattern, $content, $results);
+
+            $collection[] = $results[1];
+        }
+        $this->apiResponse = array('movies' => $collection);
+    }
+
+    public function action_review() {
+        $id = $this->request->param('id');
+        $field = $this->request->param('field');
+
+        if ('categories' === $id) {
+            $this->apiResponse = array('categories' =>
+                array(1 => 'shopping', 2 => 'important', 3 => 'it', 4 => 'travel', 5 => 'sport'));
+        }
+
+
+        switch ($field) {
+
+            case 'category':
+                break;
+            case 'notes':
+                break;
+            case 'tags':
+                break;
+            case 'expand':
+
+
+                $status = array('OPEN', 'CLOSED', 'TODO');
+                $excerpts = array(
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
+                    'massa sapien. Integer lacinia feugiat tellus, at imperdiet metus',
+                    'tincidunt nec. Donec sollicitudin faucibus arcu, nec pellentesque',
+                    'nisi sollicitudin at. Aenean vel nunc eu neque egestas dapibus.',
+                    'Maecenas eget lectus leo. Vestibulum fringilla faucibus lacus, ',
+                    'vehicula pulvinar est ullamcorper vel. Nullam ac nulla arcu, sed suscipit sem.',
+                    'In hac habitasse platea dictumst. Integer venenatis ultricies massa quis interdum.'
+                );
+
+                $autor = array('DealerRater', 'Cars.com', 'Edmunds',
+                    'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
+
+                $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
+                    'Blogger', 'Rss', 'Delicious');
+
+                $network = $competition[rand(0, 6)];
+
+                $review = array(
+                    'status' => $status[rand(0, 2)],
+                    'rating' => rand(0, 5), // [decimal:optional] - review overall rating
+                    'submitted' => rand(1300000000, time()),
+                    'excerpt' => $excerpts[rand(0, 6)],
+                    'site' => $network,
+                    'id' => $id,
+                    'review' => $excerpts[rand(0, 6)],
+                    'category' => "important",
+                    'notes' => 'notes',
+                    'keywords' => array('keyword', 'car'),
+                    'title' => $excerpts[rand(0, 6)],
+                    'link' => $autor[rand(0, 6)],
+                    'autor' => $autor[rand(0, 6)]
+                );
+
+
+                $this->apiResponse = array(
+                    'review' => $review,
+                );
+
+                break;
+        }
+    }
+
 }

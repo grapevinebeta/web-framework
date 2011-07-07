@@ -30,11 +30,14 @@
                     <?php echo $topOptions; ?>
                 <?php endif; ?>
     
+                <?php echo $body; ?>
+    
                 <?php if (!empty($rightPanel)): ?>
                     <?php echo $rightPanel; ?>
                 <?php endif; ?>
-
-            <?php echo $body; ?>
+                
+                <div class="clear"></div>
+                
             </div>
         </div>
         <?php echo $footer; ?>
@@ -42,7 +45,7 @@
     <div id="ajax-loader-holder">
         <div class="ajax-loader">
             <?php echo html::image(
-                'images/ajax-loader.gif', 
+                'images/ajax-loader.gif',
                 array(
                     'class' => __('ajax-loading-gif'),
                     'alt' => __('loading ...'), 
@@ -50,8 +53,5 @@
                     )) ?>
         </div>
     </div>
-    <script type="text/javascript">
-        var b = BoxController();
-    </script>
 </body>
 </html> 

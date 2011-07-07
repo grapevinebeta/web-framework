@@ -8,27 +8,20 @@
         ); 
     ?>
     <div class="box-content padding-5">
-        <div class="data-grid-holder" style="display: none;">
-            <table class="wide data-grid">
-                <thead>
-                    <tr>
-                        <th class="a-left"><?php echo __('Network'); ?></th>
-                        <th class="a-left"></th>
-                        <th><?php echo __('Activity'); ?></th>
-                        <th><?php echo __('Change'); ?></th>
-                        <th><?php echo __('Total'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-network"></td>
-                        <td class="col-action"></td>
-                        <td class="col-value a-center"></td>
-                        <td class="col-change a-center"></td>
-                        <td class="col-total a-center"></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="data-video">
+            
+            <a  
+			 href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
+			 style="display:block;width:335px;height:250px"  
+			 id="player"> 
+		</a> 
+	
+		<!-- this will install flowplayer inside previous A- tag. -->
+		<script>
+			flowplayer("player", "/js/flowplayer/flowplayer-3.2.7.swf");
+		</script>
+	
+            
         </div>
     </div>
 </div>

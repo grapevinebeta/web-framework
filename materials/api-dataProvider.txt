@@ -232,4 +232,3 @@ CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObj
 {
 
 }
-
