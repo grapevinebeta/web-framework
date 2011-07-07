@@ -1804,15 +1804,29 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         
     },
     
-    prepareDetailsView: function(template, message) {
-      
-        var tr = template.clone();
-        var currentId = parseInt(message.id);
-        tr.attr('data-row-id', currentId);
+    /**
+     * redefinie this function on every class to ensure population of data from
+     * callback
+     *
+     */
+    customPopulateFields: function(text, data) {
+        
+        var message = text.competition;
+        
+        var tr = $(data.trContext);
+        
         tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
         
-        return tr;
+    },
+
+    expandedPopulateCallback: function(data) {
+
+            
+            data.context.genericRequest('competition' + '/expand/' + data.id, {}, 
+            data.context.genericCallbackEventWrapper(
+                data.context.populateFields, 
+                data));
       
     },
     
@@ -1826,11 +1840,21 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         var trContent = null;
         table.find('tbody tr').remove();
         
-        var data = this.data.reviews;
+        var data = this.data.competitions;
         
         for (var i = 0; i < data.length; i++) {
             
-            trContent = this.prepareDetailsView(trContentTemplate, data[i]);
+            var currentId = parseInt(data[i].id);
+            
+            trContent = trContentTemplate.clone().attr('data-row-id', currentId)
+            .bind('expand',this.genericCallbackEventWrapper(
+                this.expandedPopulate, 
+                {
+                    context:this, 
+                    id: currentId
+                }
+                )
+            );
             tr = this.prepareMessage(trTemplate, data[i]);
             
             if (i % 2) {
@@ -2147,11 +2171,11 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
      */
     customPopulateFields: function(text, data) {
         
-        var message = text.review;
+        var message = text.social;
         
         var tr = $(data.trContext);
         
-         tr.find('.details-title').text(message.title);
+        tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
         
     },
@@ -2174,6 +2198,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         var tr = null;
         var trContent = null;
         table.find('tbody tr').remove();
+        var data = this.data.socials;
         for (var i = 0; i < this.data.socials.length; i++) {
             
             var currentId = parseInt(data[i].id);
