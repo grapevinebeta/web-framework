@@ -3,7 +3,7 @@
         '_partials/box/header', 
         array(
             'caption' => __('Reputation Distribution'),
-            'buttons' => array('dashboard-pin', 'move'),
+            'buttons' => array('dashboard-pin', 'move', 'show-graph', 'show-data'),
             )
         ); 
     ?>
@@ -20,6 +20,16 @@
                         <th><?php echo __('Avg'); ?></th>
                     </tr>
                 </thead>
+                <tfoot>
+                    <tr>
+                        <th class="a-left"><?php echo __('Total'); ?></th>
+                        <th class="col-total a-center"></th>
+                        <th class="col-positive a-center"></th>
+                        <th class="col-neutral a-center"></th>
+                        <th class="col-negative a-center"></th>
+                        <th class="col-average a-center"></th>
+                    </tr>
+                </tfoot>
                 <tbody>
                     <tr>
                         <td class="col-dealership"></td>

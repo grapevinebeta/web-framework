@@ -1,8 +1,8 @@
 /** 
- * @license Highcharts JS v2.1.4 (2011-03-30)
+ * @license Highcharts JS v2.1.5 (2011-06-22)
  * MooTools adapter
  * 
- * (c) 2010 Torstein Hønsi
+ * (c) 2010-2011 Torstein Hønsi
  * 
  * License: www.highcharts.com/license
  */
@@ -13,7 +13,7 @@
 (function() {
 	
 var win = window,
-	legacy = !!win.$merge
+	legacy = !!win.$merge,
 	$extend = win.$extend || function() {
 		return Object.append.apply(Object, arguments)
 	};
@@ -43,6 +43,8 @@ win.HighchartsAdapter = {
 				);
 			}
 			fxStart.apply(fx, arguments);
+			
+			return this; // chainable
 		};
 		
 		// override Fx.step to allow animation of SVG element wrappers

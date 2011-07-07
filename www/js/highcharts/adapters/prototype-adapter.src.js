@@ -1,5 +1,5 @@
 /** 
- * @license Highcharts JS v2.1.4 (2011-03-02)
+ * @license Highcharts JS v2.1.5 (2011-06-22)
  * Prototype adapter
  * 
  * @author Michael Nelson, Torstein Hønsi.
@@ -154,7 +154,7 @@ return {
 	
 	removeEvent: function(el, event, handler){
 		if ($(el).stopObserving) {
-			el.stopObserving(el, event, handler);
+			$(el).stopObserving(event, handler);
 			
 		} else {
 			HighchartsAdapter._extend(el);
@@ -229,7 +229,8 @@ return {
 				
 			for (var key in original) {
 				value = original[key];
-				if  (value && typeof value == 'object' && value.constructor != Array) { 
+				if  (value && typeof value == 'object' && value.constructor != Array && 
+						typeof value.nodeType !== 'number') { 
 					copy[key] = doCopy(copy[key] || {}, value); // copy
 				
 				} else {
