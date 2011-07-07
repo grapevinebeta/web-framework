@@ -2549,8 +2549,6 @@ exportBoxes: function () {
         var content;
         var box = this.collection[i];
             
-        if(box.ignore)
-            continue;
             
         if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
                 
@@ -2573,8 +2571,9 @@ exportBoxes: function () {
                 
         }
             
-        content = box.getContentDom().find('.data-grid-holder table').filter(':visible').clone();
-            
+        content = box.getContentDom().find('.data-grid-holder table').filter(':visible').children().not('.expanded').end().clone();
+
+        
         if(content.length) {
             var title = $("<h2/>").text(box.getHeaderDom()
             .find('.box-header-title').text());
