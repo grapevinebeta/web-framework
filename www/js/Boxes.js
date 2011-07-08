@@ -368,6 +368,8 @@ var BC_SocialActivityMini = BoxController.extend({
     
     limit: 4,
     
+    ignore: true,
+    
     
     prepareMessage: function(template, data) {
       
@@ -377,7 +379,7 @@ var BC_SocialActivityMini = BoxController.extend({
       
         var tmpDate = new Date(data.submitted * 1000);
         var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
-        '/' + tmpDate.getYear();
+        '/' + tmpDate.getFullYear();
       
         template.find('.date').text(formatted);
       
@@ -784,7 +786,7 @@ var BC_Inbox = BoxController.extend({
     currentPage: 1,
     totalPages: null,
     limit: 10,
-    ignore: true,
+    ignore: false,
     
     beforeLoadData: function () {
         this.getContentDom().children().hide();
@@ -801,7 +803,6 @@ var BC_Inbox = BoxController.extend({
      */
     attachBoxEvents: function() {
         var self = this;
-
         
         self.getPagerHolder().delegate('.prev, .next','click', function(e) {
             
@@ -1402,11 +1403,16 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
                 case 'rating':
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
                     col.html(ratingStars);
                     break;
                 case 'status':
-                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value.toLowerCase() + '"></div>');
+                    
+                    value = value.toLowerCase();
+                    
+                    var icon = value == 'open' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
+                    
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
                     col.html(reviewStatus);
                     break;
                 default:
@@ -1432,9 +1438,67 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
         var tr = $(data.trContext);
         
+        tr.find('.action-completed').bind('click', function(e) {
+            
+             e.preventDefault();
+            
+             $(this).remove();
+             
+             tr.find('.action-todo').remove();
+            
+             data.context.genericRequest('review' + '/status/' + data.id, {
+                 status: 'CLOSED'
+             }, function() {
+                
+                tr.find('.recent-review-status-icon')
+                .removeClass('open closed todo')
+                .addClass('closed');
+                
+                var reviewStatus = $('<div class="reviewStatus reviewStatus-closed"><span>[ x ]</span></div>');
+                tr.prev().find('.col-status').html(reviewStatus); 
+                 
+             })
+            
+        });
+        
+        tr.find('.action-todo').bind('click', function(e) {
+            
+            e.preventDefault();
+            
+            $(this).remove();
+             
+            tr.find('.action-complete').remove();
+            
+            data.context.genericRequest('review' + '/status/' + data.id, {
+                status: 'TODO'
+            }, function() {
+                
+                tr.find('.recent-review-status-icon')
+                .removeClass('open closed todo')
+                .addClass('todo');
+                
+                var reviewStatus = $('<div class="reviewStatus reviewStatus-todo"><span>[ ! ]</span></div>');
+                tr.prev().find('.col-status').html(reviewStatus); 
+                 
+            })
+            
+        });
+
+
+        var status = message.status.toLowerCase();   
+
+        if(status == 'closed') {
+            tr.find('.actions-todo, .actions-completed').remove();
+        }
+        else
+            tr.find('.actions-' + status).remove();
+
         tr.find('.recent-review-status-icon')
         .removeClass('open closed todo')
-        .addClass(message.status.toLowerCase());
+        .addClass(status);
+        
+        
+        
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-review').text(message.review);
         
@@ -2234,7 +2298,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
                 case 'network':
-                    titleLink = $('<a href="#"><span></span></a>');
+                    titleLink = $('<a href="#"><span>' + value.toLowerCase() + '</span></a>');
                     titleLink.attr('class', value.toLowerCase());
                     titleLink.filter('span').text(value);
                     col.html(titleLink);
@@ -2548,7 +2612,10 @@ exportBoxes: function () {
         var block;
         var content;
         var box = this.collection[i];
-            
+        
+        if(box.ignore)
+            continue;
+        
             
         if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
                 
@@ -2570,9 +2637,18 @@ exportBoxes: function () {
             block2.appendTo(this.exporter.template.container);
                 
         }
-            
-        content = box.getContentDom().find('.data-grid-holder table').filter(':visible').children().not('.expanded').end().clone();
+        
+        
 
+        content = box.getContentDom()
+        .find('.data-grid-holder table:visible').clone();
+        
+        
+        content.find('tr.expanded').remove();
+        
+        console.log(content);
+        
+        content.find('.col-title').removeAttr('width');
         
         if(content.length) {
             var title = $("<h2/>").text(box.getHeaderDom()
@@ -2592,8 +2668,6 @@ exportBoxes: function () {
         
 }
 };
-
-
 
 
 $(document).ready(function () {

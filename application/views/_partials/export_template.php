@@ -42,16 +42,17 @@
 
 
 
-table.data-grid thead tr th {
+table thead tr th, table tfoot tr th {
     background-color: #EFDFEF;
     color: #000;
+    font-weight:bold;
 }
 
 tr.even {
    background-color: #EFDFEF; 
 }
 
-table.data-grid th, table.data-grid td {
+table th, table td {
     border-collapse: collapse;
     border-color: gray;
     border-style: solid;
@@ -59,7 +60,14 @@ table.data-grid th, table.data-grid td {
     padding: 7px;
 }
 
-table.data-grid {
+td.col-status {
+    width: 40px;
+}
+td.col-rating {
+    width: 80px;
+}
+
+table {
     border: 0 solid gray;
     border-collapse: collapse;
     border-radius: 0 0 9px 9px;

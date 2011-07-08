@@ -39,31 +39,31 @@
                         </div>
                     </div>
                     <div class="recentReviewDetailsMenu">
-                        <div class="a-center v-padding-5">
+                        <div class="actions-status a-center v-padding-5">
                             <span class="recent-review-status-icon"></span>
                             <p>
                                 (<?php echo __('After responding to a review check the completed box'); ?>)
                             </p>
                         </div>
-                        <div class="v-padding-5">
+                        <div class="actions-email v-padding-5">
                             <a href="#" class="action action-completed">
                                 <span class="mono-icon icon-checkbox"></span>
                                 <?php echo __('Completed'); ?>
                             </a>
                         </div>
-                        <div class="v-padding-5">
+                        <div class="actions-email v-padding-5">
                           <a href="#" class="action action-email">
                             <span class="mono-icon icon-email"></span>
                             Email
                           </a>
                         </div>
-                        <div class="v-padding-5">
+                        <div class="actions-todo v-padding-5">
                           <a href="#" class="action action-todo">
                             <span class="mono-icon icon-todo"></span>
                             <?php echo __('Flag "To Do"'); ?>
                           </a>
                         </div>
-                        <div class="v-padding-5">
+                        <div class="actions-review v-padding-5">
                           <a href="#" class="action action-review">
                             <span class="mono-icon icon-goto"></span>
                             <?php echo __('Go to Review'); ?>
@@ -72,7 +72,7 @@
                     </div>
                 <div class="clear"></div>
                 <p class="recentReviewDetailsButtons a-right">
-                    <a class="reply-to-review-button" href=""></a>
+                    <a class="actions-reply reply-to-review-button" href=""></a>
                     <a class="save-button" href=""></a>
                 </p>
             </div>

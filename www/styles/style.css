@@ -479,6 +479,10 @@ input[type=submit] {
         position: relative;
         width: 110px;
     }
+    
+    #box-recent-reviews .reviewRating span, #box-recent-reviews .reviewStatus span {
+        display:none;
+    }
 
         #box-recent-reviews .reviewRating .stars-0-of-5-front,
         #box-recent-reviews .reviewRating .stars-1-of-5-front,
@@ -1038,7 +1042,6 @@ background: -webkit-gradient(
     
     .row {
         
-        margin-bottom: 20px;
         
     }
     
