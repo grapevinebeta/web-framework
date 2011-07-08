@@ -18,8 +18,8 @@
                                         </select>
                                     </td>
                                     <td class="a-right">
-                                        <?php echo __('Keywords'); ?>:
-                                        <input type="text" value="" name="keywords" />
+                                        <?php echo __('Tags'); ?>:
+                                        <input type="text" value="" name="tags" />
                                     </td>
                                 </tr>
                                 <tr>

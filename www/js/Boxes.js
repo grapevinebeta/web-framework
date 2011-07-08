@@ -1088,18 +1088,31 @@ var BC_Ogsi = BoxController.extend({
             holder.show();
             
             var distribution = data.ogsi.distribution;
-            var barHolder = holder.find('#box-ogsi-review-distribution .bar-holder');
+            var barHolder = holder.find('.bar-holder');
+            
+            var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
+            
+            var ratio;
             if (distribution.total) {
                 barHolder.show();
                 var bar = barHolder.find('.bar-negative');
                 bar.children('.bar-value').text('');
                 if (distribution.negative > 0) {
-                    bar.children('.bar-value').text(distribution.negative);
+                    
+                    ratio = (distribution.negative / maxValue) * 100;
+                    
+                    if(ratio > 2.5)
+                        bar.children('.bar-value').text(distribution.negative);
                 }
                 bar = barHolder.find('.bar-neutral');
                 bar.children('.bar-value').text('');
                 if (distribution.neutral > 0) {
-                    bar.children('.bar-value').text(distribution.neutral);
+                    
+                    ratio = (distribution.neutral / maxValue) * 100;
+                    
+                    if(ratio > 2.5)
+                        bar.children('.bar-value').text(distribution.neutral);
+                
                     bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
                     bar.show();
                 } else if (distribution.positive > 0) {
@@ -1111,7 +1124,12 @@ var BC_Ogsi = BoxController.extend({
                 bar = barHolder.find('.bar-positive');
                 bar.children('.bar-value').text('');
                 if (distribution.positive > 0) {
-                    bar.children('.bar-value').text(distribution.positive);
+                    
+                    ratio = (distribution.positive / maxValue) * 100;
+                    
+                    if(ratio > 2.5)
+                        bar.children('.bar-value').text(distribution.positive);
+                    
                     bar.css('width', (distribution.positive/(distribution.neutral + distribution.positive))*100+'%');
                     bar.show();
                 } else {
@@ -1132,17 +1150,17 @@ var BC_Ogsi = BoxController.extend({
 });
 
 
-var BC_KeywordsAnalysis = GraphBoxController.extend({
+var BC_TagsAnalysis = GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
      */
-    boxId: 'box-keywords-analysis',
+    boxId: 'box-tags-analysis',
     
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'keywords',
+    endpoint: 'tags',
     
     
     prepareGraph: function () {
@@ -1203,15 +1221,15 @@ var BC_KeywordsAnalysis = GraphBoxController.extend({
     loadDataCallback: function (data, textStatus, jqXHR) {
         var boxController = this.success.boxController;
         boxController.data = data;
-        boxController.graphData = data.keywords;
+        boxController.graphData = data.tags;
         var table = boxController.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.keywords.length; i++) {
+        for (var i = 0; i < boxController.data.tags.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.keywords[i]) {
-                var value = boxController.data.keywords[i][n];
+            for (n in boxController.data.tags[i]) {
+                var value = boxController.data.tags[i][n];
                 if (n == 'percent') {
                     value = value + '%';
                 } 
@@ -1438,6 +1456,8 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
         var tr = $(data.trContext);
         
+        var status = message.status.toLowerCase(); 
+        
         tr.find('.action-completed').bind('click', function(e) {
             
              e.preventDefault();
@@ -1485,8 +1505,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
         });
 
 
-        var status = message.status.toLowerCase();   
-
         if(status == 'closed') {
             tr.find('.actions-todo, .actions-completed').remove();
         }
@@ -1516,14 +1534,14 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 )
             );
         
-        tr.find('input[name="keywords"]').val(message.keywords.join(', '))
+        tr.find('input[name="tags"]').val(message.tags.join(', '))
         .bind('save', 
             data.context.genericCallbackEventWrapper(
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'review/keywords',
-                    name: 'keywords',
+                    endpoint: 'review/tags',
+                    name: 'tags',
                     context: data.context
                 }
                 )
@@ -1545,7 +1563,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
         tr.find('.save-button').bind('click', function(e) {
             
-            $.each(['keywords', 'notes'], function() {
+            $.each(['tags', 'notes'], function() {
                 
                 self.find('*[name=' + this + ']').trigger('save');
                 
@@ -2605,73 +2623,62 @@ clearData: function () {
     return this;
 },
     
-exportBoxes: function () {
+    /**
+     * get all boxes from manager and fetch graph, inbox and tabular data
+     */
+    exportBoxes: function () {
       
-    for (i in this.collection) {
+        for (i in this.collection) {
 
-        var block;
-        var content;
-        var box = this.collection[i];
+            var block;
+            var content;
+            var box = this.collection[i];
         
-        if(box.ignore)
-            continue;
-        
+            if(box.ignore)
+                continue;
+
+            if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
+                block = Exporter.template.blockWide.clone();
+            }
+            else
+                block = Exporter.template.block.clone();
             
-        if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
+
+            if(box.hasOwnProperty('graph')) {
                 
-            block = Exporter.template.blockWide.clone();
+                var block2 = block.clone();
+                var content2 = box.graph.getSVG();
+                var title2 = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
+            
+                title2.add(content2).appendTo(block2.find('.inner'));
+
+                block2.appendTo(this.exporter.template.container);
                 
-        }
-        else
-            block = Exporter.template.block.clone();
-            
+            }
+        
+            content = box.getContentDom()
+            .find('.data-grid-holder table:visible').clone();
+            content.find('tr.expanded').remove();
 
-        if(box.hasOwnProperty('graph')) {
-                
-            var block2 = block.clone();
-            var content2 = box.graph.getSVG();
-            var title2 = $("<h2/>").text(box.getHeaderDom().find('.box-header-title').text());
-            
-            title2.add(content2).appendTo(block2.find('.inner'));
-
-            block2.appendTo(this.exporter.template.container);
-                
-        }
+            content.find('.col-title').removeAttr('width');
         
-        
-
-        content = box.getContentDom()
-        .find('.data-grid-holder table:visible').clone();
-        
-        
-        content.find('tr.expanded').remove();
-        
-        console.log(content);
-        
-        content.find('.col-title').removeAttr('width');
-        
-        if(content.length) {
-            var title = $("<h2/>").text(box.getHeaderDom()
-            .find('.box-header-title').text());
-            title.add(content).appendTo(block.find('.inner'));
-            block.appendTo(this.exporter.template.container);
-        }
-            
-            
-    }
-        
-
-    this.exporter.submit();
-  
-  
+            if(content.length) {
+                var title = $("<h2/>").text(box.getHeaderDom()
+                    .find('.box-header-title').text());
+                title.add(content).appendTo(block.find('.inner'));
+                block.appendTo(this.exporter.template.container);
+            }
  
-        
-}
+        }
+ 
+        this.exporter.submit();
+
+    }
 };
 
 
 $(document).ready(function () {
-    boxManager.add(new BC_KeywordsAnalysis())
+    boxManager.add(new BC_TagsAnalysis())
     .add(new BC_Ogsi())
     .add(new BC_ReviewSites())
     .add(new BC_ReviewInbox())

@@ -1,8 +1,8 @@
-<div id="box-keywords-analysis" class="box">
+<div id="box-tags-analysis" class="box">
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Analysis of Review Keywords'),
+            'caption' => __('Analysis of Review Tags'),
             'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
             )
         ); 
@@ -12,7 +12,7 @@
             <table class="wide data-grid">
                 <thead>
                     <tr>
-                        <th class="a-left"><?php echo __('Important Keywords'); ?></th>
+                        <th class="a-left"><?php echo __('Important Tags'); ?></th>
                         <th><?php echo __('Times Used'); ?></th>
                         <th><?php echo __('Avg star rating'); ?></th>
                         <th><?php echo __('% of Total'); ?></th>
@@ -28,6 +28,6 @@
                 </tbody>
             </table>
         </div>
-        <div id="box-keywords-analysis-graph-holder" class="graph-holder"></div>
+        <div id="box-tags-analysis-graph-holder" class="graph-holder"></div>
     </div>
 </div>

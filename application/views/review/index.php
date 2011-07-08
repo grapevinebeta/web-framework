@@ -4,7 +4,7 @@
         <?php echo view::factory('_partials/box/review-sites'); ?>
     </div>
     <div class="box-container active box-container-right">
-        <?php echo view::factory('_partials/box/keywords-analysis'); ?>
+        <?php echo view::factory('_partials/box/tags-analysis'); ?>
     </div>
     <div class="clear"></div>
     

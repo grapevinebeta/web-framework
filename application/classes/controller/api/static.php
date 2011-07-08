@@ -149,8 +149,8 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array('sites' => $sites);
     }
 
-    public function action_keywords() {
-        $keywords = array(
+    public function action_tags() {
+        $tags = array(
             array(
                 'id' => 1,
                 'keyword' => 'great location',
@@ -167,7 +167,7 @@ class Controller_Api_Static extends Controller {
             ),
         );
         // sleep(1);
-        $this->apiResponse = array('keywords' => $keywords);
+        $this->apiResponse = array('tags' => $tags);
     }
 
     /**
@@ -247,7 +247,7 @@ class Controller_Api_Static extends Controller {
                 'review' => $excerpts[$eKey],
                 'category' => 'category',
                 'notes' => 'notes',
-                'keywords' => array('keyword', 'car'),
+                'tags' => array('keyword', 'car'),
                 'title' => $excerpts[$eKey],
                 'link' => $autor[$eKey],
                 'autor' => $autor[$eKey]
@@ -306,7 +306,7 @@ class Controller_Api_Static extends Controller {
                 'review' => $excerpts[rand(0, 6)],
                 'category' => "important",
                 'notes' => 'notes',
-                'keywords' => array('keyword', 'car'),
+                'tags' => array('keyword', 'car'),
                 'title' => $excerpts[rand(0, 6)],
                 'link' => $autor[rand(0, 6)],
                 'autor' => $autor[rand(0, 6)]
@@ -422,7 +422,7 @@ class Controller_Api_Static extends Controller {
                 'review' => $excerpts[rand(0, 6)],
                 'category' => 'category',
                 'notes' => 'notes',
-                'keywords' => array('keyword', 'car'),
+                'tags' => array('keyword', 'car'),
                 'title' => $excerpts[rand(0, 6)],
                 'link' => $autor[rand(0, 6)],
                 'autor' => $autor[rand(0, 6)]
@@ -536,7 +536,7 @@ class Controller_Api_Static extends Controller {
                 'review' => $excerpts[rand(0, 6)],
                 'category' => "important",
                 'notes' => 'notes',
-                'keywords' => array('keyword', 'car'),
+                'tags' => array('keyword', 'car'),
                 'title' => $excerpts[rand(0, 6)],
                 'link' => $autor[rand(0, 6)],
                 'autor' => $autor[rand(0, 6)]
@@ -753,7 +753,7 @@ class Controller_Api_Static extends Controller {
                 'review' => $excerpts[rand(0, 6)],
                 'category' => 'category',
                 'notes' => 'notes',
-                'keywords' => array('keyword', 'car'),
+                'tags' => array('keyword', 'car'),
                 'title' => $excerpts[rand(0, 7)],
                 'link' => $autor[rand(0, 6)],
                 'author' => $autor[rand(0, 6)]
@@ -838,7 +838,7 @@ class Controller_Api_Static extends Controller {
                     'review' => $excerpts[$eKey],
                     'category' => "important",
                     'notes' => 'notes',
-                    'keywords' => array('keyword', 'car'),
+                    'tags' => array('keyword', 'car'),
                     'title' => $excerpts[$eKey],
                     'link' => $autor[$eKey],
                     'autor' => $autor[$eKey]
