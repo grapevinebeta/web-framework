@@ -549,6 +549,72 @@ class Controller_Api_Static extends Controller {
 
             return;
         }
+        
+        
+        switch ($id) {
+
+            case 'ogsi':
+
+                $ogsi = array();
+
+                $competition = array(
+                    'Best', 'Classic', 'Bryan', 'Ross downing', 'Brian Harris', 'Mac', 'Batton Rouge'
+                );
+
+
+                foreach ($competition as $competitor) {
+
+                    $ogsiDistributionObject = array(
+                        'positive' => $a = rand(0, 99),
+                        'negative' => $b = rand(0, 99),
+                        'neutral' => $c = rand(0, 99),
+                        'total' => $a + $b + $c,
+                        'average' => (lcg_value() * (abs(10)))
+                    );
+
+                    $ogsiScoreObject = array(
+                        'value' => (lcg_value() * (abs(100))),
+                        'rank' => array(
+                            'value' => rand(1, 10),
+                            'out' => 10,
+                        )
+                    );
+
+                    $ogsiReviewsObject = array(
+                        'value' => rand(1, 10),
+                        'rank' => array(
+                            'value' => rand(1, 10),
+                            'out' => 10,
+                        )
+                    );
+
+                    $ogsiRatingObject = array(
+                        'value' => rand(1, 5),
+                        'rank' => array(
+                            'value' => rand(1, 10),
+                            'out' => 10,
+                        )
+                    );
+
+                    $ogsiObject = array(
+                        'distribution' => $ogsiDistributionObject,
+                        'ogsi' => $ogsiScoreObject,
+                        'reviews' => $ogsiReviewsObject,
+                        'rating' => $ogsiRatingObject
+                    );
+
+
+                    $ogsi[$competitor] = $ogsiObject;
+                }
+
+
+                $this->apiResponse = array(
+                    'ogsi' => $ogsi
+                );
+                
+                break;
+        }
+        
     }
     
     /**

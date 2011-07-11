@@ -6,6 +6,10 @@
     <div class="clear"></div>
     
     <div class="box-container active">
+        <?php echo view::factory('_partials/box/competition-score'); ?>
+    </div>
+    
+    <div class="box-container active">
         <?php echo view::factory('_partials/box/competition-distribution'); ?>
     </div>
     

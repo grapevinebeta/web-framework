@@ -1,15 +1,18 @@
-<div class="box-container active">
-    <?php echo view::factory('_partials/box/ogsi'); ?>
-</div>
+
 <div id="boxes-holder">
     
+    <div class="box-container active">
+        <?php echo view::factory('_partials/box/ogsi'); ?>
+    </div>
 
+    <div class="box-container active">
+        <?php echo view::factory('_partials/box/ogsi_current'); ?>
+    </div>
 
     <div class="box-container active">
         <?php echo view::factory('_partials/box/reviews-inbox'); ?>
     </div>
 
-    
     <div class="box-container active box-container-left">
         <?php echo view::factory('_partials/box/review-sites'); ?>
     </div>

@@ -349,6 +349,21 @@ var BoxController = Class.extend({
     clearData: function () {
         this.data = null;
         return this;
+    },
+    
+    /**
+     * callback that returns the proper js event function and has data variable
+     * accesible from local scope
+     */
+    genericCallbackEventWrapper: function(callback, data) {
+        
+        
+        return function (e)
+        {
+            callback(e, data);            
+            
+        }
+        
     }
     
 });
@@ -982,21 +997,6 @@ var BC_Inbox = BoxController.extend({
         });
       
     },
-
-    /**
-     * callback that returns the proper js event function and has data variable
-     * accesible from local scope
-     */
-    genericCallbackEventWrapper: function(callback, data) {
-        
-        
-        return function (e)
-        {
-            callback(e, data);            
-            
-        }
-        
-    },
     
     expandEndpointCallback: function(e, data) {
         
@@ -1047,6 +1047,100 @@ var BC_Inbox = BoxController.extend({
     
 });
 
+var BC_CompetitionScore = BoxController.extend({
+    
+    boxId: 'box-competition-score',
+    endpoint: 'competition/ogsi',
+    
+    populateColumns: function(ogsi, template, row) {
+      
+      var t;
+      for(var col in ogsi) {
+            t = template.clone();
+            t.text(col);
+            row.append(t);
+
+      }
+
+    },
+    
+    addColumn: function(ogsi, template, tbody) {
+        
+        var ogsiRow = template.clone();
+        var avgStarRow = template.clone();
+        var reviewsRow = template.clone();
+        
+        ogsiRow.find('.score').text(ogsi.ogsi.value.toFixed(2) + "%");
+        ogsiRow.find('.growth').text(ogsi.ogsi.value.toFixed(2) + "%");
+        ogsiRow.find('.rank').text(ogsi.ogsi.rank.value + " of " + ogsi.ogsi.rank.out);
+        
+        avgStarRow.find('.score').text(ogsi.distribution.average.toFixed(2));
+        
+        reviewsRow.find('.score').text(ogsi.reviews.value.toFixed(2));
+        reviewsRow.find('.rank').text(ogsi.reviews.value + " of " + ogsi.reviews.rank.out);
+
+        var data = [ogsiRow, avgStarRow, reviewsRow];
+
+        var i = 0;
+
+        tbody.find('tr').each(function() {
+            
+            $(this).append('<td>' + data[i++].html() + '</td>');
+            
+        });
+    },
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        
+        var table = boxController.getContentDom().find('.data-grid-holder > table');
+        var tr = null;
+        
+        var row = table.find('thead tr');
+        var tbody = table.find('tbody');
+        var template = row.find('th');
+        var ogsi = data.ogsi;
+        
+        var score = table.find('tbody tr th:nth-child(2)');
+        
+        var scoreTemplate = score.clone();
+        score.remove();
+
+        var callback = boxController.genericCallbackEventWrapper(function(e, data) {
+            
+            e.preventDefault();
+            
+            var filter = $(e.target).attr('filter');
+            
+            data.table.find('tr.' + filter).toggleClass('hide');
+            
+            
+            $(e.target).toggleClass('active');
+            
+  
+        }, {table: table});
+        
+        boxController.getBoxDom().delegate('a[filter]', 'click', callback);
+
+        boxController.populateColumns(ogsi, template, row);
+        
+        for(var competitor in ogsi) {
+            
+            boxController.addColumn(ogsi[competitor], scoreTemplate, tbody);
+            
+        }
+
+        boxController.afterLoadData();
+        
+    },
+    
+    construct: function () {}
+    
+});
+
+
+
 var BC_Ogsi = BoxController.extend({
 
     /**
@@ -1064,24 +1158,24 @@ var BC_Ogsi = BoxController.extend({
         boxController.data = data;
         var holder = boxController.getContentDom();
         if (data.ogsi) {
-            holder.find('#ogsi-score-value').text(data.ogsi.ogsi.value);
-            holder.find('#ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
-            holder.find('#ogsi-score-change .change-arrow')
+            holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
+            holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+            holder.find('.ogsi-score-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
             .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
                 
-            holder.find('#ogsi-rating-value').text(data.ogsi.rating.value);
-            holder.find('#ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
-            holder.find('#ogsi-rating-change .change-arrow')
+            holder.find('.ogsi-rating-value').text(data.ogsi.rating.value);
+            holder.find('.ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('.ogsi-rating-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
             .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('#ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+            holder.find('.ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
 
-            holder.find('#ogsi-reviews-value').text(data.ogsi.reviews.value);
-            holder.find('#ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
-            holder.find('#ogsi-reviews-change .change-arrow')
+            holder.find('.ogsi-reviews-value').text(data.ogsi.reviews.value);
+            holder.find('.ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('.ogsi-reviews-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
             .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
@@ -1101,7 +1195,7 @@ var BC_Ogsi = BoxController.extend({
                     
                     ratio = (distribution.negative / maxValue) * 100;
                     
-                    if(ratio > 2.5)
+                    if(ratio > 5)
                         bar.children('.bar-value').text(distribution.negative);
                 }
                 bar = barHolder.find('.bar-neutral');
@@ -1110,7 +1204,7 @@ var BC_Ogsi = BoxController.extend({
                     
                     ratio = (distribution.neutral / maxValue) * 100;
                     
-                    if(ratio > 2.5)
+                    if(ratio > 5)
                         bar.children('.bar-value').text(distribution.neutral);
                 
                     bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
@@ -1127,7 +1221,7 @@ var BC_Ogsi = BoxController.extend({
                     
                     ratio = (distribution.positive / maxValue) * 100;
                     
-                    if(ratio > 2.5)
+                    if(ratio > 5)
                         bar.children('.bar-value').text(distribution.positive);
                     
                     bar.css('width', (distribution.positive/(distribution.neutral + distribution.positive))*100+'%');
@@ -1149,6 +1243,100 @@ var BC_Ogsi = BoxController.extend({
     
 });
 
+var BC_OgsiCurrent = BC_Ogsi.extend({
+    
+    
+    boxId: 'box-ogsi-current',
+    
+    loadDataCallback: function (data, textStatus, jqXHR) {
+        var boxController = this.success.boxController;
+        boxController.data = data;
+        var holder = boxController.getContentDom();
+        if (data.ogsi) {
+            holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
+            holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+            holder.find('.ogsi-score-change .change-arrow')
+            .removeClass('positive')
+            .removeClass('negative')
+            .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+                
+            holder.find('.ogsi-rating-value').text(data.ogsi.rating.value);
+            holder.find('.ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('.ogsi-rating-change .change-arrow')
+            .removeClass('positive')
+            .removeClass('negative')
+            .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+
+            holder.find('.ogsi-reviews-value').text(data.ogsi.reviews.value);
+            holder.find('.ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('.ogsi-reviews-change .change-arrow')
+            .removeClass('positive')
+            .removeClass('negative')
+            .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            holder.show();
+            
+            var distribution = data.ogsi.distribution;
+            var barHolder = holder.find('.bar-holder');
+            
+            var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
+            
+            var ratio;
+            if (distribution.total) {
+                barHolder.show();
+                var bar = barHolder.find('.bar-negative');
+                bar.children('.bar-value').text('');
+                if (distribution.negative > 0) {
+                    
+                    ratio = (distribution.negative / maxValue) * 100;
+                    
+                    if(ratio > 5)
+                        bar.children('.bar-value').text(distribution.negative);
+                }
+                bar = barHolder.find('.bar-neutral');
+                bar.children('.bar-value').text('');
+                if (distribution.neutral > 0) {
+                    
+                    ratio = (distribution.neutral / maxValue) * 100;
+                    
+                    if(ratio > 5)
+                        bar.children('.bar-value').text(distribution.neutral);
+                
+                    bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
+                    bar.show();
+                } else if (distribution.positive > 0) {
+                    bar.css('width', ((distribution.positive)/distribution.total)*100+'%');
+                    bar.show();
+                } else {
+                    bar.hide();
+                }
+                bar = barHolder.find('.bar-positive');
+                bar.children('.bar-value').text('');
+                if (distribution.positive > 0) {
+                    
+                    ratio = (distribution.positive / maxValue) * 100;
+                    
+                    if(ratio > 5)
+                        bar.children('.bar-value').text(distribution.positive);
+                    
+                    bar.css('width', (distribution.positive/(distribution.neutral + distribution.positive))*100+'%');
+                    bar.show();
+                } else {
+                    bar.hide();
+                }
+                
+            } else {
+                barHolder.hide();
+            }
+            
+            
+        }
+        boxController.afterLoadData();
+    },
+    
+    construct: function() {}
+    
+});
 
 var BC_TagsAnalysis = GraphBoxController.extend({
 
@@ -2689,6 +2877,8 @@ $(document).ready(function () {
     .add(new BC_CompetitionComparision())
     .add(new BC_CompetitionReviewInbox())
     .add(new BC_SocialActivityMini())
+    .add(new BC_CompetitionScore())
+    .add(new BC_OgsiCurrent())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter)
     .init();

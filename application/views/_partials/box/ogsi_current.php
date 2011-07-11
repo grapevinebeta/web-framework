@@ -1,8 +1,8 @@
-<div id="box-ogsi" class="box">
+<div id="box-ogsi-current" class="box">
     <?php
     echo View::factory(
             '_partials/box/header', array(
-        'caption' => __('Grapevine OGSI'),
+        'caption' => __('Current Score'),
                 'buttons' => array('move'),
             )
     );
@@ -12,7 +12,8 @@
             <table class="wide a-center v-top" style="margin: 10px 0;">
                 <tr>
                     <td style="width: 20%">
-                        <h3 class="headline-arrow">
+                        <h3 class="headline-arrow current">
+                            
                         </h3>
                     </td>
                     <td style="width: 10%">
