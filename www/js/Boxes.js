@@ -756,6 +756,9 @@ var LinearGraphBoxController = GraphBoxController.extend({
             title: {
                 text: this.getHeaderDom().find('.box-header-title').text()
             },
+            credits: {
+                enabled: false
+            },
             colors: [
             '#80699B', 
             '#AA4643', 
@@ -1367,7 +1370,7 @@ var BC_TagsAnalysis = GraphBoxController.extend({
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                margin: [10, 10, 10, 10],
+                margin: [20, 20, 20, 20],
                 animation: false,
                 defaultSeriesType: 'pie'
             },
@@ -1390,6 +1393,9 @@ var BC_TagsAnalysis = GraphBoxController.extend({
                 formatter: function() {
                     return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
                 }
+            },
+            credits: {
+                enabled: false
             },
             legend: {
                 borderRadius: 0
@@ -2733,6 +2739,7 @@ boxManager = {
             $(this).append(ui.draggable);
                     
             boxManager.moveEmptyToBottom();
+
         }
     });
     return this;
