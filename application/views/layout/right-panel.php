@@ -15,7 +15,7 @@
         </div>
         <div class="light-box-content box-content">
                 <div style="display: none;">
-                    <table>
+                    <table width="100%">
                         <tr>
                             <td>
                                 <div class="ogsi-score-bg-right">
@@ -44,11 +44,10 @@
                                         <div class="bar-negative">
                                             <div class="bar-neutral">
                                                 <div class="bar-positive">
-                                                    <span class="bar-value">1</span>
+      
                                                 </div>
-                                                <span class="bar-value">3</span>
+ 
                                             </div>
-                                            <span class="bar-value">5</span>
                                         </div>
                                     </div>
                                 </div>

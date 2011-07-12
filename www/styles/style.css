@@ -1104,15 +1104,19 @@ background: -webkit-gradient(
         display:none;
     }
     
+    .light-box-content .ogsi-reviews {
+        
+        height:auto;
+        
+    }
     .light-box-content .ogsi-rating {
         
         height: auto;
         
-        
     }
     
     .light-box-content .ogsi-reviews-value {
-        font-size: 22px;
+        font-size: 15px;
         font-weight: bold;
         line-height: 100%;
         padding: 0;
@@ -1120,5 +1124,58 @@ background: -webkit-gradient(
     }
     
     .light-box-content .ogsi-reviews-reviews {
-        font-size: 16px;
+        font-size: 13px;
+        margin-bottom: 10px;
     }
+    
+    .light-box-content .ogsi-rating-rating {
+        color: #61467e;
+        font-size: 17px;
+    }
+    
+    .light-box-content .bar-neutral {
+        
+        height: 17px;
+        
+    }
+    .light-box-content .bar-positive {
+        
+        height: 17px;
+        
+    }
+    
+    .light-box-content .bar-negative {
+        
+        height: 17px;
+        
+    }
+    
+    .light-box-content .ogsi-score {
+        
+        width:85px;
+        color: #783cad;
+        
+    }
+    
+    .light-box-content .ogsi-score-ogsi, .light-box-content .ogsi-score-value  {
+        
+        text-align:right;
+        
+    }
+        
+    .light-box-content .ogsi-score-bg-right {
+        background-image: url("../images/ogsi_mini.png");
+        background-position: -166px -131px;
+        background-repeat: no-repeat;
+        padding-right: 32px;
+    }
+    
+    .light-box-content .ogsi-score-bg-left {
+        background-image: url("../images/ogsi_mini.png");
+        background-position: left top;
+        background-repeat: no-repeat;
+        height: 106px;
+        padding-left: 10px;
+    }
+    
+    
