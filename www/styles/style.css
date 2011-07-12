@@ -1110,3 +1110,15 @@ background: -webkit-gradient(
         
         
     }
+    
+    .light-box-content .ogsi-reviews-value {
+        font-size: 22px;
+        font-weight: bold;
+        line-height: 100%;
+        padding: 0;
+        text-align: center;
+    }
+    
+    .light-box-content .ogsi-reviews-reviews {
+        font-size: 16px;
+    }
