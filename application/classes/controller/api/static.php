@@ -72,7 +72,7 @@ class Controller_Api_Static extends Controller {
                     'average' => 4, //:[decimal:required] - average count
                 ),
                 'ogsi' => array(// OGSIScoreObject,
-                    'value' => 55.0, //:[decimal:required] - the ogsi percent
+                    'value' => number_format(lcg_value() * (abs(100)),1), //:[decimal:required] - the ogsi percent
                     'change' => 5.0, //:[decimal:required] - the change in percentage
                 ),
                 'reviews' => array(// OGSIReviewsObject,
