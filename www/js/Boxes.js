@@ -1254,10 +1254,6 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
         var holder = boxController.getContentDom();
         if (data.ogsi) {
             
-            console.log(holder.find('.ogsi-score-value'));
-            
-            console.log(data.ogsi.ogsi.value);
-            
             holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
             holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
             holder.find('.ogsi-score-change .change-arrow')

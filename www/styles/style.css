@@ -1103,3 +1103,10 @@ background: -webkit-gradient(
     .hide {
         display:none;
     }
+    
+    .light-box-content .ogsi-rating {
+        
+        height: auto;
+        
+        
+    }
