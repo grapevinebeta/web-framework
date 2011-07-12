@@ -1,0 +1,1 @@
+Configuration settings' templates are provided within "dist" subdirectory.

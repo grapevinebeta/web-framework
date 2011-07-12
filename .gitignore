@@ -2,3 +2,4 @@
 .settings/com.aptana.editor.php.prefs
 .settings
 /nbproject/private/
+/application/config/*.php
