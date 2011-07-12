@@ -354,6 +354,14 @@ var BoxController = Class.extend({
     /**
      * callback that returns the proper js event function and has data variable
      * accesible from local scope
+     * 
+     * example usage:
+     * 
+     * $.post(endpoint, this.genericCallbackEventWrapper(function(e, data)) {
+     *    // you have access to data you include throught data variable like
+     *    data.variable
+     * }, {variable: foo});
+     * 
      */
     genericCallbackEventWrapper: function(callback, data) {
         
@@ -369,9 +377,9 @@ var BoxController = Class.extend({
 });
 
 
-var BC_SocialActivityMini = BoxController.extend({
+var BC_RecentActivity = BoxController.extend({
 
-/**
+    /**
      * @var String DOM id of the container div 
      */
     boxId: 'box-social-activity-mini',
@@ -384,8 +392,7 @@ var BC_SocialActivityMini = BoxController.extend({
     limit: 4,
     
     ignore: true,
-    
-    
+
     prepareMessage: function(template, data) {
       
         template = template.clone();
@@ -400,7 +407,7 @@ var BC_SocialActivityMini = BoxController.extend({
       
         titleLink = $('<a href="#"><span></span></a>');
         titleLink.attr('class', data.network.toLowerCase());
-        titleLink.filter('span').text(value);
+        
         template.find('.network').html(titleLink);
       
         return template;
@@ -412,16 +419,20 @@ var BC_SocialActivityMini = BoxController.extend({
      */
     loadData: function () {
         this.beforeLoadData();
+        
         if (!this.loadDataCallback.boxController) {
             this.loadDataCallback.boxController = this;
         }
-        this.dataProvider.setEndpoint(this.endpoint)
+        
+        this.data = this.dataProvider
+        .setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(null)
         .setLimit(this.limit)
-        .setCallback(this.loadDataCallback);
-        this.data = this.dataProvider.fetch();
+        .setCallback(this.loadDataCallback)
+        .fetch();
+        
         return this;
     },
     
@@ -430,13 +441,13 @@ var BC_SocialActivityMini = BoxController.extend({
         boxController.data = data;
         
         var content = boxController.getContentDom().find('.data-grid-holder');
-        var rowTemplate = content.find('.row:first').clone();
+        var template = content.find('.row:first');
         content.find('.row').remove();
         var row;
         var social = data.socials;
         for (var i = 0; i < social.length; i++) {
 
-            row = boxController.prepareMessage(rowTemplate, social[i]);   
+            row = boxController.prepareMessage(template, social[i]);   
             content.append(row); // append two elements
             
         }
@@ -500,11 +511,8 @@ var GraphBoxController = BoxController.extend({
     },
     
     computeDateInterval: function() {
-      
-        var number = (this.getPeriodInDays() )  / 6;
-      
 
-        return Math.floor(number) + 1;
+        return Math.floor((this.getPeriodInDays() )  / 6) + 1;
     },
     
     beforeLoadData: function () {
@@ -534,9 +542,10 @@ var GraphBoxController = BoxController.extend({
         var boxContent = box.find('.box-content');
         boxContent.children().hide();
         box.find('.box-header-button').removeClass('active');
-        var boxController = boxManager.getBox(box.attr('id'));
+
+
         var dataGrid = box.find('.data-grid-holder');
-        if (dataGrid.css('display') == 'none') {
+        if (!dataGrid.is(':visible')) {
             dataGrid.show();
         }
         box.find('.box-header-button-show-data').addClass('active');
@@ -620,17 +629,15 @@ var GraphBoxController = BoxController.extend({
         
         
         this.getGraphHolder().children().remove();
-        this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-graph').addClass('active');
+        this.getHeaderDom()
+        .find('.box-header-right-buttons a.box-header-button-show-graph')
+        .addClass('active');
         
         
-        for(var key in this.graphData) 
-        {
+        for(var key in this.graphData);
+        
 
-            }
-        
-        
-        
-        if(this.graphData[key] == false) {
+        if(!this.graphData[key]) {
             
             this.getContentDom().find('.graph-holder')
             .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>')
@@ -712,7 +719,7 @@ var LinearGraphBoxController = GraphBoxController.extend({
         
         return this.firstTimestamp = Date.parse(
             new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate())
-            );
+        );
         
         
     },
@@ -939,8 +946,7 @@ var BC_Inbox = BoxController.extend({
             }
         }
 
-        boxController.initPager();
-        boxController.afterLoadData();
+        boxController.initPager().afterLoadData();
 
     },
     
@@ -979,9 +985,7 @@ var BC_Inbox = BoxController.extend({
             
         }
         
-        
-        
-        return;
+        return this;
       
     },
     
@@ -1019,8 +1023,7 @@ var BC_Inbox = BoxController.extend({
         data.context.customPopulateFields(text, data);
         
         
-        tr.removeClass('hidden-row');
-        tr.find('.details').show();
+        tr.removeClass('hidden-row').find('.details').show();
         
     },
     
@@ -2877,7 +2880,7 @@ $(document).ready(function () {
     .add(new BC_CompetitionDistribution())
     .add(new BC_CompetitionComparision())
     .add(new BC_CompetitionReviewInbox())
-    .add(new BC_SocialActivityMini())
+    .add(new BC_RecentActivity())
     .add(new BC_CompetitionScore())
     .add(new BC_OgsiCurrent())
     .setDataProvider(new DataProvider())
