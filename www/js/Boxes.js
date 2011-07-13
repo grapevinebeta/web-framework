@@ -1076,7 +1076,7 @@ var BC_CompetitionScore = BoxController.extend({
 
     },
     
-    addColumn: function(ogsi, template, tbody) {
+    addColumn: function(ogsi, template, tbody, isOdd) {
         
         var ogsiRow = template.clone();
         var avgStarRow = template.clone();
@@ -1096,10 +1096,11 @@ var BC_CompetitionScore = BoxController.extend({
         var i = 0;
 
         tbody.find('tr').each(function() {
-            
-            $(this).append('<td>' + data[i++].html() + '</td>');
+            $(this).append('<td ' + (isOdd ? 'class="even"' : '') +  '>' + data[i++].html() + '</td>');
             
         });
+        
+        
     },
     
     loadDataCallback: function (data, textStatus, jqXHR) {
@@ -1137,9 +1138,11 @@ var BC_CompetitionScore = BoxController.extend({
 
         boxController.populateColumns(ogsi, template, row);
         
+        
+        var i =0;
         for(var competitor in ogsi) {
             
-            boxController.addColumn(ogsi[competitor], scoreTemplate, tbody);
+            boxController.addColumn(ogsi[competitor], scoreTemplate, tbody, (i++ % 2));
             
         }
 

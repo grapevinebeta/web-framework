@@ -36,16 +36,12 @@
                     <tr class="data ogsi">  
                         <th>
                             <span class="score">OGSI Score</span>
-                            <span class="rank">-Rank</span>
-                            <span class="growth">Growth</span>
-                            <span class="rank">-Rank</span>
+                            <span class="rank">Rank</span>
 
                         </th>
                         <th>
 
                             <span class="score"></span>
-                            <span class="rank"></span>
-                            <span class="growth"></span>
                             <span class="rank"></span>
 
                         </th>
@@ -53,30 +49,22 @@
                     <tr class="data avg-star">  
                         <th>
                             <span class="score">Ave. Star Rating</span>
-                            <span class="rank">-Rank</span>
-                            <span class="growth">Growth</span>
-                            <span class="rank">-Rank</span>
+                            <span class="rank">Rank</span>
                         </th>
                         <th>
 
                             <span class="score"></span>
-                            <span class="rank"></span>
-                            <span class="growth"></span>
                             <span class="rank"></span>
 
                         </th>
                     </tr>  
                     <tr class="data nb-reviews">  
                         <th>
-                            <span class="score"># of Reviews</span>
-                            <span class="rank">-Rank</span>
-                            <span class="growth">Growth</span>
+                            <span class="score">No. of Reviews</span>
                             <span class="rank">-Rank</span>
                         </th>
                         <th>
                             <span class="score"></span>
-                            <span class="rank"></span>
-                            <span class="growth"></span>
                             <span class="rank"></span>
                         </th>
                     </tr>  

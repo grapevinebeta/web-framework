@@ -363,6 +363,8 @@ input[type=submit] {
     border-radius: 8px 8px 0px 0px;
     padding: 5px;
     margin-bottom: 5px;
+    font-size:15px;
+    font-weight: bold;
 }
 
 .light-box-content {
@@ -777,16 +779,18 @@ input[type=submit] {
 
 .box .box-filter a.active {
     
+        background: #573975;
+        /* Mozilla: */
+        background: -moz-linear-gradient(top, #d1cddc,#573975);
+        /* Chrome, Safari:*/
+        background: -webkit-gradient(linear,
+                left top, left bottom, from(#d1cddc), to(#573975));
+        /* MSIE */
+        filter: progid:DXImageTransform.Microsoft.Gradient(
+                StartColorStr='#d1cddc', EndColorStr='#573975', GradientType=0);
+        
 	color: #fff;
 	padding: 2px 3px;
-        background: -moz-linear-gradient(
-        top,
-        #d1cddc 0%,
-        #573975);
-background: -webkit-gradient(
-        linear, left top, left bottom, 
-        from(#d1cddc),
-        to(#573975));
 	border-radius: 4px;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
@@ -796,15 +800,8 @@ background: -webkit-gradient(
 }
 
 .box .spacer {
-    float:left; 
-    width:100%; 
-    margin-top:12px; 
+    padding-top:12px; 
     clear:both;
-}
-
-
-.box-filter {
-    position: relative;
 }
 
 .box-filters .box-filters-inner
@@ -886,10 +883,6 @@ background: -webkit-gradient(
     /* Styling of the expanded review details */
     tr.expanded {
         
-    }
-    
-    tr.hidden-row {
-        display:none;
     }
 
     .box .col-2 {
@@ -973,6 +966,15 @@ background: -webkit-gradient(
 #box-competition-score .data {
     text-align:center;
 }    
+    td.even {
+        background-color: #E7E4EF;
+    }
+
+    #box-competition-score .data th {
+
+        text-align:right;
+        
+    }
     
     #box-competition-score .data span {
 
@@ -1072,8 +1074,8 @@ background: -webkit-gradient(
     }
     
     .row {
-        
-        
+        background: url("/images/bar.gif") repeat-x left bottom;
+        margin: 0 0 15px;
     }
     
     .row .title {
@@ -1121,7 +1123,7 @@ background: -webkit-gradient(
     }
     
     .light-box-content .ogsi-reviews-value {
-        font-size: 15px;
+        font-size: 18px;
         font-weight: bold;
         line-height: 100%;
         padding: 0;
@@ -1129,13 +1131,14 @@ background: -webkit-gradient(
     }
     
     .light-box-content .ogsi-reviews-reviews {
-        font-size: 13px;
+        font-size: 17px;
         margin-bottom: 10px;
     }
     
     .light-box-content .ogsi-rating-rating {
         color: #61467e;
         font-size: 17px;
+        margin-bottom: 5px;
     }
     
     .light-box-content .bar-neutral {
@@ -1160,6 +1163,10 @@ background: -webkit-gradient(
         width:85px;
         color: #783cad;
         
+    }
+    
+    .light-box-content .ogsi-rating-value {
+        font-size: 18px;
     }
     
     .light-box-content .ogsi-score-ogsi, .light-box-content .ogsi-score-value  {

@@ -1,0 +1,88 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10960\viewh11580\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 PSD Recap with New Modifications\
+\
+
+\b Overall Notes:
+\b0 \
+- Please follow the look and feel of the PSD. It is the most current version with how we believe the final product should look and feel.\
+- Please assume for all widget/boxes that the size of the widget/box shown in the PSD properly reflects the DEFAULT size the widget/box should be. None of the boxes should be able to be resized.\
+- Notice that if there is no data available for the user's selected date range to use the widget/box that shows "No Data" (found in the attached Illustrator file, PNG attached as reference).\
+- Verify consistency of icons' size across the dashboard: Please keep all icons to 24x24 if they are in a box/widget, and 32x32 if they are found in the Sidebar.\
+- Keep all titles of the widget/boxes as lowercase, no capitals.\
+\
+
+\b Items That's Weren't Properly Working:\
+
+\i\b0 Pin to Dashboard:
+\i0 \
+- Originally in the project we discussed the ability to "Pin" widget/boxes. Please verify that "pinning" works. Each Widget/Box needs to be able to be added to the Dashboard (home page) and saved so they stay there when the user logs in the next time. Please show a "Purple Pin" icon when the widget/box is pinned to the dashboard, show a "Grayed Out Pin" (similar to Table/Graph icons) when the widget/box is not currently pinned to dashboard.
+\b \
+
+\i\b0 Freeform Boxes Break HTML
+\i0\b \
+
+\b0 - Any freeform text boxes (like "Notes" found under Review Inbox-Expanded), cannot be resized - it will break the HTML. It especially breaks the page when the text area is resized on width.\
+
+\i Expand Icon Not Working Correctly:
+\i0 \
+- On every "Inbox" on every row of data, there is an Expand icon that pops up. The icon shows correctly, but the user shouldn't have to click on the "Expand" icon. They should be able to click on the row itself (or the Expand icon) to expand the row; they should also be able to click on the row again (or the Close/Save icon) to collapse the view. 
+\b \
+\
+Page-by-Page Changes:
+\b0 \
+
+\i 1) Dashboard 
+\i0 \
+- "Current time score" -> Will show the # of days based on the "Viewing" selection or "Date Range"; regardless the date ranges should be modified to be represented as a #. Example shown in PSD: Right now "1m" viewing is showing "30 day score". If they selected "1y" it would show "365 days".\
+- Notice "Star Rating" is now in Purple instead of yellow/gold used before.\
+- New "Checkbox" icon is now Gray instead of Green. (Found in attached AI file)\
+- Grapevine scoreboard is a regular full-width widget/box similar to size of Review Inbox. (Home page sidebar items should still show on far right of grapevine scoreboard like in PSD).\
+
+\i 2) Review Breakdown
+\i0 \
+No changes.\
+
+\i 3) Social Page: 
+\i0 \
+- Create Lightbox for photo and video viewing. Do not autostart any photo.\
+- Integrate YouTube and Flickr API for Video and Photo (described in detail below)\
+- Remove "Flag to Do" icon and text\
+
+\i 4) Competition
+\i0 \
+- Notice updated "Score & Ranking Details")
+\b \
+\
+----New Features We'd Like Implemented-- \
+PLEASE PROVIDE ESTIMATE OF HOURS OF EACH FEATURE REQUESTED, SO WE CAN SELECT ALL OR SOME\
+(Listed in order of importance, Only after Core completion)\
+
+\i\b0 Note: We haven't described these items in entirety please provide feedback. We really need to add the HIGH priority items, others can wait if we have time.
+\i0\b \
+HIGH PRIORITY:
+\b0 \
+
+\i 1) Integration of Flickr API and YouTube API for Social Page
+\i0  (in addition to incorporating it into Account Preferences)\
+
+\i 2) Social Publishing (may require Facebook and Twitter API Integration (in addition to incorporating it into Account Preferences):
+\i0  Allow publishing to Facebook and Twitter directly from inside the dashboard. Please include this in Dashboard and under Social Page. Attached an image of what functionality is, please use our color scheme though.\
+3) 
+\i System of in-dashboard "Alerts"
+\i0  (shown as an "Alerts" widget/box in Sidebar Items in PSD), this is like a quicker version of filtering in Review Inboxes. This is just shown more prominent, and would pull # of Reviews that need attention and # of Review that are still flagged. (Please let us know how difficult this is, we'd like for this to be updated whenever a user changes a Review status (flagged, completed, attention). Not defined in API nor have we defined functionality. Will be based on "Status" of selected review.\
+
+\b SECONDARY PRIORITY:
+\b0 \
+4) 
+\i Ability to print out all reviews
+\i0  in a given time period in full text (from Review Inbox, whether user is on Dashboard or Review Breakdown page).\
+
+\b \
+
+\b0 \
+}
