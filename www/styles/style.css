@@ -479,7 +479,6 @@ input[type=submit] {
         background-position: 0px 0px;
         background-repeat: no-repeat;
         height: 18px;
-        position: relative;
         width: 110px;
     }
     
@@ -548,7 +547,6 @@ input[type=submit] {
         
     /* Styling of the expanded review details */
     #box-recent-reviews .details {
-        overflow: hidden;
     }
 
         #box-recent-reviews .details td {
