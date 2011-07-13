@@ -1038,11 +1038,7 @@ var BC_Inbox = BoxController.extend({
      */
     expandedPopulate: function(e, data) 
     {
-        var cloned = $(e.target).clone(false).html();
-        
-        
-        // reset all handlers to prevent event double
-        e.target.innerHTML = cloned;
+        $(e.target).unbind('*');
         
         data.trContext = $(e.target);
         

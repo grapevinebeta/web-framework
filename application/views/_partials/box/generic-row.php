@@ -5,7 +5,6 @@
                 <div class="innerForm">
                     <h2 class="review-details-title"></h2>
                     <p class="review-details-review"></p>
-                    <form action="/" method="post">
                         <table class="wide">
                             <tr>
                                 <td class="a-right">
@@ -33,7 +32,6 @@
                                 </td>
                             </tr>
                         </table>
-                    </form>
                 </div>
             </div>
             <div class="recentReviewDetailsMenu">
