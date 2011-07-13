@@ -6,7 +6,6 @@
         <div class="box-filter box-filter-<?php echo __($filter); ?>"></div>
         <div class="spacer"></div>
         <?php endforeach; ?>
-        <div class="clear"></div>
     </div>
 </div>
 <?php if(isset($has_pager)): ?>
