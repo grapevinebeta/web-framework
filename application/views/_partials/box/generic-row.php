@@ -1,8 +1,8 @@
-<tr class="expanded">
+<tr class="expanded hidden-row">
     <td colspan="5">
 
-        <form action="">
-            <div class="details" style="display: none;">
+        <form action="/">
+            <div class="details">
                     <div class="recentReviewDetailsForm">
                         <div class="innerForm">
                         <h2 class="review-details-title"></h2>

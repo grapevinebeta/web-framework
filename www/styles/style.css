@@ -13,6 +13,7 @@ textarea {
     padding: 0px;
     border-width: 1px;
     border-style: solid;
+    resize: none; /* chrome resizing disable */
 }
 
 select {
@@ -884,7 +885,11 @@ background: -webkit-gradient(
     
     /* Styling of the expanded review details */
     tr.expanded {
-        overflow: hidden;
+        
+    }
+    
+    tr.hidden-row {
+        display:none;
     }
 
     .box .col-2 {

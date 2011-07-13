@@ -808,7 +808,13 @@ var LinearGraphBoxController = GraphBoxController.extend({
 
 var BC_Inbox = BoxController.extend({
     
+    /**
+     * @var first page that will be displayed
+     */
     currentPage: 1,
+     /**
+     * @var the number of pages that api return
+     */
     totalPages: null,
     limit: 10,
     ignore: false,
@@ -829,6 +835,7 @@ var BC_Inbox = BoxController.extend({
     attachBoxEvents: function() {
         var self = this;
         
+        // pager event delegation
         self.getPagerHolder().delegate('.prev, .next','click', function(e) {
             
             e.preventDefault();
@@ -844,6 +851,7 @@ var BC_Inbox = BoxController.extend({
                     self.currentPage--;
             } 
             
+            // reload all data
             self.loadData();
             
             
@@ -864,9 +872,7 @@ var BC_Inbox = BoxController.extend({
             $(this).parents('tr.expanded')
             .addClass('hidden-row')
             .prev()
-            .removeClass('border')
-            .find('.details')
-            .hide();
+            .removeClass('border');
 
           
         });
@@ -877,17 +883,13 @@ var BC_Inbox = BoxController.extend({
             
                 event.preventDefault();
             
-            
-                var rowId = $(this).attr('data-row-id');
-                var detailsBox = self.getBoxDom().find('tr[data-row-id="' + rowId + '"].expanded .details');
-                var detailsRow = $(this).next();
+                var expanded = $(this).next();
                 if (!$(this).hasClass('border')) {
                     
-                    detailsRow.trigger('expand');
+                    expanded.trigger('expand');
                     
                 } else {
-                    detailsRow.addClass('hidden-row');
-                    detailsBox.hide();
+                    expanded.addClass('hidden-row');
                 
                 }
                 $(this).toggleClass('border');
@@ -1026,10 +1028,14 @@ var BC_Inbox = BoxController.extend({
         data.context.customPopulateFields(text, data);
         
         
-        tr.removeClass('hidden-row').find('.details').show();
+        tr.removeClass('hidden-row');
         
     },
     
+    /**
+     * this callback is executed when expand event is triggered
+     * is include custom user expand callback that need to be implemented
+     */
     expandedPopulate: function(e, data) 
     {
         // reset all handlers to prevent event double
