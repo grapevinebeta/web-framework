@@ -1,6 +1,6 @@
 <div class="light-box box" id="box-ogsi-current">
     <div class="light-box-header">
-        <?php echo __('All Time Score'); ?>
+        <?php echo __('all time score'); ?>
         <?php
         echo html::anchor(
                 '#', html::image('images/icons/help.png', array('alt' => '')), array(

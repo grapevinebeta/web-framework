@@ -2,7 +2,7 @@
     <?php
     echo View::factory(
             '_partials/box/header', array(
-        'caption' => __('Social Activity'),
+        'caption' => __('social activity'),
         'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
             )
     );

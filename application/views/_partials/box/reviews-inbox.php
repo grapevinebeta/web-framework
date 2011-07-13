@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Reviews Inbox'),
+            'caption' => __('reviews inbox'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
@@ -19,13 +19,13 @@
     
     <div class="box-content">
         <div class="data-grid-holder" style="display: none;">
-            <table class="wide data-grid no-outer-border" style="padding: 5px;">
+            <table class="wide data-grid no-outer-border">
                 <tbody>
                     <tr>
                         <td class="col-status"></td>
                         <td class="col-rating"></td>
-                        <td class="col-submitted a-center" width="10%"></td>
-                        <td class="col-title" width="72%">
+                        <td class="col-submitted a-center" style="width:76px;"></td>
+                        <td class="col-title" style="width:426px;">
                             <div class="wrapper">
                                 <div class="in"></div>
                             </div>

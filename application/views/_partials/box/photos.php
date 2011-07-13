@@ -8,26 +8,9 @@
         ); 
     ?>
     <div class="box-content padding-5">
-        <div class="data-grid-holder" style="display: none;">
-            <table class="wide data-grid">
-                <thead>
-                    <tr>
-                        <th class="a-left"><?php echo __('Network'); ?></th>
-                        <th class="a-left"></th>
-                        <th><?php echo __('Activity'); ?></th>
-                        <th><?php echo __('Change'); ?></th>
-                        <th><?php echo __('Total'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-network"></td>
-                        <td class="col-action"></td>
-                        <td class="col-value a-center"></td>
-                        <td class="col-change a-center"></td>
-                        <td class="col-total a-center"></td>
-                    </tr>
-                </tbody>
+        <div class="data-grid-holder">
+            <table class="wide data-photo">
+                <a href="http://www.flickr.com/photos/58402146@N02/5934098842/"><img src="http://farm7.static.flickr.com/6141/5934098842_ae7d7c5466_m.jpg"></a>
             </table>
         </div>
     </div>

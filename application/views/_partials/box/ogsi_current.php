@@ -1,19 +1,11 @@
 <div id="box-ogsi-current" class="box">
-    <?php
-    echo View::factory(
-            '_partials/box/header', array(
-        'caption' => __('Current Score'),
-                'buttons' => array('move'),
-            )
-    );
-    ?>
     <div class="box-content">
         <div style="display: none;">
             <table class="wide a-center v-top" style="margin: 10px 0;">
                 <tr>
                     <td style="width: 20%">
                         <h3 class="headline-arrow current">
-                            
+                            <span class="days">30</span> day
                         </h3>
                     </td>
                     <td style="width: 10%">

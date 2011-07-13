@@ -757,7 +757,15 @@ input[type=submit] {
     }
     
     .current {
-        background-position: bottom left;
+        background-position: left bottom;
+        background-repeat: no-repeat;
+        font-family: Verdana,Arial,Tahoma,sans-serif;
+        font-size: 30px;
+        font-weight: normal;
+        padding-bottom: 6px;
+        padding-left: -2px;
+        text-align: left;
+        letter-spacing: -2.1px;
     }
 
 #range-form .ui-datepicker-trigger {

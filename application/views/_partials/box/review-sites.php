@@ -1,7 +1,7 @@
 <div id="box-review-sites" class="box">
     <?php echo View::factory(
         '_partials/box/header', 
-        array('caption' => __('Review Sites'),
+        array('caption' => __('review sites'),
               'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
             )
         ); 

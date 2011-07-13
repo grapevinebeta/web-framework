@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Analysis of Review Tags'),
+            'caption' => __('analysis of review tags'),
             'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
             )
         ); 

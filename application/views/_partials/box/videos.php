@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Videos'),
+            'caption' => __('videos'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
@@ -10,18 +10,24 @@
     <div class="box-content padding-5">
         <div class="data-video">
             
-            <a  
-			 href="http://pseudo01.hddn.com/vod/demo.flowplayervod/flowplayer-700.flv"
-			 style="display:block;width:335px;height:250px"  
-			 id="player"> 
-		</a> 
+            <iframe width="322" height="197" src="http://www.youtube.com/embed/mkTMj0McIvc" 
+                    frameborder="0" allowfullscreen></iframe>
 	
-		<!-- this will install flowplayer inside previous A- tag. -->
-		<script>
-			flowplayer("player", "/js/flowplayer/flowplayer-3.2.7.swf");
-		</script>
-	
-            
+            <div class="controls">
+                <div class="prev">
+                <a href="#"><span>prev</span></a>
+                </div>
+                <div class="desc">
+                    <a href="#" class="title">Chevy cruise video</a>
+                    <span class="date">2/23/2011</span>
+                    <span class="desc">"Checkout the new chevy.."</span>
+                </div>
+                <div class="next">
+                
+                    <a href="#"><span>next</span></a>
+                    
+                </div>
+            </div>
         </div>
     </div>
 </div>

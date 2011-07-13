@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Social Media Inbox'),
+            'caption' => __('social media inbox'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
@@ -20,12 +20,12 @@
     <div class="box-content">
         <div class="data-grid-holder" style="display: none;">
             <form action="">
-                <table class="wide data-grid no-outer-border" style="padding: 5px;">
+                <table class="wide data-grid no-outer-border">
                     <tbody>
                         <tr>
                             <td class="col-network"></td>
                             <td class="col-submitted a-center" width="13%"></td>
-                            <td class="col-title" width="72%"><div class="wrapper"><div class="in"></div></div></td>
+                            <td class="col-title" style="width:466px;"><div class="wrapper"><div class="in"></div></div></td>
                             <td class="col-site" width="15%"></td>
                         </tr>
                         

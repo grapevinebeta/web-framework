@@ -1,6 +1,6 @@
 <div class="light-box" id="box-social-activity-mini">
     <div class="light-box-header">
-        <?php echo __('Recent Activity'); ?>
+        <?php echo __('recent activity'); ?>
         <?php
         echo html::anchor(
                 '#', html::image('images/icons/help.png', array('alt' => '')), array(

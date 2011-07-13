@@ -21,6 +21,14 @@ function determineMonthDiff(period)
     }
 }
 
+function getPeriodInDays(period) {
+        
+        return period == '1y' ? 365 : determineMonthDiff(period) * 30;
+      
+      
+}
+
+
 (function(){
 
     // logging function

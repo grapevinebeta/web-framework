@@ -459,7 +459,7 @@ var BC_RecentActivity = BoxController.extend({
 });
 
 
-var GraphBoxController = BoxController.extend({
+var BC_GraphBoxController = BoxController.extend({
     
     /**
      * @var Object To store data from ajax responces for graph
@@ -482,37 +482,11 @@ var GraphBoxController = BoxController.extend({
             this.refresh();
         }
     },
-    
-    
-    getPeriodInDays: function() {
-        var startPoint;
- 
-        switch(this.range['period']) {
-            case '1m':
-                startPoint = 30;
-                break;
-            case '3m':
-                startPoint = 90;
-                break;
-            case '6m':
-                startPoint = 180;
-                break;
-            case '1y':
-                startPoint = 365;
-                break;
-            default:
-                startPoint = 30;
-                break;
-        }
-        
-        return startPoint;
-      
-      
-    },
+
     
     computeDateInterval: function() {
 
-        return Math.floor((this.getPeriodInDays() )  / 6) + 1;
+        return Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
     },
     
     beforeLoadData: function () {
@@ -665,7 +639,7 @@ var GraphBoxController = BoxController.extend({
  * It all requires data indexed by timestamps in specific interval
  *
  */
-var LinearGraphBoxController = GraphBoxController.extend({
+var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
     
     /*
      * @var Array holds all data series
@@ -715,7 +689,7 @@ var LinearGraphBoxController = GraphBoxController.extend({
         
         
         parsed = new Date(parsed * 1000);
-        var offset = Math.floor(this.getPeriodInDays() / 30);
+        var offset = Math.floor(getPeriodInDays(this.range['period']) / 30);
         
         return this.firstTimestamp = Date.parse(
             new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate())
@@ -1268,6 +1242,10 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
         var holder = boxController.getContentDom();
         if (data.ogsi) {
             
+            
+            
+            holder.find('.days').text(getPeriodInDays(boxController.range['period']));
+            
             holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
             holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
             holder.find('.ogsi-score-change .change-arrow')
@@ -1353,7 +1331,7 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
     
 });
 
-var BC_TagsAnalysis = GraphBoxController.extend({
+var BC_TagsAnalysis = BC_GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1450,7 +1428,7 @@ var BC_TagsAnalysis = GraphBoxController.extend({
     
 });
 
-var BC_ReviewSites = GraphBoxController.extend({
+var BC_ReviewSites = BC_GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1859,7 +1837,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
 /**
  * @TODO create base class for linar graph controllers
  */
-var BC_SocialActivity = LinearGraphBoxController.extend({
+var BC_SocialActivity = BC_LinearGraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1998,7 +1976,7 @@ var BC_SocialActivity = LinearGraphBoxController.extend({
     
 });
 
-var BC_SocialSubscribers = GraphBoxController.extend({
+var BC_SocialSubscribers = BC_GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -2256,7 +2234,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
 });
 
 
-var BC_CompetitionComparision = LinearGraphBoxController.extend({
+var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
    
     boxId: 'box-competition-comparision',
     series: [],
@@ -2356,7 +2334,7 @@ var BC_CompetitionComparision = LinearGraphBoxController.extend({
    
 });
 
-var BC_CompetitionDistribution = GraphBoxController.extend({
+var BC_CompetitionDistribution = BC_GraphBoxController.extend({
  
     boxId: 'box-competition-distribution',
  

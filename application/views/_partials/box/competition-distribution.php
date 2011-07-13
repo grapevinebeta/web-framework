@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('Reputation Distribution'),
+            'caption' => __('reputation distribution'),
             'buttons' => array('dashboard-pin', 'move', 'show-graph', 'show-data'),
             )
         ); 
