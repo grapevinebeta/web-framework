@@ -919,6 +919,7 @@ input[type=submit] {
     tr.border {
     
         border: 1px solid #000;
+        border-style: solid none solid none;
         
     }
     
