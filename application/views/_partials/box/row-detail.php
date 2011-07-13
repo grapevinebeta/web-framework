@@ -1,6 +1,5 @@
 <tr class="expanded hidden-row">
     <td colspan="5">
-        <form action="/">
             <div class="details">
 
                     <div class="col-2">
@@ -33,6 +32,5 @@
                     
                 </div>
             </div>
-        </form>
     </td>
 </tr>
