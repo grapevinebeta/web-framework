@@ -1838,10 +1838,12 @@ var BC_ReviewInbox = BC_Inbox.extend({
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
-            checkbox.attr('value', currentId);
+            checkbox.attr('value', this.data.socials[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
-            table.find('tbody:first').append(tr, trContent); // append two elements
+            table.children('tbody').append(tr); // append two elements
+            table.children('tbody').append(trContent); // append two elements
+            
         }
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
