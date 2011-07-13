@@ -1,5 +1,5 @@
 <div id="right-panel-holder">
-    <?php $urls = array('/dashboard' => 1, '' => 1); ?>
+    <?php $urls = array('/dashboard' => 1, '' => 1, '/' => 1); ?>
 <?php if( !isset($urls[Kohana_Request::detect_uri()])): ?>
     <?php echo view::factory('_partials/box/ogsi_mini'); ?>
 <?php endif; ?>
