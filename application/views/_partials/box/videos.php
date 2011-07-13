@@ -8,7 +8,7 @@
         ); 
     ?>
     <div class="box-content padding-5">
-        <div class="data-video">
+        <div class="assets">
             
             <iframe width="322" height="197" src="http://www.youtube.com/embed/mkTMj0McIvc" 
                     frameborder="0" allowfullscreen></iframe>
@@ -20,13 +20,12 @@
                 <div class="desc">
                     <a href="#" class="title">Chevy cruise video</a>
                     <span class="date">2/23/2011</span>
-                    <span class="desc">"Checkout the new chevy.."</span>
+                    <span class="text">"Checkout the new chevy.."</span>
                 </div>
                 <div class="next">
-                
                     <a href="#"><span>next</span></a>
-                    
                 </div>
+                <div class="clear"></div>
             </div>
         </div>
     </div>

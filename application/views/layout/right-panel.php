@@ -1,21 +1,21 @@
 <div id="right-panel-holder">
     <?php $urls = array('/dashboard' => 1, '' => 1, '/' => 1); ?>
-<?php if( !isset($urls[Kohana_Request::detect_uri()])): ?>
-    <?php echo view::factory('_partials/box/ogsi_mini'); ?>
-<?php endif; ?>
+    <?php if (!isset($urls[Kohana_Request::detect_uri()])): ?>
+        <?php echo view::factory('_partials/box/ogsi_mini'); ?>
+    <?php endif; ?>
     <?php echo view::factory('_partials/box/recent_activity'); ?>
 
     <div class="light-box">
         <div class="light-box-header">
-            <?php echo __('Resource & Help'); ?>
-            <?php echo html::anchor(
-                '#', 
-                html::image('images/icons/help.png', array('alt' => '')),
-                array(
-                    'class' => 'tooltip',
-                    'title' => __('some tip'),
+            <?php echo __('resource & help'); ?>
+            <?php
+            echo html::anchor(
+                    '#', html::image('images/icons/help.png', array('alt' => '')), array(
+                'class' => 'tooltip',
+                'title' => __('some tip'),
                     )
-                ); ?>
+            );
+            ?>
         </div>
         <div class="light-box-content">
             <table>
@@ -58,5 +58,5 @@
             </table>
         </div>
     </div>
-    
+
 </div>
