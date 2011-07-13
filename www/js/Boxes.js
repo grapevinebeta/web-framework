@@ -1038,8 +1038,11 @@ var BC_Inbox = BoxController.extend({
      */
     expandedPopulate: function(e, data) 
     {
+        var cloned = $(e.target).clone(false).html();
+        
+        
         // reset all handlers to prevent event double
-        e.target.innerHTML = $(e.target).clone(false).html();
+        e.target.innerHTML = cloned;
         
         data.trContext = $(e.target);
         
@@ -1838,8 +1841,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
             }
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
-            checkbox.attr('value', this.data.socials[i].id);
+            checkbox.attr('value', currentId);
             tr.find('td.col-checkbox').html(checkbox);
+            
             
             table.children('tbody').append(tr); // append two elements
             table.children('tbody').append(trContent); // append two elements

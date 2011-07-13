@@ -547,6 +547,16 @@ input[type=submit] {
     #box-recent-reviews .details {
     }
 
+        .innerForm table {
+            vertical-align: top;
+        }
+
+
+        .innerForm textarea {
+            width:99%;
+            height:100px;
+        }
+    
         #box-recent-reviews .details td {
             padding: 0;
         }

@@ -5,8 +5,8 @@
                 <div class="innerForm">
                     <h2 class="review-details-title"></h2>
                     <p class="review-details-review"></p>
-                    <form action="" method="post">
-                        <table class="wide" style="vertical-align: top;">
+                    <form action="/" method="post">
+                        <table class="wide">
                             <tr>
                                 <td class="a-right">
                                     <?php echo __('Categorize'); ?>:
@@ -29,7 +29,7 @@
                                     </span>
                                 </td>
                                 <td colspan="2">
-                                    <textarea type="text" name="notes" style="width: 99%; height: 75px;"></textarea>
+                                    <textarea name="notes" rows="9" cols="9"></textarea>
                                 </td>
                             </tr>
                         </table>
@@ -70,8 +70,8 @@
             </div>
             <div class="clear"></div>
             <p class="recentReviewDetailsButtons a-right">
-                <a class="actions-reply reply-to-review-button" href=""></a>
-                <a class="save-button" href=""></a>
+                <a class="actions-reply reply-to-review-button" href=#""></a>
+                <a class="save-button" href="#"></a>
             </p>
         </div>
     </td>
