@@ -173,3 +173,11 @@ table.no-outer-border tr:last-child td {
     border-bottom-width: 0px;
 }
 
+tr.collapsed {
+        cursor: pointer;
+        overflow: hidden;
+}
+
+tr.expanded{
+        overflow: hidden;
+}

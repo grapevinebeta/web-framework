@@ -25,7 +25,11 @@
                         <td class="col-status"></td>
                         <td class="col-rating"></td>
                         <td class="col-submitted a-center" width="10%"></td>
-                        <td class="col-title" width="72%"><div class="wrapper"><div class="in"></div></div></td>
+                        <td class="col-title" width="72%">
+                            <div class="wrapper">
+                                <div class="in"></div>
+                            </div>
+                        </td>
                         <td class="col-site a-right"></td>
                     </tr>
                     <?php echo View::factory('_partials/box/generic-row'); ?>

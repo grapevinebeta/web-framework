@@ -470,9 +470,6 @@ input[type=submit] {
 /* Review Inbox */
 #box-recent-reviews {}
 
-    #box-recent-reviews tr.collapsed {
-        cursor: pointer;
-    }
 
     #box-recent-reviews .reviewRating {
         background-image: url(../images/icons/review-stars.png);
@@ -480,6 +477,7 @@ input[type=submit] {
         background-repeat: no-repeat;
         height: 18px;
         width: 110px;
+        position: relative;
     }
     
     #box-recent-reviews .reviewRating span, #box-recent-reviews .reviewStatus span {
@@ -878,10 +876,6 @@ input[type=submit] {
         background-position: 0 -297px;
     }
     
-    /* Styling of the expanded review details */
-    tr.expanded {
-        
-    }
 
     .box .col-2 {
         
@@ -990,10 +984,6 @@ input[type=submit] {
 
 /* Review Inbox */
 #box-competition-review-inbox {}
-
-    #box-competition-review-inbox tr.collapsed {
-        cursor: pointer;
-    }
 
     #box-competition-review-inbox .reviewRating {
         background-image: url(../images/icons/review-stars.png);
