@@ -6,24 +6,21 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
-USE `mydb`;
-
 -- -----------------------------------------------------
--- Table `mydb`.`company`
+-- Table `company`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`company` (
-  `company_id` INT NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `company` (
+  `id` INT NOT NULL ,
   `name` VARCHAR(150) NULL ,
-  PRIMARY KEY (`company_id`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`locations`
+-- Table `locations`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`locations` (
-  `location_id` INT(11) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `locations` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `location_name` VARCHAR(50) NULL ,
   `address1` VARCHAR(45) NULL ,
   `address2` VARCHAR(45) NULL ,
@@ -37,36 +34,26 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`locations` (
   `owner_phone` VARCHAR(20) NULL ,
   `owner_ext` VARCHAR(45) NULL ,
   `billing_type` ENUM('charge','invoice') NULL ,
-  PRIMARY KEY (`location_id`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`company_locations`
+-- Table `company_locations`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`company_locations` (
-  `location_id` INT(11) NOT NULL ,
-  `company_id` INT(11) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `company_locations` (
+  `location_id` INT NOT NULL ,
+  `company_id` INT NOT NULL ,
   PRIMARY KEY (`location_id`, `company_id`) ,
   INDEX `fk_locations_company` (`company_id` ASC) ,
-  INDEX `fk_locations` (`location_id` ASC) ,
-  CONSTRAINT `fk_locations_company`
-    FOREIGN KEY (`company_id` )
-    REFERENCES `mydb`.`company` (`company_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_locations`
-    FOREIGN KEY (`location_id` )
-    REFERENCES `mydb`.`locations` (`location_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_locations` (`location_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`roles`
+-- Table `roles`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`roles` (
+CREATE  TABLE IF NOT EXISTS `roles` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(32) NULL ,
   `description` VARCHAR(255) NULL ,
@@ -76,9 +63,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`users`
+-- Table `users`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`users` (
+CREATE  TABLE IF NOT EXISTS `users` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `logins` INT(10) NOT NULL DEFAULT 0 ,
   `last_login` INT(10) UNSIGNED NULL ,
@@ -95,33 +82,23 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`roles_users`
+-- Table `roles_users`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`roles_users` (
-  `user_id` INT(10) UNSIGNED NOT NULL ,
-  `role_id` INT(10) UNSIGNED NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `roles_users` (
+  `user_id` INT UNSIGNED NOT NULL ,
+  `role_id` INT UNSIGNED NOT NULL ,
   PRIMARY KEY (`user_id`, `role_id`) ,
   INDEX `fk_role_id` (`role_id` ASC) ,
-  INDEX `fk_user_id` (`user_id` ASC) ,
-  CONSTRAINT `fk_role_id`
-    FOREIGN KEY (`role_id` )
-    REFERENCES `mydb`.`roles` (`id` )
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_user_id`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `mydb`.`users` (`id` )
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+  INDEX `fk_user_id` (`user_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`user_tokens`
+-- Table `user_tokens`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`user_tokens` (
+CREATE  TABLE IF NOT EXISTS `user_tokens` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `user_id` INT(11) UNSIGNED NOT NULL ,
+  `user_id` INT UNSIGNED NOT NULL ,
   `user_agent` VARCHAR(40) NOT NULL ,
   `token` VARCHAR(40) NOT NULL ,
   `type` VARCHAR(100) NOT NULL ,
@@ -129,157 +106,94 @@ CREATE  TABLE IF NOT EXISTS `mydb`.`user_tokens` (
   `expires` INT(10) UNSIGNED NOT NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `uniq_token` (`token` ASC) ,
-  INDEX `fk_user_tokens` (`user_id` ASC) ,
-  CONSTRAINT `fk_user_tokens`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `mydb`.`users` (`id` )
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+  INDEX `fk_user_tokens` (`user_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`company_users`
+-- Table `company_users`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`company_users` (
+CREATE  TABLE IF NOT EXISTS `company_users` (
   `company_id` INT NOT NULL ,
   `user_id` INT NOT NULL ,
   PRIMARY KEY (`company_id`, `user_id`) ,
   INDEX `fk_user` (`user_id` ASC) ,
-  INDEX `fk_comany` (`company_id` ASC) ,
-  CONSTRAINT `fk_user`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `mydb`.`users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_comany`
-    FOREIGN KEY (`company_id` )
-    REFERENCES `mydb`.`company` (`company_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_comany` (`company_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`location_users`
+-- Table `location_users`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`location_users` (
-  `location_id` INT(11) NOT NULL ,
-  `user_id` INT(11) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `location_users` (
+  `location_id` INT NOT NULL ,
+  `user_id` INT NOT NULL ,
   PRIMARY KEY (`location_id`, `user_id`) ,
   INDEX `fk_location_users_locations` (`location_id` ASC) ,
-  INDEX `fk_location_users_users` (`user_id` ASC) ,
-  CONSTRAINT `fk_location_users_locations`
-    FOREIGN KEY (`location_id` )
-    REFERENCES `mydb`.`locations` (`location_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_location_users_users`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `mydb`.`users` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_location_users_users` (`user_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`alerts`
+-- Table `alerts`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`alerts` (
-  `alert_id` INT(11) NOT NULL AUTO_INCREMENT ,
-  `location_id` INT(11) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `alerts` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `location_id` INT NOT NULL ,
   `type` VARCHAR(12) NOT NULL ,
   `criteria` TEXT NOT NULL COMMENT 'only typed text to work with custom keyword entries\n' ,
   `use_default` BOOLEAN NOT NULL ,
-  PRIMARY KEY (`alert_id`) ,
-  INDEX `fk_alerts_locations` (`location_id` ASC) ,
-  CONSTRAINT `fk_alerts_locations`
-    FOREIGN KEY (`location_id` )
-    REFERENCES `mydb`.`locations` (`location_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_alerts_locations` (`location_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`table1`
+-- Table `emails`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`table1` (
-)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mydb`.`emails`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`emails` (
-  `email_id` INT NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `emails` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(200) NULL ,
   `location_id` INT(11) NOT NULL ,
-  PRIMARY KEY (`email_id`, `location_id`) ,
-  INDEX `fk_emails_locations` (`location_id` ASC) ,
-  CONSTRAINT `fk_emails_locations`
-    FOREIGN KEY (`location_id` )
-    REFERENCES `mydb`.`locations` (`location_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`, `location_id`) ,
+  INDEX `fk_emails_locations` (`location_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`alert_emails`
+-- Table `alert_emails`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`alert_emails` (
-  `alert_id` INT(11) NOT NULL ,
+CREATE  TABLE IF NOT EXISTS `alert_emails` (
+  `alert_id` INT NOT NULL ,
   `emails_id` INT NOT NULL ,
   PRIMARY KEY (`alert_id`, `emails_id`) ,
   INDEX `fk_alert_emails_alerts` (`alert_id` ASC) ,
-  INDEX `fk_alert_emails_emails` (`emails_id` ASC) ,
-  CONSTRAINT `fk_alert_emails_alerts`
-    FOREIGN KEY (`alert_id` )
-    REFERENCES `mydb`.`alerts` (`alert_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_alert_emails_emails`
-    FOREIGN KEY (`emails_id` )
-    REFERENCES `mydb`.`emails` (`email_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_alert_emails_emails` (`emails_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`newsletters`
+-- Table `newsletters`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`newsletters` (
+CREATE  TABLE IF NOT EXISTS `newsletters` (
   `email_id` INT NOT NULL ,
-  `location_id` INT(11) NOT NULL ,
+  `location_id` INT NOT NULL ,
   PRIMARY KEY (`email_id`, `location_id`) ,
-  INDEX `fk_newsletters_emails` (`email_id` ASC, `location_id` ASC) ,
-  CONSTRAINT `fk_newsletters_emails`
-    FOREIGN KEY (`email_id` , `location_id` )
-    REFERENCES `mydb`.`emails` (`email_id` , `location_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_newsletters_emails` (`email_id` ASC, `location_id` ASC))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`location_settings`
+-- Table `location_settings`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `mydb`.`location_settings` (
-  `id` INT NOT NULL COMMENT 'competitor,newsletter,facebook_oauth_token,twitter_search,twitter_account,filter_search,gblog_search,youtube_search' ,
+CREATE  TABLE IF NOT EXISTS `location_settings` (
+  `id` INT NOT NULL AUTO_INCREMENT,
   `type` VARCHAR(45) NOT NULL COMMENT 'competitor,newsletter,facebook_oauth_token,twitter_search,twitter_account,filter_search,gblog_search,youtube_search' ,
   `value` VARCHAR(225) NULL ,
-  `location_id` INT(11) NOT NULL ,
+  `location_id` INT NOT NULL ,
   PRIMARY KEY (`id`, `location_id`) ,
   INDEX `fk_location_settings_locations` (`location_id` ASC) ,
-  INDEX `idx_setting_type` (`type` ASC) ,
-  CONSTRAINT `fk_location_settings_locations`
-    FOREIGN KEY (`location_id` )
-    REFERENCES `mydb`.`locations` (`location_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `idx_setting_type` (`type` ASC))
 ENGINE = InnoDB;
 
 
