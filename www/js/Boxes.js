@@ -247,10 +247,25 @@ var BoxController = Class.extend({
     },
     
     /**
-     * Will handle Ajax response of the loadData
+     * this function work as cache create function for every instance
+     * and create it only one time at first call
+     *
      */
-    loadDataCallback: function () {
-        this.boxController.afterLoadData();
+    loadDataCallback: function(boxController) {
+        
+        if(!boxController.hasOwnProperty('loadCallback')) {
+            
+            boxController.loadCallback = function (data, textStatus, jqXHR) {
+        
+                boxController.data = data;
+                boxController.processData();
+                boxController.afterLoadData();
+    
+            };
+            
+        }
+        
+        return boxController.loadCallback;
     },
     
     /**
@@ -258,16 +273,15 @@ var BoxController = Class.extend({
      */
     loadData: function () {
         this.beforeLoadData();
-        if (!this.loadDataCallback.boxController) {
-            this.loadDataCallback.boxController = this;
-        }
+        
         this.dataProvider.setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
-        .setDateInterval(null)
-            
-        .setCallback(this.loadDataCallback);
+        .setDateInterval(null)   
+        .setCallback(this.loadDataCallback(this));
+        
         this.data = this.dataProvider.fetch();
+        
         return this;
     },
     
@@ -420,38 +434,33 @@ var BC_RecentActivity = BoxController.extend({
     loadData: function () {
         this.beforeLoadData();
         
-        if (!this.loadDataCallback.boxController) {
-            this.loadDataCallback.boxController = this;
-        }
-        
         this.data = this.dataProvider
         .setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(null)
         .setLimit(this.limit)
-        .setCallback(this.loadDataCallback)
+        .setCallback(this.loadDataCallback(this))
         .fetch();
         
         return this;
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    processData: function() {
+      
+        var content = this.getContentDom().find('.data-grid-holder'),
+        template = content.find('.row:first'),
+        row,
+        socials = this.data.socials;
         
-        var content = boxController.getContentDom().find('.data-grid-holder');
-        var template = content.find('.row:first');
         content.find('.row').remove();
-        var row;
-        var social = data.socials;
-        for (var i = 0; i < social.length; i++) {
+        for (var i = 0; i < socials.length; i++) {
 
-            row = boxController.prepareMessage(template, social[i]);   
+            row = this.prepareMessage(template, socials[i]);   
             content.append(row); // append two elements
             
         }
-        boxController.afterLoadData();
+      
     },
     
     construct: function () {}
@@ -910,41 +919,41 @@ var BC_Inbox = BoxController.extend({
         alert('You must implement it by yourself');
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    processData: function() {
+      
+        this.loadInboxData();
         
-        boxController.loadInboxData();
+        var filters = this.data.filters;
         
-        if(data.filters) 
+        if(filters) 
         {
 
-            for(var activeFilter in data.filters) 
+            for(var activeFilter in filters) 
             {
-                boxController.loadFilters(activeFilter); 
+                this.loadFilters(activeFilter); 
             }
         }
-
-        boxController.initPager().afterLoadData();
-
+        
+        this.initPager();
+      
     },
-    
+
     /**
      * Load Data by Ajax
      */
     loadData: function () {
         this.beforeLoadData();
-        if (!this.loadDataCallback.boxController) {
-            this.loadDataCallback.boxController = this;
-        }
+
         this.dataProvider.setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(null)
         .setPage(this.currentPage)
         .setLimit(this.limit)
-        .setCallback(this.loadDataCallback);
+        .setCallback(this.loadDataCallback(this));
+        
         this.data = this.dataProvider.fetch();
+        
         return this;
     },
     
@@ -1076,24 +1085,9 @@ var BC_CompetitionScore = BoxController.extend({
         
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    filterRowsCallback:  function(table) {
         
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var tr = null;
-        
-        var row = table.find('thead tr');
-        var tbody = table.find('tbody');
-        var template = row.find('th');
-        var ogsi = data.ogsi;
-        
-        var score = table.find('tbody tr th:nth-child(2)');
-        
-        var scoreTemplate = score.clone();
-        score.remove();
-
-        var callback = boxController.genericCallbackEventWrapper(function(e, data) {
+        return this.genericCallbackEventWrapper(function(e, data) {
             
             e.preventDefault();
             
@@ -1105,22 +1099,35 @@ var BC_CompetitionScore = BoxController.extend({
             $(e.target).toggleClass('active');
             
   
-        }, {table: table});
+        }, {
+            table: table
+        });
         
-        boxController.getBoxDom().delegate('a[filter]', 'click', callback);
+    },
+    
+    processData: function() {
+      
+        var table = this.getContentDom().find('.data-grid-holder > table'),
+        row = table.find('thead tr'),
+        tbody = table.find('tbody'),
+        template = row.find('th'),
+        ogsi = this.data.ogsi,
+        score = table.find('tbody tr th:nth-child(2)'),
+        scoreTemplate = score.clone(),
+        i=0;
+        
+        score.remove();
+        
+        this.getBoxDom().delegate('a[filter]', 'click', this.filterRowsCallback(table));
 
-        boxController.populateColumns(ogsi, template, row);
+        this.populateColumns(ogsi, template, row);
         
-        
-        var i =0;
         for(var competitor in ogsi) {
             
-            boxController.addColumn(ogsi[competitor], scoreTemplate, tbody, (i++ % 2));
+            this.addColumn(ogsi[competitor], scoreTemplate, tbody, (i++ % 2));
             
         }
-
-        boxController.afterLoadData();
-        
+      
     },
     
     construct: function () {}
@@ -1141,35 +1148,37 @@ var BC_Ogsi = BoxController.extend({
      */
     endpoint: 'ogsi',
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        var holder = boxController.getContentDom();
-        if (data.ogsi) {
-            holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
-            holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+    processData: function() {
+      
+        var holder = this.getContentDom(),
+        ogsi = this.data.ogsi;
+        
+        
+        if (ogsi) {
+            holder.find('.ogsi-score-value').text(ogsi.ogsi.value);
+            holder.find('.ogsi-score-change .change-value').text(ogsi.ogsi.change + '%');
             holder.find('.ogsi-score-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.ogsi.change >= 0) ? 'positive': 'negative');
                 
-            holder.find('.ogsi-rating-value').text(data.ogsi.rating.value);
-            holder.find('.ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('.ogsi-rating-value').text(ogsi.rating.value);
+            holder.find('.ogsi-rating-change .change-value').text(ogsi.rating.change + '%');
             holder.find('.ogsi-rating-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('.ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+            .addClass((ogsi.rating.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.value / 5) * 100 + '%');
 
-            holder.find('.ogsi-reviews-value').text(data.ogsi.reviews.value);
-            holder.find('.ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('.ogsi-reviews-value').text(ogsi.reviews.value);
+            holder.find('.ogsi-reviews-change .change-value').text(ogsi.reviews.change + '%');
             holder.find('.ogsi-reviews-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.reviews.change >= 0) ? 'positive': 'negative');
             holder.show();
             
-            var distribution = data.ogsi.distribution;
+            var distribution = ogsi.distribution;
             var barHolder = holder.find('.bar-holder');
             
             var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
@@ -1224,57 +1233,56 @@ var BC_Ogsi = BoxController.extend({
             
             
         }
-        boxController.afterLoadData();
+      
     },
+    
     
     construct: function () {}
     
 });
 
-var BC_OgsiCurrent = BC_Ogsi.extend({
+var BC_OgsiCurrent = BoxController.extend({
     
     
     boxId: 'box-ogsi-current',
+    endpoint: 'ogsi',
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        var holder = boxController.getContentDom();
-        if (data.ogsi) {
+    processData: function() {
+
+        var holder = this.getContentDom(),
+        ogsi = this.data.ogsi,
+        distribution = ogsi.distribution,
+        barHolder = holder.find('.bar-holder'),
+        maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative),
+        ratio;
+        
+        if (ogsi) {
             
+            holder.find('.days').text(getPeriodInDays(this.range['period']));
             
-            
-            holder.find('.days').text(getPeriodInDays(boxController.range['period']));
-            
-            holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
-            holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+            holder.find('.ogsi-score-value').text(ogsi.ogsi.value);
+            holder.find('.ogsi-score-change .change-value').text(ogsi.ogsi.change + '%');
             holder.find('.ogsi-score-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.ogsi.change >= 0) ? 'positive': 'negative');
                 
-            holder.find('.ogsi-rating-value').text(data.ogsi.rating.value);
-            holder.find('.ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('.ogsi-rating-value').text(ogsi.rating.value);
+            holder.find('.ogsi-rating-change .change-value').text(ogsi.rating.change + '%');
             holder.find('.ogsi-rating-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('.ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+            .addClass((ogsi.rating.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.value / 5) * 100 + '%');
 
-            holder.find('.ogsi-reviews-value').text(data.ogsi.reviews.value);
-            holder.find('.ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('.ogsi-reviews-value').text(ogsi.reviews.value);
+            holder.find('.ogsi-reviews-change .change-value').text(ogsi.reviews.change + '%');
             holder.find('.ogsi-reviews-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.reviews.change >= 0) ? 'positive': 'negative');
             holder.show();
             
-            var distribution = data.ogsi.distribution;
-            var barHolder = holder.find('.bar-holder');
-            
-            var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
-            
-            var ratio;
             if (distribution.total) {
                 barHolder.show();
                 var bar = barHolder.find('.bar-negative');
@@ -1288,6 +1296,7 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
                 }
                 bar = barHolder.find('.bar-neutral');
                 bar.children('.bar-value').text('');
+                
                 if (distribution.neutral > 0) {
                     
                     ratio = (distribution.neutral / maxValue) * 100;
@@ -1297,12 +1306,17 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
                 
                     bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
                     bar.show();
+                    
                 } else if (distribution.positive > 0) {
+                    
                     bar.css('width', ((distribution.positive)/distribution.total)*100+'%');
                     bar.show();
+                    
                 } else {
                     bar.hide();
                 }
+                
+                
                 bar = barHolder.find('.bar-positive');
                 bar.children('.bar-value').text('');
                 if (distribution.positive > 0) {
@@ -1323,8 +1337,8 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
             }
             
             
-        }
-        boxController.afterLoadData();
+        }  
+        
     },
     
     construct: function() {}
@@ -1402,18 +1416,18 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        boxController.graphData = data.tags;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
+    processData: function() {
+        
+        var tags = this.data.tags;
+        
+        var table = this.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.tags.length; i++) {
+        for (var i = 0; i < tags.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.tags[i]) {
-                var value = boxController.data.tags[i][n];
+            for (n in tags[i]) {
+                var value = tags[i][n];
                 if (n == 'percent') {
                     value = value + '%';
                 } 
@@ -1421,7 +1435,7 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             }
             table.find('tbody').append(tr);
         }
-        boxController.afterLoadData();
+        
     },
     
     construct: function () {}
@@ -1525,20 +1539,23 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        boxController.graphData = data.sites;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
-        var trFooter = table.find('tfoot tr');
+    processData: function() {
+        
+        var table = this.getContentDom().find('.data-grid-holder > table'),
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null,
+        trFooter = table.find('tfoot tr'),
+        sites = this.data.sites;
+        
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.sites.length; i++) {
+        
+        
+        
+        for (var i = 0; i < sites.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.sites[i]) {
-                var value = boxController.data.sites[i][n];
+            for (n in sites[i]) {
+                var value = sites[i][n];
                 tr.find('td.col-' + n).text(value);
                 if (n != 'site') {
                     var currentTotalValue = 0;
@@ -1552,13 +1569,14 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             }
             table.find('tbody').append(tr);
         }
+        
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
-            boxController.data.sites.length
-            );
-        boxController.afterLoadData();
+            sites.length
+            );  
+        
     },
-    
+       
     construct: function () {}
     
 });
@@ -1834,10 +1852,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
 });
 
 
-/**
- * @TODO create base class for linar graph controllers
- */
-var BC_SocialActivity = BC_LinearGraphBoxController.extend({
+var BC_SocialActivity = BC_GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1925,22 +1940,22 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
 
-    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
+    processData: function() {
         
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
-        var trFooter = table.find('tfoot tr');
+        var networks = this.data.networks,
+        table = this.getContentDom().find('.data-grid-holder > table'),
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null;
+        
+        
+        trFooter = table.find('tfoot tr');
         trFooter.find('th.col-value').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.networks.length; i++) {
+        
+        for (var i = 0; i < networks.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.networks[i]) {
-                var value = boxController.data.networks[i][n];
+            for (n in networks[i]) {
+                var value = networks[i][n];
                 
                 tr.find('td.col-' + n).text(value);
                 if (n != 'network') {
@@ -1964,12 +1979,9 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
         }
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
-            boxController.data.networks.length
+            networks.length
             );
-                
-        boxController.afterLoadData();
         
-
     },
    
     construct: function() {}
@@ -2065,21 +2077,22 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
+    processData: function() {
         
-        var trFooter = table.find('tfoot tr');
+        var table = this.getContentDom().find('.data-grid-holder > table'),
+        networks = this.data.networks,
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null,
+        trFooter = table.find('tfoot tr');
+        
+        
         trFooter.find('.col-value, .col-total').text('0');
         
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.networks.length; i++) {
+        for (var i = 0; i < networks.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.networks[i]) {
-                var value = boxController.data.networks[i][n];
+            for (n in networks[i]) {
+                var value = networks[i][n];
                 if (n == 'change') {
                     value = value + '%';
                 }
@@ -2099,7 +2112,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             }
             table.find('tbody').append(tr);
         }
-        boxController.afterLoadData();
+        
     },
     
     construct: function () {}
@@ -2321,15 +2334,6 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
       
     },
    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        
-        boxController.afterLoadData();
-        
-
-    },
-   
     construct: function() {}
    
 });
@@ -2414,18 +2418,17 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
  
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    processData: function() {
         
-        var distribution = data.distribution;
         
-        boxController.graphData = distribution;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
+        var distribution = this.data.distribution,        
+        table = this.getContentDom().find('.data-grid-holder > table'),        
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null,
+        trFooter = table.find('tfoot tr');
         
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
-        var trFooter = table.find('tfoot tr');
+        this.graphData = distribution;
+        
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
         for (var i = 0; i < distribution.length; i++) {
@@ -2450,10 +2453,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
             parseFloat(trFooter.find('th.col-average').text()) / 
             distribution.length
             );
-                
-        boxController.afterLoadData();
         
-
     },
  
     construct: function() {}

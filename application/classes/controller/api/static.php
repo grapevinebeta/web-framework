@@ -35,6 +35,8 @@ class Controller_Api_Static extends Controller {
 //        if ($this->request->method() != 'POST') {
 //            throw new HTTP_Exception_405();
 //        }
+        
+        
         $range = $this->request->post('range');
         if (!empty($range)) {
             Session::instance()->set(
@@ -54,6 +56,8 @@ class Controller_Api_Static extends Controller {
     }
 
     public function action_index() {
+        
+
         
     }
 

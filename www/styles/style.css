@@ -1289,7 +1289,8 @@ input[type=submit] {
         background-position: left top;
         background-repeat: no-repeat;
         height: 106px;
-        padding-left: 10px;
+        padding-left: 0px;
+        padding-top: 5px;
     }
     
     .assets .controls {
