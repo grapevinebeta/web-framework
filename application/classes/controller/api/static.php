@@ -292,29 +292,32 @@ class Controller_Api_Static extends Controller {
                 'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
 
             $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
-                'Blogger', 'Rss', 'Delicious');
+            'Blogger', 'Rss','Stumbleupon','Reddit', 'Delicious');
 
-            $network = $competition[rand(0, 6)];
+            $key = $id % 10;
+            $keyT = $id % 6;
+            $network = $competition[$key];
 
-            $review = array(
+            $social = array(
+                'network' => $network,
                 'status' => $status[rand(0, 2)],
                 'rating' => rand(0, 5), // [decimal:optional] - review overall rating
                 'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[rand(0, 6)],
+                'excerpt' => $excerpts[$keyT],
                 'site' => $network,
                 'id' => $id,
-                'review' => $excerpts[rand(0, 6)],
-                'category' => "important",
+                'review' => $excerpts[$keyT],
+                'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
-                'title' => $excerpts[rand(0, 6)],
-                'link' => $autor[rand(0, 6)],
-                'autor' => $autor[rand(0, 6)]
+                'title' => $excerpts[$keyT],
+                'link' => $autor[$keyT],
+                'autor' => $autor[$keyT]
             );
 
 
             $this->apiResponse = array(
-                'social' => $review,
+                'social' => $social,
             );
 
             return;
@@ -401,7 +404,7 @@ class Controller_Api_Static extends Controller {
             'Google', 'CitySearch', 'MyDealerRaport', 'Judys Book');
 
         $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
-            'Blogger', 'Rss', 'Delicious');
+            'Blogger', 'Rss','Stumbleupon','Reddit', 'Delicious');
 
         $socials = array();
 
@@ -409,23 +412,26 @@ class Controller_Api_Static extends Controller {
         $limit = $limit ? $limit : 10;
         
         for ($i = 0; $i < $limit; $i++) {
-            $network = $competition[rand(0, 6)];
+            $id = rand(1, 1000000); 
+            $key = $id % 10;
+            $keyT = $id % 6;
+            $network = $competition[$key];
 
             $socials[] = array(
                 'network' => $network,
                 'status' => $status[rand(0, 2)],
                 'rating' => rand(0, 5), // [decimal:optional] - review overall rating
                 'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[rand(0, 6)],
+                'excerpt' => $excerpts[$keyT],
                 'site' => $network,
-                'id' => rand(1, 1000000),
-                'review' => $excerpts[rand(0, 6)],
+                'id' => $id,
+                'review' => $excerpts[$keyT],
                 'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
-                'title' => $excerpts[rand(0, 6)],
-                'link' => $autor[rand(0, 6)],
-                'autor' => $autor[rand(0, 6)]
+                'title' => $excerpts[$keyT],
+                'link' => $autor[$keyT],
+                'autor' => $autor[$keyT]
             );
         }
 
