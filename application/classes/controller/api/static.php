@@ -51,7 +51,7 @@ class Controller_Api_Static extends Controller {
 
     public function after() {
         $this->response->headers('Content-Type', 'application/json');
-        $this->response->body(json_encode(false));
+        $this->response->body(json_encode($this->apiResponse));
         parent::after();
     }
 
