@@ -3,13 +3,12 @@
     echo View::factory(
             '_partials/box/header', array(
         'caption' => __('grapvine scoreboard'),
-                'buttons' => array('move'),
             )
     );
     ?>
     <div class="box-content">
         <div style="display: none;">
-            <table class="wide a-center v-top" style="margin: 10px 0;">
+            <table class="wide a-center v-top">
                 <tr>
                     <td style="width: 20%">
                         <h3 class="headline-arrow">
@@ -55,4 +54,5 @@
             </table>
         </div>
     </div>
+    <?php echo view::factory('_partials/box/ogsi_current'); ?>
 </div>

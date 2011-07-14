@@ -6,10 +6,6 @@
     </div>
 
     <div class="box-container active">
-        <?php echo view::factory('_partials/box/ogsi_current'); ?>
-    </div>
-
-    <div class="box-container active">
         <?php echo view::factory('_partials/box/reviews-inbox'); ?>
     </div>
 

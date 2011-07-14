@@ -1,7 +1,7 @@
-<div id="box-ogsi-current" class="box">
+<div id="box-ogsi-current">
     <div class="box-content">
         <div style="display: none;">
-            <table class="wide a-center v-top" style="margin: 10px 0;">
+            <table class="wide a-center v-center">
                 <tr>
                     <td style="width: 20%">
                         <h3 class="headline-arrow current">

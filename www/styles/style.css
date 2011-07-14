@@ -587,7 +587,7 @@ input[type=submit] {
                 text-align: right;
             }
 
-#box-ogsi {}
+#box-ogsi { background: url(/images/scoreboard-bg.png) bottom left repeat-x;}
 
     .ogsi-score-bg-right {
         background-image: url(../images/ogsi-bg.png);
@@ -613,7 +613,6 @@ input[type=submit] {
         padding: 5px 0px 0px;
         font-size: 20px;
         text-align: center;
-        color: #F9AA21;
     }
     .ogsi-reviews-reviews {
         padding: 5px 0px 0px;
