@@ -2533,6 +2533,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
+        tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
 

@@ -19,7 +19,7 @@
                 <a href="#"><span>prev</span></a>
                 </div>
                 <div class="desc">
-                    <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" class="title">Chevy cruise video</a>
+                    <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" class="title" title="Chevy cruise video">Chevy cruise video</a>
                     <span class="date">2/23/2011</span>
                     <span class="text">"Checkout the new chevy.."</span>
                 </div>
