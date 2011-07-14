@@ -641,24 +641,18 @@ var BC_GraphBoxController = BoxController.extend({
         this.graphData = null;
         this.getGraphHolder().append(this.getLoaderHtml());
     },
-
-    /**
-     * Will handle Ajax response of the loadGraphData
-     */
-    loadGraphDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        
-        boxController.graphData = data;
-        boxController.afterLoadGraphData();
+    
+    processData: function() {
+      
+      this.graphData = this.data;
+      this.afterLoadGraphData();
+      
     },
     
     loadGraphData: function() {
         this.beforeLoadGraphData();
-
-        var callback = this.loadGraphDataCallback.clone();
         
         this.graphData = null;
-        callback.boxController = this;
         
         
         this.graphData = this.dataProvider
@@ -666,7 +660,7 @@ var BC_GraphBoxController = BoxController.extend({
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(this.computeDateInterval())
-        .setCallback(callback)
+        .setCallback(this.loadDataCallback(this))
         .fetch();
         return this;
     },
@@ -1484,6 +1478,7 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
     processData: function() {
         
         var tags = this.data.tags;
+        this.graphData = tags;
         
         var table = this.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
@@ -1611,6 +1606,8 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
         tr = null,
         trFooter = table.find('tfoot tr'),
         sites = this.data.sites;
+        
+        this.graphData = sites;
         
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
@@ -1986,9 +1983,9 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
         
 
         
-        for (var i = 0; i < this.graphData.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             
-            var site = this.graphData.networks[i];
+            var site = this.graphData[i];
             
             data.push(site.value);
             options.xAxis.categories.push(site.network);
@@ -2012,6 +2009,7 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
         trTemplate = table.find('tbody tr:first').clone(),
         tr = null;
         
+        this.graphData = networks;
         
         trFooter = table.find('tfoot tr');
         trFooter.find('th.col-value').text('0');
@@ -2123,9 +2121,9 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         
 
         
-        for (var i = 0; i < this.graphData.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             
-            var site = this.graphData.networks[i];
+            var site = this.graphData[i];
             
             data.push(site.value);
             options.xAxis.categories.push(site.network);
@@ -2150,7 +2148,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         tr = null,
         trFooter = table.find('tfoot tr');
         
-        
+        this.graphData = networks;
         trFooter.find('.col-value, .col-total').text('0');
         
         table.find('tbody tr').remove();
@@ -2223,7 +2221,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
                 case 'rating':
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
                     col.html(ratingStars);
                     break;
                 default:
@@ -2251,6 +2249,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
+        tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
 

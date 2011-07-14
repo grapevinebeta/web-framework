@@ -480,7 +480,7 @@ input[type=submit] {
         position: relative;
     }
     
-    #box-recent-reviews .reviewRating span, #box-recent-reviews .reviewStatus span {
+    .reviewRating span, .reviewStatus span  {
         display:none;
     }
 

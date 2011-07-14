@@ -534,22 +534,26 @@ class Controller_Api_Static extends Controller {
             $competition = array('Google', 'Twitter', 'YouTube', 'Facebook', 'Flickr',
                 'Blogger', 'Rss', 'Delicious');
 
-            $network = $competition[rand(0, 6)];
+            
+            $key = $id % 10;
+            $keyT = $id % 6;
+            $network = $competition[$keyT];
 
             $review = array(
+                'network' => $network,
                 'status' => $status[rand(0, 2)],
                 'rating' => rand(0, 5), // [decimal:optional] - review overall rating
                 'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[rand(0, 6)],
+                'excerpt' => $excerpts[$keyT],
                 'site' => $network,
                 'id' => $id,
-                'review' => $excerpts[rand(0, 6)],
+                'review' => $excerpts[$keyT],
                 'category' => "important",
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
-                'title' => $excerpts[rand(0, 6)],
-                'link' => $autor[rand(0, 6)],
-                'autor' => $autor[rand(0, 6)]
+                'title' => $excerpts[$keyT],
+                'link' => $autor[$keyT],
+                'autor' => $autor[$keyT]
             );
 
 
@@ -818,21 +822,27 @@ class Controller_Api_Static extends Controller {
 
         for ($i = 0; $i < 10; $i++) {
 
+            $id = rand(1, 1000000); 
+            $key = $id % 10;
+            $keyT = $id % 6;
+            $network = $competition[$keyT];
+            
             $reviews[] = array(
-                'competition' => $competition[rand(0, 6)],
+                'network' => $network,
+                'competition' => $competition[$keyT],
                 'status' => $status[rand(0, 2)],
                 'rating' => rand(0, 5), // [decimal:optional] - review overall rating
                 'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[rand(0, 6)],
-                'site' => $autor[rand(0, 6)],
-                'id' => rand(1, 1000000),
-                'review' => $excerpts[rand(0, 6)],
+                'excerpt' => $excerpts[$keyT],
+                'site' => $autor[$keyT],
+                'id' => $id,
+                'review' => $excerpts[$keyT],
                 'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
-                'title' => $excerpts[rand(0, 7)],
-                'link' => $autor[rand(0, 6)],
-                'author' => $autor[rand(0, 6)]
+                'title' => $excerpts[$keyT],
+                'link' => $autor[$keyT],
+                'author' => $autor[$keyT]
             );
         }
 
