@@ -1180,13 +1180,12 @@ var BC_CompetitionScore = BoxController.extend({
         else if(this.cachedTable) {
             
             holder.find('table').remove();
-            
             table = this.cachedTable.clone();
+            holder.append(table);
             
             
             this.getBoxDom().undelegate('a')
-            .delegate('a[filter]', 'click', this.filterRowsCallback(table))
-            .find('a[filter]').addClass('active');
+            .delegate('a[filter]', 'click', this.filterRowsCallback(table));
             
         }
         
