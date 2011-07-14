@@ -214,7 +214,7 @@ var BoxController = Class.extend({
     },
     
     hideLoader: function () {
-        this.getContentDom().find('.ajax-loader').remove();
+        this.getBoxDom().find('.ajax-loader').remove();
         return this;
     },
     
@@ -236,12 +236,68 @@ var BoxController = Class.extend({
         this.hideLoader();
         this.showContent();
         this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
-        
-        if(!this.getContentDom().find('.data-grid-holder table tbody tr, .data-grid-holder .row').length) {
-            this.getContentDom().find('.data-grid-holder')
-            .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>');
-
+     
+        if(this.empty) {
+            
+            
+            var holder = this.getContentDom().find('div');
+            
+            
+            var div, wrapper, span;
+            if(holder.width() > 291) {
+            
+                wrapper = $('<div/>', {
+                    css: {
+                        margin: '20px',
+                        'text-align': 'center'
+                    
+                    }
+                });
+            
+            
+                div = $("<div/>", {
+                    css: {
+                        background: 'url(/images/icons/icons.png) 5px 0px',
+                        width: '291px',
+                        height: '283px',
+                        margin: 'auto auto',
+                        position: 'relative'
+                    }
+                        
+                });
+                
+                span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            
+            }
+            else
+            {
+               
+                wrapper = $('<div/>', {
+                    css: {
+                        margin: '5px',
+                        'text-align': 'center'
+                    
+                    }
+                })
+               
+                div = $('<div/>', {
+                        
+                });
+                
+                span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+                
+            }
+            
+                    
+            div.html(span);
+            wrapper.append(div);
+                        
+                    
+            holder.html(wrapper);
+            
+            
         }
+
         
         return this;
     },
@@ -258,8 +314,16 @@ var BoxController = Class.extend({
             boxController.loadCallback = function (data, textStatus, jqXHR) {
         
                 boxController.data = data;
-                boxController.processData();
-                boxController.afterLoadData();
+                
+                if(data) {
+                    boxController.processData();
+                    boxController.afterLoadData();
+                }
+                else {
+                    boxController.empty = true;
+                    
+                    boxController.afterLoadData();
+                }
     
             };
             
@@ -282,7 +346,7 @@ var BoxController = Class.extend({
         
         this.data = this.dataProvider.fetch();
         
-        return this;
+        return this.loadDataCallback;
     },
     
     setDataProvider: function (dataProvider) {
@@ -806,8 +870,9 @@ var BC_Inbox = BoxController.extend({
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
         
+        
         this.getFiltersDom().find('.box-filter')
-        .html($(this.getLoaderHtml()).children());
+        .html(this.getLoaderHtml());
     },
     
     
@@ -2587,8 +2652,6 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             table.children('tbody').append(trContent); // append two elements
             
         }
-        this.getContentDom().find('.ajax-loader').remove();
-        this.getContentDom().find('.data-grid-holder').show();
     },
     
     construct: function () {}
