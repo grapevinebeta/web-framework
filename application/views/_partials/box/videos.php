@@ -10,15 +10,16 @@
     <div class="box-content padding-5">
         <div class="assets">
             
-            <iframe width="322" height="197" src="http://www.youtube.com/embed/mkTMj0McIvc" 
-                    frameborder="0" allowfullscreen></iframe>
+            <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" class="thumb">
+                <img src="http://img.youtube.com/vi/mkTMj0McIvc/0.jpg" width="322" />
+            </a>
 	
             <div class="controls">
                 <div class="prev">
                 <a href="#"><span>prev</span></a>
                 </div>
                 <div class="desc">
-                    <a href="#" class="title">Chevy cruise video</a>
+                    <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" class="title">Chevy cruise video</a>
                     <span class="date">2/23/2011</span>
                     <span class="text">"Checkout the new chevy.."</span>
                 </div>
@@ -30,3 +31,12 @@
         </div>
     </div>
 </div>
+<script>
+
+    $(document).ready(function() {
+        
+        $(".thumb, .title").colorbox({iframe:true, innerWidth:425, innerHeight:344});
+        
+    });
+
+</script>

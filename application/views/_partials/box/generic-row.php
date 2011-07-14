@@ -41,7 +41,7 @@
                         (<?php echo __('After responding to a review check the completed box'); ?>)
                     </p>
                 </div>
-                <div class="actions-email v-padding-5">
+                <div class="actions-completed v-padding-5">
                     <a href="#" class="action action-completed">
                         <span class="mono-icon icon-checkbox"></span>
                         <?php echo __('Completed'); ?>

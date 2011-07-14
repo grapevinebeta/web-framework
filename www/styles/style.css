@@ -523,23 +523,23 @@ input[type=submit] {
         }
 
     #box-recent-reviews .reviewStatus {
-        background-image: url(../images/icons/review-status-icons.png);
+        background-image: url(../images/icons/icons.png);
         background-position: 0px -91px;
         background-repeat: no-repeat;
-        height: 25px;
-        width: 28px;
+        height: 24px;
+        width: 24px;
     }
 
         #box-recent-reviews .reviewStatus-closed {
-            background-position: 0px -31px;
+            background-position: -553px -103px;
         }
 
         #box-recent-reviews .reviewStatus-open {
-            background-position: 0px -91px;
+            background-position: -553px -12px;
         }
 
         #box-recent-reviews .reviewStatus-todo {
-            background-position: 0px 0px;
+            background-position: -553px -126px;
         }
 
         
@@ -1060,23 +1060,23 @@ input[type=submit] {
 
     #box-recent-reviews .recent-review-status-icon {
         display: inline-block;
-        width: 71px;
-        height: 65px;
+        width: 80px;
+        height: 80px;
         background-position: center center;
         background-repeat: no-repeat;
-        background-image: url(../images/icons/review-status-icons-big.png);
+        background-image: url(../images/icons/icons.png);
     }
     
     #box-recent-reviews .recent-review-status-icon.open {
-        background-position: center 0px;
+        background-position: -454px -12px;
     }
 
     #box-recent-reviews .recent-review-status-icon.closed {
-        background-position: center -260px;
+        background-position: -454px -337px;
     }
 
     #box-recent-reviews .recent-review-status-icon.todo {
-        background-position: center -130px;
+        background-position: -454px -418px;
     }
     
     .row {
