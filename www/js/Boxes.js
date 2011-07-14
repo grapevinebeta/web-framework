@@ -795,7 +795,7 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
                 type: 'spline'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: false
             },
             credits: {
                 enabled: false
@@ -823,11 +823,11 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
             },
             yAxis: {
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: false,
                     align: 'high'
                 },
                 min: 0,
-                max: this.maxValue + 0.0005
+                max: 5
             },
             
             series: this.series
@@ -1166,8 +1166,31 @@ var BC_CompetitionScore = BoxController.extend({
     
     processData: function() {
       
-        var table = this.getContentDom().find('.data-grid-holder > table'),
-        row = table.find('thead tr'),
+        var holder = this.getContentDom().find('.data-grid-holder');
+      
+        var table;
+        
+        if(!this.cachedTable) {
+            table = holder.find('table');
+            this.getBoxDom().delegate('a[filter]', 'click', this.filterRowsCallback(table));
+            
+            this.cachedTable = table.clone();
+
+        }
+        else if(this.cachedTable) {
+            
+            holder.find('table').remove();
+            
+            table = this.cachedTable.clone();
+            
+            
+            this.getBoxDom().undelegate('a')
+            .delegate('a[filter]', 'click', this.filterRowsCallback(table))
+            .find('a[filter]').addClass('active');
+            
+        }
+        
+        var row = table.find('thead tr'),
         tbody = table.find('tbody'),
         template = row.find('th'),
         ogsi = this.data.ogsi,
@@ -1177,7 +1200,6 @@ var BC_CompetitionScore = BoxController.extend({
         
         score.remove();
         
-        this.getBoxDom().delegate('a[filter]', 'click', this.filterRowsCallback(table));
 
         this.populateColumns(ogsi, template, row);
         
@@ -2422,9 +2444,6 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
                 renderTo: graphHolderId,
                 type: 'bar'
             },
-            title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
-            },
             xAxis: {
                 categories: [],
                 title: {
@@ -2432,11 +2451,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
                 }
             },
             yAxis: {
-                min: 0,
-                title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
-                    align: 'high'
-                }
+                min: 0
             },
             plotOptions: {
                 series: {

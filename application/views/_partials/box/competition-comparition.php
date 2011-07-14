@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('competition comparision'),
+            'caption' => __('competition comparison'),
             'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
