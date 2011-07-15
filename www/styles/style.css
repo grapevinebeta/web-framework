@@ -526,20 +526,20 @@ input[type=submit] {
         background-image: url(../images/icons/icons.png);
         background-position: 0px -91px;
         background-repeat: no-repeat;
-        height: 24px;
-        width: 24px;
+        height: 27px;
+        width: 27px;
     }
 
         #box-recent-reviews .reviewStatus-closed {
-            background-position: -553px -103px;
+            background-position: -553px -160px;
         }
 
         #box-recent-reviews .reviewStatus-open {
-            background-position: -553px -12px;
+            background-position: -553px -14px;
         }
 
         #box-recent-reviews .reviewStatus-todo {
-            background-position: -553px -126px;
+            background-position: -553px -193px;
         }
 
         
@@ -860,43 +860,43 @@ input[type=submit] {
     
     
     .network a.facebook {
-        background-position: -333px -11px;
+        background-position: -647px -16px;
     }
     
     .network a.flickr {
-        background-position: -333px -54px;
+        background-position: -647px -59px;
     }
 
     .network a.twitter {
-        background-position: -333px -98px;
+        background-position: -647px -103px;
     }
 
     .network a.google {
-        background-position: -333px -141px;
+        background-position: -647px -146px;
     }
 
     .network a.youtube {
-        background-position: -333px -185px;
+        background-position: -647px -190px;
     }
     
     .network a.reddit {
-        background-position: -333px -230px;
+        background-position: -647px -236px;
     }
     
     .network a.stumbleupon {
-        background-position: -333px -274px;
+        background-position: -647px -279px;
     }
 
     .network a.rss {
-        background-position: -333px -317px;
+        background-position: -647px -322px;
     }
 
     .network a.blogger {
-        background-position: -333px -360px;
+        background-position: -647px -365px;
     }
     
     .network a.delicious {
-        background-position: -333px -403px;
+        background-position: -647px -408px;
     }
     
     
@@ -907,43 +907,43 @@ input[type=submit] {
     }
     
     #box-social-media-inbox tr td.col-network a.facebook {
-        background-position: -287px -11px;
+        background-position: -602px -15px;
     }
     
     #box-social-media-inbox tr td.col-network a.flickr {
-        background-position: -287px -44px;
+        background-position: -602px -48px;
     }
 
     #box-social-media-inbox tr td.col-network a.twitter {
-        background-position: -287px -77px;
+        background-position: -602px -81px;
     }
 
     #box-social-media-inbox tr td.col-network a.google {
-        background-position: -287px -110px;
+        background-position: -602px -114px;
     }
 
     #box-social-media-inbox tr td.col-network a.youtube {
-        background-position: -287px -142px;
+        background-position: -602px -146px;
     }
     
     #box-social-media-inbox tr td.col-network a.reddit {
-        background-position: -287px -176px;
+        background-position: -602px -180px;
     }
     
     #box-social-media-inbox tr td.col-network a.stumbleupon {
-        background-position: -287px -208px;
+        background-position: -602px -212px;
     }
 
     #box-social-media-inbox tr td.col-network a.rss {
-        background-position: -287px -241px;
+        background-position: -602px -245px;
     }
 
     #box-social-media-inbox tr td.col-network a.blogger {
-        background-position: -287px -275px;
+        background-position: -602px -279px
     }
     
     #box-social-media-inbox tr td.col-network a.delicious {
-        background-position: -287px -307px;
+        background-position: -602px -311px;
     }
     
     

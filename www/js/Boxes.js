@@ -827,8 +827,10 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
                     align: 'high'
                 },
                 min: 0,
-                max: 5
+                max: this.maxValue + 1,
+                endOnTick: false
             },
+            exporting: {enabled: false},
             
             series: this.series
         }
@@ -882,19 +884,27 @@ var BC_Inbox = BoxController.extend({
             
             e.preventDefault();
             
+            var reload = false;
+            
             if($(this).hasClass('next')) {
                 
-                self.currentPage++;
+                if(self.currentPage < self.totalPages) {
+                    self.currentPage++;
+                    reload = true;
+                }
+                    
                 
             }
             if($(this).hasClass('prev')) {
                 
-                if(self.currentPage > 1)
+                if(self.currentPage > 1) {
                     self.currentPage--;
+                    reload = true;
+                }
             } 
             
-            // reload all data
-            self.loadData();
+            if(reload)
+                self.loadData();
             
             
         });
@@ -1020,15 +1030,17 @@ var BC_Inbox = BoxController.extend({
       
         var pager = this.data.pagination;
         
+        console.log(pager);
+        
         this.currentPage = pager.page;
-        this.totalPages = pager.pagesCount;
+        this.totalPages = pager.pages;
         this.pagerInited = true;
       
         if(this.getPagerHolder()) {
             
             
             this.getPagerHolder().find('.page').text(pager.page);
-            this.getPagerHolder().find('.pageCount').text(pager.pagesCount);
+            this.getPagerHolder().find('.pageCount').text(pager.pages);
             
         }
         
@@ -1185,7 +1197,8 @@ var BC_CompetitionScore = BoxController.extend({
             
             
             this.getBoxDom().undelegate('a')
-            .delegate('a[filter]', 'click', this.filterRowsCallback(table));
+            .delegate('a[filter]', 'click', this.filterRowsCallback(table))
+            .find('a[filter]').removeClass('active').addClass('active');
             
         }
         
@@ -1450,30 +1463,25 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                margin: [20, 20, 20, 20],
-                animation: false,
+                margin: [0, 0, 30, 0],
                 defaultSeriesType: 'pie'
             },
             plotOptions: {
                 pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
                     dataLabels: {
                         enabled: false
                     },
                     showInLegend: true
                 }
             },
-            events: {
-                load: function (e) {
-                    var container = $(this.container);
-                }
-            },
+
             tooltip: {
                 formatter: function() {
                     return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
                 }
             },
+            title: '',
+            exporting: {enabled: false},
             credits: {
                 enabled: false
             },
@@ -1482,8 +1490,8 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             },
             series: [{
                 type: 'pie',
-                name: 'Browser share',
-                data: new Array()
+                name: 'Tags use',
+                data: []
             }]
         };
         for (var i = 0; i < this.graphData.length; i++) {
@@ -1550,7 +1558,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
                 defaultSeriesType: 'bar'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: ''
             },
             colors: [
             '#80699B', 
@@ -1566,13 +1574,13 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: '',
                     align: 'high'
                 }
             },
@@ -1591,6 +1599,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             credits: {
                 enabled: false
             },
+            exporting: {enabled: false},
             series: [{
                 name: 'Negative',
                 data: [],
@@ -1960,7 +1969,7 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
                 defaultSeriesType: 'bar'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: ''
             },
             colors: [
             '#80699B', 
@@ -1976,13 +1985,13 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: '',
                     align: 'high'
                 }
             },
@@ -1997,6 +2006,7 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
                     colorByPoint: true
                 }
             },
+            exporting: {enabled: false},
             series: []
         }
          
@@ -2098,7 +2108,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
                 defaultSeriesType: 'bar'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: ''
             },
             colors: [
             '#80699B', 
@@ -2114,13 +2124,13 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: '',
                     align: 'high'
                 }
             },
@@ -2135,6 +2145,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
                     colorByPoint: true
                 }
             },
+            exporting: {enabled: false},
             series: []
         }
          
@@ -2443,14 +2454,16 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
                 renderTo: graphHolderId,
                 type: 'bar'
             },
+            title: '',
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
-                min: 0
+                min: 0,
+                title: {text: ''}
             },
             plotOptions: {
                 series: {
@@ -2467,6 +2480,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
             credits: {
                 enabled: false
             },
+            exporting: {enabled: false},
             series: [{
                 name: 'Negative',
                 data: [],
