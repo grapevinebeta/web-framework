@@ -2923,10 +2923,15 @@ boxManager = {
           
             self.positions = data;
            
+            var populated = {};
+           
             for(var box in data) {
                 
                 var j = data[box],
                 current = self.collection[j.box_id];
+                
+                populated[j.box_id] = true;
+                
                 box_holder = current.getBoxDom().parent();
                 holder_id = box_holder.attr('id');
                 
@@ -2944,6 +2949,14 @@ boxManager = {
                 
                 current.init();
                 
+            }
+            
+            for (var i in boxManager.collection) {
+             
+                if(populated[i]) 
+                    continue;
+                
+                boxManager.collection[i].init();
             }
            
             self.initDragAndDrop();
