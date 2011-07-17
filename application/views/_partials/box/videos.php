@@ -28,6 +28,14 @@
                 </div>
                 <div class="clear"></div>
             </div>
+            
+            <div class="playlist">
+                <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" title="Chevy cruise video">
+                   <img src="http://img.youtube.com/vi/mkTMj0McIvc/0.jpg" width="322" />
+                   <span class="date">2/23/2011</span>
+                   <span class="text">"Checkout the new chevy.."</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>

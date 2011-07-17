@@ -149,6 +149,7 @@ Route::set('account_settings_api', 'api/settings')
 		'controller' => 'settings',
 		'action' => 'index',
 	));
+
 Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(api)'
 	));

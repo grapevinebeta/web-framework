@@ -1030,8 +1030,6 @@ var BC_Inbox = BoxController.extend({
       
         var pager = this.data.pagination;
         
-        console.log(pager);
-        
         this.currentPage = pager.page;
         this.totalPages = pager.pages;
         this.pagerInited = true;
@@ -1331,6 +1329,30 @@ var BC_Ogsi = BoxController.extend({
     
     
     construct: function () {}
+    
+});
+
+var BC_Photos = BoxController.extend({
+    
+    boxId: 'box-photos',
+    endpoint: 'photos',
+    
+    processData: function() {
+        
+    },
+    construct: function() {}
+    
+});
+
+var BC_Videos = BoxController.extend({
+    
+    boxId: 'box-videos',
+    endpoint: 'videos',
+    
+    processData: function() {
+        
+    },
+    construct: function() {}
     
 });
 
@@ -2686,12 +2708,14 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
 });
 
 boxManager = {
-    revert: false,
     collection: {},
+    section_id: null, // the name of selected tab
     
     dataProvider: null,
 
     range: null,
+    
+    positions: null, //positions of boxes from db
     
     exporter: null, // exporter class for dynamic exporting
     
@@ -2720,15 +2744,222 @@ boxManager = {
         return false;
     },
     
-    initBoxes: function () {
-        for (i in this.collection) {
-            this.collection[i].init();
+    droppable: function(selector) {
+        
+        return {
+            accept: selector,
+            activeClass: "box-dropable",
+            hoverClass: "box-drag-over",
+            drop: function (event, ui) {
+                
+                var oldBox = $(this),
+                fromContainer = ui.draggable.parent(),
+                collection = {},
+                holder_id = $(this).attr('id'),
+                swap_holder_id = fromContainer.attr('id');
+                
+                // if there is any child we need to swap the dragged child with holder child
+                if (oldBox.children().length > 0) {
+                    
+                    collection[swap_holder_id] = {
+                        
+                        box_id: $(oldBox).children().attr('id'),
+                        location_id: 1,
+                        box_class: fromContainer.attr('class')
+                  
+                    };
+                    
+                    collection[holder_id] =
+                    {
+                        box_id: $(ui.draggable).attr('id'),
+                        location_id: 1,
+                        box_class: $(this).attr('class')
+                    };
+                    
+
+                    fromContainer.append(oldBox.children());
+                    
+                    
+                    
+                } 
+                else 
+                {
+                    collection[holder_id] =
+                    {
+                        holder_id: holder_id,
+                        box_id: $(ui.draggable).attr('id'),
+                        location_id: 1,
+                        box_class: $(this).attr('class'),
+                        section_id: boxManager.section_id
+                    };
+                    
+                    fromContainer.addClass('empty').removeClass('active');    
+                }
+                $(this).append(ui.draggable);
+            
+                $(this).removeClass('empty').addClass('active');
+
+                
+                if(!boxManager.positions[holder_id]) {
+                    collection[holder_id].delete_previous = true;
+
+                }
+
+                boxManager.genericRequest('/api/box/move', $.param({
+                    holders: collection
+                }));
+                
+
+            }
         }
-        return this;
+    },
+    initDragAndDrop: function() {
+      
+        var self = this;
+      
+        $( "#boxes-holder .box" ).draggable({ 
+            snap: ".box-container", 
+            snapMode: 'inner',
+            handle: ".box-header-button-move",
+            cursor: 'move',
+            helper: function() {
+              return $('<div />', {
+                  css: {
+                      width: $(this).width()-14,
+                      background: '#fff',
+                      padding: '10px',
+                      border: '1px solid gray',
+                      'font-size': '14px',
+                      'font-weight': 'bold',
+                      height: '30px'
+                  }
+              }).text($(this).find('.box-header-title').text());
+            },
+            appendTo: 'body',
+            zIndex: 10,
+            start: function(event, ui) {
+                
+                // show only holders that can really contain dragged box
+                var filter = $(this).parent().is('.box-container-left, .box-container-right') ?
+                    $('.box-container.empty.box-container-left, .box-container.empty.box-container-right')
+                    :
+                    $('.box-container.empty').not('.box-container-left, .box-container.empty.box-container-right');
+                
+                filter.addClass('box-dropable');
+            },
+            stop: function (event, ui) {
+                $(this).css({
+                    bottom: 0,
+                    left: 0,
+                    width: 'auto'
+                });
+                
+                $('.box-container.empty').removeClass('box-dropable');
+            }
+        });
+        
+        
+        $('.box-container').each(function() {
+            
+            
+            var filter = $(this).is('.box-container-left, .box-container-right') ?
+                    '.box-container.box-container-left .box, .box-container.box-container-right .box'
+                    :
+                    '.box-container:not(.box-container-left, .box-container-right) .box';
+            
+            if(!$(this).children().length) {
+                $(this).removeClass('active').addClass('empty');
+            }
+            
+            $(this).droppable(self.droppable(filter));
+            
+        })
+      
+    },
+    
+    genericRequest: function(endpoint, data, callback) {
+                 
+        $.ajax({
+            type: "POST",
+            accepts: "application/json; charset=utf-8",
+            data: data,
+            dataType: "json",
+            url: endpoint,
+            success: callback
+        });
+      
+    },
+
+    initHolders: function() {
+        
+        var self = this,
+        settings = {};
+        settings.holders = [];
+
+        $('.box-container').each(function() {
+            
+            var id = self.section_id  + '-' + $(this).index();
+            
+            $(this).addClass('hide');
+            $(this).attr('id', id);
+            
+            
+            if($(this).is(':parent')) {
+              
+                settings.holders.push({
+                  
+                    holder_id: this.id,
+                    box_id: $(this).find('.box').attr('id'),
+                    location_id: 1,
+                    section_id: self.section_id,
+                    box_class: $(this).attr('class')
+                  
+                });
+            }
+        });
+      
+      
+        this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {
+          
+            self.positions = data;
+           
+            for(var box in data) {
+                
+                var j = data[box],
+                current = self.collection[j.box_id];
+                box_holder = current.getBoxDom().parent();
+                holder_id = box_holder.attr('id');
+                
+                if(holder_id != j.holder_id) {
+                    
+                    var holder_2 = $('#' + j.holder_id);
+                    var holder_2_box = holder_2.children();
+                    
+                    holder_2.html(current.getBoxDom());
+                    holder_2.removeClass('empty').addClass('active');
+                    box_holder.html(holder_2_box);
+                    
+                    
+                }
+                
+                current.init();
+                
+            }
+           
+            self.initDragAndDrop();
+            $('.box-container').removeClass('hide');
+          
+        });
+      
+      
     },
 
     init: function () {
-        var self = this;
+        
+        this.section_id = $('.top-menu-item.active')
+            .text()
+            .toLowerCase()
+            .replace(/\s+/g,"_");
         
         var rangeArray = $('#range-form').serializeArray();
         var range = {};
@@ -2738,7 +2969,8 @@ boxManager = {
         }
         this.setRange(range);
         
-        this.initBoxes();
+        
+        this.initHolders();
         
         
         $('#range-form').submit(function (e) {
@@ -2756,72 +2988,8 @@ boxManager = {
         }).find('#period-selector, #date-selector').change(function () {
             $(this).parents('form:first').submit();
         });
-        
-        $( "#boxes-holder .box" ).draggable({ 
-            snap: ".box-container", 
-            snapMode: 'inner',
-            handle: ".box-header-button-move",
-            cursor: 'move',
-            cursorAt: { 
-                cursor: "move", 
-                top: 10, 
-                left: 100 
-            },
-            revert: function(){
-                if(boxManager.revert == false){
-                    return 'invalid';
-                } else{
-                    boxManager.revert = false;
-                }
-            },
-        appendTo: 'body',
-        zIndex: 10,
-        start: function(event, ui) {
-            $(this).css({});
-            $('.box-container.empty').addClass('box-dropable')
-            .css('min-height', $(this).height());
-        },
-        stop: function (event, ui) {
-            $(this).css({
-                top: 0,
-                left: 0,
-                width: 'auto'
-            });
-            $('.box-container').css('min-height', '');
-            $('.box-container.empty').removeClass('box-dropable');
-        }
-        });
-    $('.box-container')
-    .droppable({
-        accept: '.box',
-        activeClass: "box-dropable",
-        hoverClass: "box-drag-over",
-        drop: function (event, ui) {
-            var oldBox = $(this);
-                
-            var fromContainer = ui.draggable.parent();
-                
-            // prevent of switching between small box to widebox
-            if(fromContainer.is('.box-container-left, .box-container-right')) {
-                    
-                if(!$(this).is('.box-container-left, .box-container-right')) {
-                    boxManager.revert = true;
-                    return this;
-                }   
-            }
-                
-            if (oldBox.children().length > 0) {
-                fromContainer.append(oldBox.children());
-            } else {
-                fromContainer.addClass('empty').removeClass('active');
-            }
-            $(this).removeClass('empty').addClass('active');
-            $(this).append(ui.draggable);
-                    
-            boxManager.moveEmptyToBottom();
-
-        }
-    });
+    
+    
     return this;
 },
     
@@ -2839,6 +3007,7 @@ moveEmptyToBottom: function () {
                 tmp.next('.clear').remove();
                 boxesHolder.append(box);
                 boxesHolder.append(tmp);
+                
                 boxesHolder.append('<div class="clear"></div>');
             } else if (!box.hasClass('box-container-left')
                 && !box.hasClass('box-container-right')) {
@@ -2846,6 +3015,7 @@ moveEmptyToBottom: function () {
             }
         }
     });
+    
     return this;
 },
     
@@ -2970,6 +3140,8 @@ $(document).ready(function () {
     .add(new BC_RecentActivity())
     .add(new BC_CompetitionScore())
     .add(new BC_OgsiCurrent())
+    .add(new BC_Photos())
+    .add(new BC_Videos())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter)
     .init();

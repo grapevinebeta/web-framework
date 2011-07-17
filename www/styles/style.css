@@ -217,6 +217,7 @@ input[type=submit] {
 .box-container {
     border: 1px solid transparent;
     z-index: 1;
+    position: relative;
 }
 
 .box-container.active {
@@ -1350,4 +1351,6 @@ input[type=submit] {
         
     }
     
-    
+    #box-videos .playlist {
+        display:none;
+    }

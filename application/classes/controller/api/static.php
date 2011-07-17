@@ -60,6 +60,43 @@ class Controller_Api_Static extends Controller {
 
         
     }
+    
+    public function action_videos() {
+        
+        
+        $this->apiResponse = array(
+            
+            'videos' => array(
+                
+                array(
+                    'url' => 'http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1',
+                    'thumb_url' => 'http://img.youtube.com/vi/mkTMj0McIvc/0.jpg',
+                    'date' => '2/23/2011',
+                    'desc' => 'Checkout the new chevy..'
+                )
+            )
+            
+        );
+        
+    }
+    public function action_photos() {
+        
+        
+        $this->apiResponse = array(
+            
+            'videos' => array(
+                
+                array(
+                    'url' => 'http://farm7.static.flickr.com/6141/5934098842_ae7d7c5466.jpg',
+                    'thumb_url' => 'http://farm7.static.flickr.com/6141/5934098842_ae7d7c5466.jpg',
+                    'date' => '2/23/2011',
+                    'desc' => 'Chevy cruise'
+                )
+            )
+            
+        );
+        
+    }
 
     public function action_ogsi() {
 
