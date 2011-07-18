@@ -61,7 +61,7 @@
     var dateRange = $("#date-range");
     var datapicker;
     
-        
+    // @TODO fix bug when user select date in specific range
     // default date = yesterday
     maxDate = maxDate.length ? new Date(maxDate) : '-1d';
     

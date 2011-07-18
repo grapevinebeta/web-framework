@@ -34,15 +34,16 @@ if (!isset($buttons)) {
                         )
                     );
             endif;
-            if (in_array('dashboard-pin', $buttons)):
-                echo html::anchor(
-                    '#', '', 
-                    array(
-                        'title' => __('Dashboard Pin'),
-                        'class' => 'box-header-button box-header-button-dashboard-pin', 
-                        )
-                    );
-            endif;
+// uncomment when this functionality will work            
+//            if (in_array('dashboard-pin', $buttons)):
+//                echo html::anchor(
+//                    '#', '', 
+//                    array(
+//                        'title' => __('Dashboard Pin'),
+//                        'class' => 'box-header-button box-header-button-dashboard-pin', 
+//                        )
+//                    );
+//            endif;
         ?>
     </div>
     <div class="box-header-left-buttons">
