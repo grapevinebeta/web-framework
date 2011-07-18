@@ -14,12 +14,8 @@ class Controller_Dashboard extends Controller_Template {
     }
     
     public function action_index() {
+        
         $this->template->body = View::factory('dashboard/index');
-    }
-    
-    public function action_test() {
-        var_dump(Session::instance()->get('viewingRange'));
-        die();
     }
     
 }

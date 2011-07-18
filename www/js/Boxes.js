@@ -214,7 +214,7 @@ var BoxController = Class.extend({
     },
     
     hideLoader: function () {
-        this.getContentDom().find('.ajax-loader').remove();
+        this.getBoxDom().find('.ajax-loader').remove();
         return this;
     },
     
@@ -236,21 +236,100 @@ var BoxController = Class.extend({
         this.hideLoader();
         this.showContent();
         this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
-        
-        if(!this.getContentDom().find('.data-grid-holder table tbody tr, .data-grid-holder .row').length) {
-            this.getContentDom().find('.data-grid-holder')
-            .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>');
-
+     
+        if(this.empty) {
+            
+            
+            var holder = this.getContentDom().find('div');
+            
+            
+            var div, wrapper, span;
+            if(holder.width() > 291) {
+            
+                wrapper = $('<div/>', {
+                    css: {
+                        margin: '20px',
+                        'text-align': 'center'
+                    
+                    }
+                });
+            
+            
+                div = $("<div/>", {
+                    css: {
+                        background: 'url(/images/icons/icons.png) 5px 0px',
+                        width: '291px',
+                        height: '283px',
+                        margin: 'auto auto',
+                        position: 'relative'
+                    }
+                        
+                });
+                
+                span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            
+            }
+            else
+            {
+               
+                wrapper = $('<div/>', {
+                    css: {
+                        margin: '5px',
+                        'text-align': 'center'
+                    
+                    }
+                })
+               
+                div = $('<div/>', {
+                        
+                });
+                
+                span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+                
+            }
+            
+                    
+            div.html(span);
+            wrapper.append(div);
+                        
+                    
+            holder.html(wrapper);
+            
+            
         }
+
         
         return this;
     },
     
     /**
-     * Will handle Ajax response of the loadData
+     * this function work as cache create function for every instance
+     * and create it only one time at first call
+     *
      */
-    loadDataCallback: function () {
-        this.boxController.afterLoadData();
+    loadDataCallback: function(boxController) {
+        
+        if(!boxController.hasOwnProperty('loadCallback')) {
+            
+            boxController.loadCallback = function (data, textStatus, jqXHR) {
+        
+                boxController.data = data;
+                
+                if(data) {
+                    boxController.processData();
+                    boxController.afterLoadData();
+                }
+                else {
+                    boxController.empty = true;
+                    
+                    boxController.afterLoadData();
+                }
+    
+            };
+            
+        }
+        
+        return boxController.loadCallback;
     },
     
     /**
@@ -258,17 +337,16 @@ var BoxController = Class.extend({
      */
     loadData: function () {
         this.beforeLoadData();
-        if (!this.loadDataCallback.boxController) {
-            this.loadDataCallback.boxController = this;
-        }
+        
         this.dataProvider.setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
-        .setDateInterval(null)
-            
-        .setCallback(this.loadDataCallback);
+        .setDateInterval(null)   
+        .setCallback(this.loadDataCallback(this));
+        
         this.data = this.dataProvider.fetch();
-        return this;
+        
+        return this.loadDataCallback;
     },
     
     setDataProvider: function (dataProvider) {
@@ -420,38 +498,33 @@ var BC_RecentActivity = BoxController.extend({
     loadData: function () {
         this.beforeLoadData();
         
-        if (!this.loadDataCallback.boxController) {
-            this.loadDataCallback.boxController = this;
-        }
-        
         this.data = this.dataProvider
         .setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(null)
         .setLimit(this.limit)
-        .setCallback(this.loadDataCallback)
+        .setCallback(this.loadDataCallback(this))
         .fetch();
         
         return this;
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    processData: function() {
+      
+        var content = this.getContentDom().find('.data-grid-holder'),
+        template = content.find('.row:first'),
+        row,
+        socials = this.data.socials;
         
-        var content = boxController.getContentDom().find('.data-grid-holder');
-        var template = content.find('.row:first');
         content.find('.row').remove();
-        var row;
-        var social = data.socials;
-        for (var i = 0; i < social.length; i++) {
+        for (var i = 0; i < socials.length; i++) {
 
-            row = boxController.prepareMessage(template, social[i]);   
+            row = this.prepareMessage(template, socials[i]);   
             content.append(row); // append two elements
             
         }
-        boxController.afterLoadData();
+      
     },
     
     construct: function () {}
@@ -568,24 +641,18 @@ var BC_GraphBoxController = BoxController.extend({
         this.graphData = null;
         this.getGraphHolder().append(this.getLoaderHtml());
     },
-
-    /**
-     * Will handle Ajax response of the loadGraphData
-     */
-    loadGraphDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        
-        boxController.graphData = data;
-        boxController.afterLoadGraphData();
+    
+    processData: function() {
+      
+      this.graphData = this.data;
+      this.afterLoadGraphData();
+      
     },
     
     loadGraphData: function() {
         this.beforeLoadGraphData();
-
-        var callback = this.loadGraphDataCallback.clone();
         
         this.graphData = null;
-        callback.boxController = this;
         
         
         this.graphData = this.dataProvider
@@ -593,7 +660,7 @@ var BC_GraphBoxController = BoxController.extend({
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(this.computeDateInterval())
-        .setCallback(callback)
+        .setCallback(this.loadDataCallback(this))
         .fetch();
         return this;
     },
@@ -728,7 +795,7 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
                 type: 'spline'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: false
             },
             credits: {
                 enabled: false
@@ -756,12 +823,14 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
             },
             yAxis: {
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: false,
                     align: 'high'
                 },
                 min: 0,
-                max: this.maxValue + 0.0005
+                max: this.maxValue + 1,
+                endOnTick: false
             },
+            exporting: {enabled: false},
             
             series: this.series
         }
@@ -797,8 +866,9 @@ var BC_Inbox = BoxController.extend({
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
         
+        
         this.getFiltersDom().find('.box-filter')
-        .html($(this.getLoaderHtml()).children());
+        .html(this.getLoaderHtml());
     },
     
     
@@ -814,19 +884,27 @@ var BC_Inbox = BoxController.extend({
             
             e.preventDefault();
             
+            var reload = false;
+            
             if($(this).hasClass('next')) {
                 
-                self.currentPage++;
+                if(self.currentPage < self.totalPages) {
+                    self.currentPage++;
+                    reload = true;
+                }
+                    
                 
             }
             if($(this).hasClass('prev')) {
                 
-                if(self.currentPage > 1)
+                if(self.currentPage > 1) {
                     self.currentPage--;
+                    reload = true;
+                }
             } 
             
-            // reload all data
-            self.loadData();
+            if(reload)
+                self.loadData();
             
             
         });
@@ -910,41 +988,41 @@ var BC_Inbox = BoxController.extend({
         alert('You must implement it by yourself');
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    processData: function() {
+      
+        this.loadInboxData();
         
-        boxController.loadInboxData();
+        var filters = this.data.filters;
         
-        if(data.filters) 
+        if(filters) 
         {
 
-            for(var activeFilter in data.filters) 
+            for(var activeFilter in filters) 
             {
-                boxController.loadFilters(activeFilter); 
+                this.loadFilters(activeFilter); 
             }
         }
-
-        boxController.initPager().afterLoadData();
-
+        
+        this.initPager();
+      
     },
-    
+
     /**
      * Load Data by Ajax
      */
     loadData: function () {
         this.beforeLoadData();
-        if (!this.loadDataCallback.boxController) {
-            this.loadDataCallback.boxController = this;
-        }
+
         this.dataProvider.setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
         .setDateInterval(null)
         .setPage(this.currentPage)
         .setLimit(this.limit)
-        .setCallback(this.loadDataCallback);
+        .setCallback(this.loadDataCallback(this));
+        
         this.data = this.dataProvider.fetch();
+        
         return this;
     },
     
@@ -953,14 +1031,14 @@ var BC_Inbox = BoxController.extend({
         var pager = this.data.pagination;
         
         this.currentPage = pager.page;
-        this.totalPages = pager.pagesCount;
+        this.totalPages = pager.pages;
         this.pagerInited = true;
       
         if(this.getPagerHolder()) {
             
             
             this.getPagerHolder().find('.page').text(pager.page);
-            this.getPagerHolder().find('.pageCount').text(pager.pagesCount);
+            this.getPagerHolder().find('.pageCount').text(pager.pages);
             
         }
         
@@ -1076,24 +1154,9 @@ var BC_CompetitionScore = BoxController.extend({
         
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    filterRowsCallback:  function(table) {
         
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var tr = null;
-        
-        var row = table.find('thead tr');
-        var tbody = table.find('tbody');
-        var template = row.find('th');
-        var ogsi = data.ogsi;
-        
-        var score = table.find('tbody tr th:nth-child(2)');
-        
-        var scoreTemplate = score.clone();
-        score.remove();
-
-        var callback = boxController.genericCallbackEventWrapper(function(e, data) {
+        return this.genericCallbackEventWrapper(function(e, data) {
             
             e.preventDefault();
             
@@ -1105,22 +1168,57 @@ var BC_CompetitionScore = BoxController.extend({
             $(e.target).toggleClass('active');
             
   
-        }, {table: table});
+        }, {
+            table: table
+        });
         
-        boxController.getBoxDom().delegate('a[filter]', 'click', callback);
-
-        boxController.populateColumns(ogsi, template, row);
+    },
+    
+    processData: function() {
+      
+        var holder = this.getContentDom().find('.data-grid-holder');
+      
+        var table;
         
-        
-        var i =0;
-        for(var competitor in ogsi) {
+        if(!this.cachedTable) {
+            table = holder.find('table');
+            this.getBoxDom().delegate('a[filter]', 'click', this.filterRowsCallback(table));
             
-            boxController.addColumn(ogsi[competitor], scoreTemplate, tbody, (i++ % 2));
+            this.cachedTable = table.clone();
+
+        }
+        else if(this.cachedTable) {
+            
+            holder.find('table').remove();
+            table = this.cachedTable.clone();
+            holder.append(table);
+            
+            
+            this.getBoxDom().undelegate('a')
+            .delegate('a[filter]', 'click', this.filterRowsCallback(table))
+            .find('a[filter]').removeClass('active').addClass('active');
             
         }
-
-        boxController.afterLoadData();
         
+        var row = table.find('thead tr'),
+        tbody = table.find('tbody'),
+        template = row.find('th'),
+        ogsi = this.data.ogsi,
+        score = table.find('tbody tr th:nth-child(2)'),
+        scoreTemplate = score.clone(),
+        i=0;
+        
+        score.remove();
+        
+
+        this.populateColumns(ogsi, template, row);
+        
+        for(var competitor in ogsi) {
+            
+            this.addColumn(ogsi[competitor], scoreTemplate, tbody, (i++ % 2));
+            
+        }
+      
     },
     
     construct: function () {}
@@ -1141,35 +1239,37 @@ var BC_Ogsi = BoxController.extend({
      */
     endpoint: 'ogsi',
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        var holder = boxController.getContentDom();
-        if (data.ogsi) {
-            holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
-            holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+    processData: function() {
+      
+        var holder = this.getContentDom(),
+        ogsi = this.data.ogsi;
+        
+        
+        if (ogsi) {
+            holder.find('.ogsi-score-value').text(ogsi.ogsi.value);
+            holder.find('.ogsi-score-change .change-value').text(ogsi.ogsi.change + '%');
             holder.find('.ogsi-score-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.ogsi.change >= 0) ? 'positive': 'negative');
                 
-            holder.find('.ogsi-rating-value').text(data.ogsi.rating.value);
-            holder.find('.ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('.ogsi-rating-value').text(ogsi.rating.value);
+            holder.find('.ogsi-rating-change .change-value').text(ogsi.rating.change + '%');
             holder.find('.ogsi-rating-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('.ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+            .addClass((ogsi.rating.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.value / 5) * 100 + '%');
 
-            holder.find('.ogsi-reviews-value').text(data.ogsi.reviews.value);
-            holder.find('.ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('.ogsi-reviews-value').text(ogsi.reviews.value);
+            holder.find('.ogsi-reviews-change .change-value').text(ogsi.reviews.change + '%');
             holder.find('.ogsi-reviews-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.reviews.change >= 0) ? 'positive': 'negative');
             holder.show();
             
-            var distribution = data.ogsi.distribution;
+            var distribution = ogsi.distribution;
             var barHolder = holder.find('.bar-holder');
             
             var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
@@ -1224,57 +1324,80 @@ var BC_Ogsi = BoxController.extend({
             
             
         }
-        boxController.afterLoadData();
+      
     },
+    
     
     construct: function () {}
     
 });
 
-var BC_OgsiCurrent = BC_Ogsi.extend({
+var BC_Photos = BoxController.extend({
+    
+    boxId: 'box-photos',
+    endpoint: 'photos',
+    
+    processData: function() {
+        
+    },
+    construct: function() {}
+    
+});
+
+var BC_Videos = BoxController.extend({
+    
+    boxId: 'box-videos',
+    endpoint: 'videos',
+    
+    processData: function() {
+        
+    },
+    construct: function() {}
+    
+});
+
+var BC_OgsiCurrent = BoxController.extend({
     
     
     boxId: 'box-ogsi-current',
+    endpoint: 'ogsi',
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        var holder = boxController.getContentDom();
-        if (data.ogsi) {
+    processData: function() {
+
+        var holder = this.getContentDom(),
+        ogsi = this.data.ogsi,
+        distribution = ogsi.distribution,
+        barHolder = holder.find('.bar-holder'),
+        maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative),
+        ratio;
+        
+        if (ogsi) {
             
+            holder.find('.days').text(getPeriodInDays(this.range['period']));
             
-            
-            holder.find('.days').text(getPeriodInDays(boxController.range['period']));
-            
-            holder.find('.ogsi-score-value').text(data.ogsi.ogsi.value);
-            holder.find('.ogsi-score-change .change-value').text(data.ogsi.ogsi.change + '%');
+            holder.find('.ogsi-score-value').text(ogsi.ogsi.value);
+            holder.find('.ogsi-score-change .change-value').text(ogsi.ogsi.change + '%');
             holder.find('.ogsi-score-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.ogsi.change >= 0) ? 'positive': 'negative');
                 
-            holder.find('.ogsi-rating-value').text(data.ogsi.rating.value);
-            holder.find('.ogsi-rating-change .change-value').text(data.ogsi.rating.change + '%');
+            holder.find('.ogsi-rating-value').text(ogsi.rating.value);
+            holder.find('.ogsi-rating-change .change-value').text(ogsi.rating.change + '%');
             holder.find('.ogsi-rating-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('.ogsi-rating-stars-on').css('width', (data.ogsi.rating.value / 5) * 100 + '%');
+            .addClass((ogsi.rating.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.value / 5) * 100 + '%');
 
-            holder.find('.ogsi-reviews-value').text(data.ogsi.reviews.value);
-            holder.find('.ogsi-reviews-change .change-value').text(data.ogsi.reviews.change + '%');
+            holder.find('.ogsi-reviews-value').text(ogsi.reviews.value);
+            holder.find('.ogsi-reviews-change .change-value').text(ogsi.reviews.change + '%');
             holder.find('.ogsi-reviews-change .change-arrow')
             .removeClass('positive')
             .removeClass('negative')
-            .addClass((data.ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            .addClass((ogsi.reviews.change >= 0) ? 'positive': 'negative');
             holder.show();
             
-            var distribution = data.ogsi.distribution;
-            var barHolder = holder.find('.bar-holder');
-            
-            var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
-            
-            var ratio;
             if (distribution.total) {
                 barHolder.show();
                 var bar = barHolder.find('.bar-negative');
@@ -1288,6 +1411,7 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
                 }
                 bar = barHolder.find('.bar-neutral');
                 bar.children('.bar-value').text('');
+                
                 if (distribution.neutral > 0) {
                     
                     ratio = (distribution.neutral / maxValue) * 100;
@@ -1297,12 +1421,17 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
                 
                     bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
                     bar.show();
+                    
                 } else if (distribution.positive > 0) {
+                    
                     bar.css('width', ((distribution.positive)/distribution.total)*100+'%');
                     bar.show();
+                    
                 } else {
                     bar.hide();
                 }
+                
+                
                 bar = barHolder.find('.bar-positive');
                 bar.children('.bar-value').text('');
                 if (distribution.positive > 0) {
@@ -1323,8 +1452,8 @@ var BC_OgsiCurrent = BC_Ogsi.extend({
             }
             
             
-        }
-        boxController.afterLoadData();
+        }  
+        
     },
     
     construct: function() {}
@@ -1356,30 +1485,25 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                margin: [20, 20, 20, 20],
-                animation: false,
+                margin: [0, 0, 30, 0],
                 defaultSeriesType: 'pie'
             },
             plotOptions: {
                 pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
                     dataLabels: {
                         enabled: false
                     },
                     showInLegend: true
                 }
             },
-            events: {
-                load: function (e) {
-                    var container = $(this.container);
-                }
-            },
+
             tooltip: {
                 formatter: function() {
                     return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
                 }
             },
+            title: '',
+            exporting: {enabled: false},
             credits: {
                 enabled: false
             },
@@ -1388,8 +1512,8 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             },
             series: [{
                 type: 'pie',
-                name: 'Browser share',
-                data: new Array()
+                name: 'Tags use',
+                data: []
             }]
         };
         for (var i = 0; i < this.graphData.length; i++) {
@@ -1402,18 +1526,19 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        boxController.graphData = data.tags;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
+    processData: function() {
+        
+        var tags = this.data.tags;
+        this.graphData = tags;
+        
+        var table = this.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.tags.length; i++) {
+        for (var i = 0; i < tags.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.tags[i]) {
-                var value = boxController.data.tags[i][n];
+            for (n in tags[i]) {
+                var value = tags[i][n];
                 if (n == 'percent') {
                     value = value + '%';
                 } 
@@ -1421,7 +1546,7 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             }
             table.find('tbody').append(tr);
         }
-        boxController.afterLoadData();
+        
     },
     
     construct: function () {}
@@ -1455,7 +1580,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
                 defaultSeriesType: 'bar'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: ''
             },
             colors: [
             '#80699B', 
@@ -1471,13 +1596,13 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: '',
                     align: 'high'
                 }
             },
@@ -1496,6 +1621,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             credits: {
                 enabled: false
             },
+            exporting: {enabled: false},
             series: [{
                 name: 'Negative',
                 data: [],
@@ -1525,20 +1651,25 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        boxController.graphData = data.sites;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
-        var trFooter = table.find('tfoot tr');
+    processData: function() {
+        
+        var table = this.getContentDom().find('.data-grid-holder > table'),
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null,
+        trFooter = table.find('tfoot tr'),
+        sites = this.data.sites;
+        
+        this.graphData = sites;
+        
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.sites.length; i++) {
+        
+        
+        
+        for (var i = 0; i < sites.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.sites[i]) {
-                var value = boxController.data.sites[i][n];
+            for (n in sites[i]) {
+                var value = sites[i][n];
                 tr.find('td.col-' + n).text(value);
                 if (n != 'site') {
                     var currentTotalValue = 0;
@@ -1552,13 +1683,14 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             }
             table.find('tbody').append(tr);
         }
+        
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
-            boxController.data.sites.length
-            );
-        boxController.afterLoadData();
+            sites.length
+            );  
+        
     },
-    
+       
     construct: function () {}
     
 });
@@ -1834,10 +1966,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
 });
 
 
-/**
- * @TODO create base class for linar graph controllers
- */
-var BC_SocialActivity = BC_LinearGraphBoxController.extend({
+var BC_SocialActivity = BC_GraphBoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1862,7 +1991,7 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
                 defaultSeriesType: 'bar'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: ''
             },
             colors: [
             '#80699B', 
@@ -1878,13 +2007,13 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: '',
                     align: 'high'
                 }
             },
@@ -1899,6 +2028,7 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
                     colorByPoint: true
                 }
             },
+            exporting: {enabled: false},
             series: []
         }
          
@@ -1906,9 +2036,9 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
         
 
         
-        for (var i = 0; i < this.graphData.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             
-            var site = this.graphData.networks[i];
+            var site = this.graphData[i];
             
             data.push(site.value);
             options.xAxis.categories.push(site.network);
@@ -1925,22 +2055,23 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
 
-    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
+    processData: function() {
         
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
-        var trFooter = table.find('tfoot tr');
+        var networks = this.data.networks,
+        table = this.getContentDom().find('.data-grid-holder > table'),
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null;
+        
+        this.graphData = networks;
+        
+        trFooter = table.find('tfoot tr');
         trFooter.find('th.col-value').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.networks.length; i++) {
+        
+        for (var i = 0; i < networks.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.networks[i]) {
-                var value = boxController.data.networks[i][n];
+            for (n in networks[i]) {
+                var value = networks[i][n];
                 
                 tr.find('td.col-' + n).text(value);
                 if (n != 'network') {
@@ -1964,12 +2095,9 @@ var BC_SocialActivity = BC_LinearGraphBoxController.extend({
         }
         trFooter.find('th.col-average').text(
             parseFloat(trFooter.find('th.col-average').text()) / 
-            boxController.data.networks.length
+            networks.length
             );
-                
-        boxController.afterLoadData();
         
-
     },
    
     construct: function() {}
@@ -2002,7 +2130,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
                 defaultSeriesType: 'bar'
             },
             title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
+                text: ''
             },
             colors: [
             '#80699B', 
@@ -2018,13 +2146,13 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
                 title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
+                    text: '',
                     align: 'high'
                 }
             },
@@ -2039,6 +2167,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
                     colorByPoint: true
                 }
             },
+            exporting: {enabled: false},
             series: []
         }
          
@@ -2046,9 +2175,9 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         
 
         
-        for (var i = 0; i < this.graphData.networks.length; i++) {
+        for (var i = 0; i < this.graphData.length; i++) {
             
-            var site = this.graphData.networks[i];
+            var site = this.graphData[i];
             
             data.push(site.value);
             options.xAxis.categories.push(site.network);
@@ -2065,21 +2194,22 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
     
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
+    processData: function() {
         
-        var trFooter = table.find('tfoot tr');
+        var table = this.getContentDom().find('.data-grid-holder > table'),
+        networks = this.data.networks,
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null,
+        trFooter = table.find('tfoot tr');
+        
+        this.graphData = networks;
         trFooter.find('.col-value, .col-total').text('0');
         
         table.find('tbody tr').remove();
-        for (var i = 0; i < boxController.data.networks.length; i++) {
+        for (var i = 0; i < networks.length; i++) {
             tr = trTemplate.clone();
-            for (n in boxController.data.networks[i]) {
-                var value = boxController.data.networks[i][n];
+            for (n in networks[i]) {
+                var value = networks[i][n];
                 if (n == 'change') {
                     value = value + '%';
                 }
@@ -2099,7 +2229,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             }
             table.find('tbody').append(tr);
         }
-        boxController.afterLoadData();
+        
     },
     
     construct: function () {}
@@ -2145,7 +2275,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
                 case 'rating':
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><!-- ' + value + ' --></div></div>');
+                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
                     col.html(ratingStars);
                     break;
                 default:
@@ -2173,6 +2303,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
+        tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
 
@@ -2321,15 +2452,6 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
       
     },
    
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
-        
-        boxController.afterLoadData();
-        
-
-    },
-   
     construct: function() {}
    
 });
@@ -2354,21 +2476,16 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
                 renderTo: graphHolderId,
                 type: 'bar'
             },
-            title: {
-                text: this.getHeaderDom().find('.box-header-title').text()
-            },
+            title: '',
             xAxis: {
                 categories: [],
                 title: {
-                    text: null
+                    text: ''
                 }
             },
             yAxis: {
                 min: 0,
-                title: {
-                    text: this.getHeaderDom().find('.box-header-title').text(),
-                    align: 'high'
-                }
+                title: {text: ''}
             },
             plotOptions: {
                 series: {
@@ -2385,6 +2502,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
             credits: {
                 enabled: false
             },
+            exporting: {enabled: false},
             series: [{
                 name: 'Negative',
                 data: [],
@@ -2414,18 +2532,17 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
         this.graph = new Highcharts.Chart(options);
     },
  
-    loadDataCallback: function (data, textStatus, jqXHR) {
-        var boxController = this.success.boxController;
-        boxController.data = data;
+    processData: function() {
         
-        var distribution = data.distribution;
         
-        boxController.graphData = distribution;
-        var table = boxController.getContentDom().find('.data-grid-holder > table');
+        var distribution = this.data.distribution,        
+        table = this.getContentDom().find('.data-grid-holder > table'),        
+        trTemplate = table.find('tbody tr:first').clone(),
+        tr = null,
+        trFooter = table.find('tfoot tr');
         
-        var trTemplate = table.find('tbody tr:first').clone();
-        var tr = null;
-        var trFooter = table.find('tfoot tr');
+        this.graphData = distribution;
+        
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
         for (var i = 0; i < distribution.length; i++) {
@@ -2450,10 +2567,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
             parseFloat(trFooter.find('th.col-average').text()) / 
             distribution.length
             );
-                
-        boxController.afterLoadData();
         
-
     },
  
     construct: function() {}
@@ -2533,6 +2647,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-review').text(message.review);
+        tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
 
@@ -2586,8 +2701,6 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             table.children('tbody').append(trContent); // append two elements
             
         }
-        this.getContentDom().find('.ajax-loader').remove();
-        this.getContentDom().find('.data-grid-holder').show();
     },
     
     construct: function () {}
@@ -2595,12 +2708,14 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
 });
 
 boxManager = {
-    revert: false,
     collection: {},
+    section_id: null, // the name of selected tab
     
     dataProvider: null,
 
     range: null,
+    
+    positions: null, //positions of boxes from db
     
     exporter: null, // exporter class for dynamic exporting
     
@@ -2629,15 +2744,235 @@ boxManager = {
         return false;
     },
     
-    initBoxes: function () {
-        for (i in this.collection) {
-            this.collection[i].init();
+    droppable: function(selector) {
+        
+        return {
+            accept: selector,
+            activeClass: "box-dropable",
+            hoverClass: "box-drag-over",
+            drop: function (event, ui) {
+                
+                var oldBox = $(this),
+                fromContainer = ui.draggable.parent(),
+                collection = {},
+                holder_id = $(this).attr('id'),
+                swap_holder_id = fromContainer.attr('id');
+                
+                // if there is any child we need to swap the dragged child with holder child
+                if (oldBox.children().length > 0) {
+                    
+                    collection[swap_holder_id] = {
+                        
+                        box_id: $(oldBox).children().attr('id'),
+                        location_id: 1,
+                        box_class: fromContainer.attr('class')
+                  
+                    };
+                    
+                    collection[holder_id] =
+                    {
+                        box_id: $(ui.draggable).attr('id'),
+                        location_id: 1,
+                        box_class: $(this).attr('class')
+                    };
+                    
+
+                    fromContainer.append(oldBox.children());
+                    
+                    
+                    
+                } 
+                else 
+                {
+                    collection[holder_id] =
+                    {
+                        holder_id: holder_id,
+                        box_id: $(ui.draggable).attr('id'),
+                        location_id: 1,
+                        box_class: $(this).attr('class'),
+                        section_id: boxManager.section_id
+                    };
+                    
+                    fromContainer.addClass('empty').removeClass('active');    
+                }
+                $(this).append(ui.draggable);
+            
+                $(this).removeClass('empty').addClass('active');
+
+                
+                if(!boxManager.positions[holder_id]) {
+                    collection[holder_id].delete_previous = true;
+
+                }
+
+                boxManager.genericRequest('/api/box/move', $.param({
+                    holders: collection
+                }));
+                
+
+            }
         }
-        return this;
+    },
+    initDragAndDrop: function() {
+      
+        var self = this;
+      
+        $( "#boxes-holder .box" ).draggable({ 
+            snap: ".box-container", 
+            snapMode: 'inner',
+            handle: ".box-header-button-move",
+            cursor: 'move',
+            helper: function() {
+              return $('<div />', {
+                  css: {
+                      width: $(this).width()-14,
+                      background: '#fff',
+                      padding: '10px',
+                      border: '1px solid gray',
+                      'font-size': '14px',
+                      'font-weight': 'bold',
+                      height: '30px'
+                  }
+              }).text($(this).find('.box-header-title').text());
+            },
+            appendTo: 'body',
+            zIndex: 10,
+            start: function(event, ui) {
+                
+                // show only holders that can really contain dragged box
+                var filter = $(this).parent().is('.box-container-left, .box-container-right') ?
+                    $('.box-container.empty.box-container-left, .box-container.empty.box-container-right')
+                    :
+                    $('.box-container.empty').not('.box-container-left, .box-container.empty.box-container-right');
+                
+                filter.addClass('box-dropable');
+            },
+            stop: function (event, ui) {
+                $(this).css({
+                    bottom: 0,
+                    left: 0,
+                    width: 'auto'
+                });
+                
+                $('.box-container.empty').removeClass('box-dropable');
+            }
+        });
+        
+        
+        $('.box-container').each(function() {
+            
+            
+            var filter = $(this).is('.box-container-left, .box-container-right') ?
+                    '.box-container.box-container-left .box, .box-container.box-container-right .box'
+                    :
+                    '.box-container:not(.box-container-left, .box-container-right) .box';
+            
+            if(!$(this).children().length) {
+                $(this).removeClass('active').addClass('empty');
+            }
+            
+            $(this).droppable(self.droppable(filter));
+            
+        })
+      
+    },
+    
+    genericRequest: function(endpoint, data, callback) {
+                 
+        $.ajax({
+            type: "POST",
+            accepts: "application/json; charset=utf-8",
+            data: data,
+            dataType: "json",
+            url: endpoint,
+            success: callback
+        });
+      
+    },
+
+    initHolders: function() {
+        
+        var self = this,
+        settings = {};
+        settings.holders = [];
+
+        $('.box-container').each(function() {
+            
+            var id = self.section_id  + '-' + $(this).index();
+            
+            $(this).addClass('hide');
+            $(this).attr('id', id);
+            
+            
+            if($(this).is(':parent')) {
+              
+                settings.holders.push({
+                  
+                    holder_id: this.id,
+                    box_id: $(this).find('.box').attr('id'),
+                    location_id: 1,
+                    section_id: self.section_id,
+                    box_class: $(this).attr('class')
+                  
+                });
+            }
+        });
+      
+      
+        this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {
+          
+            self.positions = data;
+           
+            var populated = {};
+           
+            for(var box in data) {
+                
+                var j = data[box],
+                current = self.collection[j.box_id];
+                
+                populated[j.box_id] = true;
+                
+                box_holder = current.getBoxDom().parent();
+                holder_id = box_holder.attr('id');
+                
+                if(holder_id != j.holder_id) {
+                    
+                    var holder_2 = $('#' + j.holder_id);
+                    var holder_2_box = holder_2.children();
+                    
+                    holder_2.html(current.getBoxDom());
+                    holder_2.removeClass('empty').addClass('active');
+                    box_holder.html(holder_2_box);
+                    
+                    
+                }
+                
+                current.init();
+                
+            }
+            
+            for (var i in boxManager.collection) {
+             
+                if(populated[i]) 
+                    continue;
+                
+                boxManager.collection[i].init();
+            }
+           
+            self.initDragAndDrop();
+            $('.box-container').removeClass('hide');
+          
+        });
+      
+      
     },
 
     init: function () {
-        var self = this;
+        
+        this.section_id = $('.top-menu-item.active')
+            .text()
+            .toLowerCase()
+            .replace(/\s+/g,"_");
         
         var rangeArray = $('#range-form').serializeArray();
         var range = {};
@@ -2647,9 +2982,10 @@ boxManager = {
         }
         this.setRange(range);
         
-        this.initBoxes();
         
+        this.initHolders();
         
+        var self = this;
         $('#range-form').submit(function (e) {
             
             e.preventDefault();
@@ -2665,72 +3001,8 @@ boxManager = {
         }).find('#period-selector, #date-selector').change(function () {
             $(this).parents('form:first').submit();
         });
-        
-        $( "#boxes-holder .box" ).draggable({ 
-            snap: ".box-container", 
-            snapMode: 'inner',
-            handle: ".box-header-button-move",
-            cursor: 'move',
-            cursorAt: { 
-                cursor: "move", 
-                top: 10, 
-                left: 100 
-            },
-            revert: function(){
-                if(boxManager.revert == false){
-                    return 'invalid';
-                } else{
-                    boxManager.revert = false;
-                }
-            },
-        appendTo: 'body',
-        zIndex: 10,
-        start: function(event, ui) {
-            $(this).css({});
-            $('.box-container.empty').addClass('box-dropable')
-            .css('min-height', $(this).height());
-        },
-        stop: function (event, ui) {
-            $(this).css({
-                top: 0,
-                left: 0,
-                width: 'auto'
-            });
-            $('.box-container').css('min-height', '');
-            $('.box-container.empty').removeClass('box-dropable');
-        }
-        });
-    $('.box-container')
-    .droppable({
-        accept: '.box',
-        activeClass: "box-dropable",
-        hoverClass: "box-drag-over",
-        drop: function (event, ui) {
-            var oldBox = $(this);
-                
-            var fromContainer = ui.draggable.parent();
-                
-            // prevent of switching between small box to widebox
-            if(fromContainer.is('.box-container-left, .box-container-right')) {
-                    
-                if(!$(this).is('.box-container-left, .box-container-right')) {
-                    boxManager.revert = true;
-                    return this;
-                }   
-            }
-                
-            if (oldBox.children().length > 0) {
-                fromContainer.append(oldBox.children());
-            } else {
-                fromContainer.addClass('empty').removeClass('active');
-            }
-            $(this).removeClass('empty').addClass('active');
-            $(this).append(ui.draggable);
-                    
-            boxManager.moveEmptyToBottom();
-
-        }
-    });
+    
+    
     return this;
 },
     
@@ -2748,6 +3020,7 @@ moveEmptyToBottom: function () {
                 tmp.next('.clear').remove();
                 boxesHolder.append(box);
                 boxesHolder.append(tmp);
+                
                 boxesHolder.append('<div class="clear"></div>');
             } else if (!box.hasClass('box-container-left')
                 && !box.hasClass('box-container-right')) {
@@ -2755,6 +3028,7 @@ moveEmptyToBottom: function () {
             }
         }
     });
+    
     return this;
 },
     
@@ -2879,6 +3153,8 @@ $(document).ready(function () {
     .add(new BC_RecentActivity())
     .add(new BC_CompetitionScore())
     .add(new BC_OgsiCurrent())
+    .add(new BC_Photos())
+    .add(new BC_Videos())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter)
     .init();

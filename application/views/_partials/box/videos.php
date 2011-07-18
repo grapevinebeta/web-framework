@@ -19,7 +19,7 @@
                 <a href="#"><span>prev</span></a>
                 </div>
                 <div class="desc">
-                    <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" class="title">Chevy cruise video</a>
+                    <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" class="title" title="Chevy cruise video">Chevy cruise video</a>
                     <span class="date">2/23/2011</span>
                     <span class="text">"Checkout the new chevy.."</span>
                 </div>
@@ -27,6 +27,14 @@
                     <a href="#"><span>next</span></a>
                 </div>
                 <div class="clear"></div>
+            </div>
+            
+            <div class="playlist">
+                <a href="http://www.youtube.com/embed/mkTMj0McIvc?autoplay=1" title="Chevy cruise video">
+                   <img src="http://img.youtube.com/vi/mkTMj0McIvc/0.jpg" width="322" />
+                   <span class="date">2/23/2011</span>
+                   <span class="text">"Checkout the new chevy.."</span>
+                </a>
             </div>
         </div>
     </div>

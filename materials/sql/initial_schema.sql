@@ -10,9 +10,9 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 -- Table `company`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `company` (
-  `company_id` INT NOT NULL ,
+  `id` INT NOT NULL ,
   `name` VARCHAR(150) NULL ,
-  PRIMARY KEY (`company_id`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -20,7 +20,7 @@ ENGINE = InnoDB;
 -- Table `locations`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `locations` (
-  `location_id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `location_name` VARCHAR(50) NULL ,
   `address1` VARCHAR(45) NULL ,
   `address2` VARCHAR(45) NULL ,
@@ -34,7 +34,7 @@ CREATE  TABLE IF NOT EXISTS `locations` (
   `owner_phone` VARCHAR(20) NULL ,
   `owner_ext` VARCHAR(45) NULL ,
   `billing_type` ENUM('charge','invoice') NULL ,
-  PRIMARY KEY (`location_id`) )
+  PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 
 
@@ -138,12 +138,12 @@ ENGINE = InnoDB;
 -- Table `alerts`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `alerts` (
-  `alert_id` INT NOT NULL AUTO_INCREMENT ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `location_id` INT NOT NULL ,
   `type` VARCHAR(12) NOT NULL ,
   `criteria` TEXT NOT NULL COMMENT 'only typed text to work with custom keyword entries\n' ,
   `use_default` BOOLEAN NOT NULL ,
-  PRIMARY KEY (`alert_id`) ,
+  PRIMARY KEY (`id`) ,
   INDEX `fk_alerts_locations` (`location_id` ASC))
 ENGINE = InnoDB;
 
@@ -152,10 +152,10 @@ ENGINE = InnoDB;
 -- Table `emails`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `emails` (
-  `email_id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(200) NULL ,
   `location_id` INT(11) NOT NULL ,
-  PRIMARY KEY (`email_id`, `location_id`) ,
+  PRIMARY KEY (`id`, `location_id`) ,
   INDEX `fk_emails_locations` (`location_id` ASC))
 ENGINE = InnoDB;
 
@@ -187,7 +187,7 @@ ENGINE = InnoDB;
 -- Table `location_settings`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `location_settings` (
-  `id` INT NOT NULL COMMENT 'competitor,newsletter,facebook_oauth_token,twitter_search,twitter_account,filter_search,gblog_search,youtube_search' ,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `type` VARCHAR(45) NOT NULL COMMENT 'competitor,newsletter,facebook_oauth_token,twitter_search,twitter_account,filter_search,gblog_search,youtube_search' ,
   `value` VARCHAR(225) NULL ,
   `location_id` INT NOT NULL ,
