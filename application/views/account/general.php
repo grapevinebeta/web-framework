@@ -1,7 +1,7 @@
 <h1 class="content-title">
     <?php echo __('General'); ?>
 </h1>
-<div class="padding-5">
+<div class="padding-5" id="generalLocationSettings">
     <form action="" method="post">
         <table>
             <tr>
@@ -15,7 +15,7 @@
                     <?php echo __('Name'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('name'); ?>
+                    <?php echo form::input('owner_name'); ?>
                 </td>
             </tr>
             <tr>
@@ -23,7 +23,7 @@
                     <?php echo __('Email'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('email'); ?>
+                    <?php echo form::input('owner_email'); ?>
                 </td>
             </tr>
             <tr>
@@ -31,7 +31,7 @@
                     <?php echo __('Contact Phone'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('phone'); ?>
+                    <?php echo form::input('owner_phone'); ?>
                 </td>
             </tr>
             <tr>
@@ -39,7 +39,7 @@
                     <?php echo __('Extension'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('extension'); ?>
+                    <?php echo form::input('owner_ext'); ?>
                 </td>
             </tr>
             <tr>
@@ -66,7 +66,7 @@
                     <?php echo __('Address 1'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('adress1'); ?>
+                    <?php echo form::input('address1'); ?>
                 </td>
             </tr>
             <tr>
@@ -74,7 +74,7 @@
                     <?php echo __('Address 2'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('adress2'); ?>
+                    <?php echo form::input('address2'); ?>
                 </td>
             </tr>
             <tr>
@@ -106,7 +106,7 @@
                     <?php echo __('Phone'); ?>:
                 </td>
                 <td>
-                    <?php echo form::input('location_phone'); ?>
+                    <?php echo form::input('phone'); ?>
                 </td>
             </tr>
             <tr>

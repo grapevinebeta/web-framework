@@ -142,14 +142,38 @@ Route::set('social', 'social')
 		'controller' => 'social',
 		'action'     => 'index',
 	));
+
 // API routes
-Route::set('account_settings_api', 'api/settings')
+Route::set('api_account_settings', 'api/settings')
 	->defaults(array(
 		'directory' => 'api',
 		'controller' => 'settings',
 		'action' => 'index',
 	));
-
+Route::set('api_account_settings_addemail', 'api/settings/addemail')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'addemail',
+	));
+Route::set('api_account_settings_get', 'api/settings/get')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'get',
+	));
+Route::set('api_account_settings_getemails', 'api/settings/getemails')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'getemails',
+	));
+Route::set('api_account_settings_getuser', 'api/settings/getuser')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'getuser',
+	));
 Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(api)'
 	));
