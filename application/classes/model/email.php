@@ -15,6 +15,7 @@ class Model_Email extends ORM {
         return array(
             'email' => array(
                 array('email', null),
+                array('max_length', array(':value',255)),
                 array('min_length', array(':value',6)),
                 array('not_empty', null),
             ),
