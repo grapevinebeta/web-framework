@@ -11,7 +11,7 @@
 <?php if(isset($has_pager)): ?>
 <div class="box-pager">
     <a class="prev" href="#">&lt;</a>
-    Page <span class="page">1</span> of <span class="pageCount">1</span>
+    <?php echo __('Page'); ?> <span class="page">1</span> <?php echo __('of'); ?> <span class="pageCount">1</span>
     <a class="next" href="#">&gt;</a>
 </div>
 <?php endif; ?>

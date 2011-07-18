@@ -41,7 +41,9 @@ Class.extend = function(def) {
 var boxCollection = new Array();
 
 /**
- * 
+ * the simplest controller of all and the base on
+ * it contain logic for handle with filters, pagination and asynchronic data
+ * load.
  */
 var BoxController = Class.extend({
     
@@ -90,12 +92,18 @@ var BoxController = Class.extend({
      */
     ignore: false,
     
+    
+    /**
+     * @var Boolean if there is no data this variable return true
+     */
+    
+    empty: false,
+    
     construct: function () {},
     
     init: function () {
         if (this.boxId && this.getContentDom().length) {
             this.refresh();
-            this.attachCommonEvents();
             this.attachBoxEvents();
         }
     },
@@ -109,33 +117,6 @@ var BoxController = Class.extend({
     // this method can be safely overriden by any of the inheriting classes
     },
 
-    /**
-     * Attach events to specific elements within currently processed box. Has to
-     * use .delegate() jQuery method on the current box's DOM (eg. retrieved by
-     * this.getBoxDom()), to stand the data reloading without the need to attach
-     * again and not to impact in extent, like .live() does.
-     */
-    attachCommonEvents: function() {
-        var self = this;
-
-        // Attach event for setting filter by status
-        self.getBoxDom().delegate('a[data-filter-status]', 'click', function(event){
-            event.preventDefault();
-            var filter_value = $(this).attr('data-filter-status');
-            
-
-
-            var key = $(this).parent().attr('class');
-            key = key.replace("box-filter box-filter-", "");
-            
-            if($(this).hasClass('show-all')) {
-                self.resetFilters(key);
-            }
-            
-            self.addFilter(key , filter_value);
-            self.refresh();
-        });
-    },
 
     /**
      * @return jQuery DOM element which holds the box
@@ -175,19 +156,6 @@ var BoxController = Class.extend({
             this._filterDom = $('#' + this.boxId + ' .box-filters');
         }
         return this._filterDom;
-    },
-    
-    /**
-     * @return jQuery DOM element which holds pager of the box
-     */
-    
-    getPagerHolder: function() {
-        
-        if (!this._pagerDom) {
-            this._pagerDom = $('#' + this.boxId + ' .box-pager');
-        }
-        return this._pagerDom;
-        
     },
     
     getLoaderHtml: function () {
@@ -235,15 +203,16 @@ var BoxController = Class.extend({
     afterLoadData: function () {
         this.hideLoader();
         this.showContent();
-        this.getHeaderDom().find('.box-header-right-buttons a.box-header-button-show-data').addClass('active');
+        this.getHeaderDom()
+        .find('.box-header-right-buttons a.box-header-button-show-data')
+        .addClass('active');
      
         if(this.empty) {
+            var holder = this.getContentDom().find('div'),
+            div, wrapper, span;
             
             
-            var holder = this.getContentDom().find('div');
-            
-            
-            var div, wrapper, span;
+            // big 100% width no data icon
             if(holder.width() > 291) {
             
                 wrapper = $('<div/>', {
@@ -280,9 +249,7 @@ var BoxController = Class.extend({
                     }
                 })
                
-                div = $('<div/>', {
-                        
-                });
+                div = $('<div/>');
                 
                 span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
                 
@@ -320,6 +287,7 @@ var BoxController = Class.extend({
                     boxController.afterLoadData();
                 }
                 else {
+                    // when no data is loaded this variable indicate it
                     boxController.empty = true;
                     
                     boxController.afterLoadData();
@@ -556,7 +524,10 @@ var BC_GraphBoxController = BoxController.extend({
         }
     },
 
-    
+    /**
+     * we should separate data to 6 equal size points
+     *
+     */
     computeDateInterval: function() {
 
         return Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
@@ -585,11 +556,9 @@ var BC_GraphBoxController = BoxController.extend({
             box = $(this).parents('.box:first');
         }
         
-        
         var boxContent = box.find('.box-content');
         boxContent.children().hide();
         box.find('.box-header-button').removeClass('active');
-
 
         var dataGrid = box.find('.data-grid-holder');
         if (!dataGrid.is(':visible')) {
@@ -862,6 +831,19 @@ var BC_Inbox = BoxController.extend({
     limit: 10,
     ignore: false,
     
+    /**
+     * @return jQuery DOM element which holds pager of the box
+     */
+    
+    getPagerHolder: function() {
+        
+        if (!this._pagerDom) {
+            this._pagerDom = $('#' + this.boxId + ' .box-pager');
+        }
+        return this._pagerDom;
+        
+    },
+    
     beforeLoadData: function () {
         this.getContentDom().children().hide();
         this.getContentDom().append(this.getLoaderHtml());
@@ -873,11 +855,27 @@ var BC_Inbox = BoxController.extend({
     
     
     /**
-     * Attach events associated with RecentReviews box, such as expanding review
+     * Attach events associated with Inbox boxes, such as expanding review
      * details when the review snippet is being clicked.
      */
     attachBoxEvents: function() {
         var self = this;
+
+        // Attach event for setting filter by status
+        self.getBoxDom().delegate('a[data-filter-status]', 'click', function(event){
+            event.preventDefault();
+            var filter_value = $(this).attr('data-filter-status');
+            
+            var key = $(this).parent().attr('class');
+            key = key.replace("box-filter box-filter-", "");
+            
+            if($(this).hasClass('show-all')) {
+                self.resetFilters(key);
+            }
+            
+            self.addFilter(key , filter_value);
+            self.refresh();
+        });
         
         // pager event delegation
         self.getPagerHolder().delegate('.prev, .next','click', function(e) {
