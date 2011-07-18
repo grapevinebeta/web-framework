@@ -186,6 +186,10 @@ Route::set('api_account_settings_updategeneral', 'api/settings/updategeneral')
 		'controller' => 'settings',
 		'action' => 'updategeneral',
 	));
+
+Route::set('dataprovider', '<directory>(/<controller>(/<action>(/<id>)))', array(
+		'directory' => 'api/dataProvider'
+	));
 Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(api)'
 	));
