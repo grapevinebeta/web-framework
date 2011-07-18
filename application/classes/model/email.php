@@ -14,8 +14,9 @@ class Model_Email extends ORM {
     public function rules() {
         return array(
             'email' => array(
-                array('not_empty', null),
+                array('email', null),
                 array('min_length', array(':value',6)),
+                array('not_empty', null),
             ),
         );
     }
