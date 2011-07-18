@@ -147,6 +147,12 @@ jQuery(function(){
                 alert('Not yet ready');
             });
 
+            this.userManagementSettings.delegate('form input[type="text"]', 'keydown', function(event){
+                if (event.keyCode == 13){
+                    jQuery(this).parents('form').submit(); // submit form
+                };
+            });
+
             log('User management initialized');
         }
 
