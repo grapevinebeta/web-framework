@@ -3,7 +3,7 @@
 class Controller_Api_Settings extends Controller {
 
     /**
-     * @var API response in the format it will be returned, for distinguishing
+     * @var array API response in the format it will be returned, for distinguishing
      *      between successful responses and errors
      * */
     protected $apiResponse = array(
@@ -81,7 +81,7 @@ class Controller_Api_Settings extends Controller {
      * @todo Apply security - for now any user can be retrieved
      */
     public function action_getuser() {
-        $data = $_GET;
+        $data = $_GET; // @todo for debugging only; replace with POST data
         //$data = $this->request->post();
         $user_id = (int)Arr::path($data, 'params.user_id');
         $user = ORM::factory('user')
@@ -101,6 +101,46 @@ class Controller_Api_Settings extends Controller {
                     'username' => $user->username,
                 ),
             );
+        }
+    }
+
+    /**
+     * Get general location settings.
+     */
+    public function action_getgeneral() {
+        $data = $_GET; // @todo For debugging only; replace with POST data
+        // $data = $this->request->post();
+
+        // @todo Change location ID to be assigned as needed
+        $location_id = 1;
+
+        $location = ORM::factory('location')
+                //->where('location_id', '=', $location_id)
+                ->find();
+        if (empty($location->location_id)) {
+            // Location not found
+            $this->apiResponse['error'] = array(
+                'message' => __('Location not found'),
+            );
+        } else {
+            $this->apiResponse['result'] = array();
+            $properties = array(
+                'owner_name',
+                'owner_email',
+                'owner_phone',
+                'owner_ext',
+                'location_name',
+                'address1',
+                'address2',
+                'city',
+                'state',
+                'zip',
+                'phone',
+                'url',
+            );
+            foreach ($properties as $property_name) {
+                $this->apiResponse['result'][$property_name] = $location->$property_name;
+            }
         }
     }
 
