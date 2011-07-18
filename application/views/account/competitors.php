@@ -31,10 +31,12 @@
                         <?php echo html::chars($competitor['name']) ?>
                     </td>
                     <td class="a-center">
-                        <?php echo html::anchor(
-                            '#', 'x',
-                            array('class' => 'confirm-required',
-                                  'onclick' => "return confirm('". __('Are you sure?') ."')")) ?>
+                        <?php
+                        echo html::anchor('#', 'x',array(
+                            'class' => 'confirm-required',
+                            'data-action' => 'delete',
+                        ));
+                        ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

@@ -24,10 +24,12 @@
                         <?php echo html::chars($email) ?>
                     </td>
                     <td class="a-center">
-                        <?php echo html::anchor(
-                            '#', 'x',
-                            array('class' => 'confirm-required',
-                                  'onclick' => "return confirm('". __('Are you sure?') ."')")) ?>
+                        <?php
+                        echo html::anchor('#', 'x',array(
+                            'class' => 'confirm-required', // @todo is it really still needed?
+                            'data-action' => 'delete',
+                        ));
+                        ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

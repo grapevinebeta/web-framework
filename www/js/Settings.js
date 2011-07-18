@@ -66,6 +66,19 @@ jQuery(function(){
         },
 
         'initializeCompetitorsSettings': function(){
+            this.competitorsSettings.delegate('form', 'submit', function(event){
+                event.preventDefault();
+                alert('Not yet ready');
+            });
+
+            this.competitorsSettings.delegate('a[data-action="delete"]', 'click', function(event){
+                event.preventDefault();
+                if (confirm('Are you sure?')){
+                    jQuery(this).parents('tr').remove(); // @todo do this only when deletion confirmed by server
+                    log('Competitor would be deleted here');
+                }
+            });
+
             log('Competitors settings initialized');
         },
 
@@ -103,14 +116,37 @@ jQuery(function(){
         },
 
         'initializeReportsSettings': function(){
+            this.reportsSettings.delegate('form', 'submit', function(event){
+                event.preventDefault();
+                alert('Not yet ready');
+            });
+
+            this.reportsSettings.delegate('a[data-action="delete"]', 'click', function(event){
+                event.preventDefault();
+                if (confirm('Are you sure?')){
+                    jQuery(this).parents('tr').remove(); // @todo do this only when deletion confirmed by server
+                    log('Email would be deleted here');
+                }
+            });
+
             log('Reports settings initialized');
         },
 
         'initializeSocialMediaSettings': function(){
+            this.socialMediaSettings.delegate('form', 'submit', function(event){
+                event.preventDefault();
+                alert('Not yet ready');
+            });
+
             log('Social media settings initialized');
         },
 
         'initializeUserManagement': function(){
+            this.userManagementSettings.delegate('form', 'submit', function(event){
+                event.preventDefault();
+                alert('Not yet ready');
+            });
+
             log('User management initialized');
         }
 
