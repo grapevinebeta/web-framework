@@ -168,11 +168,23 @@ Route::set('api_account_settings_getemails', 'api/settings/getemails')
 		'controller' => 'settings',
 		'action' => 'getemails',
 	));
+Route::set('api_account_settings_getgeneral', 'api/settings/getgeneral')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'getgeneral',
+	));
 Route::set('api_account_settings_getuser', 'api/settings/getuser')
 	->defaults(array(
 		'directory' => 'api',
 		'controller' => 'settings',
 		'action' => 'getuser',
+	));
+Route::set('api_account_settings_updategeneral', 'api/settings/updategeneral')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'updategeneral',
 	));
 Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(api)'

@@ -16,6 +16,7 @@
                 </td>
                 <td>
                     <?php echo form::input('owner_name'); ?>
+                    <span class="validation-message" data-validation-for="owner_name"></span>
                 </td>
             </tr>
             <tr>
@@ -24,6 +25,7 @@
                 </td>
                 <td>
                     <?php echo form::input('owner_email'); ?>
+                    <span class="validation-message" data-validation-for="owner_email"></span>
                 </td>
             </tr>
             <tr>
@@ -32,6 +34,7 @@
                 </td>
                 <td>
                     <?php echo form::input('owner_phone'); ?>
+                    <span class="validation-message" data-validation-for="owner_phone"></span>
                 </td>
             </tr>
             <tr>
@@ -40,6 +43,7 @@
                 </td>
                 <td>
                     <?php echo form::input('owner_ext'); ?>
+                    <span class="validation-message" data-validation-for="owner_ext"></span>
                 </td>
             </tr>
             <tr>
@@ -59,6 +63,7 @@
                 </td>
                 <td>
                     <?php echo form::input('location_name'); ?>
+                    <span class="validation-message" data-validation-for="location_name"></span>
                 </td>
             </tr>
             <tr>
@@ -67,6 +72,7 @@
                 </td>
                 <td>
                     <?php echo form::input('address1'); ?>
+                    <span class="validation-message" data-validation-for="address1"></span>
                 </td>
             </tr>
             <tr>
@@ -75,6 +81,7 @@
                 </td>
                 <td>
                     <?php echo form::input('address2'); ?>
+                    <span class="validation-message" data-validation-for="address2"></span>
                 </td>
             </tr>
             <tr>
@@ -83,6 +90,7 @@
                 </td>
                 <td>
                     <?php echo form::input('city'); ?>
+                    <span class="validation-message" data-validation-for="city"></span>
                 </td>
             </tr>
             <tr>
@@ -91,6 +99,7 @@
                 </td>
                 <td>
                     <?php echo form::input('state'); ?>
+                    <span class="validation-message" data-validation-for="state"></span>
                 </td>
             </tr>
             <tr>
@@ -99,6 +108,7 @@
                 </td>
                 <td>
                     <?php echo form::input('zip'); ?>
+                    <span class="validation-message" data-validation-for="zip"></span>
                 </td>
             </tr>
             <tr>
@@ -107,6 +117,7 @@
                 </td>
                 <td>
                     <?php echo form::input('phone'); ?>
+                    <span class="validation-message" data-validation-for="phone"></span>
                 </td>
             </tr>
             <tr>
@@ -115,6 +126,7 @@
                 </td>
                 <td>
                     <?php echo form::input('url'); ?>
+                    <span class="validation-message" data-validation-for="url"></span>
                 </td>
             </tr>
         </table>

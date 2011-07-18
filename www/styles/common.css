@@ -213,3 +213,10 @@ html[xmlns] .clearfix {
     top: 1px;
     width: 24px;
 }
+
+
+
+/* Validation-specific*/
+.validation-message {
+    color: #f00;
+}

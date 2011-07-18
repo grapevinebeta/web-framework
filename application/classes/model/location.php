@@ -3,4 +3,8 @@
 /**
  * Model for representing single location
  */
-class Model_Location extends ORM {}
+class Model_Location extends ORM {
+
+    protected $_primary_key = 'location_id';
+    
+}
