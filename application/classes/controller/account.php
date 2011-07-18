@@ -54,11 +54,21 @@ class Controller_Account extends Controller_Template {
     
     public function action_reports()
     {
+        // @todo replace it with something actually meaningful
+        $location_id = 1;
+
         $this->_contentView = View::factory('account/reports');
-        $emailsData = array(
-            'jacek.kromski@polcode.com',
-            'tomasz.jaskowski@polcode.com',
-        );
+
+        // get currently assigned emails
+        $emailsData = array();
+        $emails = ORM::factory('email')
+            ->where('location_id','=',(int)$location_id)
+            ->find_all();
+        foreach ($emails as $email){
+            $emailsData[] = $email->email;
+        }
+
+        // assign emails to the view
         $this->_contentView->emails = $emailsData;
     }
     

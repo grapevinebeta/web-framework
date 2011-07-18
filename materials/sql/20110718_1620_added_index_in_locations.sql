@@ -1,0 +1,1 @@
+ALTER TABLE `locations` CHANGE `location_id` `location_id` INT UNSIGNED NOT NULL AUTO_INCREMENT;

@@ -14,6 +14,7 @@
             <p>
                 <input type="text" name="email" />
                 <?php echo form::submit('', __('Add Email')); ?>
+                <span class="validation-message" data-validation-for="email"></span>
             </p>
         </form>
         * <?php echo __('PLEASE add <a href="mailto:customer.service@grapevinebeta.com">customer.service@grapevinebeta.com</a> to your email address book "whitelist" to guarantee you will receive these reports.'); ?>

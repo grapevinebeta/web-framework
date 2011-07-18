@@ -9,6 +9,15 @@ class Model_Email extends ORM {
     protected $_belongs_to = array();
 
     // primary key within the table
-    protected $_primary_key = 'album_id';
+    protected $_primary_key = 'email_id';
+
+    public function rules() {
+        return array(
+            'email' => array(
+                array('not_empty', null),
+                array('min_length', array(':value',6)),
+            ),
+        );
+    }
 
 }

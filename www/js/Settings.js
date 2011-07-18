@@ -117,6 +117,10 @@ jQuery(function(){
                     log('Retrieved data:');
                     log(data);
                     self.refreshReportsSettingsEmails();
+                    if (data.error && typeof data.error.validation_errors != 'undefined'){
+                        // display error information
+                        self.displayValidationErrors(data.error.validation_errors, this.reportsSettings);
+                    }
                 }, 'json');
             });
 
@@ -155,6 +159,21 @@ jQuery(function(){
             log('User management initialized');
         },
 
+
+
+        // display validation information from the data given, into the validation messages' containers
+        'displayValidationErrors': function(errors, form){
+            if (typeof form == 'undefined'){
+                form = jQuery('form');
+            }
+            var field;
+            for (field_name in errors){
+                log('Showing "' + field_name + '" validation feedback: ' + errors[field_name]);
+                field = form.find('.validation-message[data-validation-for="' + field_name + '"]');
+                field.html(errors[field_name]);
+                log(field);
+            }
+        },
 
         // enter the given data into form fields
         'propagateFormData': function(data, form){

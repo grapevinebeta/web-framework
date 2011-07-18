@@ -179,11 +179,8 @@ class Controller_Api_Settings extends Controller {
         // @todo dummy replacement, delete it and assign it from eg. session
         $location_id = 1;
 
-        $email_id = time()-1310968430; // @todo implement AUTO_INCREMENT in the database, now it fails PRIMARY KEY check
-
         $post = array(
             'location_id' => $location_id,
-            'email_id' => $email_id,
         );
         $post = $post + $this->request->post();
 
@@ -203,13 +200,14 @@ class Controller_Api_Settings extends Controller {
                     'code' => $e->getCode(),
                     'message' => $e->getMessage(),
                 ),
+                'validation_errors' => $e->errors('validation'),
             );
         } catch (Database_Exception $e) {
             // This should not happen and should be handled by validation!
             $this->apiResponse['error'] = array(
                 'message' => __('Email is incorrect'), // @todo add more details
                 'error_data' => array(
-                    'code' => $e->getCode(). '['.time().']',
+                    'code' => $e->getCode(),
                     'message' => $e->getMessage(),
                 ),
             );
@@ -227,6 +225,7 @@ class Controller_Api_Settings extends Controller {
          */
         $location_id = 1;
 
+        // list of fields accepted for setting and for viewing in general settings
         $editable = array(
             'owner_name',
             'owner_email',
