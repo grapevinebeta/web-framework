@@ -3125,8 +3125,6 @@ clearData: function () {
             content.find('tr.expanded').remove();
 
             content.find('td').removeAttr('style');
-            
-            console.log(content);
         
             if(content.length) {
                 var title = $("<h2/>").text(box.getHeaderDom()
