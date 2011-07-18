@@ -164,6 +164,57 @@ class Controller_Api_Settings extends Controller {
             $this->apiResponse['result']['emails'][] = $email->email;
         }
 
+        $this->apiResponse['result']['emails_html'] = View::factory('account/_partials/reports_emails', array(
+            'emails' => $this->apiResponse['result']['emails'],
+        ))->render();
+
+    }
+
+    /**
+     * Action to add email to the list of emails to which the report is being
+     * sent.
+     */
+    public function action_addemail() {
+
+        // @todo dummy replacement, delete it and assign it from eg. session
+        $location_id = 1;
+
+        $email_id = time()-1310968430; // @todo implement AUTO_INCREMENT in the database, now it fails PRIMARY KEY check
+
+        $post = array(
+            'location_id' => $location_id,
+            'email_id' => $email_id,
+        );
+        $post = $post + $this->request->post();
+
+        try {
+            $email = ORM::factory('email')
+                    ->values($post)
+                    ->create();
+            
+            $this->apiResponse['result'] = array(
+                'success' => true,
+                'message' => __('Email has been successfully added to the list'),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Email is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Email is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(). '['.time().']',
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
     }
 
 }

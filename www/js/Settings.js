@@ -116,9 +116,19 @@ jQuery(function(){
         },
 
         'initializeReportsSettings': function(){
+            var self = this;
+            
             this.reportsSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
-                alert('Not yet ready');
+
+                // @todo Replace it with some shorthand method for requests
+                jQuery.post('/api/settings/addemail', {
+                    'email': jQuery(this).find('input[name="email"]').val()
+                }, function(data){
+                    log('Retrieved data:');
+                    log(data);
+                    self.refreshReportsSettingsEmails();
+                }, 'json');
             });
 
             this.reportsSettings.delegate('a[data-action="delete"]', 'click', function(event){
@@ -150,10 +160,25 @@ jQuery(function(){
             this.userManagementSettings.delegate('form input[type="text"]', 'keydown', function(event){
                 if (event.keyCode == 13){
                     jQuery(this).parents('form').submit(); // submit form
-                };
+                }
             });
 
             log('User management initialized');
+        },
+
+
+        // refresh list of emails on the reports settings page
+        'refreshReportsSettingsEmails': function(){
+            var self = this;
+            
+            jQuery.post('/api/settings/getemails', {}, function(data){
+                if (data.result){
+                    // result received
+                    self.reportsSettings.find('.reportsSettingsEmails').replaceWith(data.result.emails_html);
+                }else{
+                    log('Problem encountered when trying to get list of emails from the server');
+                }
+            }, 'json');
         }
 
     });

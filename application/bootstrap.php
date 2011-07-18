@@ -150,6 +150,12 @@ Route::set('api_account_settings', 'api/settings')
 		'controller' => 'settings',
 		'action' => 'index',
 	));
+Route::set('api_account_settings_addemail', 'api/settings/addemail')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'addemail',
+	));
 Route::set('api_account_settings_get', 'api/settings/get')
 	->defaults(array(
 		'directory' => 'api',
