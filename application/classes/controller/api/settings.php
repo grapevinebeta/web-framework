@@ -246,23 +246,42 @@ class Controller_Api_Settings extends Controller {
             ->where('location_id','=',(int)$location_id)
             ->find();
 
-        if (!empty($general_settings->location_id)) {
-            $general_settings
-                ->values($data)
-                ->update();
-        } else {
-            $general_settings
-                ->values($data)
-                ->create();
+        try {
+            if (!empty($general_settings->location_id)) {
+                $general_settings
+                    ->values($data)
+                    ->update();
+            } else {
+                $general_settings
+                    ->values($data)
+                    ->create();
+            }
+            // get settings again
+            $general_settings = ORM::factory('location')
+                ->where('location_id','=',(int)$location_id)
+                ->find();
+
+            //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
+            $this->apiResponse['result']['general_settings'] = $general_settings->as_array();
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Your data is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Your data is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
         }
-
-        // get settings again
-        $general_settings = ORM::factory('location')
-            ->where('location_id','=',(int)$location_id)
-            ->find();
-
-        //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
-        $this->apiResponse['result']['general_settings'] = $general_settings->as_array();
 
     }
 

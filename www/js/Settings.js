@@ -94,9 +94,12 @@ jQuery(function(){
                 jQuery.post('/api/settings/updategeneral', form.serialize(), function(data){
                     if (data.result){
                         log('Data retrieved');
+                        self.clearValidationErrors();
                         self.refreshGeneralLocationSettings();
                     }else{
-                        alert('some error occured');
+                        if (typeof data.error.validation_errors != 'undefined'){
+                            self.displayValidationErrors(data.error.validation_errors, this.generalLocationSettings);
+                        }
                     }
                 }, 'json');
             });
@@ -119,7 +122,9 @@ jQuery(function(){
                     self.refreshReportsSettingsEmails();
                     if (data.error && typeof data.error.validation_errors != 'undefined'){
                         // display error information
-                        self.displayValidationErrors(data.error.validation_errors, this.reportsSettings);
+                        self.displayValidationErrors(data.error.validation_errors, self.reportsSettings);
+                    }else{
+                        self.clearValidationErrors();
                     }
                 }, 'json');
             });
@@ -162,6 +167,19 @@ jQuery(function(){
 
 
         // display validation information from the data given, into the validation messages' containers
+        'clearValidationErrors': function(form){
+            if (typeof form == 'undefined'){
+                form = jQuery('form');
+            }
+            form.find('.validation-message[data-validation-for]').each(function(index, element){
+                jQuery(this).html('');
+                log('Element to be emptied: ');
+                log(element);
+            });
+            log('Validation errors cleared');
+        },
+        
+        // display validation information from the data given, into the validation messages' containers
         'displayValidationErrors': function(errors, form){
             if (typeof form == 'undefined'){
                 form = jQuery('form');
@@ -173,6 +191,7 @@ jQuery(function(){
                 field.html(errors[field_name]);
                 log(field);
             }
+            log('Validation errors displayed.');
         },
 
         // enter the given data into form fields
