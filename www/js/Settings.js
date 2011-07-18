@@ -83,33 +83,22 @@ jQuery(function(){
         },
 
         'initializeGeneralLocationSettings': function(){
-            /**
-             * Dummy variable containing location data
-             */
-            var locationData = {
-                'owner_name': 'Tom Jaskowski',
-                'owner_email': 'tomasz.jaskowski@polcode.com',
-                'owner_phone': '661696776',
-                'owner_ext': 'n/a',
-                'location_name': 'Plaza',
-                'address1': 'Hoza 13',
-                'address2': 'Floor no.2',
-                'city': 'Warsaw',
-                'state': 'Poland',
-                'zip': '02-123',
-                'phone': '022222222',
-                'url': 'http://www.polcode.com/'
-            };
+            var self = this;
 
-            // propagate initial data
-            for (item in locationData){
-                this.generalLocationSettings.find('input[name="' + item + '"]').val(locationData[item]);
-            }
+            this.refreshGeneralLocationSettings();
 
             // attach events
             this.generalLocationSettings.delegate('form','submit',function(event){
                 event.preventDefault();
-                alert('Not yet ready.');
+                var form = jQuery(this);
+                jQuery.post('/api/settings/updategeneral', form.serialize(), function(data){
+                    if (data.result){
+                        log('Data retrieved');
+                        self.refreshGeneralLocationSettings();
+                    }else{
+                        alert('some error occured');
+                    }
+                }, 'json');
             });
 
             log('General settings initialized');
@@ -166,6 +155,35 @@ jQuery(function(){
             log('User management initialized');
         },
 
+
+        // enter the given data into form fields
+        'propagateFormData': function(data, form){
+            if (typeof form == 'undefined'){
+                form = jQuery('form');
+            }
+            var field;
+            for (field_name in data){
+                log('Propagating ' + field_name + ' field with data: ' + data[field_name]);
+                field = form.find('input[name="' + field_name + '"]').val(data[field_name]);
+                log(field);
+            }
+        },
+
+        // propagate General Location Settings form with up-to-date data
+        'refreshGeneralLocationSettings': function(){
+            var self = this;
+            
+            // propagate data when the page is displayed
+            jQuery.post('/api/settings/getgeneral', {}, function(data){
+                if (data.result){
+                    log('General location data retrieved');
+                    var form = self.generalLocationSettings.find('form');
+                    self.propagateFormData(data.result, form);
+                }else{
+                    log('Error fetching initial data for general location settings');
+                }
+            }, 'json');
+        },
 
         // refresh list of emails on the reports settings page
         'refreshReportsSettingsEmails': function(){

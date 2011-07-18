@@ -217,4 +217,54 @@ class Controller_Api_Settings extends Controller {
 
     }
 
+    /**
+     * Update the general settings
+     */
+    public function action_updategeneral() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = 1;
+
+        $editable = array(
+            'owner_name',
+            'owner_email',
+            'owner_phone',
+            'owner_ext',
+            'location_name',
+            'address1',
+            'address2',
+            'city',
+            'state',
+            'zip',
+            'phone',
+            'url',
+        );
+        $data = array_intersect_key($this->request->post(), array_flip($editable));
+
+        $general_settings = ORM::factory('location')
+            ->where('location_id','=',(int)$location_id)
+            ->find();
+
+        if (!empty($general_settings->location_id)) {
+            $general_settings
+                ->values($data)
+                ->update();
+        } else {
+            $general_settings
+                ->values($data)
+                ->create();
+        }
+
+        // get settings again
+        $general_settings = ORM::factory('location')
+            ->where('location_id','=',(int)$location_id)
+            ->find();
+
+        //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
+        $this->apiResponse['result']['general_settings'] = $general_settings->as_array();
+
+    }
+
 }
