@@ -12,6 +12,10 @@
                         
                         <div class="rightCol">
                             
+                            <div class="actions-network a-left v-padding-2">
+                                <span class="details-network"></span>
+                            </div>
+                            
                             <div class="v-padding-2">
                                 <span class="mono-icon icon-email"></span>
                                 Email

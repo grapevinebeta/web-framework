@@ -15,7 +15,7 @@
                     <a href="#"><span>prev</span></a>
                 </div>
                 <div class="desc">
-                    <a href="http://farm7.static.flickr.com/6141/5934098842_ae7d7c5466.jpg" class="title">Chevy cruise</a>
+                    <a href="http://farm7.static.flickr.com/6141/5934098842_ae7d7c5466.jpg" class="title" title="Chevy cruise">Chevy cruise</a>
                     <span class="date">2/23/2011</span>
                 </div>
                 <div class="next">
