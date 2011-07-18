@@ -142,6 +142,7 @@ Route::set('social', 'social')
 		'controller' => 'social',
 		'action'     => 'index',
 	));
+
 // API routes
 Route::set('api_account_settings', 'api/settings')
 	->defaults(array(
@@ -154,6 +155,12 @@ Route::set('api_account_settings_get', 'api/settings/get')
 		'directory' => 'api',
 		'controller' => 'settings',
 		'action' => 'get',
+	));
+Route::set('api_account_settings_getemails', 'api/settings/getemails')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'getemails',
 	));
 Route::set('api_account_settings_getuser', 'api/settings/getuser')
 	->defaults(array(

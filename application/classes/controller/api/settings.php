@@ -144,4 +144,26 @@ class Controller_Api_Settings extends Controller {
         }
     }
 
+    /**
+     * Get emails used for reports
+     */
+    public function action_getemails() {
+
+        // @todo dummy replacement, delete it and assign it from eg. session
+        $location_id = 1;
+
+        $emails = ORM::factory('email')
+                ->where('location_id', '=', (int)$location_id)
+                ->find_all();
+
+        $this->apiResponse['result'] = array(
+            'emails' => array(),
+        );
+
+        foreach ($emails as $email) {
+            $this->apiResponse['result']['emails'][] = $email->email;
+        }
+
+    }
+
 }
