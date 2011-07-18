@@ -317,6 +317,7 @@ class Controller_Api_Static extends Controller {
 
         if ($field == 'expand') {
 
+            sleep(1);
             $status = array('OPEN', 'CLOSED', 'TODO');
             $excerpts = array(
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -552,7 +553,7 @@ class Controller_Api_Static extends Controller {
 
         if ($field == 'expand') {
 
-
+            sleep(1);
             $status = array('OPEN', 'CLOSED', 'TODO');
             $excerpts = array(
                 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -930,7 +931,7 @@ class Controller_Api_Static extends Controller {
                 break;
             case 'expand':
 
-
+                sleep(1);
                 $status = array('OPEN', 'CLOSED', 'TODO');
                 $excerpts = array(
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

@@ -1080,6 +1080,7 @@ var BC_Inbox = BoxController.extend({
         data.context.customPopulateFields(text, data);
         
         
+        data.trContext.prev().find('.expand-preloader').removeClass('expand-preloader').addClass('expand');
         tr.removeClass('hidden-row');
         
     },
@@ -1094,6 +1095,7 @@ var BC_Inbox = BoxController.extend({
         
         data.trContext = $(e.target);
         
+        data.trContext.prev().find('.expand').removeClass('expand').addClass('expand-preloader');
         data.context.expandedPopulateCallback(data);
         
         
@@ -2982,9 +2984,6 @@ boxManager = {
         }
         this.setRange(range);
         
-        
-        this.initHolders();
-        
         var self = this;
         $('#range-form').submit(function (e) {
             
@@ -3001,6 +3000,8 @@ boxManager = {
         }).find('#period-selector, #date-selector').change(function () {
             $(this).parents('form:first').submit();
         });
+        
+        this.initHolders();
     
     
     return this;
@@ -3119,10 +3120,13 @@ clearData: function () {
             }
         
             content = box.getContentDom()
-            .find('.data-grid-holder table:visible').clone();
+            .find('.data-grid-holder table:visible:first').clone();
+            
             content.find('tr.expanded').remove();
 
-            content.find('.col-title').removeAttr('width');
+            content.find('td').removeAttr('style');
+            
+            console.log(content);
         
             if(content.length) {
                 var title = $("<h2/>").text(box.getHeaderDom()

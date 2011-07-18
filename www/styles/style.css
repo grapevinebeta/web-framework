@@ -305,6 +305,7 @@ input[type=submit] {
 }
 
 .box-header-title {
+    position: relative;
 }
 
 .box-header-right-buttons {
@@ -1051,6 +1052,11 @@ input[type=submit] {
         height: 100%;
     }
     
+    .collapsed .col-title div.wrapper .in .title {
+        margin-right:28px;
+        display:block;
+    }
+    
     .box .col-2 h2 {
         margin:0;
     }
@@ -1354,3 +1360,5 @@ input[type=submit] {
     #box-videos .playlist {
         display:none;
     }
+    
+    

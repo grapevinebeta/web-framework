@@ -202,3 +202,14 @@ html[xmlns] .clearfix {
 * html .clearfix {
 	height: 1%;
 }
+
+.expand-preloader {
+    background: url("/images/preloader.gif") no-repeat scroll right top transparent;
+    display: inline-block;
+    height: 24px;
+    padding-left: 10px;
+    position: absolute;
+    right: 0px;
+    top: 1px;
+    width: 24px;
+}
