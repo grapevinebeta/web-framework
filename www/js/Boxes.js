@@ -2985,7 +2985,7 @@ boxManager = {
         
         this.initHolders();
         
-        
+        var self = this;
         $('#range-form').submit(function (e) {
             
             e.preventDefault();
