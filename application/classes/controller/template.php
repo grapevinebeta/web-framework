@@ -44,6 +44,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/jquery.livequery.js',
             'js/Boxes.js',
             'js/common.js', // adds some common functions
+            'js/Settings.js',
         );
         
         $this->template->body = 'test';
