@@ -42,15 +42,7 @@
         public function before()
         {
             parent::before();
-            $this->filters = array(
-                new Api_Filters_Neutral(),
-                new Api_Filters_Positive(),
-                new Api_Filters_Negative(),
-                new Api_Filters_Alert(),
-                new Api_Filters_Flagged(),
-                new Api_Filters_Completed()
 
-            );
 
             $this->id = $this->request->query('id');
             $range = $this->request->post('range');
@@ -104,7 +96,6 @@
 
         }
 
-        
 
         public function after()
         {
@@ -114,33 +105,48 @@
         }
 
 
-        
+        private $total_docs = 0;
 
         protected function matches_filter($doc)
         {
+
 
             $allow = false;
             foreach (
                 $this->filters as $filter
             ) {
 
-                $name = $filter->name();
-                if (!isset($this->filterResponse[$name])) {
-                    $this->filterResponse[$name] = array(
+                $name = $filter->name($doc);
+                $kind = $filter->kind();
+                if (!isset($this->filterResponse[$kind])) {
+                    $this->filterResponse[$kind] = array(
+                        'Total'
+                        => array(
+                            'total' => &$this->total_doc,
+                            'value' => null,
+                            'active' => false
+                        )
+                    );
+
+                }
+                if (!isset($this->filterResponse[$kind][$name])) {
+                    $this->filterResponse[$kind][$name] = array(
                         'total' => 0,
-                        'value' => $filter->key(),
-                        'active' => isset($this->activeFilters[$filter->key()])
+                        'value' => $filter->key($doc),
+                        'active' => isset($this->activeFilters[$filter->key($doc)])
                     );
                 }
+                $this->filterResponse[$kind][$name] ['total']++;
+
                 if ($filter->test($doc)) {
 
-                    $this->filterResponse[$name]['total']++;
+
                     if ($this->filterEnabled) {
                         $allow = true;
                     }
                 }
             }
-
+            $this->total_doc++;
             return $this->filterEnabled ? $allow : true;
 
         }

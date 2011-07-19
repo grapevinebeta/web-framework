@@ -18,12 +18,17 @@
             return true;
         }
 
-        public function key()
+        public function key($doc)
         {
             return null;
         }
 
-        public function name()
+        public function kind()
+        {
+            return null;
+        }
+
+        public function name($doc)
         {
             return null;
         }

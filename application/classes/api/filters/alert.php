@@ -14,13 +14,18 @@
             return $doc['status'] == 'alert';
         }
 
-        public function key()
+        public function key($doc)
         {
             return "alert";
         }
 
-        public function name()
+        public function name($doc)
         {
             return "Alert";
+        }
+
+        public function kind()
+        {
+            return "status";
         }
     }

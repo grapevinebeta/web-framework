@@ -14,13 +14,17 @@
             return $doc['status'] == 'TODO';
         }
 
-        public function key()
+        public function key($doc)
         {
             return "flagged";
         }
 
-        public function name()
+        public function name($doc)
         {
             return "Flagged";
+        }
+          public function kind()
+        {
+            return "status";
         }
     }

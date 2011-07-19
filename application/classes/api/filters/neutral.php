@@ -14,13 +14,17 @@
             return $doc['score'] >= 3 && $doc['score'] < 4;
         }
 
-        public function key()
+        public function key($doc)
         {
             return "neutral";
         }
 
-        public function name()
+        public function name($doc)
         {
             return "Neutral";
+        }
+          public function kind()
+        {
+            return "status";
         }
     }
