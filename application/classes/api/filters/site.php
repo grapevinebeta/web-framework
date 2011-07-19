@@ -29,6 +29,9 @@
             return $doc['site'];
         }
 
+        public function kind(){
+            return "source";
+        }
         public function name($doc)
         {
             return ucfirst($doc['site']);

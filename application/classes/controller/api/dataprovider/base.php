@@ -105,8 +105,11 @@
         }
 
 
+        private $total_docs = 0;
+
         protected function matches_filter($doc)
         {
+
 
             $allow = false;
             foreach (
@@ -116,7 +119,15 @@
                 $name = $filter->name($doc);
                 $kind = $filter->kind();
                 if (!isset($this->filterResponse[$kind])) {
-                    $this->filterResponse[$kind] = array();
+                    $this->filterResponse[$kind] = array(
+                        'Total'
+                        => array(
+                            'total' => &$this->total_doc,
+                            'value' => null,
+                            'active' => false
+                        )
+                    );
+
                 }
                 if (!isset($this->filterResponse[$kind][$name])) {
                     $this->filterResponse[$kind][$name] = array(
@@ -126,6 +137,7 @@
                     );
                 }
                 $this->filterResponse[$kind][$name] ['total']++;
+
                 if ($filter->test($doc)) {
 
 
@@ -134,7 +146,7 @@
                     }
                 }
             }
-
+            $this->total_doc++;
             return $this->filterEnabled ? $allow : true;
 
         }
