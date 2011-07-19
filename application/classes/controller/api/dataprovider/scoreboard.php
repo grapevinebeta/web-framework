@@ -24,10 +24,16 @@
             $doc = $doc['aggregates']['1'];
 
             return array(
-                'negative' => $doc['negative'],
-                'positive' => $doc['positive'],
-                'neutral' => $doc['neutral'],
-                'score' => floatval(number_format($doc['points'] / $doc['count'], 1))
+                'ogsi' => 0,
+                'rating'
+                => array(
+                    'negative' => $doc['negative'],
+                    'positive' => $doc['positive'],
+                    'neutral' => $doc['neutral'],
+                    'score' => floatval(number_format($doc['points'] / $doc['count'], 1))
+                ),
+                'reviews' => $doc['count']
+
             );
 
 
