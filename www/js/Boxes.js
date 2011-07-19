@@ -1086,10 +1086,12 @@ var BC_Inbox = BoxController.extend({
     /**
      * this callback is executed when expand event is triggered
      * is include custom user expand callback that need to be implemented
+     * e.target points to tr row that need to be populated
      */
     expandedPopulate: function(e, data) 
     {
-        $(e.target).unbind('*');
+        // we need to unbind all descendants events to avoid event duplication
+        $(e.target).find('*').unbind();
         
         data.trContext = $(e.target);
         
@@ -1100,6 +1102,12 @@ var BC_Inbox = BoxController.extend({
             
     },
     
+    /**
+     * this is placefolder for method than need to be implemented in 
+     * every class that extend inbox to provide custom data population when row
+     * is expanded
+     *
+     */
     expandedPopulateCallback: function(data) {
       
       alert('not implemented');
@@ -1708,6 +1716,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
     endpoint: 'reviews',
 
 
+    /**
+     * this method populate every row of collapsed messages
+     * based on specific message template
+     *
+     */
     prepareMessage: function(template, message) {
         
         template = template.clone();
@@ -1721,7 +1734,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             var titleLink;
             switch(key) {
                 
-                case 'submitted':
+                case 'date':
                     var tmpDate = new Date(value * 1000);
                     var formatted = monthNames[tmpDate.getMonth()] +
                     ' ' + tmpDate.getDate();
@@ -1736,7 +1749,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     col.html(titleLink);
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
-                case 'rating':
+                case 'score':
                     var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
                     col.html(ratingStars);
                     break;
@@ -1768,11 +1781,17 @@ var BC_ReviewInbox = BC_Inbox.extend({
      */
     customPopulateFields: function(text, data) {
         
-        var message = text.review;
+        var message = text.review,
+        tr = $(data.trContext),
+        status = message.status.toLowerCase(),
+        self = tr;
         
-        var tr = $(data.trContext);
+        tr.find('.recent-review-status-icon')
+        .removeClass('open closed todo')
+        .addClass(status);
         
-        var status = message.status.toLowerCase(); 
+        tr.find('.review-details-title').text(message.title);
+        tr.find('.review-details-content').text(message.content);
         
         tr.find('.action-completed').bind('click', function(e) {
             
@@ -1826,15 +1845,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
         }
         else
             tr.find('.actions-' + status).remove();
-
-        tr.find('.recent-review-status-icon')
-        .removeClass('open closed todo')
-        .addClass(status);
-        
-        
-        
-        tr.find('.review-details-title').text(message.title);
-        tr.find('.review-details-review').text(message.review);
         
         
         tr.find('select[name="category"]').val(message.category)
@@ -1874,8 +1884,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 }
                 )
             );
-        
-        var self = tr;
         
         tr.find('.save-button').bind('click', function(e) {
             

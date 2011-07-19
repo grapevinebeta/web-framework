@@ -4,7 +4,7 @@
             <div class="recentReviewDetailsForm">
                 <div class="innerForm">
                     <h2 class="review-details-title"></h2>
-                    <p class="review-details-review"></p>
+                    <p class="review-details-content"></p>
                         <table class="wide">
                             <tr>
                                 <td class="a-right">

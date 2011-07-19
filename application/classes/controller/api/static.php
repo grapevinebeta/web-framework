@@ -280,18 +280,17 @@ class Controller_Api_Static extends Controller {
             
             $reviews[] = array(
                 'status' => $status[$key],
-                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
-                'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[$eKey],
+                'score' => rand(0, 5), // [decimal:optional] - review overall score
+                'date' => rand(1300000000, time()),
                 'site' => $network,
                 'id' => $id,
-                'review' => $excerpts[$eKey],
+                'content' => $excerpts[$eKey],
                 'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
                 'title' => $excerpts[$eKey],
                 'link' => $autor[$eKey],
-                'autor' => $autor[$eKey]
+                'identity' => $autor[$eKey]
             );
         }
 
@@ -954,18 +953,17 @@ class Controller_Api_Static extends Controller {
 
                 $review = array(
                     'status' => $status[$key],
-                    'rating' => rand(0, 5), // [decimal:optional] - review overall rating
-                    'submitted' => rand(1300000000, time()),
-                    'excerpt' => $excerpts[rand(0, 6)],
+                    'score' => rand(0, 5), // [decimal:optional] - review overall rating
+                    'date' => rand(1300000000, time()),
                     'site' => $network,
                     'id' => $id,
-                    'review' => $excerpts[$eKey],
+                    'content' => $excerpts[$eKey],
                     'category' => "important",
                     'notes' => 'notes',
                     'tags' => array('keyword', 'car'),
                     'title' => $excerpts[$eKey],
                     'link' => $autor[$eKey],
-                    'autor' => $autor[$eKey]
+                    'identity' => $autor[$eKey]
                 );
 
 

@@ -18,7 +18,7 @@
             );
         ?>
         <?php 
-            echo html::image('images/icons/pickdate.png', array('alt' => ''));
+            echo html::image('images/icons/pickdate.png', array('alt' => 'Choose start date'));
             echo form::input(
             'date', 
             $viewingRange['date'], 
@@ -61,8 +61,6 @@
     var dateRange = $("#date-range");
     var datapicker;
     
-    // @TODO fix bug when user select date in specific range
-    // default date = yesterday
     maxDate = maxDate.length ? new Date(maxDate) : '-1d';
     
     if(maxDate instanceof Date) {
@@ -99,6 +97,7 @@
             
             maxDate = new Date(dateText);
             
+            minDate.setDate(maxDate.getDate());
             minDate.setMonth(maxDate.getMonth() - period);
             
             datapicker.datepicker("option", {
