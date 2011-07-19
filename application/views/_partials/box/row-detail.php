@@ -6,7 +6,7 @@
                         <div class="leftCol">
                             <div class="inner">
                                 <h2 class="details-title"></h2>
-                                <p class="details-review"></p>
+                                <p class="details-content"></p>
                             </div>
                         </div>
                         

@@ -98,32 +98,21 @@ class Controller_Api_Static extends Controller {
         
     }
 
-    public function action_ogsi() {
-
+    public function action_scoreboard() {
+        
         $rands[] = rand(0, 100);
         $rands[] = rand(0, 100);
         $rands[] = rand(0, 100);
 
-        $this->apiResponse = array('ogsi' => array(
-                'distribution' => array(// OGSIDistributionObject,
+        $this->apiResponse = array($this->request->param('id') => array(
+                'rating' => array(// OGSIDistributionObject,
                     'positive' => $rands[0], //:[int:required] - positive count
                     'neutral' => $rands[1], //:[int:required] - neutral count
                     'negative' => $rands[2], //:[int:required] - negative count
-                    'total' => array_sum($rands), //:[int:required] - total count
-                    'average' => 4, //:[decimal:required] - average count
+                    'score' => rand(0, 50) / 10.0
                 ),
-                'ogsi' => array(// OGSIScoreObject,
-                    'value' => number_format(lcg_value() * (abs(100)),1), //:[decimal:required] - the ogsi percent
-                    'change' => 5.0, //:[decimal:required] - the change in percentage
-                ),
-                'reviews' => array(// OGSIReviewsObject,
-                    'value' => rand(0, 50) / 10.0, //:[number:required] - the number of reviews
-                    'change' => rand(-10, 10), //:[number:required] - the change in percentage
-                ),
-                'rating' => array(// OGSIRatingObect
-                    'value' => rand(0, 50) / 10.0, //:[decimal:required] - the current rating
-                    'change' => rand(-10, 10), //:[decimal:required] - change in rating
-                ),
+                'ogsi' => number_format(lcg_value() * (abs(100)),1),
+                'reviews' => rand(0, 5000) / 10.0
                 ));
     }
 
@@ -214,7 +203,7 @@ class Controller_Api_Static extends Controller {
     /**
      * Reviews inbox endpoint
      */
-    public function action_reviews() {
+    public function action_review() {
 
         $postfilters = $this->request->post('filters');
         $filters = array();
@@ -241,9 +230,8 @@ class Controller_Api_Static extends Controller {
 
             foreach ($f as $filter) {
 
-                $filters[$network][] = array(
+                $filters[$network][$filter] = array(
                     'total' => rand(1, 50),
-                    'value' => $filter,
                     'active' => isset($inversed[strtolower($filter)])
                 );
             }
@@ -251,7 +239,7 @@ class Controller_Api_Static extends Controller {
 
 //        Kohana::$log->instance()->add(Log::DEBUG, $filters);
 
-        $status = array('OPEN', 'CLOSED', 'TODO');
+        $status = array('OPENED', 'CLOSED', 'TODO');
         $excerpts = array(
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             'Duis euismod sollicitudin lectus sit amet aliquam. Sed non',
@@ -313,6 +301,11 @@ class Controller_Api_Static extends Controller {
         $limit = $limit ? $limit : 10;
         $networks = array();
 
+        if(!$id) {
+            
+            $this->action_socials();
+            return;
+        }
 
         if ($field == 'expand') {
 
@@ -342,18 +335,17 @@ class Controller_Api_Static extends Controller {
             $social = array(
                 'network' => $network,
                 'status' => $status[rand(0, 2)],
-                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
-                'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[$keyT],
+                'score' => rand(0, 5), // [decimal:optional] - review overall rating
+                'date' => rand(1300000000, time()),
                 'site' => $network,
                 'id' => $id,
-                'review' => $excerpts[$keyT],
+                'content' => $excerpts[$keyT],
                 'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
                 'title' => $excerpts[$keyT],
                 'link' => $autor[$keyT],
-                'autor' => $autor[$keyT]
+                'identity' => $autor[$keyT]
             );
 
 
@@ -424,10 +416,7 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array('networks' => $networks);
     }
 
-    /**
-     * social inbox
-     */
-    public function action_socials() {
+    private function action_socials() {
 
         $status = array('OPEN', 'CLOSED', 'TODO');
         $excerpts = array(
@@ -461,18 +450,17 @@ class Controller_Api_Static extends Controller {
             $socials[] = array(
                 'network' => $network,
                 'status' => $status[rand(0, 2)],
-                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
-                'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[$keyT],
+                'score' => rand(0, 5), // [decimal:optional] - review overall rating
+                'date' => rand(1300000000, time()),
                 'site' => $network,
                 'id' => $id,
-                'review' => $excerpts[$keyT],
+                'content' => $excerpts[$keyT],
                 'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
                 'title' => $excerpts[$keyT],
                 'link' => $autor[$keyT],
-                'autor' => $autor[$keyT]
+                'identity' => $autor[$keyT]
             );
         }
 
@@ -550,6 +538,13 @@ class Controller_Api_Static extends Controller {
         $field = $this->request->param('field');
         $id = $this->request->param('id');
 
+        if(!$id) {
+            
+            $this->action_competitions();
+            return;
+            
+        }
+        
         if ($field == 'expand') {
 
             sleep(1);
@@ -579,18 +574,17 @@ class Controller_Api_Static extends Controller {
             $review = array(
                 'network' => $network,
                 'status' => $status[rand(0, 2)],
-                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
-                'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[$keyT],
+                'score' => rand(0, 5), // [decimal:optional] - review overall rating
+                'date' => rand(1300000000, time()),
                 'site' => $network,
                 'id' => $id,
-                'review' => $excerpts[$keyT],
+                'content' => $excerpts[$keyT],
                 'category' => "important",
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
                 'title' => $excerpts[$keyT],
                 'link' => $autor[$keyT],
-                'autor' => $autor[$keyT]
+                'identity' => $autor[$keyT]
             );
 
 
@@ -797,7 +791,7 @@ class Controller_Api_Static extends Controller {
      * CompetitionReviewObject extends ContentObject implements IOGISBaseCompetitionObject
      * @see api-dataProvider.txt
      */
-    public function action_competition_ledger() {
+    private function action_competitions() {
         $status = array('OPEN', 'CLOSE', 'TODO');
         $excerpts = array(
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -852,7 +846,6 @@ class Controller_Api_Static extends Controller {
                 );
             }
 
-            Kohana::$log->instance()->add(Log::DEBUG, $filters);
         }
 
         $reviews = array();
@@ -868,18 +861,17 @@ class Controller_Api_Static extends Controller {
                 'network' => $network,
                 'competition' => $competition[$keyT],
                 'status' => $status[rand(0, 2)],
-                'rating' => rand(0, 5), // [decimal:optional] - review overall rating
-                'submitted' => rand(1300000000, time()),
-                'excerpt' => $excerpts[$keyT],
+                'score' => rand(0, 5), // [decimal:optional] - review overall rating
+                'date' => rand(1300000000, time()),
                 'site' => $autor[$keyT],
                 'id' => $id,
-                'review' => $excerpts[$keyT],
+                'content' => $excerpts[$keyT],
                 'category' => 'category',
                 'notes' => 'notes',
                 'tags' => array('keyword', 'car'),
                 'title' => $excerpts[$keyT],
                 'link' => $autor[$keyT],
-                'author' => $autor[$keyT]
+                'identity' => $autor[$keyT]
             );
         }
 
@@ -908,7 +900,7 @@ class Controller_Api_Static extends Controller {
         $this->apiResponse = array('movies' => $collection);
     }
 
-    public function action_review() {
+    public function action_reviews() {
         $id = $this->request->param('id');
         $field = $this->request->param('field');
 

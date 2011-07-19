@@ -23,10 +23,10 @@
                 <table class="wide data-grid no-outer-border">
                     <tbody>
                         <tr>
-                            <td class="col-rating"></td>
-                            <td class="col-submitted a-center"></td>
+                            <td class="col-score"></td>
+                            <td class="col-date a-center"></td>
                             <td class="col-title" style="width:466px;"><div class="wrapper"><div class="in"></div></div></td>
-                            <td class="col-author a-right"></td>
+                            <td class="col-identity a-right"></td>
                             <td class="col-competition a-right"></td>
                         </tr>
                         

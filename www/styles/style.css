@@ -536,7 +536,7 @@ input[type=submit] {
             background-position: -553px -160px;
         }
 
-        #box-recent-reviews .reviewStatus-open {
+        #box-recent-reviews .reviewStatus-opened {
             background-position: -553px -14px;
         }
 
@@ -1024,12 +1024,12 @@ input[type=submit] {
         font-weight: bold;
         font-style: italic; 
         vertical-align: text-top;
-        height: 28px;
+
     }
     
     .collapsed .expand {
         background: url("../images/icons/expand-icon.png") no-repeat scroll 0 0 transparent;
-        bottom: -33px;
+        bottom: -6px;
         display: block;
         height: 15px;
         position: absolute;
@@ -1043,6 +1043,7 @@ input[type=submit] {
     
     .collapsed .col-title div.wrapper {
         position: relative;
+        height: 28px;
     }
     
     

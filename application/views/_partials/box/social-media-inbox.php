@@ -24,7 +24,7 @@
                     <tbody>
                         <tr>
                             <td class="col-network"></td>
-                            <td class="col-submitted a-center" width="13%"></td>
+                            <td class="col-date a-center" width="13%"></td>
                             <td class="col-title" style="width:466px;"><div class="wrapper"><div class="in"></div></div></td>
                             <td class="col-site" width="15%"></td>
                         </tr>

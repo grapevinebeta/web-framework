@@ -30,7 +30,7 @@
                                 <div class="in"></div>
                             </div>
                         </td>
-                        <td class="col-identity a-right" style="width:54px;"></td>
+                        <td class="col-site a-right" style="width:54px;"></td>
                     </tr>
                     <?php echo View::factory('_partials/box/generic-row'); ?>
                 </tbody>

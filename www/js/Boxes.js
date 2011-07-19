@@ -433,7 +433,7 @@ var BC_RecentActivity = BoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'socials',
+    endpoint: 'social',
     
     limit: 4,
     
@@ -445,7 +445,7 @@ var BC_RecentActivity = BoxController.extend({
       
         template.find('.title').text(data.title);
       
-        var tmpDate = new Date(data.submitted * 1000);
+        var tmpDate = new Date(data.date * 1000);
         var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
         '/' + tmpDate.getFullYear();
       
@@ -952,27 +952,29 @@ var BC_Inbox = BoxController.extend({
         var activeCount = 0;
         var filterHolder = this.getFiltersDom().find('.box-filter-' + filterType);
         filterHolder.html('');
-        for (var i = 0; i < filters.length; i++) {
+        
+        for(var filter in filters) {
             
             var filterLink = $('<a href="#" data-filter-status="' + 
-                filters[i].value.toLowerCase() + '"></a>');
-            if (filters[i].total) {
-                filterLink.text(filters[i].total +' ');
+                filter.toLowerCase() + '"></a>');
+            if (filters[filter].total) {
+                filterLink.text(filters[filter].total +' ');
             }
             
-            if(filters[i].active == 1) {
+            if(filters[filter].active == 1) {
                 
                 filterLink.addClass('active');
                 activeCount++;
             }
             
-            if(i === 0) {
+            if(filter == 'Total') {
                 filterLink.addClass('show-all');
             }
             
-            filterLink.text(filterLink.text() + filters[i].value);
+            filterLink.text(filterLink.text() + filter);
             filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
+            
         }
         
         if(!activeCount)
@@ -991,6 +993,7 @@ var BC_Inbox = BoxController.extend({
         this.loadInboxData();
         
         var filters = this.data.filters;
+        
         
         if(filters) 
         {
@@ -1245,82 +1248,69 @@ var BC_Ogsi = BoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'ogsi',
+    endpoint: 'scoreboard/overall',
     
     processData: function() {
       
         var holder = this.getContentDom(),
-        ogsi = this.data.ogsi;
+        ogsi = this.data.overall;
         
         
         if (ogsi) {
-            holder.find('.ogsi-score-value').text(ogsi.ogsi.value);
-            holder.find('.ogsi-score-change .change-value').text(ogsi.ogsi.change + '%');
-            holder.find('.ogsi-score-change .change-arrow')
-            .removeClass('positive')
-            .removeClass('negative')
-            .addClass((ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-score-value').text(ogsi.ogsi);
                 
-            holder.find('.ogsi-rating-value').text(ogsi.rating.value);
-            holder.find('.ogsi-rating-change .change-value').text(ogsi.rating.change + '%');
-            holder.find('.ogsi-rating-change .change-arrow')
-            .removeClass('positive')
-            .removeClass('negative')
-            .addClass((ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.value / 5) * 100 + '%');
+            holder.find('.ogsi-rating-value').text(ogsi.rating.score);
+            
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.score / 5) * 100 + '%');
 
-            holder.find('.ogsi-reviews-value').text(ogsi.reviews.value);
-            holder.find('.ogsi-reviews-change .change-value').text(ogsi.reviews.change + '%');
-            holder.find('.ogsi-reviews-change .change-arrow')
-            .removeClass('positive')
-            .removeClass('negative')
-            .addClass((ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-reviews-value').text(ogsi.reviews);
+            
             holder.show();
             
-            var distribution = ogsi.distribution;
+            var rating = ogsi.rating;
             var barHolder = holder.find('.bar-holder');
             
-            var maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative);
-            
+            var maxValue = Math.max(rating.negative, rating.positive, rating.neutral);
+            var total = rating.negative + rating.positive + rating.neutral;
             var ratio;
-            if (distribution.total) {
+            if (total) {
                 barHolder.show();
                 var bar = barHolder.find('.bar-negative');
                 bar.children('.bar-value').text('');
-                if (distribution.negative > 0) {
+                if (rating.negative > 0) {
                     
-                    ratio = (distribution.negative / maxValue) * 100;
+                    ratio = (rating.negative / maxValue) * 100;
                     
                     if(ratio > 5)
-                        bar.children('.bar-value').text(distribution.negative);
+                        bar.children('.bar-value').text(rating.negative);
                 }
                 bar = barHolder.find('.bar-neutral');
                 bar.children('.bar-value').text('');
-                if (distribution.neutral > 0) {
+                if (rating.neutral > 0) {
                     
-                    ratio = (distribution.neutral / maxValue) * 100;
+                    ratio = (rating.neutral / maxValue) * 100;
                     
                     if(ratio > 5)
-                        bar.children('.bar-value').text(distribution.neutral);
+                        bar.children('.bar-value').text(rating.neutral);
                 
-                    bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
+                    bar.css('width', ((rating.neutral + rating.positive)/total)*100+'%');
                     bar.show();
-                } else if (distribution.positive > 0) {
-                    bar.css('width', ((distribution.positive)/distribution.total)*100+'%');
+                } else if (rating.positive > 0) {
+                    bar.css('width', ((rating.positive)/total)*100+'%');
                     bar.show();
                 } else {
                     bar.hide();
                 }
                 bar = barHolder.find('.bar-positive');
                 bar.children('.bar-value').text('');
-                if (distribution.positive > 0) {
+                if (rating.positive > 0) {
                     
-                    ratio = (distribution.positive / maxValue) * 100;
+                    ratio = (rating.positive / maxValue) * 100;
                     
                     if(ratio > 5)
-                        bar.children('.bar-value').text(distribution.positive);
+                        bar.children('.bar-value').text(rating.positive);
                     
-                    bar.css('width', (distribution.positive/(distribution.neutral + distribution.positive))*100+'%');
+                    bar.css('width', (rating.positive/(rating.neutral + rating.positive))*100+'%');
                     bar.show();
                 } else {
                     bar.hide();
@@ -1368,71 +1358,60 @@ var BC_OgsiCurrent = BoxController.extend({
     
     
     boxId: 'box-ogsi-current',
-    endpoint: 'ogsi',
+    endpoint: 'scoreboard/current',
     
     processData: function() {
 
         var holder = this.getContentDom(),
-        ogsi = this.data.ogsi,
-        distribution = ogsi.distribution,
+        ogsi = this.data.current,
+        rating = ogsi.rating,
         barHolder = holder.find('.bar-holder'),
-        maxValue = Math.max(distribution.negative, distribution.positive, distribution.negative),
         ratio;
         
         if (ogsi) {
             
+            var maxValue = Math.max(rating.negative, rating.positive, rating.negative),
+            total = rating.negative + rating.positive + rating.neutral;
+            
             holder.find('.days').text(getPeriodInDays(this.range['period']));
             
-            holder.find('.ogsi-score-value').text(ogsi.ogsi.value);
-            holder.find('.ogsi-score-change .change-value').text(ogsi.ogsi.change + '%');
-            holder.find('.ogsi-score-change .change-arrow')
-            .removeClass('positive')
-            .removeClass('negative')
-            .addClass((ogsi.ogsi.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-score-value').text(ogsi.ogsi);
+            
                 
-            holder.find('.ogsi-rating-value').text(ogsi.rating.value);
-            holder.find('.ogsi-rating-change .change-value').text(ogsi.rating.change + '%');
-            holder.find('.ogsi-rating-change .change-arrow')
-            .removeClass('positive')
-            .removeClass('negative')
-            .addClass((ogsi.rating.change >= 0) ? 'positive': 'negative');
-            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.value / 5) * 100 + '%');
+            holder.find('.ogsi-rating-value').text(ogsi.rating.score);
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.score / 5) * 100 + '%');
 
-            holder.find('.ogsi-reviews-value').text(ogsi.reviews.value);
-            holder.find('.ogsi-reviews-change .change-value').text(ogsi.reviews.change + '%');
-            holder.find('.ogsi-reviews-change .change-arrow')
-            .removeClass('positive')
-            .removeClass('negative')
-            .addClass((ogsi.reviews.change >= 0) ? 'positive': 'negative');
+            holder.find('.ogsi-reviews-value').text(ogsi.reviews);
+            
             holder.show();
             
-            if (distribution.total) {
+            if (total) {
                 barHolder.show();
                 var bar = barHolder.find('.bar-negative');
                 bar.children('.bar-value').text('');
-                if (distribution.negative > 0) {
+                if (rating.negative > 0) {
                     
-                    ratio = (distribution.negative / maxValue) * 100;
+                    ratio = (rating.negative / maxValue) * 100;
                     
                     if(ratio > 5)
-                        bar.children('.bar-value').text(distribution.negative);
+                        bar.children('.bar-value').text(rating.negative);
                 }
                 bar = barHolder.find('.bar-neutral');
                 bar.children('.bar-value').text('');
                 
-                if (distribution.neutral > 0) {
+                if (rating.neutral > 0) {
                     
-                    ratio = (distribution.neutral / maxValue) * 100;
+                    ratio = (rating.neutral / maxValue) * 100;
                     
                     if(ratio > 5)
-                        bar.children('.bar-value').text(distribution.neutral);
+                        bar.children('.bar-value').text(rating.neutral);
                 
-                    bar.css('width', ((distribution.neutral + distribution.positive)/distribution.total)*100+'%');
+                    bar.css('width', ((rating.neutral + rating.positive) / total)*100+'%');
                     bar.show();
                     
-                } else if (distribution.positive > 0) {
+                } else if (rating.positive > 0) {
                     
-                    bar.css('width', ((distribution.positive)/distribution.total)*100+'%');
+                    bar.css('width', (rating.positive/(total))*100+'%');
                     bar.show();
                     
                 } else {
@@ -1442,14 +1421,14 @@ var BC_OgsiCurrent = BoxController.extend({
                 
                 bar = barHolder.find('.bar-positive');
                 bar.children('.bar-value').text('');
-                if (distribution.positive > 0) {
+                if (rating.positive > 0) {
                     
-                    ratio = (distribution.positive / maxValue) * 100;
+                    ratio = (rating.positive / maxValue) * 100;
                     
                     if(ratio > 5)
-                        bar.children('.bar-value').text(distribution.positive);
+                        bar.children('.bar-value').text(rating.positive);
                     
-                    bar.css('width', (distribution.positive/(distribution.neutral + distribution.positive))*100+'%');
+                    bar.css('width', (rating.positive/(rating.neutral + rating.positive))*100+'%');
                     bar.show();
                 } else {
                     bar.hide();
@@ -1713,7 +1692,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
      */
     boxId: 'box-recent-reviews',
     
-    endpoint: 'reviews',
+    endpoint: 'review',
 
 
     /**
@@ -1801,7 +1780,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
              tr.find('.action-todo').remove();
             
-             data.context.genericRequest('review' + '/status/' + data.id, {
+             data.context.genericRequest('reviews' + '/status/' + data.id, {
                  status: 'CLOSED'
              }, function() {
                 
@@ -1824,7 +1803,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
             tr.find('.action-complete').remove();
             
-            data.context.genericRequest('review' + '/status/' + data.id, {
+            data.context.genericRequest('reviews' + '/status/' + data.id, {
                 status: 'TODO'
             }, function() {
                 
@@ -1853,7 +1832,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'review/category',
+                    endpoint: 'reviews/category',
                     name: 'category',
                     context: data.context
                 }
@@ -1866,7 +1845,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'review/tags',
+                    endpoint: 'reviews/tags',
                     name: 'tags',
                     context: data.context
                 }
@@ -1878,7 +1857,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'review/notes',
+                    endpoint: 'reviews/notes',
                     name: 'notes',
                     context: data.context
                 }
@@ -1900,7 +1879,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
       
       // we need to populate selectbox before we fetch another data
-      data.context.genericRequest('review' + '/categories', {}, function(response) {
+      data.context.genericRequest('reviews' + '/categories', {}, function(response) {
         
             var select = data.trContext.find('.review-categories').empty();
             var option = $('<option />');
@@ -1912,7 +1891,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
             data.customPopulateFields = this.reviewPopulate;
             
-            data.context.genericRequest('review' + '/expand/' + data.id, {}, 
+            data.context.genericRequest('reviews' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data
@@ -1966,10 +1945,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
         
-        
     },
     
-    construct: function () {}
+    construct: function () {
+        
+    }
     
 });
 
@@ -2108,7 +2088,9 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
         
     },
    
-    construct: function() {}
+    construct: function() {
+        
+    }
     
 });
 
@@ -2251,7 +2233,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     boxId: 'box-competition-review-inbox',
     
-    endpoint: 'competition_ledger',
+    endpoint: 'competition',
 
     
     prepareMessage: function(template, message) {
@@ -2267,7 +2249,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
             var titleLink;
             switch(key) {
                 
-                case 'submitted':
+                case 'date':
                     var tmpDate = new Date(value * 1000);
                     var formatted = monthNames[tmpDate.getMonth()] +
                     ' ' + tmpDate.getDate();
@@ -2282,7 +2264,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                     col.html(titleLink);
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
-                case 'rating':
+                case 'score':
                     var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
                     col.html(ratingStars);
                     break;
@@ -2310,7 +2292,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         var tr = $(data.trContext);
         
         tr.find('.details-title').text(message.title);
-        tr.find('.details-review').text(message.review);
+        tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
@@ -2594,7 +2576,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'socials',
+    endpoint: 'social',
     
 
     prepareMessage: function(template, message) {
@@ -2609,7 +2591,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             var titleLink;
             switch(key) {
                 
-                case 'submitted':
+                case 'date':
                     var tmpDate = new Date(value * 1000);
                     var formatted = monthNames[tmpDate.getMonth()] +
                     ' ' + tmpDate.getDate();
@@ -2654,7 +2636,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         var tr = $(data.trContext);
         
         tr.find('.details-title').text(message.title);
-        tr.find('.details-review').text(message.review);
+        tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
