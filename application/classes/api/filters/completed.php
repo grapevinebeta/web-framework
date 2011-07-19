@@ -14,13 +14,17 @@
             return $doc['status'] == 'CLOSED';
         }
 
-        public function key()
+        public function key($doc)
         {
             return "completed";
         }
 
-        public function name()
+        public function name($doc)
         {
-            return "completed";
+            return "Completed";
+        }
+          public function kind()
+        {
+            return "status";
         }
     }

@@ -24,11 +24,30 @@
         public function action_index()
         {
 
+            $expand = !is_null($this->id);
+            if (!$expand) {
+                $this->filters = array(
+
+                    new Api_Filters_Neutral(),
+                    new Api_Filters_Positive(),
+                    new Api_Filters_Negative(),
+                    new Api_Filters_Alert(),
+                    new Api_Filters_Flagged(),
+                    new Api_Filters_Completed(),
+                    new Api_Filters_Site(array(
+                            'citysearch.com', 'dealerrater.com', 'edmunds.com', 'insiderpages.com', 'judysbook.com',
+                            'mydealreport.com', 'superpages.com', 'yelp.com'
+                        ),
+                        $this->activeFilters
+                    )
+                );
+            }
+
 
             $fields = array('status' => 1, 'score' => 1, 'date' => 1, 'site' => 1, 'title' => 1, '_id' => 1);
 
             $limit = 10;
-            $expand = !is_null($this->id);
+
             if ($expand) {
                 $fields = array_merge($fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'identity' => 1));
                 $this->query = array("_id" => new  MongoId($this->id));
@@ -98,7 +117,7 @@
             $this->response = array('error' => $error);
         }
 
-        public function action_stats()
+        public function action_tags()
         {
             $tags = $this->request->post('tags');
             if (is_array($tags)) {

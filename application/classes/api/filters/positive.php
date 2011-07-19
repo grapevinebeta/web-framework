@@ -14,13 +14,17 @@
             return $doc['score'] >= 4;
         }
 
-        public function name()
+        public function name($doc)
         {
             return "Positive";
         }
 
-        public function key()
+        public function key($doc)
         {
             return "positive";
+        }
+          public function kind()
+        {
+            return "status";
         }
     }

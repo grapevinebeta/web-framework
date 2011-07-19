@@ -13,13 +13,17 @@
             return $doc < 3;
         }
 
-        public function key()
+        public function key($doc)
         {
             return "negative";
         }
 
-        public function name()
+        public function name($doc)
         {
             return "Negative";
+        }
+          public function kind()
+        {
+            return "status";
         }
     }
