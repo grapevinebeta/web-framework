@@ -23,20 +23,20 @@
                 </tr>
                 <?php if (!empty($users)): ?>
                 <?php foreach ($users as $k => $user): ?>
-                <?php $_inputPrefix = 'users['. $user['id'] .']'; ?>
+                <?php $_inputPrefix = 'users['. $user->id .']'; ?>
                 <tr class="<?php echo ($k % 2?'even':'odd'); ?>">
                     <td>
-                        <?php echo form::hidden($_inputPrefix . '[id]', $user['id']); ?>
-                        <?php echo $user['name'], ' ', html::anchor('#', __('edit'), array(
+                        <?php echo form::hidden($_inputPrefix . '[id]', $user->id); ?>
+                        <?php echo $user->firstname.' '.$user->lastname, ' ', html::anchor('#', __('edit'), array(
                             'data-action' => 'edit',
-                            'data-user-id' => $user['id'],
+                            'data-user-id' => $user->id,
                         )); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo form::radio($_inputPrefix . '[role]', 'admin', $user['role'] == 'admin'); ?>
+                        <?php echo form::radio($_inputPrefix . '[role]', 'admin', false); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo form::radio($_inputPrefix . '[role]', 'user', $user['role'] == 'user'); ?>
+                        <?php echo form::radio($_inputPrefix . '[role]', 'user', true); ?>
                     </td>
                     <td class="a-center">
                         <?php echo html::anchor(

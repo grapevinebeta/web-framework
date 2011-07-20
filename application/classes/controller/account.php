@@ -35,16 +35,18 @@ class Controller_Account extends Controller_Template {
     
     public function action_users()
     {
+        // @todo This is only for development, replace this with actual location ID
+        $location_id = 1;
+
+        $location = ORM::factory('location')
+                ->where('location_id','=',(int)$location_id)
+                ->find();
+
         $this->_contentView = View::factory('account/users');
+
+        $users = $location->getUsers();
         
-        // temporary
-        $usersData = array(
-            array('id' => 1, 'name' => 'Jacek Kromski', 'role' => 'admin'),
-            array('id' => 2, 'name' => 'Tomasz Jaśkowski', 'role' => 'admin'),
-            array('id' => 3, 'name' => 'Richard Ortega', 'role' => 'admin'),
-            array('id' => 4, 'name' => 'John Kowalski', 'role' => 'user'),
-        );
-        $this->_contentView->users = $usersData;
+        $this->_contentView->users = $users;
     }
     
     public function action_alerts()
