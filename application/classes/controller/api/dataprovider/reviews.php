@@ -49,7 +49,7 @@
             $limit = 10;
 
             if ($expand) {
-                $fields = array_merge($fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'identity' => 1));
+                $fields = array_merge($fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1));
                 $this->query = array("_id" => new  MongoId($this->id));
                 
                 $doc = $this->findOne('reviews', $this->query, $fields);

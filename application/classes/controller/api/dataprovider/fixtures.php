@@ -106,7 +106,7 @@
                             'date' => $date,
                             'site' => $site,
                             'tags' => array(),
-                            'notes' => array(),
+                            'notes' => '',
                             'content' => $content,
                             'title' => substr($content, 0, 40) . '...',
                             'identity' => 'Guest' . mt_rand(600, 1000),

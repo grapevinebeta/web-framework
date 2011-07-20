@@ -85,6 +85,7 @@
             if (isset($filters['source'])) {
                 $this->activeFilters = $filters['source'];
             }
+            
             if (isset($filters['status'])) {
                 $this->activeFilters = array_merge($this->activeFilters, $filters['status']);
             }
