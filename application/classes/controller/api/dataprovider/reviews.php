@@ -58,7 +58,7 @@
                 unset($doc['_id']);
                 
                 $this->apiResponse = array(
-                    'review' => $this->findOne('reviews', $this->query, $fields)
+                    'review' =>$doc
                 );
                 
                 return;
@@ -177,14 +177,20 @@
         public function action_category()
         {
 
-            $error = $this->update(array('$set' => array('category' => $this->request->post('category'))));
+            // since all requests are done as an array we get the single instance
+
+            $category=$this->request->post('category');
+            $category=array_shift($category);
+            $error = $this->update(array('$set' => array('category' => $category)));
 
             $this->apiResponse = array('error' => $error);
         }
 
         public function action_notes()
-        {
-            $error = $this->update(array('$set' => array('notes' => $this->request->post('notes'))));
+        {// since all requests are done as an array we get the single instance
+            $notes=$this->request->post('notes');
+            $notes=array_shift($notes);
+            $error = $this->update(array('$set' => array('notes' => $notes)));
             $this->apiResponse = array('error' => $error);
         }
 
