@@ -38,6 +38,11 @@
         protected $startDate;
         protected $endDate;
 
+        /**
+         * @var int
+         */
+        protected $location;
+
 
         public function before()
         {
@@ -90,6 +95,11 @@
             $this->query = array('date' => array('$gte' => $this->startDate, '$lte' => $this->endDate));
 
 
+            $location = $this->request->post('loc');
+            if (empty($location)) {
+                $location = 1;
+            }
+            $this->location = intval($location);
             $this->mongo = new Mongo();
             $this->db = $this->mongo->auto;
 

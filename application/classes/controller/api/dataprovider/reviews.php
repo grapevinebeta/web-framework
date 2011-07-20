@@ -78,6 +78,66 @@
 
         }
 
+        public function action_sites()
+        {
+            $metrics = $this->db->selectCollection('metrics');
+            $cursor = $metrics->find(
+                array(
+                    'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate),
+                    'type' => 'reviews',
+
+                    'period' => 'day'
+
+                ), array("aggregates.{$this->location}" => 1)
+            );
+            $sites = array();
+            foreach (
+                $cursor as $doc
+            ) {
+                $doc = $doc['aggregates'][$this->location];
+                foreach (
+                    $doc as $site
+                    => $site_info
+                ) {
+
+
+                    if (!isset($sites[$site])) {
+                        $sites[$site] = array(
+                            'site' => $site,
+                            'positive' => 0,
+                            'negative' => 0,
+                            'neutral' => 0,
+                            'total' => 0,
+                            'average' => 0,
+
+                        );
+                    }
+                    foreach (
+                        $site_info as $key
+                        => $value
+                    ) {
+                        if (isset($sites[$site][$key])) {
+                            $sites[$site][$key] += $value;
+                        }
+                    }
+                    $sites[$site]['total'] += $site_info['count'];
+                    $sites[$site]['average'] += $site_info['points'];
+                }
+
+
+            }
+
+            foreach (
+                $sites as $site
+                => &$data
+            ) {
+                $data['average'] = number_format($data['average'] / $data['total'], 1);
+
+            }
+
+            $this->apiResponse['sites'] = $sites;
+        }
+
         public function action_expand()
         {
             $this->action_index();
