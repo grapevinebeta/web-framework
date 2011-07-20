@@ -1068,17 +1068,9 @@ var BC_Inbox = BoxController.extend({
         e.preventDefault();
         
         var param = {};
-        
-        
-        var val = $(e.target).val();
-        
-        if(data.split) {
-            
-            val =  val.split(',');
-            
-        }
-        
-        param[data.name] = val;
+
+        var val=$(e.target).val();
+        param[data.name] = data.split ? val.split(",") : val;
         
 
         var endpoint = data.endpoint + '/' + data.id;
@@ -1874,8 +1866,8 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     context: data.context,
                     split: true
                 }
-                )
-            );
+            )
+        );
         tr.find('textarea[name="notes"]').val(message.notes)
         .bind('save', 
             data.context.genericCallbackEventWrapper(
