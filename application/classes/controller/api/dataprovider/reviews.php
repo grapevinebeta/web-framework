@@ -44,29 +44,33 @@
             }
 
 
-            $fields = array('status' => 1, 'score' => 1, 'date' => 1, 'site' => 1, 'title' => 1, '_id' => 1);
+            $fields = array('status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
 
             $limit = 10;
 
             if ($expand) {
-                $fields = array_merge($fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1));
+                $fields = array_merge(
+                    $fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1)
+                );
                 $this->query = array("_id" => new  MongoId($this->id));
-                
+
                 $doc = $this->findOne('reviews', $this->query, $fields);
                 $doc['date'] = $doc['date']->sec;
                 $doc['id'] = $doc['_id']->{'$id'};
                 unset($doc['_id']);
-                
+
                 $this->apiResponse = array(
-                    'review' =>$doc
+                    'review' => $doc
                 );
-                
+
                 return;
-                        
-                
+
+
             }
 
-            $cursor = $this->query('reviews', $this->query, $fields, $limit);
+            $cursor = $this->find('reviews', $this->query, $fields, $limit);
+            
+            $cursor->sort(array('date'=>-1));
 
             $reviews = array();
             foreach (
@@ -83,25 +87,26 @@
             $this->apiResponse = array(
                 'reviews' => $reviews,
                 'filters' => $this->filterResponse,
+                'query'=>$this->query,
                 'pagination'
                 => array('page' => $this->request->post('page'), 'pagesCount' => ceil($cursor->count() / 10))
             );
 
 
         }
-        
-        
+
+
         /**
-         * @todo Eric change it to the proper implementation, this is 
+         * @todo Eric change it to the proper implementation, this is
          * just a placeholder
          */
         public function action_categories()
         {
-            $this->apiResponse['categories'] = 
-                    array(1 => 'shopping', 2 => 'important', 3 => 'it', 4 => 'travel', 5 => 'sport');
+            $this->apiResponse['categories']
+                    = array(1 => 'shopping', 2 => 'important', 3 => 'it', 4 => 'travel', 5 => 'sport');
 
         }
-        
+
         public function action_sites()
         {
             $metrics = $this->db->selectCollection('metrics');
@@ -179,19 +184,21 @@
 
             // since all requests are done as an array we get the single instance
 
-            $category=$this->request->post('category');
+            $category = $this->request->post('category');
             
-            $error = $this->update(array('$set' => array('category' => $category)));
+
+            $error = $this->update( array('$set' => array('category' => $category)));
+            
 
             $this->apiResponse = array('error' => $error);
         }
 
         public function action_notes()
-        {// since all requests are done as an array we get the single instance
-            $notes=$this->request->post('notes');
-            
+        { // since all requests are done as an array we get the single instance
+            $notes = $this->request->post('notes');
+
             $error = $this->update(array('$set' => array('notes' => $notes)));
-            $this->apiResponse = array('error' => $error);
+            $this->apiResponse = array('error' => $error, 'review' => $this->action_expand());
         }
 
         public function action_status()
@@ -223,7 +230,7 @@
 
         protected function update($newobj)
         {
-            
+
             $this->reviews->update(
                 array(
                     '_id' => new MongoId($this->id),
