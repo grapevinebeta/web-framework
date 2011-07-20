@@ -16,7 +16,7 @@
                                 </td>
                                 <td class="a-right">
                                     <?php echo __('Tags'); ?>:
-                                    <input type="text" value="" name="tags" />
+                                    <input type="text" name="tags" class="review-tags" />
                                 </td>
                             </tr>
                             <tr>
@@ -28,7 +28,7 @@
                                     </span>
                                 </td>
                                 <td colspan="2">
-                                    <textarea name="notes" rows="9" cols="9"></textarea>
+                                    <textarea name="notes" rows="9" cols="9" class="review-notes"></textarea>
                                 </td>
                             </tr>
                         </table>

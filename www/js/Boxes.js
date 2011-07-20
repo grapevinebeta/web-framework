@@ -1068,7 +1068,7 @@ var BC_Inbox = BoxController.extend({
         e.preventDefault();
         
         var param = {};
-        param[data.name] = $(e.target).val();
+        param[data.name] = $(e.target).val().split(',');
         
 
         var endpoint = data.endpoint + '/' + data.id;
@@ -1770,7 +1770,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr = $(data.trContext),
         status = message.status.toLowerCase(),
         self = tr;
-        
+                
         tr.find('.recent-review-status-icon')
         .removeClass('open closed todo')
         .addClass(status);
@@ -1845,7 +1845,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 )
             );
         
-        tr.find('input[name="tags"]').val(message.tags.join(', '))
+        tr.find('input.review-tags').val(message.tags.join(','))
         .bind('save', 
             data.context.genericCallbackEventWrapper(
                 data.context.expandEndpointCallback, 
