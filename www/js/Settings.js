@@ -155,6 +155,21 @@ jQuery(function(){
                 alert('Not yet ready');
             });
 
+            this.userManagementSettings.delegate('a[data-action="edit"][data-user-id]', 'click', function(event){
+                // editing user data
+                event.preventDefault();
+                var user_id = jQuery(this).attr('data-user-id');
+                jQuery.post('/api/settings/getuser', {
+                    'params': {
+                        'user_id': user_id
+                    }
+                }, function(data){
+                    //
+                    log('Received data:');
+                    log(data);
+                }, 'json');
+            });
+
             this.userManagementSettings.delegate('form input[type="text"]', 'keydown', function(event){
                 if (event.keyCode == 13){
                     jQuery(this).parents('form').submit(); // submit form

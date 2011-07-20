@@ -27,7 +27,10 @@
                 <tr class="<?php echo ($k % 2?'even':'odd'); ?>">
                     <td>
                         <?php echo form::hidden($_inputPrefix . '[id]', $user['id']); ?>
-                        <?php echo $user['name'], ' ', html::anchor('#', __('edit')) ?>
+                        <?php echo $user['name'], ' ', html::anchor('#', __('edit'), array(
+                            'data-action' => 'edit',
+                            'data-user-id' => $user['id'],
+                        )); ?>
                     </td>
                     <td class="a-center">
                         <?php echo form::radio($_inputPrefix . '[role]', 'admin', $user['role'] == 'admin'); ?>

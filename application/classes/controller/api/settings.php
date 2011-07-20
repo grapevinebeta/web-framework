@@ -81,9 +81,7 @@ class Controller_Api_Settings extends Controller {
      * @todo Apply security - for now any user can be retrieved
      */
     public function action_getuser() {
-        $data = $_GET; // @todo for debugging only; replace with POST data
-        //$data = $this->request->post();
-        $user_id = (int)Arr::path($data, 'params.user_id');
+        $user_id = (int)Arr::path($data = $this->request->post(), 'params.user_id');
         $user = ORM::factory('user')
                 ->where('id','=',$user_id)
                 ->find();
@@ -94,6 +92,7 @@ class Controller_Api_Settings extends Controller {
         } else {
             $this->apiResponse['result'] = array(
                 'user' => array(
+                    'id' => $user->id,
                     'firstname' => $user->firstname,
                     'lastname' => $user->lastname,
                     'email' => $user->email,
