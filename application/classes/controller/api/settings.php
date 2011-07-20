@@ -215,6 +215,54 @@ class Controller_Api_Settings extends Controller {
     }
 
     /**
+     * Delete email from the list of emails assigned to specific location
+     */
+    public function action_deleteemail() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = 1;
+
+        $email_address = Arr::path($this->request->post(), 'email');
+
+        try {
+            $email = ORM::factory('email')
+                    ->where_open()
+                        ->where('location_id','=',(int)$location_id)
+                        ->and_where('email', '=', $email_address)
+                    ->where_close()
+                    ->find(); // assuming email addresses for single location are unique (do not appear more than once)
+
+            $email->delete();
+
+            $this->apiResponse['result'] = array(
+                'success' => true,
+                'message' => __('Email has been successfully deleted'),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Email has not been deleted'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Email has not been deleted'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+        
+    }
+
+    /**
      * Update the general settings
      */
     public function action_updategeneral() {

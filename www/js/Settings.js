@@ -132,8 +132,19 @@ jQuery(function(){
             this.reportsSettings.delegate('a[data-action="delete"]', 'click', function(event){
                 event.preventDefault();
                 if (confirm('Are you sure?')){
-                    jQuery(this).parents('tr').remove(); // @todo do this only when deletion confirmed by server
-                    log('Email would be deleted here');
+                    var email = jQuery(this).attr('data-email');
+                    log('Attempting to delete mail "' + email + '" from the current location');
+
+                    jQuery.post('/api/settings/deleteemail', {
+                        'email': email
+                    }, function(data){
+                        if (data.result && data.result.success){
+                            self.refreshReportsSettingsEmails();
+                            log('List of report emails updated after successful deletion of email');
+                        }else{
+                            log('Some error occured while trying to delete email from reports section.')
+                        }
+                    }, 'json');
                 }
             });
 
