@@ -116,44 +116,6 @@ class Controller_Api_Static extends Controller {
                 ));
     }
 
-    public function action_export() {
-
-
-
-        $markup = View::factory('_partials/export_template', array(
-                    'html' => $this->request->post('html'),
-                ));
-
-
-        $ch = curl_init();
-
-        $api_key = "ccgXj8JFWYAXX7fkM8uB";
-        $url = "https://docraptor.com/docs?user_credentials=$api_key";
-        $name = substr(md5(time()), 0, 7) . '.pdf';
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-            'doc[document_content]' => $markup,
-            'doc[document_type]' => 'pdf',
-            'doc[name]' => $name,
-            'doc[test]' => true,
-            'doc[strict]' => 'none',
-        ));
-
-
-        $result = curl_exec($ch);
-        curl_close($ch);
-
-        header('Content-type: application/pdf');
-        header('Content-disposition: attachment; filename="' . $name . '"');
-
-
-        die($result);
-    }
-
     public function action_sites() {
         $sites = array(
             array(

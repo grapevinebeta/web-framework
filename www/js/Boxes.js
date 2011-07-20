@@ -1750,7 +1750,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     
                     value = value.toLowerCase();
                     
-                    var icon = value == 'open' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
+                    var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
                     
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
                     col.html(reviewStatus);
@@ -3187,7 +3187,7 @@ var monthNames = [
 var Exporter = {
 
     options: {
-        action: "/api/static/export",
+        action: "/api/box/export",
         width: 380
     },
         
