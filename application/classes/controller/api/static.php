@@ -488,7 +488,7 @@ class Controller_Api_Static extends Controller {
 
             foreach ($f as $filter) {
 
-                $filters[$network][] = array(
+                $filters[$network][$filter] = array(
                     'total' => rand(1, 50),
                     'value' => $filter,
                     'active' => isset($inversed[strtolower($filter)])

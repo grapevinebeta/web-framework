@@ -970,7 +970,7 @@ var BC_Inbox = BoxController.extend({
                 activeCount++;
             }
             
-            if(filter == 'Total') {
+            if(filter == 'Total' || filter == 'All') {
                 filterLink.addClass('show-all');
             }
             
@@ -1241,7 +1241,7 @@ var BC_CompetitionScore = BoxController.extend({
 
 
 
-var BC_Ogsi = BoxController.extend({
+var BC_Scoreboard = BoxController.extend({
 
     /**
      * @var String DOM id of the container div 
@@ -1251,7 +1251,7 @@ var BC_Ogsi = BoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'scoreboard/overall',
+    endpoint: '/api/dataProvider/scoreboard/overall',
     
     processData: function() {
       
@@ -1329,7 +1329,11 @@ var BC_Ogsi = BoxController.extend({
     },
     
     
-    construct: function () {}
+    construct: function () {
+        
+        this.noApiUrl = true;
+        
+    }
     
 });
 
@@ -1357,11 +1361,11 @@ var BC_Videos = BoxController.extend({
     
 });
 
-var BC_OgsiCurrent = BoxController.extend({
+var BC_ScoreboardCurrent = BoxController.extend({
     
     
     boxId: 'box-ogsi-current',
-    endpoint: 'scoreboard/current',
+    endpoint: '/api/dataProvider/scoreboard/current',
     
     processData: function() {
 
@@ -1446,7 +1450,11 @@ var BC_OgsiCurrent = BoxController.extend({
         
     },
     
-    construct: function() {}
+    construct: function() {
+        
+        this.noApiUrl = true;
+        
+    }
     
 });
 
@@ -1632,7 +1640,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             }]
         }
         
-        for (var i = 0; i < this.graphData.length; i++) {
+        for (var i in this.graphData) {
             var site = this.graphData[i];
             options.xAxis.categories.push(site.site);
             options.series[0].data.push(site.negative);
@@ -2650,7 +2658,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            data.context.genericRequest('social' + '/expand/' + data.id, {}, 
+            data.context.genericRequest('/api/static/social' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2666,9 +2674,9 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         var trContent = null;
         table.find('tbody tr').remove();
         var data = this.data.socials;
-        for (var i = 0; i < this.data.socials.length; i++) {
+        for (var i = 0; i < data.length; i++) {
             
-            var currentId = parseInt(data[i].id);
+            var currentId = data[i].id;
             
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
@@ -2680,7 +2688,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
                 )
             );
             
-            tr =this.prepareMessage(trTemplate, this.data.socials[i]);
+            tr =this.prepareMessage(trTemplate, data[i]);
             
             if (i % 2) {
                 tr.addClass('odd');
@@ -2690,7 +2698,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             
             
             var checkbox = $('<input type="checkbox" name="id[]" value=""  />');
-            checkbox.attr('value', this.data.socials[i].id);
+            checkbox.attr('value', data[i].id);
             tr.find('td.col-checkbox').html(checkbox);
             
             table.children('tbody').append(tr); // append two elements
@@ -2699,7 +2707,9 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         }
     },
     
-    construct: function () {}
+    construct: function () {
+        
+    }
     
 });
 
@@ -3136,8 +3146,10 @@ clearData: function () {
 
 
 $(document).ready(function () {
-    boxManager.add(new BC_TagsAnalysis())
-    .add(new BC_Ogsi())
+    boxManager
+    .add(new BC_TagsAnalysis())
+    .add(new BC_Scoreboard())
+    .add(new BC_ScoreboardCurrent())
     .add(new BC_ReviewSites())
     .add(new BC_ReviewInbox())
     .add(new BC_SocialActivity())
@@ -3148,7 +3160,6 @@ $(document).ready(function () {
     .add(new BC_CompetitionReviewInbox())
     .add(new BC_RecentActivity())
     .add(new BC_CompetitionScore())
-    .add(new BC_OgsiCurrent())
     .add(new BC_Photos())
     .add(new BC_Videos())
     .setDataProvider(new DataProvider())
