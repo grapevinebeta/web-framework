@@ -1068,7 +1068,17 @@ var BC_Inbox = BoxController.extend({
         e.preventDefault();
         
         var param = {};
-        param[data.name] = $(e.target).val().split(',');
+        
+        
+        var val = $(e.target).val();
+        
+        if(data.split) {
+            
+            val =  val.split(',');
+            
+        }
+        
+        param[data.name] = val;
         
 
         var endpoint = data.endpoint + '/' + data.id;
@@ -1861,7 +1871,8 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     id: data.id,
                     endpoint: '/api/dataProvider/reviews/tags',
                     name: 'tags',
-                    context: data.context
+                    context: data.context,
+                    split: true
                 }
                 )
             );
