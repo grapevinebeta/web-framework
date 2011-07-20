@@ -576,17 +576,29 @@ input[type=submit] {
             }
             
             #box-recent-reviews .details .recentReviewDetailsForm .innerForm {
-                margin-right:170px;
+                margin-right:0px;
             } 
 
             #box-recent-reviews .details .recentReviewDetailsMenu {
                 float: right;
                 width: 150px;
-                margin-left: -150px;
+                margin-left: -100px;
             }
 
             #box-recent-reviews .details .recentReviewDetailsButtons {
                 text-align: right;
+            }
+            
+            .review-details-content {
+                width: 524px;
+                white-space: pre;           /* CSS 2.0 */
+                white-space: pre-wrap;      /* CSS 2.1 */
+                white-space: pre-line;      /* CSS 3.0 */
+                white-space: -pre-wrap;     /* Opera 4-6 */
+                white-space: -o-pre-wrap;   /* Opera 7 */
+                white-space: -moz-pre-wrap; /* Mozilla */
+                white-space: -hp-pre-wrap;  /* HP Printers */
+                word-wrap: break-word;      /* IE 5+ */
             }
 
 #box-ogsi { background: url(/images/scoreboard-bg.png) bottom left repeat-x;}
@@ -1171,7 +1183,7 @@ input[type=submit] {
         background-image: url(../images/icons/icons.png);
     }
     
-    #box-recent-reviews .recent-review-status-icon.open {
+    #box-recent-reviews .recent-review-status-icon.opened {
         background-position: -454px -12px;
     }
 

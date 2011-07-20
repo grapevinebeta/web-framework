@@ -49,7 +49,7 @@
             parent::before();
 
 
-            $this->id = $this->request->query('id');
+            $this->id = $this->request->param('id');
             $range = $this->request->post('range');
             if (!empty($range)) {
                 Session::instance()->set(
@@ -180,4 +180,12 @@
             }
             return $cursor;
         }
+        
+        protected function findOne($name, $query, $fields) {
+            $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
+            
+            /* @var $collection MongoCollection */
+            return $collection->findOne($query, $fields);
+        }
+        
     }

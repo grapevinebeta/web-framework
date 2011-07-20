@@ -97,12 +97,14 @@ var DataProvider = function() {
                 params.limit = limit;
             }
             
+            var url = this.noApiUrl ? endpoint : ApiUrl + endpoint;
+            
             $.ajax({
                 type: "POST",
                 accepts: "application/json; charset=utf-8",
                 data: params,
                 dataType: "json",
-                url: ApiUrl + endpoint,
+                url: url,
                 success: callback
             });
         }

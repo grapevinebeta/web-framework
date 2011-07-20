@@ -51,7 +51,19 @@
             if ($expand) {
                 $fields = array_merge($fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'identity' => 1));
                 $this->query = array("_id" => new  MongoId($this->id));
-                $limit = -1;
+                
+                $doc = $this->findOne('reviews', $this->query, $fields);
+                $doc['date'] = $doc['date']->sec;
+                $doc['id'] = $doc['_id']->{'$id'};
+                unset($doc['_id']);
+                
+                $this->apiResponse = array(
+                    'review' => $this->findOne('reviews', $this->query, $fields)
+                );
+                
+                return;
+                        
+                
             }
 
             $cursor = $this->query('reviews', $this->query, $fields, $limit);
@@ -77,7 +89,19 @@
 
 
         }
+        
+        
+        /**
+         * @todo Eric change it to the proper implementation, this is 
+         * just a placeholder
+         */
+        public function action_categories()
+        {
+            $this->apiResponse['categories'] = 
+                    array(1 => 'shopping', 2 => 'important', 3 => 'it', 4 => 'travel', 5 => 'sport');
 
+        }
+        
         public function action_sites()
         {
             $metrics = $this->db->selectCollection('metrics');
@@ -161,20 +185,20 @@
         public function action_notes()
         {
             $error = $this->update(array('$set' => array('notes' => $this->request->post('notes'))));
-            $this->response = array('error' => $error);
+            $this->apiResponse = array('error' => $error);
         }
 
         public function action_status()
         {
             $status = $this->request->post('status');
             if (in_array($status, array('OPEN', 'CLOSED', 'TODO'))) {
-                $error = $this->update(array('$set' => array('notes' => $status)));
+                $error = $this->update(array('$set' => array('status' => $status)));
             } else {
                 $error = true;
             }
 
 
-            $this->response = array('error' => $error);
+            $this->apiResponse = array('error' => $error);
         }
 
         public function action_tags()
@@ -188,7 +212,7 @@
             }
 
 
-            $this->response = array('error' => $error);
+            $this->apiResponse = array('error' => $error);
         }
 
         protected function update($newobj)

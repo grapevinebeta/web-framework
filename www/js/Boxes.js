@@ -99,6 +99,8 @@ var BoxController = Class.extend({
     
     empty: false,
     
+    noApiUrl: false,
+    
     construct: function () {},
     
     init: function () {
@@ -319,6 +321,7 @@ var BoxController = Class.extend({
     
     setDataProvider: function (dataProvider) {
         this.dataProvider = new DataProvider();
+        this.dataProvider.noApiUrl = this.noApiUrl;
     },
     
     resetFilters: function(name) {
@@ -1054,7 +1057,7 @@ var BC_Inbox = BoxController.extend({
             accepts: "application/json; charset=utf-8",
             data: data,
             dataType: "json",
-            url: ApiUrl + endpoint,
+            url: endpoint,
             success: callback
         });
       
@@ -1536,7 +1539,9 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
         
     },
     
-    construct: function () {}
+    construct: function () {
+        
+    }
     
 });
 
@@ -1550,7 +1555,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'sites',
+    endpoint: '/api/dataProvider/reviews/sites',
     
     prepareGraph: function () {
         if (!this.graphData) {
@@ -1651,9 +1656,8 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
         
-        
-        
-        for (var i = 0; i < sites.length; i++) {
+        var c=0;
+        for(var i in sites) {
             tr = trTemplate.clone();
             for (n in sites[i]) {
                 var value = sites[i][n];
@@ -1662,6 +1666,7 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
                     var currentTotalValue = 0;
                     if (n == 'average') {
                         currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
+                        value = parseFloat(value);
                     } else {
                         currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
                     }
@@ -1669,16 +1674,18 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
                 }
             }
             table.find('tbody').append(tr);
+            c++;
         }
         
-        trFooter.find('th.col-average').text(
-            parseFloat(trFooter.find('th.col-average').text()) / 
-            sites.length
-            );  
+        var number = parseFloat(trFooter.find('th.col-average').text()) / c;
+        number = number.toFixed(1);
+        trFooter.find('th.col-average').text(number);  
         
     },
        
-    construct: function () {}
+    construct: function () {
+        this.noApiUrl = true;
+    }
     
 });
 
@@ -1692,7 +1699,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
      */
     boxId: 'box-recent-reviews',
     
-    endpoint: 'review',
+    endpoint: '/api/dataProvider/reviews',
 
 
     /**
@@ -1703,8 +1710,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     prepareMessage: function(template, message) {
         
         template = template.clone();
-        var currentId = parseInt(message.id);
-        template.addClass('collapsed').attr('data-row-id', currentId);
+        template.addClass('collapsed').attr('data-row-id', message.id);
         
         for(key in message)
         {
@@ -1780,7 +1786,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
              tr.find('.action-todo').remove();
             
-             data.context.genericRequest('reviews' + '/status/' + data.id, {
+             data.context.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                  status: 'CLOSED'
              }, function() {
                 
@@ -1803,7 +1809,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
             tr.find('.action-complete').remove();
             
-            data.context.genericRequest('reviews' + '/status/' + data.id, {
+            data.context.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                 status: 'TODO'
             }, function() {
                 
@@ -1832,7 +1838,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'reviews/category',
+                    endpoint: '/api/dataProvider/reviews/category',
                     name: 'category',
                     context: data.context
                 }
@@ -1845,7 +1851,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'reviews/tags',
+                    endpoint: '/api/dataProvider/reviews/tags',
                     name: 'tags',
                     context: data.context
                 }
@@ -1857,7 +1863,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 data.context.expandEndpointCallback, 
                 {
                     id: data.id,
-                    endpoint: 'reviews/notes',
+                    endpoint: '/api/dataProvider/reviews/notes',
                     name: 'notes',
                     context: data.context
                 }
@@ -1879,7 +1885,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
       
       // we need to populate selectbox before we fetch another data
-      data.context.genericRequest('reviews' + '/categories', {}, function(response) {
+      data.context.genericRequest('/api/dataProvider/reviews' + '/categories', {}, function(response) {
         
             var select = data.trContext.find('.review-categories').empty();
             var option = $('<option />');
@@ -1891,7 +1897,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
             data.customPopulateFields = this.reviewPopulate;
             
-            data.context.genericRequest('reviews' + '/expand/' + data.id, {}, 
+            data.context.genericRequest('/api/dataProvider/reviews' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data
@@ -1912,7 +1918,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
         var data = this.data.reviews;
         for (var i = 0; i < data.length; i++) {
             
-            var currentId = parseInt(data[i].id);
+            var currentId = data[i].id;
                       
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
@@ -1948,7 +1954,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     },
     
     construct: function () {
-        
+        this.noApiUrl = true;
     }
     
 });
