@@ -29,16 +29,21 @@
 
         public function action_index()
         {
+            $db = $this->mongo->selectDB('auto');
+            $db->drop();
+
+            $this->fixtures_social($db);
+            $this->fixtures_reviews($db);
+        }
+
+        public function fixtures_reviews($db)
+        {
 
             $amount = 100;
             $displacement = 5;
             $distance = $amount / $displacement;
             $start_date = strtotime('-' . ($distance / 2) . ' days');
             $date = new MongoDate($start_date);
-
-
-            $db = $this->mongo->selectDB('auto');
-            $db->drop();
 
 
             $reviews = new MongoCollection($db, 'reviews');
@@ -214,6 +219,312 @@
                 'metrics' => $metric_entries
             );*/
             // $this->apiResponse = array('dump' => print_r($metric_entries));
+        }
+
+        public function fixtures_social($db)
+        {
+
+            $amount = 100;
+            $displacement = 5;
+            $distance = $amount / $displacement;
+            $start_date = strtotime('-' . ($distance / 2) . ' days');
+            $date = new MongoDate($start_date);
+
+            $social_actions = array(
+
+                'twitter.com'
+                => array(
+                    'site' => 'twitter.com',
+                    'activity'
+                    => array(
+                        'tweet',
+                        'mention',
+                        'hashtag'
+                    ),
+                    'subscriber'
+                    => array(
+                        'follower'
+                    )
+
+                ),
+
+                'facebook.com'
+                => array(
+                    'site' => 'facebook.com',
+                    'activity'
+                    => array(
+                        'wall-post',
+                        'comment',
+                        'like',
+                        'page-visit',
+                        'photo-post',
+                        'video-post',
+                        'check-in'
+                    ),
+                    'subscriber'
+                    => array(
+                        'like',
+                        'active-users'
+                    )
+
+                ),
+
+                'flickr.com'
+                => array(
+                    'site' => 'flickr.com',
+                    'activity'
+                    => array(
+                        'photo',
+                        'tag'
+                    ),
+                    'subscriber'
+                    => array(
+                        'people'
+                    )
+
+                ),
+                'youtube.com'
+                => array(
+                    'site' => 'youtube.com',
+                    'activity'
+                    => array(
+                        'upload',
+                        'view'
+                    ),
+                    'subscriber'
+                    => array(
+                        'subscriber'
+                    )
+
+                ),
+                'foursquare.com'
+                => array(
+                    'site' => 'foursquare.com',
+                    'activity'
+                    => array(
+                        'check-in',
+                        'tip',
+                        'photo'
+                    ),
+                    'subscriber'
+                    => array(
+                        'people',
+                        'mayor'
+                    )
+
+                )
+
+            );
+            $default_activity = array_map(array($this, 'map_activity'), $social_actions);
+            $default_subscriber = array_map(array($this, 'map_reach'), $social_actions);
+
+            $socials = new MongoCollection($db, 'socials');
+            $socials->ensureIndex(array('date' => 1, 'lid' => 1), array('background' => TRUE));
+
+            $metrics = new MongoCollection($db, 'metrics');
+            $metrics->ensureIndex(array('date' => 1, 'type' => 1, 'period' => 1), array('background' => TRUE));
+            $sites = array(
+
+                'twitter.com',
+                'facebook.com',
+                'flickr.com',
+                'youtube.com',
+                'foursquare.com'
+
+            );
+
+            $metric_entries = array('social.activity' => array(), 'socials' => array(), 'social.reach' => array());
+            $social_entries = array();
+
+            $location_id = 1;
+            $activity_overall = array(
+                'type' => 'social.activity',
+                'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
+                'period' => 'overall',
+                'aggregates'
+                => array(
+                    '1'
+                    => $default_activity
+                )
+            );
+            $subscriber_overall = array(
+                'type' => 'social.subscribers',
+                'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
+                'period' => 'overall',
+                'aggregates'
+                => array(
+                    '1'
+                    => $default_subscriber
+                )
+            );
+            mt_srand(time());
+            for (
+                $i = 1; $i <= $amount; $i++
+            ) {
+                if ($i % 5 == 0) {
+                    $start_date = strtotime('+1 day', $start_date);
+
+                    $date = new MongoDate($start_date);
+                }
+                foreach (
+                    $sites as $site
+                ) {
+                    $metrics_types = array('activity', 'subscribers');
+                    foreach (
+                        $metrics_types as $metric
+                    ) {
+                        $review_amount = rand(2, 5);
+                        for (
+                            $j = 0; $j < $review_amount; $j++
+                        ) {
+                            $content = $this->random_gen(mt_rand(40, 124));
+                            $defaults = $metric == 'activity' ? $default_activity : $default_subscriber;
+                            $keys = array_keys($defaults[$site]);
+
+                            $index = mt_rand(0, count($keys) - 1);
+                            try {
+                                $action = $keys [$index];
+                            } catch (Exception $e) {
+                                echo $e;
+                            }
+                            $doc = array(
+
+                                'date' => $date,
+                                'site' => $site,
+                                'metric'=>$metric,
+                                'action' => $action,
+                                'network' => substr($site, -3),
+                                'tags' => array(),
+                                'notes' => array(),
+                                'content' => $content,
+                                'title' => substr($content, 0, 40) . '...',
+                                'identity' => 'Guest' . mt_rand(600, 1000),
+                                'category' => '',
+                                'status' => 'OPENED',
+                                'lid' => $location_id,
+                                'link' => "http://" . $site . '/' . $this->random_gen(mt_rand(10, 15))
+
+                            );
+                            $social_entries[] = $doc;
+                            if (!isset($metric_entries['social.activity'][$date->sec])) {
+                                $metric_entries['social.activity'][$date->sec] = array(
+                                    'type' => 'social.activity',
+                                    'date' => $date,
+                                    'period' => 'day',
+                                    'aggregates' => array()
+
+                                );
+                                $metric_entries['social.subscribers'][$date->sec] = array(
+                                    'type' => 'social.subscribers',
+                                    'date' => $date,
+                                    'period' => 'day',
+                                    'aggregates' => array()
+
+                                );
+                                /*$metric_entries['socials'][$date->sec] = array(
+                                    'type' => 'socials',
+                                    'date' => $date,
+                                    'period' => 'day',
+                                    'aggregates' => array()
+
+                                );*/
+
+                            }
+
+                            $activity = &$metric_entries['social.activity'][$date->sec];
+                            $subscribers = &$metric_entries['social.subscribers'][$date->sec];
+
+
+                            if (!isset($activity['aggregates'][$location_id])) {
+
+                                $activity['aggregates'][$location_id] = $default_activity;
+
+                                $subscribers ['aggregates'][$location_id] = $default_subscriber;
+
+                                /*
+                              $all_sites = $sites;
+                              $review_entry = array();
+                              foreach (
+                                  $all_sites as $card_site
+                              ) {
+                                  $review_entry[$card_site] = array(
+                                      'negative' => 0,
+                                      'positive' => 0,
+                                      'neutral' => 0,
+                                      'points' => 0,
+                                      'count' => 0
+                                  );
+                              }
+
+                              $socials['aggregates'][$location_id] = $review_entry;*/
+
+
+                            }
+                            $id = time();
+
+                            $a[$id] = &$activity['aggregates'][$location_id];
+                            $s[$id] = &$subscribers['aggregates'][$location_id];
+
+
+                            if ($metric == 'activity') {
+                                $a[$id][$site][$action] += 1;
+                                $activity_overall['aggregates'][$location_id][$site][$action] += 1;
+                            } else {
+                                $s[$id][$site][$action] += 1;
+                                $subscriber_overall['aggregates'][$location_id][$site][$action] += 1;
+                            }
+
+
+                        }
+                    }
+                }
+
+
+            }
+            $all_metrics = array();
+            foreach (
+                $metric_entries as $type
+            ) {
+                foreach (
+                    $type as $date
+                    => $records
+                ) {
+                    $all_metrics[] = $records;
+                }
+            }
+            $all_metrics[] = $subscriber_overall;
+          
+            $metrics->batchInsert($all_metrics);
+            $socials->batchInsert($social_entries);
+
+            /* $this->apiResponse = array(
+                'reviews' => $review_entries,
+                'metrics' => $metric_entries
+            );*/
+            // $this->apiResponse = array('dump' => print_r($metric_entries));
+        }
+
+        public function map_activity($info)
+        {
+            $data = array();
+            foreach (
+                $info['activity'] as $type
+            ) {
+                $data[$type] = 0;
+            }
+            return $data;
+
+        }
+
+        public function map_reach($info)
+        {
+            $data = array();
+            foreach (
+                $info['subscriber'] as $type
+            ) {
+                $data[$type] = 0;
+            }
+            return $data;
         }
 
 
