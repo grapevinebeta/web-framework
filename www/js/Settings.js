@@ -163,6 +163,9 @@ jQuery(function(){
         },
 
         'initializeUserManagement': function(){
+            var self = this;
+            var editForm = this.userManagementSettings.find('form.userEditForm');
+
             this.userManagementSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
                 alert('Not yet ready');
@@ -177,9 +180,8 @@ jQuery(function(){
                         'user_id': user_id
                     }
                 }, function(data){
-                    //
-                    log('Received data:');
-                    log(data);
+                    log('Propagating user data received from server');
+                    self.propagateFormData(data.result.user, editForm);
                 }, 'json');
             });
 

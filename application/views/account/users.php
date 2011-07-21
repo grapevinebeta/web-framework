@@ -13,7 +13,7 @@
     <h2 class="content-section-title"><?php echo __('Add / Edit User'); ?></h2>
     <div id="account-users-edit-section" class="padding-5">
         <div id="account-users-edit-holder">
-            <form action="" method="post">
+            <form action="" method="post" class="userEditForm">
                 <input type="hidden" value="" name="id" />
                 <table>
                     <tr>
@@ -21,7 +21,7 @@
                             <?php echo __('First Name'); ?>:
                         </td>
                         <td>
-                            <?php echo form::input('first_name'); ?>
+                            <?php echo form::input('firstname'); ?>
                         </td>
                     </tr>
                     <tr>
@@ -29,7 +29,7 @@
                             <?php echo __('Last Name'); ?>:
                         </td>
                         <td>
-                            <?php echo form::input('last_name'); ?>
+                            <?php echo form::input('lastname'); ?>
                         </td>
                     </tr>
                     <tr>
