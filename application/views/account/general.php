@@ -3,6 +3,7 @@
 </h1>
 <div class="padding-5" id="generalLocationSettings">
     <form action="" method="post">
+        <?php echo form::hidden('location_id'); ?>
         <table>
             <tr>
                 <td class="b a-right">
