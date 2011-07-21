@@ -43,6 +43,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/jquery.loadmask.min.js',
             'js/jquery.livequery.js',
             'js/Boxes.js',
+            'js/TopMenu.js',
             'js/common.js', // adds some common functions
             'js/Settings.js',
         );
