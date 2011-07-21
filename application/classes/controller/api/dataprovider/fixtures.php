@@ -11,7 +11,7 @@
         function random_gen($length)
         {
             $random = "";
-            srand((double)microtime() * 1000000);
+            //srand((double)microtime() * 1000000);
             $char_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             $char_list .= "abcdefghijklmnopqrstuvwxyz";
             $char_list .= "1234567890";
@@ -22,7 +22,8 @@
                 $i = 0; $i < $length; $i++
             )
             {
-                $random .= substr($char_list, (rand() % ($char_length)), 1);
+
+                $random .= substr($char_list, mt_rand(0, $char_length), 1);
             }
             return $random;
         }
@@ -211,14 +212,33 @@
                 }
             }
             $all_metrics[] = $scoreboard_overall;
+            $this->track();
             $metrics->batchInsert($all_metrics);
+            $this->track(false, 'reviews.metrics ('.count($all_metrics).')');
+            $this->track();
             $reviews->batchInsert($review_entries);
+            $this->track(false, 'reviews.entries ('.count($review_entries).')');
 
             /* $this->apiResponse = array(
                 'reviews' => $review_entries,
                 'metrics' => $metric_entries
             );*/
             // $this->apiResponse = array('dump' => print_r($metric_entries));
+        }
+
+        private function track($start = true, $tag = null)
+        {
+            if ($start) {
+                $this->start = microtime();
+            } else {
+
+                list($old_usec, $old_sec) = explode(' ', $this->start);
+                list($new_usec, $new_sec) = explode(' ', microtime());
+                $old_mt = ((float)$old_usec + (float)$old_sec);
+                $new_mt = ((float)$new_usec + (float)$new_sec);
+                echo $tag . ' : ' . number_format($new_mt - $old_mt, 4) . " seconds\n";
+
+            }
         }
 
         public function fixtures_social($db)
@@ -391,9 +411,9 @@
 
                                 'date' => $date,
                                 'site' => $site,
-                                'metric'=>$metric,
+                                'metric' => $metric,
                                 'action' => $action,
-                                'network' => substr($site, -3),
+                                'network' => ucfirst(substr($site, 0, -4)),
                                 'tags' => array(),
                                 'notes' => '',
                                 'content' => $content,
@@ -493,9 +513,12 @@
                 }
             }
             $all_metrics[] = $subscriber_overall;
-          
+            $this->track();
             $metrics->batchInsert($all_metrics);
+            $this->track(false, 'socials.metrics ('.count($all_metrics).')');
+            $this->track();
             $socials->batchInsert($social_entries);
+            $this->track(false, 'socials.entries ('.count($social_entries).')');
 
             /* $this->apiResponse = array(
                 'reviews' => $review_entries,

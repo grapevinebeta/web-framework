@@ -6,93 +6,38 @@
  * Time: 6:49 AM
  */
 
-    class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Base
+    class Controller_Api_DataProvider_Reviews extends  Controller_Api_DataProvider_Content
     {
 
 
-        /**
-         * @var MongoCollection
-         */
-        protected $reviews;
+        protected $collection = "reviews";
+        protected $default_fields=array('status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
+        protected $expanded_fields=array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
         public function before()
         {
             parent::before();
-            $this->reviews = $this->db->selectCollection('reviews');
+
         }
 
-        public function action_index()
+       
+        public function setFilters()
         {
+            $this->filters = array(
 
-            $expand = !is_null($this->id);
-            if (!$expand) {
-                $this->filters = array(
-
-                    new Api_Filters_Neutral(),
-                    new Api_Filters_Positive(),
-                    new Api_Filters_Negative(),
-                    new Api_Filters_Alert(),
-                    new Api_Filters_Flagged(),
-                    new Api_Filters_Completed(),
-                    new Api_Filters_Site(array(
-                            'citysearch.com', 'dealerrater.com', 'edmunds.com', 'insiderpages.com', 'judysbook.com',
-                            'mydealreport.com', 'superpages.com', 'yelp.com'
-                        ),
-                        $this->activeFilters
-                    )
-                );
-            }
-
-
-            $fields = array('status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
-
-            $limit = 10;
-
-            if ($expand) {
-                $fields = array_merge(
-                    $fields, array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1)
-                );
-                $this->query = array("_id" => new  MongoId($this->id));
-
-                $doc = $this->findOne('reviews', $this->query, $fields);
-                $doc['date'] = $doc['date']->sec;
-                $doc['id'] = $doc['_id']->{'$id'};
-                unset($doc['_id']);
-
-                $this->apiResponse = array(
-                    'review' => $doc
-                );
-
-                return;
-
-
-            }
-
-            $cursor = $this->find('reviews', $this->query, $fields, $limit);
-            
-            $cursor->sort(array('date'=>-1));
-
-            $reviews = array();
-            foreach (
-                $cursor as $doc
-            ) {
-                if ($this->matches_filter($doc)) {
-                    $doc['date'] = $doc['date']->sec;
-                    $doc['id'] = $doc['_id']->{'$id'};
-                    unset($doc['_id']);
-                    $reviews[] = $doc;
-
-                }
-            }
-            $this->apiResponse = array(
-                'reviews' => $reviews,
-                'filters' => $this->filterResponse,
-                'query'=>$this->query,
-                'pagination'
-                => array('page' => $this->request->post('page'), 'pagesCount' => ceil($cursor->count() / 10))
+                new Api_Filters_Neutral(),
+                new Api_Filters_Positive(),
+                new Api_Filters_Negative(),
+                new Api_Filters_Alert(),
+                new Api_Filters_Flagged(),
+                new Api_Filters_Completed(),
+                new Api_Filters_Site(array(
+                        'citysearch.com', 'dealerrater.com', 'edmunds.com', 'insiderpages.com', 'judysbook.com',
+                        'mydealreport.com', 'superpages.com', 'yelp.com'
+                    ),
+                    $this->activeFilters
+                )
             );
-
-
         }
 
 
@@ -167,11 +112,7 @@
             $this->apiResponse['sites'] = $sites;
         }
 
-        public function action_expand()
-        {
-            $this->action_index();
-
-        }
+       
 
         public function action_email()
         {
@@ -185,10 +126,10 @@
             // since all requests are done as an array we get the single instance
 
             $category = $this->request->post('category');
-            
 
-            $error = $this->update( array('$set' => array('category' => $category)));
-            
+
+            $error = $this->update(array('$set' => array('category' => $category)));
+
 
             $this->apiResponse = array('error' => $error);
         }
