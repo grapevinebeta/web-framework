@@ -210,60 +210,8 @@ var BoxController = Class.extend({
         .addClass('active');
      
         if(this.empty) {
-            var holder = this.getContentDom().find('div'),
-            div, wrapper, span;
             
-            
-            // big 100% width no data icon
-            if(holder.width() > 291) {
-            
-                wrapper = $('<div/>', {
-                    css: {
-                        margin: '20px',
-                        'text-align': 'center'
-                    
-                    }
-                });
-            
-            
-                div = $("<div/>", {
-                    css: {
-                        background: 'url(/images/icons/icons.png) 5px 0px',
-                        width: '291px',
-                        height: '283px',
-                        margin: 'auto auto',
-                        position: 'relative'
-                    }
-                        
-                });
-                
-                span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
-            
-            }
-            else
-            {
-               
-                wrapper = $('<div/>', {
-                    css: {
-                        margin: '5px',
-                        'text-align': 'center'
-                    
-                    }
-                })
-               
-                div = $('<div/>');
-                
-                span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
-                
-            }
-            
-                    
-            div.html(span);
-            wrapper.append(div);
-                        
-                    
-            holder.html(wrapper);
-            
+            this.showNoData('.data-grid-holder');
             
         }
 
@@ -329,6 +277,68 @@ var BoxController = Class.extend({
         this.filters[name]  = [];
         
     },
+    
+    
+    showNoData: function(id) {
+      
+      
+        var holder = this.getContentDom().find(id).html(''),
+        div, wrapper, span;
+            
+            
+        // big 100% width no data icon
+        if(holder.width() > 291) {
+            
+            wrapper = $('<div/>', {
+                css: {
+                    margin: '20px',
+                    'text-align': 'center'
+                    
+                }
+            });
+            
+            
+            div = $("<div/>", {
+                css: {
+                    background: 'url(/images/icons/icons.png) 5px 0px',
+                    width: '291px',
+                    height: '283px',
+                    margin: 'auto auto',
+                    position: 'relative'
+                }
+                        
+            });
+                
+            span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            
+        }
+        else
+        {
+               
+            wrapper = $('<div/>', {
+                css: {
+                    margin: '5px',
+                    'text-align': 'center'
+                    
+                }
+            })
+               
+            div = $('<div/>');
+                
+            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+                
+        }
+            
+                    
+        div.html(span);
+        wrapper.append(div);
+                        
+                    
+        holder.html(wrapper);
+      
+      
+    },
+    
 
     /**
      * Sets filter. Requires JS object to be passed in the following form:
@@ -1050,19 +1060,6 @@ var BC_Inbox = BoxController.extend({
       
     },
     
-    genericRequest: function(endpoint, data, callback) {
-                 
-        $.ajax({
-            type: "POST",
-            accepts: "application/json; charset=utf-8",
-            data: data,
-            dataType: "json",
-            url: endpoint,
-            success: callback
-        });
-      
-    },
-    
     expandEndpointCallback: function(e, data) {
         
         e.preventDefault();
@@ -1075,7 +1072,7 @@ var BC_Inbox = BoxController.extend({
 
         var endpoint = data.endpoint + '/' + data.id;
 
-        data.context.genericRequest(endpoint, param);
+        boxManager.genericRequest(endpoint, param);
         
     },
     
@@ -1568,13 +1565,14 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
     endpoint: '/api/dataProvider/reviews/sites',
     
     prepareGraph: function () {
-        if (!this.graphData) {
-            return;
-        }
         
         var graphHolderId = this.boxId + '-graph-holder';
         
-        var graphHolder = $('#' + graphHolderId);
+        if (!this.graphData) {
+            this.showNoData('.graph-holder');
+            return;
+        }
+        
         
         var options = {
             chart: {
@@ -1655,13 +1653,14 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
     
     processData: function() {
         
-        var table = this.getContentDom().find('.data-grid-holder > table'),
+        var sites = this.data.sites,
+        table = this.getContentDom().find('.data-grid-holder > table'),
         trTemplate = table.find('tbody tr:first').clone(),
         tr = null,
-        trFooter = table.find('tfoot tr'),
-        sites = this.data.sites;
+        trFooter = table.find('tfoot tr');
         
         this.graphData = sites;
+        
         
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
@@ -1711,6 +1710,17 @@ var BC_ReviewInbox = BC_Inbox.extend({
     
     endpoint: '/api/dataProvider/reviews',
 
+    dateHelper: function(date) {
+        
+        var tmpDate = new Date(date * 1000);
+        return monthNames[tmpDate.getMonth()] 
+            + ' ' 
+            + tmpDate.getDate();
+        
+    },
+
+    titleLink: $('<a href="#" class="title"></a>'),
+    expandButton: $('<a href="#" class="expand"></a>'),
 
     /**
      * this method populate every row of collapsed messages
@@ -1722,40 +1732,31 @@ var BC_ReviewInbox = BC_Inbox.extend({
         template = template.clone();
         template.addClass('collapsed').attr('data-row-id', message.id);
         
-        for(key in message)
+        for(var key in message)
         {
-            var value = message[key];
-            var col = template.find('td.col-' + key);
-            var titleLink;
+            var value = message[key],
+            col = template.find('td.col-' + key),
+            titleLink;
+            
             switch(key) {
                 
                 case 'date':
-                    var tmpDate = new Date(value * 1000);
-                    var formatted = monthNames[tmpDate.getMonth()] +
-                    ' ' + tmpDate.getDate();
-                    col.text(formatted);
+                    col.text(this.dateHelper(value));
                     break;
                 case 'title':
-                    titleLink = $('<a href="#" class="title"></a>');
+                    titleLink = this.titleLink.clone();
                     titleLink.text(value);
-                    
-                    col = col.find('div.in');
-                    
-                    col.html(titleLink);
-                    col.prepend('<a href="#" class="expand"></a>');
+                    col.find('div.in')
+                    .html(titleLink)
+                    .prepend(this.expandButton.clone());
                     break;
                 case 'score':
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
-                    col.html(ratingStars);
+                    col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>'));
                     break;
                 case 'status':
-                    
                     value = value.toLowerCase();
-                    
                     var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
-                    
-                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
-                    col.html(reviewStatus);
+                    col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>'));
                     break;
                 default:
                     col.text(value);
@@ -1796,7 +1797,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
              tr.find('.action-todo').remove();
             
-             data.context.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
+             boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                  status: 'CLOSED'
              }, function() {
                 
@@ -1819,7 +1820,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
             tr.find('.action-complete').remove();
             
-            data.context.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
+            boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                 status: 'TODO'
             }, function() {
                 
@@ -1896,9 +1897,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
       
       // we need to populate selectbox before we fetch another data
-      data.context.genericRequest('/api/dataProvider/reviews' + '/categories', {}, function(response) {
+      boxManager.genericRequest('/api/dataProvider/reviews' + '/categories', {}, function(response) {
         
-            var select = data.trContext.find('.review-categories').empty();
+            var select = data.trContext.find('.review-categories').html('');
             var option = $('<option />');
             $.each(response.categories, function(i, item) {
 
@@ -1908,7 +1909,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
             data.customPopulateFields = this.reviewPopulate;
             
-            data.context.genericRequest('/api/dataProvider/reviews' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/dataProvider/reviews' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data
@@ -2317,7 +2318,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            data.context.genericRequest('competition' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('competition' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2661,7 +2662,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            data.context.genericRequest('/api/static/social' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/static/social' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2832,17 +2833,17 @@ boxManager = {
             handle: ".box-header-button-move",
             cursor: 'move',
             helper: function() {
-              return $('<div />', {
-                  css: {
-                      width: $(this).width()-14,
-                      background: '#fff',
-                      padding: '10px',
-                      border: '1px solid gray',
-                      'font-size': '14px',
-                      'font-weight': 'bold',
-                      height: '30px'
-                  }
-              }).text($(this).find('.box-header-title').text());
+                return $('<div />', {
+                    css: {
+                        width: $(this).width()-14,
+                        background: '#fff',
+                        padding: '10px',
+                        border: '1px solid gray',
+                        'font-size': '14px',
+                        'font-weight': 'bold',
+                        height: '30px'
+                    }
+                }).text($(this).find('.box-header-title').text());
             },
             appendTo: 'body',
             zIndex: 10,
@@ -2850,9 +2851,9 @@ boxManager = {
                 
                 // show only holders that can really contain dragged box
                 var filter = $(this).parent().is('.box-container-left, .box-container-right') ?
-                    $('.box-container.empty.box-container-left, .box-container.empty.box-container-right')
-                    :
-                    $('.box-container.empty').not('.box-container-left, .box-container.empty.box-container-right');
+                $('.box-container.empty.box-container-left, .box-container.empty.box-container-right')
+                :
+                $('.box-container.empty').not('.box-container-left, .box-container.empty.box-container-right');
                 
                 filter.addClass('box-dropable');
             },
@@ -2872,9 +2873,9 @@ boxManager = {
             
             
             var filter = $(this).is('.box-container-left, .box-container-right') ?
-                    '.box-container.box-container-left .box, .box-container.box-container-right .box'
-                    :
-                    '.box-container:not(.box-container-left, .box-container-right) .box';
+            '.box-container.box-container-left .box, .box-container.box-container-right .box'
+            :
+            '.box-container:not(.box-container-left, .box-container-right) .box';
             
             if(!$(this).children().length) {
                 $(this).removeClass('active').addClass('empty');
@@ -2979,119 +2980,92 @@ boxManager = {
     init: function () {
         
         this.section_id = $('.top-menu-item.active')
-            .text()
-            .toLowerCase()
-            .replace(/\s+/g,"_");
+        .text()
+        .toLowerCase()
+        .replace(/\s+/g,"_");
         
-        var rangeArray = $('#range-form').serializeArray();
-        var range = {};
-        
-        for (var i = 0; i < rangeArray.length; i++) {
-            range[rangeArray[i].name] = rangeArray[i].value;
-        }
-        this.setRange(range);
-        
-        var self = this;
-        $('#range-form').submit(function (e) {
-            
-            e.preventDefault();
-            var range = {};
-            var rangeArray = $(this).serializeArray();
-            for (var i = 0; i < rangeArray.length; i++) {
-                range[rangeArray[i].name] = rangeArray[i].value;
-            }
-            self.setRange(range);
-            self.clearData();
-            self.refresh();
-
-        }).find('#period-selector, #date-selector').change(function () {
-            $(this).parents('form:first').submit();
-        });
-        
-        this.initHolders();
+        this.initHolders();    
     
+        return this;
+    },
     
-    return this;
-},
-    
-moveEmptyToBottom: function () {
+    moveEmptyToBottom: function () {
         
-    var boxesHolder = $('#boxes-holder');
-    var boxes = $('#boxes-holder .box-container');
+        var boxesHolder = $('#boxes-holder');
+        var boxes = $('#boxes-holder .box-container');
         
-    boxes.each(function (index) {
-        var box = $(this);
-        if (!box.children().length) {
-            if (box.hasClass('box-container-left')
-                && !box.next().hasClass('active')) {
-                var tmp = box.next();
-                tmp.next('.clear').remove();
-                boxesHolder.append(box);
-                boxesHolder.append(tmp);
+        boxes.each(function (index) {
+            var box = $(this);
+            if (!box.children().length) {
+                if (box.hasClass('box-container-left')
+                    && !box.next().hasClass('active')) {
+                    var tmp = box.next();
+                    tmp.next('.clear').remove();
+                    boxesHolder.append(box).append(tmp);
                 
-                boxesHolder.append('<div class="clear"></div>');
-            } else if (!box.hasClass('box-container-left')
-                && !box.hasClass('box-container-right')) {
-                box.nextAll(':last').after(box);
+                    boxesHolder.append('<div class="clear"></div>');
+                } else if (!box.hasClass('box-container-left')
+                    && !box.hasClass('box-container-right')) {
+                    box.nextAll(':last').after(box);
+                }
             }
+        });
+    
+        return this;
+    },
+    
+    refresh: function () {
+        for (i in this.collection) {
+            this.collection[i].refresh();
         }
-    });
+        return this;
+    },
     
-    return this;
-},
+    setDataProvider: function (dataProvider) {
+        this.dataProvider = dataProvider;
+        for (var i in this.collection) {
+            this.collection[i].setDataProvider(dataProvider);
+        }
+        return this;
+    },
     
-refresh: function () {
-    for (i in this.collection) {
-        this.collection[i].refresh();
-    }
-    return this;
-},
-    
-setDataProvider: function (dataProvider) {
-    this.dataProvider = dataProvider;
-    for (i in this.collection) {
-        this.collection[i].setDataProvider(dataProvider);
-    }
-    return this;
-},
-    
-setExporter: function (exporter) {
+    setExporter: function (exporter) {
       
-    this.exporter = exporter;
+        this.exporter = exporter;
       
-    return this;
+        return this;
       
-},
+    },
     
     
-setFilter: function(filters) {
-    for (i in this.collection) {
-        this.collection[i].setFilter(filters);
-    }
-    return this;
-},
+    setFilter: function(filters) {
+        for (i in this.collection) {
+            this.collection[i].setFilter(filters);
+        }
+        return this;
+    },
 
-setRange: function(range) {
-    this.range = range;
-    for (i in this.collection) {
-        this.collection[i].setRange(this.range);
-    }
-    return this;
-},
+    setRange: function(range) {
+        this.range = range;
+        for (i in this.collection) {
+            this.collection[i].setRange(this.range);
+        }
+        return this;
+    },
     
-setDateInterval: function (dateInterval) {
-    for (i in this.collection) {
-        this.collection[i].setDateInterval(dateInterval);
-    }
-    return this;
-},
+    setDateInterval: function (dateInterval) {
+        for (i in this.collection) {
+            this.collection[i].setDateInterval(dateInterval);
+        }
+        return this;
+    },
     
-clearData: function () {
-    for (i in this.collection) {
-        this.collection[i].clearData();
-    }
-    return this;
-},
+    clearData: function () {
+        for (i in this.collection) {
+            this.collection[i].clearData();
+        }
+        return this;
+    },
     
     /**
      * get all boxes from manager and fetch graph, inbox and tabular data
@@ -3166,8 +3140,8 @@ $(document).ready(function () {
     .add(new BC_Photos())
     .add(new BC_Videos())
     .setDataProvider(new DataProvider())
-    .setExporter(Exporter)
-    .init();
+    .setExporter(Exporter);
+    // the initialization of boxManager is in TopMenu.js
 });
 
 
