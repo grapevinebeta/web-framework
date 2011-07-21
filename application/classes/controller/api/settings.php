@@ -110,13 +110,22 @@ class Controller_Api_Settings extends Controller {
         $data = $_GET; // @todo For debugging only; replace with POST data
         // $data = $this->request->post();
 
-        // @todo Change location ID to be assigned as needed
-        $location_id = 1;
+        
+        // @todo Location ID must be assigned here from database, based on which
+        //      location should be visible here
+        $location_id = Session::instance()->get('location_id');
+        if (empty($location_id)) {
+            $location_id = Arr::get($this->request->post(), 'location_id');
+        }
 
         $location = ORM::factory('location')
-                //->where('location_id', '=', $location_id)
+                ->where('location_id', '=', $location_id)
                 ->find();
         if (empty($location->location_id)) {
+            /**
+             * @todo Maybe create location here, if not found?
+             */
+
             // Location not found
             $this->apiResponse['error'] = array(
                 'message' => __('Location not found'),
@@ -124,6 +133,7 @@ class Controller_Api_Settings extends Controller {
         } else {
             $this->apiResponse['result'] = array();
             $properties = array(
+                'location_id',
                 'owner_name',
                 'owner_email',
                 'owner_phone',
@@ -270,7 +280,7 @@ class Controller_Api_Settings extends Controller {
         /**
          * @todo Change it into something more flexible
          */
-        $location_id = 1;
+        $location_id = Arr::get($this->request->post(), 'location_id');
 
         // list of fields accepted for setting and for viewing in general settings
         $editable = array(
@@ -302,11 +312,8 @@ class Controller_Api_Settings extends Controller {
                 $general_settings
                     ->values($data)
                     ->create();
+                Session::instance()->set('location_id', $general_settings->location_id);
             }
-            // get settings again
-            $general_settings = ORM::factory('location')
-                ->where('location_id','=',(int)$location_id)
-                ->find();
 
             //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
             $this->apiResponse['result']['general_settings'] = $general_settings->as_array();

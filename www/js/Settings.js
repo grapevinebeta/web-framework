@@ -95,7 +95,9 @@ jQuery(function(){
                     if (data.result){
                         log('Data retrieved');
                         self.clearValidationErrors();
-                        self.refreshGeneralLocationSettings();
+                        if (typeof data.result.general_settings != 'undefined'){
+                            self.refreshGeneralLocationSettings(data.result.general_settings);
+                        }
                     }else{
                         if (typeof data.error.validation_errors != 'undefined'){
                             self.displayValidationErrors(data.error.validation_errors, this.generalLocationSettings);
@@ -233,20 +235,35 @@ jQuery(function(){
             }
         },
 
-        // propagate General Location Settings form with up-to-date data
-        'refreshGeneralLocationSettings': function(){
+        /**
+         * Propagate General Location Settings form with up-to-date data. If
+         * data has been provided as parameter, then use it instead of making
+         * separate request to the server.
+         */
+        'refreshGeneralLocationSettings': function(settings){
             var self = this;
-            
-            // propagate data when the page is displayed
-            jQuery.post('/api/settings/getgeneral', {}, function(data){
-                if (data.result){
-                    log('General location data retrieved');
-                    var form = self.generalLocationSettings.find('form');
-                    self.propagateFormData(data.result, form);
-                }else{
-                    log('Error fetching initial data for general location settings');
+            var form = self.generalLocationSettings.find('form');
+
+            if (typeof settings == 'undefined'){
+                var location_id = self.generalLocationSettings.find('input[name="location_id"]').val();
+                if (location_id == '') {
+                    location_id = null;
                 }
-            }, 'json');
+
+                // propagate data when the page is displayed
+                jQuery.post('/api/settings/getgeneral', {
+                    'location_id': location_id
+                }, function(data){
+                    if (data.result){
+                        log('General location data retrieved');
+                        self.propagateFormData(data.result, form);
+                    }else{
+                        log('Error fetching data for general location settings');
+                    }
+                }, 'json');
+            }else{
+                self.propagateFormData(settings, form);
+            }
         },
 
         // refresh list of emails on the reports settings page
