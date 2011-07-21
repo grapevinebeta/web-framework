@@ -106,7 +106,6 @@ jQuery(function(){
         
         initialize: function() {
           
-          
             this.periodSelector = $("#period-selector");
             this.dateSelector = $("#date-selector");
             this.selectValue = this.periodSelector.val();
@@ -147,11 +146,11 @@ jQuery(function(){
         init: function() {
        
        
-            
+          if($("#period-selector").length) {  
             this.initialize();
             this.initRange();
             this.attachEvents();
-            
+          }
        
         }
    
