@@ -2,8 +2,10 @@
 
 return array(
 
-//    'email' => array(
-//        'min_length' => __('Email is too short'),
-//    ),
+    'email' => array(
+        'min_length' => __('Email address is too short'),
+
+        'is_unique_for_location' => __('This email address has already been assigned to this location.'),
+    ),
 
 );

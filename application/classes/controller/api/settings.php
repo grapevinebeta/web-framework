@@ -3,6 +3,12 @@
 class Controller_Api_Settings extends Controller {
 
     /**
+     * ID of the location.
+     * @todo Assign it on the basis on eg. database data
+     */
+    protected $_location_id = null;
+
+    /**
      * @var array API response in the format it will be returned, for distinguishing
      *      between successful responses and errors
      * */
@@ -14,6 +20,8 @@ class Controller_Api_Settings extends Controller {
 
     public function before() {
         parent::before();
+
+        $this->_location_id = Session::instance()->get('location_id');
 
         /**
          * @todo Perform a security check. According to requirements, there are
@@ -113,7 +121,7 @@ class Controller_Api_Settings extends Controller {
         
         // @todo Location ID must be assigned here from database, based on which
         //      location should be visible here
-        $location_id = Session::instance()->get('location_id');
+        $location_id = $this->_location_id;
         if (empty($location_id)) {
             $location_id = Arr::get($this->request->post(), 'location_id');
         }
@@ -159,7 +167,7 @@ class Controller_Api_Settings extends Controller {
     public function action_getemails() {
 
         // @todo dummy replacement, delete it and assign it from eg. session
-        $location_id = 1;
+        $location_id = $this->_location_id;
 
         $emails = ORM::factory('email')
                 ->where('location_id', '=', (int)$location_id)
@@ -186,7 +194,7 @@ class Controller_Api_Settings extends Controller {
     public function action_addemail() {
 
         // @todo dummy replacement, delete it and assign it from eg. session
-        $location_id = 1;
+        $location_id = $this->_location_id;
 
         $post = array(
             'location_id' => $location_id,
@@ -201,6 +209,7 @@ class Controller_Api_Settings extends Controller {
             $this->apiResponse['result'] = array(
                 'success' => true,
                 'message' => __('Email has been successfully added to the list'),
+                'reports_emails_html'
             );
         } catch (ORM_Validation_Exception $e) {
             $this->apiResponse['error'] = array(
@@ -232,7 +241,7 @@ class Controller_Api_Settings extends Controller {
         /**
          * @todo Change it into something more flexible
          */
-        $location_id = 1;
+        $location_id = $this->_location_id;
 
         $email_address = Arr::path($this->request->post(), 'email');
 

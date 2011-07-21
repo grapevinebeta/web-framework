@@ -57,7 +57,7 @@ class Controller_Account extends Controller_Template {
     public function action_reports()
     {
         // @todo replace it with something actually meaningful
-        $location_id = 1;
+        $location_id = Session::instance()->get('location_id');
 
         $this->_contentView = View::factory('account/reports');
 
