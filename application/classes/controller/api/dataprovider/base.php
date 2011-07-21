@@ -42,6 +42,10 @@
          * @var int
          */
         protected $location;
+        /**
+         * @var array Default date query
+         */
+        protected $query;
 
 
         public function before()
@@ -170,7 +174,7 @@
          * @param $limit
          * @return MongoCursor
          */
-        protected function find($name, $query, $fields, $limit = -1)
+        protected function find($name, $query,array  $fields=array(), $limit = -1)
         {
             $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
             $cursor = $collection->find($query, $fields);
