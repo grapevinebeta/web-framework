@@ -23,7 +23,7 @@
         }
 
 
-        public function all(bool $value)
+        public function all($value)
         {
             $this->_all = $value;
             return $this;
@@ -152,7 +152,7 @@
             foreach (
                 $docs as $doc
             ) {
-                if ($doc['_id'] == $this->_location) {
+                if ($doc['_id'] == $location) {
                     $location_score = $doc['value']['score'];
                 }
                 $competition_set_average += $doc['value']['score'];

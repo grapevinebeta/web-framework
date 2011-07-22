@@ -49,29 +49,28 @@
                     }';
             $finalize
                     = 'function(key,results){
-                    results.score = (results.points/results.count).toFixed(1);
+                    results.score = (results.points/results.count).toFixed(3);
                     return results;
             }';
             $db = $this->_mongo->selectDB('auto');
-            $command=array(
-                    'mapreduce' => 'metrics',
-                    'query'
-                    => array(
-                        'type' => 'scoreboard',
-                        'date'
-                        => $this->_date,
+            $command = array(
+                'mapreduce' => 'metrics',
+                'query'
+                => array(
+                    'type' => 'scoreboard',
+                    'date'
+                    => $this->_date,
 
-                        'period' => $this->_period
-                    ),
-                    'map' => $map,
-                    'reduce' => $reduce,
-                    'out' => array('inline' => TRUE),
-                    'finalize' => $finalize
-                );
-            
+                    'period' => $this->_period
+                ),
+                'map' => $map,
+                'reduce' => $reduce,
+                'out' => array('inline' => TRUE),
+                'finalize' => $finalize
+            );
+
             $results = $db->command($command);
 
-            
 
             $single = count($this->_locations) == 1;
             $return = array();
