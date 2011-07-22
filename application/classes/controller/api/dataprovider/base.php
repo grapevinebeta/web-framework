@@ -111,6 +111,20 @@
 
         }
 
+        protected function time($start = true, $tag = null)
+        {
+            if ($start) {
+                $this->start = microtime();
+            } else {
+
+                list($old_usec, $old_sec) = explode(' ', $this->start);
+                list($new_usec, $new_sec) = explode(' ', microtime());
+                $old_mt = ((float)$old_usec + (float)$old_sec);
+                $new_mt = ((float)$new_usec + (float)$new_sec);
+                echo $tag . ' : ' . number_format($new_mt - $old_mt, 4) . " seconds\n";
+
+            }
+        }
 
         public function after()
         {
