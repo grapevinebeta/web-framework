@@ -359,7 +359,7 @@ class Controller_Api_Settings extends Controller {
         $competitor_name = Arr::path($this->request->post(), 'params.newcompetitor');
 
         try {
-            $email = ORM::factory('location_setting')
+            $competitor = ORM::factory('location_setting')
                     ->values(array(
                         'type' => 'competitor',
                         'value' => $competitor_name,
@@ -378,6 +378,79 @@ class Controller_Api_Settings extends Controller {
                     'competitors' => $competitors,
                 ))->render(),
             );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
+    }
+    
+    /**
+     * Delete competitor from location settings
+     */
+    public function action_deletecompetitor() {
+
+        // @todo dummy replacement, delete it and assign it from eg. session
+        $location_id = $this->_location_id;
+
+        $competitor_name = Arr::path($this->request->post(), 'params.competitor');
+
+        try {
+            $competitor = ORM::factory('location_setting')
+                    ->where_open()
+                        ->where('type','=','competitor')
+                        ->and_where('location_id','=',(int)$location_id)
+                        ->and_where('value','=',$competitor_name)
+                    ->where_close()
+                    ->find();
+            
+            if (!empty($competitor->id)) {
+                // competitor exists
+                $competitor->delete();
+                
+                // get new list of competitors
+                $settings = new Model_Location_Settings($location_id);
+                $competitors = $settings->getSetting('competitor');
+
+                $this->apiResponse['result'] = array(
+                    'success' => true,
+                    'message' => __('New competitor has been successfully added to the list'),
+                    'competitors_list_html' => View::factory('account/competitors/list', array(
+                        'competitors' => $competitors,
+                    ))->render(),
+                );
+            } else {
+                // competitor does not exist
+                
+                // get new list of competitors
+                $settings = new Model_Location_Settings($location_id);
+                $competitors = $settings->getSetting('competitor');
+                
+                $this->apiResponse['result'] = array(
+                    'success' => false,
+                    'message' => __('Competitor has not been deleted'),
+                    'competitors_list_html' => View::factory('account/competitors/list', array(
+                        'competitors' => $competitors,
+                    ))->render(),
+                );
+            }
+            
+            
         } catch (ORM_Validation_Exception $e) {
             $this->apiResponse['error'] = array(
                 'message' => __('Competitor name is incorrect'), // @todo add more details

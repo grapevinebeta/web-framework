@@ -86,8 +86,24 @@ jQuery(function(){
             this.competitorsSettings.delegate('a[data-action="delete"]', 'click', function(event){
                 event.preventDefault();
                 if (confirm('Are you sure?')){
-                    jQuery(this).parents('tr').remove(); // @todo do this only when deletion confirmed by server
-                    log('Competitor would be deleted here');
+                    var competitor_name = jQuery(this).attr('data-competitor');
+                    //jQuery(this).parents('tr').remove(); // @todo do this only when deletion confirmed by server
+                    log('Competitor "' + competitor_name + '" would be deleted here');
+                    jQuery.post('/api/settings/deletecompetitor', {
+                        'params': {
+                            'competitor': competitor_name
+                        }
+                    }, function(data){
+                        if (data.result && data.result.success){
+                            log('Competitor "' + competitor_name + '" has been deleted');
+                            if (typeof data.result.competitors_list_html != 'undefined'){
+                                log('Updating list of competitors');
+                                self.competitorsSettings.find('.competitorsSettingsList').replaceWith(data.result.competitors_list_html);
+                            }
+                        } else if(data.result && !data.result.success){
+                            log('Competitor "' + competitor_name + '" has not been deleted');
+                        }
+                    });
                 }
             });
 
