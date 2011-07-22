@@ -6,13 +6,14 @@
  * Time: 6:49 AM
  */
 
-    class Controller_Api_DataProvider_Reviews extends  Controller_Api_DataProvider_Content
+    class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Content
     {
 
 
         protected $collection = "reviews";
-        protected $default_fields=array('status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
-        protected $expanded_fields=array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
+        protected $default_fields
+        = array('status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
+        protected $expanded_fields = array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
         public function before()
         {
@@ -20,7 +21,7 @@
 
         }
 
-       
+
         public function setFilters()
         {
             $this->filters = array(
@@ -52,23 +53,26 @@
 
         }
 
+        public function action_ogsi()
+        {
+            $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
+            $this->apiResponse = $ogsi->competition(array(2, 3, 4))
+                    ->range(new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),$this->endDate)->fetch();
+        }
+
         public function action_sites()
         {
             $metrics = $this->db->selectCollection('metrics');
-            $cursor = $metrics->find(
-                array(
-                    'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate),
-                    'type' => 'reviews',
+            $fetcher = new Api_Fetchers_Metrics($this->mongo);
+            $fetcher->type('reviews')
+                    ->range($this->startDate, $this->endDate)
+                    ->location($this->location);
 
-                    'period' => 'day'
-
-                ), array("aggregates.{$this->location}" => 1)
-            );
             $sites = array();
             foreach (
-                $cursor as $doc
+                $fetcher as $doc
             ) {
-                $doc = $doc['aggregates'][$this->location];
+
                 foreach (
                     $doc as $site
                     => $site_info
@@ -112,7 +116,6 @@
             $this->apiResponse['sites'] = $sites;
         }
 
-       
 
         public function action_email()
         {

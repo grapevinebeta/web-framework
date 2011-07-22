@@ -30,14 +30,19 @@
 
         public function action_index()
         {
+            set_time_limit(0);
             $db = $this->mongo->selectDB('auto');
             $db->drop();
 
-            $this->fixtures_social($db);
-            $this->fixtures_reviews($db);
+            for (
+                $i = 1; $i <= 4; $i++
+            ) {
+                $this->fixtures_social($db, $i);
+                $this->fixtures_reviews($db, $i);
+            }
         }
 
-        public function fixtures_reviews($db)
+        public function fixtures_reviews($db, $location_id)
         {
 
             $amount = 100;
@@ -67,22 +72,22 @@
             $metric_entries = array('scoreboard' => array(), 'reviews' => array());
             $review_entries = array();
 
-            $location_id = 1;
+
             $scoreboard_overall = array(
                 'type' => 'scoreboard',
                 'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
                 'period' => 'overall',
                 'aggregates'
                 => array(
-                    '1'
-                    => array(
-                        'negative' => 0,
-                        'positive' => 0,
-                        'neutral' => 0,
-                        'points' => 0,
-                        'count' => 0
-                    )
+
                 )
+            );
+            $scoreboard_overall['aggregates'][$location_id] = array(
+                'negative' => 0,
+                'positive' => 0,
+                'neutral' => 0,
+                'points' => 0,
+                'count' => 0
             );
             mt_srand(time());
             for (
@@ -214,10 +219,10 @@
             $all_metrics[] = $scoreboard_overall;
             $this->track();
             $metrics->batchInsert($all_metrics);
-            $this->track(false, 'reviews.metrics ('.count($all_metrics).')');
+            $this->track(false, "reviews.$location_id.metrics (" . count($all_metrics) . ')');
             $this->track();
             $reviews->batchInsert($review_entries);
-            $this->track(false, 'reviews.entries ('.count($review_entries).')');
+            $this->track(false, "reviews.$location_id.entries (" . count($review_entries) . ')');
 
             /* $this->apiResponse = array(
                 'reviews' => $review_entries,
@@ -241,7 +246,7 @@
             }
         }
 
-        public function fixtures_social($db)
+        public function fixtures_social($db, $location_id)
         {
 
             $amount = 100;
@@ -356,27 +361,23 @@
             $metric_entries = array('social.activity' => array(), 'socials' => array(), 'social.reach' => array());
             $social_entries = array();
 
-            $location_id = 1;
+
             $activity_overall = array(
                 'type' => 'social.activity',
                 'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
                 'period' => 'overall',
-                'aggregates'
-                => array(
-                    '1'
-                    => $default_activity
-                )
+                'aggregates'=>array()
+                
             );
+            $activity_overall['aggregates'][$location_id]=$default_activity;
             $subscriber_overall = array(
                 'type' => 'social.subscribers',
                 'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
                 'period' => 'overall',
-                'aggregates'
-                => array(
-                    '1'
-                    => $default_subscriber
-                )
+                'aggregates'=>array()
+                
             );
+            $subscriber_overall['aggregates'][$location_id]=$default_subscriber;
             mt_srand(time());
             for (
                 $i = 1; $i <= $amount; $i++
@@ -515,10 +516,10 @@
             $all_metrics[] = $subscriber_overall;
             $this->track();
             $metrics->batchInsert($all_metrics);
-            $this->track(false, 'socials.metrics ('.count($all_metrics).')');
+            $this->track(false, "socials.$location_id.metrics (" . count($all_metrics) . ')');
             $this->track();
             $socials->batchInsert($social_entries);
-            $this->track(false, 'socials.entries ('.count($social_entries).')');
+            $this->track(false, "socials.$location_id.entries (" . count($social_entries) . ')');
 
             /* $this->apiResponse = array(
                 'reviews' => $review_entries,
