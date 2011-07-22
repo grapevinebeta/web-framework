@@ -356,7 +356,7 @@ class Controller_Api_Settings extends Controller {
         // @todo dummy replacement, delete it and assign it from eg. session
         $location_id = $this->_location_id;
 
-        $competitor_name = Arr::path($this->request->post(), 'params.newcompetitor');
+        $competitor_name = Arr::path($this->request->post(), 'params.competitor');
 
         try {
             $competitor = ORM::factory('location_setting')
@@ -379,13 +379,16 @@ class Controller_Api_Settings extends Controller {
                 ))->render(),
             );
         } catch (ORM_Validation_Exception $e) {
+            $errors = array(
+                'competitor' => Arr::get($e->errors('validation'),'value'),
+            );
             $this->apiResponse['error'] = array(
                 'message' => __('Competitor name is incorrect'), // @todo add more details
                 'error_data' => array(
                     'code' => $e->getCode(),
                     'message' => $e->getMessage(),
                 ),
-                'validation_errors' => $e->errors('validation'),
+                'validation_errors' => $errors,
             );
         } catch (Database_Exception $e) {
             // This should not happen and should be handled by validation!

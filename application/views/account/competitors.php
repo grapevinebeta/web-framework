@@ -10,8 +10,9 @@
         )); ?>
         <form action="" method="post">
             <p>
-                <input type="text" name="newcompetitor" />
+                <input type="text" name="competitor" />
                 <?php echo form::submit('', __('Add Competitor')); ?>
+                <span class="validation-message" data-validation-for="competitor"></span>
             </p>
         </form>
     </div>
