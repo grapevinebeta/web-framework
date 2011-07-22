@@ -17,12 +17,13 @@
             $dist = new Api_Fetchers_Distribution($this->mongo, array($this->location));
             $doc = $dist->range($date)->period('overall')->fetch();
 
+            $doc['score']=number_format($doc['score'],2);
             $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
             // TODO keyston : fetch locations compentition from mysql
             $ogsi->competition(array(2, 3, 4))->range($date)->period('overall');
 
             return array(
-                'ogsi' => $ogsi->fetch(),
+                'ogsi' => number_format($ogsi->fetch(),2),
                 'rating' => $doc,
 
                 'reviews' => $doc['count']
@@ -106,13 +107,14 @@
             $dist->range($this->startDate, $this->endDate);
 
             $values = $dist->fetch();
+            $values['score']=number_format($values['score'],2);
 
 
             $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
             // TODO keyston : fetch locations compentition from mysql
             $ogsi->competition(array(2, 3, 4))->range($this->startDate, $this->endDate);
             $response = array(
-                'ogsi' => $ogsi->fetch(),
+                'ogsi' => number_format($ogsi->fetch(),2),
                 'rating' => $values,
                 'reviews' => $values['count']
 
