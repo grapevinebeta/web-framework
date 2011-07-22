@@ -1,4 +1,4 @@
-<form action="" method="post">
+<form action="" method="post" class="competitorsSettingsList">
     <table class="wide data-grid" cellpadding="5">
         <tr>
             <th class="a-left">

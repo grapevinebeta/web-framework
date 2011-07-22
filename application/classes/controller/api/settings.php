@@ -347,5 +347,57 @@ class Controller_Api_Settings extends Controller {
         }
 
     }
+    
+    /**
+     * Action to add competitor into location settings
+     */
+    public function action_addcompetitor() {
+
+        // @todo dummy replacement, delete it and assign it from eg. session
+        $location_id = $this->_location_id;
+
+        $competitor_name = Arr::path($this->request->post(), 'params.newcompetitor');
+
+        try {
+            $email = ORM::factory('location_setting')
+                    ->values(array(
+                        'type' => 'competitor',
+                        'value' => $competitor_name,
+                        'location_id' => (int)$location_id,
+                    ))
+                    ->create();
+            
+            // get new list of competitors
+            $settings = new Model_Location_Settings($location_id);
+            $competitors = $settings->getSetting('competitor');
+            
+            $this->apiResponse['result'] = array(
+                'success' => true,
+                'message' => __('New competitor has been successfully added to the list'),
+                'competitors_list_html' => View::factory('account/competitors/list', array(
+                    'competitors' => $competitors,
+                ))->render(),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
+    }
 
 }

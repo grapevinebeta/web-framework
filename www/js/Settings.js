@@ -66,9 +66,21 @@ jQuery(function(){
         },
 
         'initializeCompetitorsSettings': function(){
+            var self = this;
+            
             this.competitorsSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
-                alert('Not yet ready');
+                log('User attempts to add new competitor');
+                var new_competitor = jQuery(this).find('input[name="newcompetitor"]').val();
+                jQuery.post('/api/settings/addcompetitor', {
+                    'params': {
+                        'newcompetitor': new_competitor
+                    }
+                }, function(data){
+                    if (data.result && data.result.success){
+                        self.competitorsSettings.find('.competitorsSettingsList').replaceWith(data.result.competitors_list_html);
+                    }
+                });
             });
 
             this.competitorsSettings.delegate('a[data-action="delete"]', 'click', function(event){

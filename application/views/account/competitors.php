@@ -10,7 +10,7 @@
         )); ?>
         <form action="" method="post">
             <p>
-                <input type="text" name="newCompetitor" />
+                <input type="text" name="newcompetitor" />
                 <?php echo form::submit('', __('Add Competitor')); ?>
             </p>
         </form>

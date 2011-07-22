@@ -3,9 +3,9 @@
 return array(
 
     'email' => array(
-        'min_length' => __('Email address is too short'),
-
-        'is_unique_for_location' => __('This email address has already been assigned to this location.'),
+        'min_length' => 'Email address is too short',
+        'email' => 'Please provide a correct email address',
+        'is_unique_for_location' => 'This email address has already been assigned to this location.',
     ),
 
 );
