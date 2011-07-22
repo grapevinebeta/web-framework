@@ -97,7 +97,7 @@
 
             }
             //ratings/score
-            $rank=1;
+            $rank = 1;
             $sort = new Sorter('score', -1);
             $sort->sort($distributions);
             foreach (
@@ -116,11 +116,51 @@
 
 
             }
-            
+
 
             $this->apiResponse['ogsi'] = $results;
 
 
+        }
+
+        public function action_distribution()
+        {
+            $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
+            $competition = $location_names;
+            unset($competition[$this->location]);
+
+
+            $total_locations = count($location_names);
+            $fetcher
+                    = new Api_Fetchers_Distribution($this->mongo, array_keys($location_names));
+            $fetcher->range($this->startDate, $this->endDate);
+            $distributions = $fetcher->fetch();
+
+            $sort = new Sorter('score', -1);
+            $distributions = $sort->sort($distributions);
+
+            $results = array();
+            $rank = 1;
+            foreach (
+                $distributions as $location
+                => $doc
+            ) {
+                $location_name = $location_names[$location];
+                $results[$location_name] = array(
+                    'positive' => $doc['positive'],
+                    'negative' => $doc['negative'],
+                    'neutral' => $doc['neutral'],
+                    'total' => $doc['count'],
+                    'average' => $doc['score'],
+                    'rank'
+                    => array(
+                        'out' => $total_locations,
+                        'value' => $rank++
+                    )
+                );
+
+            }
+            $this->apiResponse['distribution']=$results;
         }
     }
 
