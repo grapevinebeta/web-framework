@@ -77,13 +77,19 @@ class Controller_Account extends Controller_Template {
     public function action_competitors()
     {
         $this->_contentView = View::factory('account/competitors');
-        $competitorsData = array(
-            array('id' => 1, 'name' => 'Jacek Kromski', 'active' => 1),
-            array('id' => 2, 'name' => 'Tomasz Jaśkowski', 'active' => 0),
-            array('id' => 3, 'name' => 'Richard Ortega', 'active' => 1),
-            array('id' => 4, 'name' => 'John Kowalski', 'active' => 0),
-        );
-        $this->_contentView->competitors = $competitorsData;
+        
+        $location_id = Session::instance()->get('location_id');
+        
+        if (!$location_id) {
+            // @todo Only debugging, replace it
+            die('No location found');
+        }
+        
+        $settings = new Model_Location_Settings($location_id);
+        
+        $competitors = $settings->getSetting('competitor');
+        
+        $this->_contentView->competitors = $competitors;
         
     }
 
