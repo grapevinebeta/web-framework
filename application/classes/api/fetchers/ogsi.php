@@ -12,6 +12,7 @@
 
         private $_location;
         private $_locations;
+        private $_all = false;
         private $_db = 'auto';
 
 
@@ -21,6 +22,12 @@
             $this->_location = $location;
         }
 
+
+        public function all(bool $value)
+        {
+            $this->_all = $value;
+            return $this;
+        }
 
         public function competition(array $locations)
         {
@@ -113,20 +120,18 @@
 
             $location_score = 0;
             $competition_set_average = 0;
+            $for = $this->_all ? $locations : array($this->_location);
             foreach (
-                $return['results'] as $doc
+                $for as $location
             ) {
-                if ($doc['_id'] == $this->_location) {
-                    $location_score = $doc['value']['score'];
+                $score = $this->compute($location, $return['results']);
+                if (!$this->_all) {
+                    return $score;
                 }
-                $competition_set_average += $doc['value']['score'];
+                $final[$location] = $score;
             }
-            /* echo "Total score: $competition_set_average \n";
-    echo "Total locations : " . count($locations) . "\n";*/
-            $competition_set_average = $competition_set_average / count($locations);
-            /*  echo "competition_set_average : $competition_set_average\n";
-    echo "location $this->_location score : " . $location_score. "\n";*/
-            return ($location_score / $competition_set_average) * 100;
+            return $final;
+
 
             /*
    echo "Total score: $competition_set_average \n";
@@ -137,6 +142,28 @@
    echo 'ogsi : ' . $ogsi = ($score / $competition_set_average) . "\n";
    echo 'Percentage : ' . ($ogsi * 100) . "\n";*/
 
+
+        }
+
+        private function compute($location, array &$docs)
+        {
+            $competition_set_average = 0;
+            $locations = 0;
+            foreach (
+                $docs as $doc
+            ) {
+                if ($doc['_id'] == $this->_location) {
+                    $location_score = $doc['value']['score'];
+                }
+                $competition_set_average += $doc['value']['score'];
+                $locations++;
+            }
+            /* echo "Total score: $competition_set_average \n";
+    echo "Total locations : " . count($locations) . "\n";*/
+            $competition_set_average = $competition_set_average / $locations;
+            /*  echo "competition_set_average : $competition_set_average\n";
+    echo "location $this->_location score : " . $location_score. "\n";*/
+            return ($location_score / $competition_set_average) * 100;
 
         }
     }

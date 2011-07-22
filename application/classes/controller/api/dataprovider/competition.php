@@ -10,13 +10,13 @@
     {
 
 
-        public function action_index()
+        public function action_ogsi()
         {
             $fetcher = new Api_Fetchers_Ogsi($this->mongo, $this->location);
-            $score = $fetcher->competition(array(2, 3, 4))->range($this->startDate, $this->endDate)->fetch();
-            $this->apiResponse['ogsi']=$score;
+            $results = $fetcher->competition(array(2, 3, 4))->range($this->startDate, $this->endDate)->all(true)->fetch(
+            );
 
-           
+            //$this->apiResponse['ogsi'] = $score;
 
 
         }
