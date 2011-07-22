@@ -182,7 +182,7 @@
                 $dates[] = strtotime('+ ' . ($seconds_step * $i) . ' seconds', $start_time);
             }
 
-            print_r($dates);
+            
             $js_locations = '[' . join(',', array_keys($location_names)) . ']';
             $js_dates = '[' . join(',', $dates) . ']';
             $map
