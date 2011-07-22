@@ -160,7 +160,117 @@
                 );
 
             }
-            $this->apiResponse['distribution']=$results;
+            $this->apiResponse['distribution'] = $results;
+        }
+
+        public function action_comparsion()
+        {
+            $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
+
+
+            $dateInterval = $this->request->post('dateInterval');
+            if (empty($dateInterval)) {
+                $dateInterval = 6;
+            }
+            $start_time = $this->startDate->sec;
+            $end_time = $this->endDate->sec;
+            $seconds_step = floor(($end_time - $start_time) / $dateInterval);
+            $dates = array();
+            for (
+                $i = 0; $i < $dateInterval; $i++
+            ) {
+                $dates[] = strtotime('+ ' . ($seconds_step * $i) . ' seconds', $start_time);
+            }
+
+            print_r($dates);
+            $js_locations = '[' . join(',', array_keys($location_names)) . ']';
+            $js_dates = '[' . join(',', $dates) . ']';
+            $map
+                    = "function(){
+                var dates=$js_dates;
+                var date;
+                var len=dates.length;
+                var time =this.date.getTime()/ 1000;
+
+                for(var i=0;i<len;i++){
+                    date =dates[i];
+                    if(time>=date && time<=dates[i+1])break;
+                }
+                var agg=this.aggregates;
+                  var locs = $js_locations;
+                    locs.forEach(function(location){
+                        if(agg[location]){
+                            emit({date:date,location:location},agg[location]);
+                         }
+
+                    });
+
+              
+            }";
+            $reduce
+                    = 'function(key,values){
+                        var results={negative:0,positive:0,neutral:0,points:0,count:0};
+                        values.forEach(function(value){
+                                for(var type in value){
+                                 results[type]+=value[type];
+                                }
+                          });
+
+                        return results;
+                    }';
+            $finalize
+                    = 'function(key,results){
+                    results.score = (results.points/results.count).toFixed(3);
+                    return results;
+            }';
+            $db = $this->mongo->selectDB('auto');
+            $command = array(
+                'mapreduce' => 'metrics',
+                'query'
+                => array(
+                    'type' => 'scoreboard',
+                    'date'
+                    => array('$gte' => $this->startDate, '$lte' => $this->endDate),
+
+                    'period' => 'day'
+                ),
+                'map' => $map,
+                'reduce' => $reduce,
+                'out' => array('inline' => TRUE),
+                'finalize' => $finalize
+            );
+
+            $return = $db->command($command);
+            $results = array();
+            foreach (
+                $return['results'] as $doc
+            ) {
+                $id = $doc['_id'];
+
+
+                $results[$id['date']][$id['location']] = $doc['value']['score'];
+
+
+            }
+            $final = array();
+            foreach (
+                $dates as $date
+            ) {
+                foreach (
+                    $location_names as $location_id
+                    => $name
+                ) {
+                    $value = 0;
+                    if (isset($results[$date]) && isset($results[$date][$location_id])) {
+                        $value = $results[$date][$location_id];
+                    }
+                    $final[$date][] = array(
+                        'competition' => $name,
+                        'value' => $value
+                    );
+                }
+            }
+            $this->apiResponse['comparision'] = $final;
         }
     }
 

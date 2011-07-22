@@ -35,7 +35,13 @@
          */
         protected $id;
 
+        /**
+         * @var MongoDate
+         */
         protected $startDate;
+        /**
+         * @var MongoDate
+         */
         protected $endDate;
 
         /**
@@ -89,7 +95,7 @@
             if (isset($filters['source'])) {
                 $this->activeFilters = $filters['source'];
             }
-            
+
             if (isset($filters['status'])) {
                 $this->activeFilters = array_merge($this->activeFilters, $filters['status']);
             }
@@ -188,23 +194,24 @@
          * @param $limit
          * @return MongoCursor
          */
-        protected function find($name, $query,array  $fields=array(), $limit = -1)
+        protected function find($name, $query, array  $fields = array(), $limit = -1)
         {
             $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
             $cursor = $collection->find($query, $fields);
-            if ($limit>-1) {
+            if ($limit > -1) {
                 $skip = 1; //intval($this->request->post('page', 1));
                 $skip = ($skip - 1) * $limit;
                 $cursor->limit($limit)->skip($skip);
             }
             return $cursor;
         }
-        
-        protected function findOne($name, $query, $fields=array()) {
+
+        protected function findOne($name, $query, $fields = array())
+        {
             $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
-            
+
             /* @var $collection MongoCollection */
             return $collection->findOne($query, $fields);
         }
-        
+
     }
