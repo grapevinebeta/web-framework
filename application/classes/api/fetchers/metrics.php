@@ -6,13 +6,10 @@
  * Time: 5:45 PM
  */
 
-    class Api_Fetchers_Metrics implements Iterator
+    class Api_Fetchers_Metrics extends Api_Fetchers_Base implements Iterator
     {
 
-        /**
-         * @var Mongo
-         */
-        private $mongo;
+        
         private $_type;
         private $_date;
         private $_location;
@@ -26,7 +23,7 @@
 
         function __construct(Mongo $mongo, $db = 'auto')
         {
-            $this->mongo = $mongo;
+            parent::__construct($mongo);
             $this->db = $db;
         }
 

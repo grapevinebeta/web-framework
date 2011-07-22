@@ -13,25 +13,18 @@
         public function fetch_overall()
         {
             $reviews = $this->db->selectCollection('metrics');
+            $date = new MongoDate(mktime(0, 0, 0, 1, 1, 1970));
+            $dist = new Api_Fetchers_Distribution($this->mongo, array($this->location));
+            $doc = $dist->range($date)->period('overall')->fetch();
 
-            $doc = $reviews->findOne(
-                array(
-                    'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
-                    'type' => 'scoreboard',
-                    'period' => 'overall'
-                ), array('aggregates.1' => 1)
-            );
-            $doc = $doc['aggregates']['1'];
+            $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
+            // TODO keyston : fetch locations compentition from mysql
+            $ogsi->competition(array(2, 3, 4))->range($date)->period('overall');
 
             return array(
-                'ogsi' => 0,
-                'rating'
-                => array(
-                    'negative' => $doc['negative'],
-                    'positive' => $doc['positive'],
-                    'neutral' => $doc['neutral'],
-                    'score' => floatval(number_format($doc['points'] / $doc['count'], 1))
-                ),
+                'ogsi' => $ogsi->fetch(),
+                'rating' => $doc,
+
                 'reviews' => $doc['count']
 
             );
@@ -60,6 +53,7 @@
 
         public function fetch_current()
         {
+            /*
             $reviews = $this->db->selectCollection('metrics');
 
 
@@ -107,45 +101,23 @@
             );
 
             // fetch single results
-            $result = $results['results'][0];
-            $this->time(true);
-            $reviews = $this->db->selectCollection('metrics');
+            $result = $results['results'][0];*/
+            $dist = new Api_Fetchers_Distribution($this->mongo, array($this->location));
+            $dist->range($this->startDate, $this->endDate);
+
+            $values = $dist->fetch();
 
 
-            $cursor = $reviews->find(
-                array(
-                    'type' => 'scoreboard',
-                    'date'
-                    => array(
-                        '$gte' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)), '$lte' => $this->endDate
-                    ),
-
-                    'period' => 'day'
-                ), array("aggregates.$this->location" => 1)
-            );
-
-
-            /**
-             * ScoreBoardObject{
-            ogsi:[number:required] -
-            rating:{
-            negative:[int:required] - number of negative
-            positive:[int:required] - number of positive
-            neutral:[int:required] - number of neutral
-            score:[int:required] - computed star rating
-            }
-            reviews:[int:required]
-
-            }
-             */
-            //TODO fetch compentation
+            $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
+            // TODO keyston : fetch locations compentition from mysql
+            $ogsi->competition(array(2, 3, 4))->range($this->startDate, $this->endDate);
             $response = array(
-                'ogsi' => 0,
-                'rating' => $result['value'],
-                'reviews' => $result['value']['count']
+                'ogsi' => $ogsi->fetch(),
+                'rating' => $values,
+                'reviews' => $values['count']
 
             );
-           
+
 
             return $response;
         }

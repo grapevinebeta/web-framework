@@ -14,14 +14,10 @@
         private $_locations;
         private $_db = 'auto';
 
-        /**
-         * @var \Mongo
-         */
-        private $_mongo;
 
         function __construct(Mongo $mongo, $location)
         {
-            $this->_mongo = $mongo;
+            parent::__construct($mongo);
             $this->_location = $location;
         }
 
@@ -58,70 +54,88 @@
         public function fetch()
         {
 
-            $db = $metrics = $this->_mongo->selectDB($this->_db);
 
-            $keys = array();
             $locations = array_merge(array($this->_location), $this->_locations);
 
-            $keys = array('type' => 1, 'period' => 1);
 
-            $initial = array('count' => 0);
-            $locations = '[' . join(',', $locations) . ']';
+            $js_locations = '[' . join(',', $locations) . ']';
             $map
                     = "function(){
-                    $locations.forEach(function(location){
-                        
+                    var agg=this.aggregates;
+                    var locs = $js_locations;
+                    locs.forEach(function(location){
+                        if(agg[location]){
+                            emit(location,{count:agg[location].count,points:agg[location].points});
+                         }
+
                     });
-                }";
+                 }";
 
-            $reduce = "function (doc, prev) { prev.count++; }";
-
-            // print_r($options);
-            $locations = '[' . join(',', $locations) . ']';
-            $map
-                    = "function(){
-                    var locations=$locations;
-                   var agg=this.aggregates;
-                    
-                    locations.forEach(function(location){
-                        var value={count:0,points:0};
-                        var loc=agg[location];
-                        if(typeof loc != 'undefined'){
-
-                                value.count=loc.count;
-                                value.points=loc.points;
-                            
-                          }
-                          emit(location,value);
-                     });
-                }";
             $reduce
-                    = 'function(doc,values){
-                var result = {count: 0, points: 0};
+                    = 'function(key,values){
+                        var results={count:0,points:0};
+                        values.forEach(function(value){
+                               results.count+=value.count;
+                               results.points+=value.points;
 
-                    values.forEach(function(value) {
-                      result.count += value.count;
-                      result.points += value.points;
-                    });
+                          });
 
-                    return result;
-                   }
-            ';
-            $return = $db->command(
-                array(
-                    'mapreduce' => 'metrics',
-                    'map' => $map,
-                    'reduce' => $reduce,
-                    'query'
-                    => array(
-                        'type' => 'scoreboard',
-                        'date' => $this->_date,
-                        'period' => 'day'
+                        return results;
+                    }';
+            $finalize
+                    = 'function(key,results){
+                    results.score = (results.points/results.count).toFixed(3);
+                    return results;
+                    
+            }';
 
-                    ), 'out' => array('inline' => 1)
-                )
+            $command = array(
+                'mapreduce' => 'metrics',
+                'map' => $map,
+                'reduce' => $reduce,
+                'query'
+                => array(
+                    'type' => 'scoreboard',
+                    'date' => $this->_date,
+                    'period' => $this->_period
+
+                ), 'out' => array('inline' => 1),
+                'finalize' => $finalize
             );
-            print_r($return);
+
+            $db = $this->_mongo->selectDB($this->_db);
+            $return = $db->command(
+                $command
+            );
+
+
+            $final = array();
+
+            $location_score = 0;
+            $competition_set_average = 0;
+            foreach (
+                $return['results'] as $doc
+            ) {
+                if ($doc['_id'] == $this->_location) {
+                    $location_score = $doc['value']['score'];
+                }
+                $competition_set_average += $doc['value']['score'];
+            }
+            /* echo "Total score: $competition_set_average \n";
+    echo "Total locations : " . count($locations) . "\n";*/
+            $competition_set_average = $competition_set_average / count($locations);
+            /*  echo "competition_set_average : $competition_set_average\n";
+    echo "location $this->_location score : " . $location_score. "\n";*/
+            return ($location_score / $competition_set_average) * 100;
+
+            /*
+   echo "Total score: $competition_set_average \n";
+
+   $competition_set_average = $competition_set_average / count($results);
+   echo "competition_set_average : $competition_set_average\n";
+   echo "location $this->location score : " . $score = $results[$this->location]['score'] . "\n";
+   echo 'ogsi : ' . $ogsi = ($score / $competition_set_average) . "\n";
+   echo 'Percentage : ' . ($ogsi * 100) . "\n";*/
 
 
         }
