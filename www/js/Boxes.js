@@ -543,7 +543,27 @@ var BC_GraphBoxController = BoxController.extend({
      */
     computeDateInterval: function() {
 
-        return Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
+        var period = this.range['period'];
+
+        switch(period) {
+            
+            case '1m':
+                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
+                break;
+            case '3m':
+                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 3.2;
+                break;
+            case '6m':
+                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 6.2;
+                break;
+            case '1y':
+                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 13;
+                break;
+            
+        }
+            
+
+        return d
     },
     
     beforeLoadData: function () {
@@ -641,7 +661,7 @@ var BC_GraphBoxController = BoxController.extend({
         .setEndpoint(this.endpoint)
         .setDateRange(this.range)
         .setFilters(this.filters)
-        .setDateInterval(this.computeDateInterval())
+        .setDateInterval(6)
         .setCallback(this.loadDataCallback(this))
         .fetch();
         return this;
@@ -737,11 +757,11 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
         }
         
         
+        
         parsed = new Date(parsed * 1000);
-        var offset = Math.floor(getPeriodInDays(this.range['period']) / 30);
         
         return this.firstTimestamp = Date.parse(
-            new Date(parsed.getFullYear(), parsed.getMonth() - offset, parsed.getDate())
+            new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())
         );
         
         
@@ -1987,7 +2007,7 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'social/activity',
+    endpoint: '/api/dataProvider/socials/activity',
 
     prepareGraph: function () {
         if (!this.graphData) {
@@ -2047,12 +2067,12 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
         
 
         
-        for (var i = 0; i < this.graphData.length; i++) {
+        for (var i in this.graphData) {
             
             var site = this.graphData[i];
             
-            data.push(site.value);
-            options.xAxis.categories.push(site.network);
+            data.push(site.total);
+            options.xAxis.categories.push(site.action);
             
             
         }
@@ -2076,7 +2096,7 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
         this.graphData = networks;
         
         trFooter = table.find('tfoot tr');
-        trFooter.find('th.col-value').text('0');
+        trFooter.find('th.col-total').text('0');
         table.find('tbody tr').remove();
         
         for (var i = 0; i < networks.length; i++) {
@@ -2092,7 +2112,9 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
                     } else {
                         currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
                     }
-                    trFooter.find('th.col-' + n).text(value + currentTotalValue);
+                    
+                    
+                    trFooter.find('th.col-' + n).text(parseInt(value) + currentTotalValue);
                 }
             }
             
@@ -2104,14 +2126,17 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
             
             table.find('tbody').append(tr);
         }
-        trFooter.find('th.col-average').text(
-            parseFloat(trFooter.find('th.col-average').text()) / 
-            networks.length
-            );
-        
+//        trFooter.find('th.col-average').text(
+//            parseFloat(trFooter.find('th.col-average').text()) / 
+//            networks.length
+//            );
+//        
     },
    
     construct: function() {
+        
+        
+        this.noApiUrl = true;
         
     }
     
@@ -2127,7 +2152,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'social/subscribers',
+    endpoint: '/api/dataProvider/socials/subscribers',
     
     
     prepareGraph: function () {
@@ -2188,11 +2213,11 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         
 
         
-        for (var i = 0; i < this.graphData.length; i++) {
+        for (var i in this.graphData) {
             
             var site = this.graphData[i];
             
-            data.push(site.value);
+            data.push(site.total);
             options.xAxis.categories.push(site.network);
             
             
@@ -2245,7 +2270,11 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
         
     },
     
-    construct: function () {}
+    construct: function () {
+        
+        this.noApiUrl = true;
+        
+    }
     
 });
 
