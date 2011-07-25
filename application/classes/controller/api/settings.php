@@ -579,6 +579,11 @@ class Controller_Api_Settings extends Controller {
          * @todo Change it into something more flexible
          */
         $location_id = $this->_location_id;
+        
+        // find location record
+        $location = ORM::factory('location')
+                ->where('location_id', '=', (int)$location_id)
+                ->find();
 
         $user_data = Arr::path($this->request->post(), 'params.user');
         
@@ -633,6 +638,9 @@ class Controller_Api_Settings extends Controller {
                 'success' => true,
                 'message' => __('User data has been successfully saved'),
                 'user' => $user->as_array(),
+                'users_html' => View::factory('account/users/list', array(
+                    'users' => $location->getUsers(),
+                ))->render(),
             );
         } catch (ORM_Validation_Exception $e) {
             $this->apiResponse['error'] = array(

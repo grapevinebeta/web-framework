@@ -247,6 +247,10 @@ jQuery(function(){
                         // success?
                         log('The request probably succeeded:');
                         log(data);
+                        self.clearForm(editForm); // clear recently added data
+                        if (typeof data.result.users_html != 'undefined'){
+                            self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
+                        }
                     }else if(data.error && typeof data.error.validation_errors != 'undefined'){
                         // validation failure
                         self.displayValidationErrors(data.error.validation_errors, editForm);
@@ -258,6 +262,7 @@ jQuery(function(){
                 // editing user data
                 event.preventDefault();
                 self.clearValidationErrors(editForm); // validation is not needed
+                self.clearForm(editForm); // get rid of the older data
                 var user_id = jQuery(this).attr('data-user-id');
                 jQuery.post('/api/settings/getuser', {
                     'params': {
