@@ -173,7 +173,10 @@
                 $dateInterval = 6;
             }
             $start_time = $this->startDate->sec;
+            
+            
             $end_time = $this->endDate->sec;
+            
             $seconds_step = floor(($end_time - $start_time) / $dateInterval);
             $dates = array();
             for (

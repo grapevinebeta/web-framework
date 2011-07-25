@@ -71,23 +71,23 @@
             $period = $range['period'];
             switch ($period) {
             case '1m':
-                $period = "+1 month";
+                $period = "-1 month";
                 break;
             case '3m':
-                $period = "+3 months";
+                $period = "-3 months";
                 break;
             case '6m':
-                $period = "+6 months";
+                $period = "-6 months";
                 break;
             case '1y':
-                $period = "+1 year";
+                $period = "-1 year";
                 break;
             default:
-                $period = "+1 month";
+                $period = "-1 month";
             }
             $start = strtotime(date('m/d/Y'));
-            $this->startDate = new MongoDate($start);
-            $this->endDate = new MongoDate(strtotime($period, $start));
+            $this->endDate = new MongoDate($start);
+            $this->startDate = new MongoDate(strtotime($period, $start));
 
             //
             $filters = $this->request->post('filters');
