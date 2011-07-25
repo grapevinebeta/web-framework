@@ -273,6 +273,29 @@ jQuery(function(){
                     self.propagateFormData(data.result.user, editForm);
                 }, 'json');
             });
+
+            this.userManagementSettings.delegate('a[data-action="delete"][data-user-id]', 'click', function(event){
+                // editing user data
+                event.preventDefault();
+                if (confirm('Are you sure?')){
+                    var user_id = jQuery(this).attr('data-user-id');
+                    jQuery.post('/api/settings/deleteuser', {
+                        'params': {
+                            'user_id': user_id
+                        }
+                    }, function(data){
+                        if (data.result){
+                            log('User has been successfully deleted');
+                            if (typeof data.result.users_html != 'undefined'){
+                                self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
+                            }
+                        }else{
+                            log('Some error occured while trying to delete the user:');
+                            log(data);
+                        }
+                    }, 'json');
+                }
+            });
             
             this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
                 event.preventDefault();

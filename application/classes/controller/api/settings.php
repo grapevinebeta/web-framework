@@ -663,5 +663,76 @@ class Controller_Api_Settings extends Controller {
         }
         
     }
+    
+    /**
+     * Delete user from location
+     * @todo Decide what should really happen when the user is to be deleted.
+     *      Should the user be deleted from the database, or just the access
+     *      to the location settings should be removed? For now both things
+     *      happen (user is deleted from the database and his/her association
+     *      with the location is also revoked).
+     * @todo Check permissions?
+     */
+    public function action_deleteuser() {
+
+        // @todo dummy replacement, delete it and assign it from eg. session
+        $location_id = $this->_location_id;
+        
+        // get the actual location object
+        $location = ORM::factory('location')
+                ->where('location_id', '=', (int)$location_id)
+                ->find();
+
+        $user_id = Arr::path($this->request->post(), 'params.user_id');
+
+        try {
+            
+            $user = ORM::factory('user')
+                    ->where('id', '=', (int)$user_id)
+                    ->find();
+            
+            if (empty($user->id)) {
+                // user not found, do not proceed
+                $this->apiResponse['error'] = array(
+                    'message' => __('User has not been found'),
+                );
+            } else {
+                // user found
+                $user->delete();
+                
+                DB::delete('location_users')
+                        ->where('location_id', '=', (int)$location_id)
+                        ->and_where('user_id', '=', (int)$user_id)
+                        ->execute();
+                
+                $this->apiResponse['result'] = array(
+                    'message' => __('User has been successfully deleted'),
+                    'users_html' => View::factory('account/users/list', array(
+                        'users' => $location->getUsers(),
+                    ))->render(),
+                );
+            }
+            
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
+    }
 
 }

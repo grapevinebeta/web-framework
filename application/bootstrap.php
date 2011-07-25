@@ -164,6 +164,12 @@ Route::set('api_account_settings_deleteemail', 'api/settings/deleteemail')
 		'controller' => 'settings',
 		'action' => 'deleteemail',
 	));
+Route::set('api_account_settings_deleteuser', 'api/settings/deleteuser')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'deleteuser',
+	));
 Route::set('api_account_settings_get', 'api/settings/get')
 	->defaults(array(
 		'directory' => 'api',
