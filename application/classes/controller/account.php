@@ -36,7 +36,10 @@ class Controller_Account extends Controller_Template {
     public function action_users()
     {
         // @todo This is only for development, replace this with actual location ID
-        $location_id = 1;
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die('Location not found');
+        }
 
         $location = ORM::factory('location')
                 ->where('location_id','=',(int)$location_id)
@@ -51,7 +54,21 @@ class Controller_Account extends Controller_Template {
     
     public function action_alerts()
     {
-        $this->_contentView = View::factory('account/alerts');
+        // @todo This is only for development, replace this with actual location ID
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die('Location not found');
+        }
+        
+        // this assumes there is only one alert for specific location, storing
+        // big text field content that is then processed by some other mechanism
+        $alert = ORM::factory('alert')
+                ->where('location_id', '=', (int)$location_id)
+                ->find();
+        
+        $this->_contentView = View::factory('account/alerts', array(
+            'alert' => $alert,
+        ));
     }
     
     public function action_reports()

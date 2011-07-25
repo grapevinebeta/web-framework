@@ -58,6 +58,29 @@ jQuery(function(){
         },
 
         'initializeAlertsSettings': function(){
+            var form = this.alertsSettings.find('form.alertsSettingsForm');
+            
+            /**
+             * The following part of the code should make request when the form
+             * content has been changed.
+             * @todo Make it work in a way that will send the request is being
+             *      sent only after some period of inactivity
+             */
+            form.delegate('form input, form textarea', 'change', function(event){
+                log('Someone has changed the content of one of the fields in alert edit form: ' + form.serialize());
+                var form_data = form.serializeArray();
+                var params = {};
+                jQuery.each(form_data, function(i, v){
+                    params[v.name] = v.value;
+                });
+                jQuery.post('/api/settings/updatealert', {
+                    'params': params
+                }, function(data){
+                    log('Request to update the data sent successfully. The response was:');
+                    log(data);
+                });
+            });
+            
             log('Alerts settings initialized');
         },
 

@@ -475,5 +475,70 @@ class Controller_Api_Settings extends Controller {
         }
 
     }
+    
+    /**
+     * Update alert record for the specific location
+     */
+    public function action_updatealert() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die ('Location not found');
+        }
+
+        // list of fields editable by user
+        $editable = array(
+            'type',
+            'criteria',
+            'use_default',
+        );
+        $post = Arr::get($this->request->post(), 'params', array());
+        
+        // use only 'params' part of POST request to populate fields
+        $data = array_intersect_key($post, array_flip($editable));
+        $data['location_id'] = (int)$location_id;
+
+        // assume only one alert record exists for a location
+        $alert = ORM::factory('alert')
+            ->where('location_id','=',(int)$location_id)
+            ->find();
+
+        try {
+            if (!empty($alert->location_id)) {
+                $alert
+                    ->values($data)
+                    ->update();
+            } else {
+                $alert
+                    ->values($data)
+                    ->create();
+            }
+
+            //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
+            $this->apiResponse['result']['alert'] = $alert->as_array();
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Your data is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Your data is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
+    }
 
 }

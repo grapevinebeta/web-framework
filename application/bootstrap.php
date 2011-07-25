@@ -187,6 +187,12 @@ Route::set('api_account_settings_getuser', 'api/settings/getuser')
 		'controller' => 'settings',
 		'action' => 'getuser',
 	));
+Route::set('api_account_settings_updatealert', 'api/settings/updatealert')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'updatealert',
+	));
 Route::set('api_account_settings_updategeneral', 'api/settings/updategeneral')
 	->defaults(array(
 		'directory' => 'api',
