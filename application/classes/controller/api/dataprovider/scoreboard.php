@@ -13,25 +13,19 @@
         public function fetch_overall()
         {
             $reviews = $this->db->selectCollection('metrics');
+            $date = new MongoDate(mktime(0, 0, 0, 1, 1, 1970));
+            $dist = new Api_Fetchers_Distribution($this->mongo, array($this->location));
+            $doc = $dist->range($date)->period('overall')->fetch();
 
-            $doc = $reviews->findOne(
-                array(
-                    'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
-                    'type' => 'scoreboard',
-                    'period' => 'overall'
-                ), array('aggregates.1' => 1)
-            );
-            $doc = $doc['aggregates']['1'];
+            $doc['score']=number_format($doc['score'],2);
+            $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
+            // TODO keyston : fetch locations compentition from mysql
+            $ogsi->competition(array(2, 3, 4))->range($date)->period('overall');
 
             return array(
-                'ogsi' => 0,
-                'rating'
-                => array(
-                    'negative' => $doc['negative'],
-                    'positive' => $doc['positive'],
-                    'neutral' => $doc['neutral'],
-                    'score' => floatval(number_format($doc['points'] / $doc['count'], 1))
-                ),
+                'ogsi' => number_format($ogsi->fetch(),2),
+                'rating' => $doc,
+
                 'reviews' => $doc['count']
 
             );
@@ -60,61 +54,72 @@
 
         public function fetch_current()
         {
+            /*
             $reviews = $this->db->selectCollection('metrics');
 
 
-            $cursor = $reviews->find(
+            $map
+                    = "function(){
+                        if(typeof this.aggregates[$this->location] !='undefined'){
+                            emit($this->location,this.aggregates[$this->location]);
+                        }
+                    }";
+
+            $reduce
+                    = 'function(key,values){
+                        var results={negative:0,positive:0,neutral:0,points:0,count:0};
+                        values.forEach(function(value){
+                                for(var type in value){
+                                 results[type]+=value[type];
+                                }
+                          });
+
+                        return results;
+                    }';
+            $finalize
+                    = 'function(key,results){
+                    results.score = (results.points/results.count).toFixed(1);
+                    return results;
+            }';
+            $results = $this->db->command(
                 array(
-                    'date'
+                    'mapreduce' => 'metrics',
+                    'query'
                     => array(
-                        '$gte' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)), '$lte' => $this->endDate
+                        'type' => 'scoreboard',
+                        'date'
+                        => array(
+                            '$gte' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)), '$lte' => $this->endDate
+                        ),
+
+                        'period' => 'day'
                     ),
-                    'type' => 'scoreboard',
-                    'period' => 'day'
-                ), array('aggregates.1' => 1)
+                    'map' => $map,
+                    'reduce' => $reduce,
+                    'out' => array('inline' => TRUE),
+                    'finalize' => $finalize
+                )
             );
 
-            /**
-             * ScoreBoardObject{
-            ogsi:[number:required] -
-            rating:{
-            negative:[int:required] - number of negative
-            positive:[int:required] - number of positive
-            neutral:[int:required] - number of neutral
-            score:[int:required] - computed star rating
-            }
-            reviews:[int:required]
+            // fetch single results
+            $result = $results['results'][0];*/
+            $dist = new Api_Fetchers_Distribution($this->mongo, array($this->location));
+            $dist->range($this->startDate, $this->endDate);
 
-            }
-             */
-            //TODO fetch compentation
+            $values = $dist->fetch();
+            $values['score']=number_format($values['score'],2);
+
+
+            $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
+            // TODO keyston : fetch locations compentition from mysql
+            $ogsi->competition(array(2, 3, 4))->range($this->startDate, $this->endDate);
             $response = array(
-                'ogsi' => 0
+                'ogsi' => number_format($ogsi->fetch(),2),
+                'rating' => $values,
+                'reviews' => $values['count']
 
             );
-            $rating = array(
-                'negative' => 0,
-                'positive' => 0,
-                'neutral' => 0,
-                'score' => 0
-            );
-            $total_counts = 0;
-            $total_points = 0;
-            foreach (
-                $cursor as $doc
-            ) {
-                $doc = $doc['aggregates']['1'];
 
-                $rating['negative'] += $doc['negative'];
-                $rating['positive'] += $doc['positive'];
-                $rating['neutral'] += $doc['neutral'];
-                $total_counts += $doc['count'];
-                $total_points += $doc['points'];
-
-            }
-            $rating['score'] = floatval(number_format($total_points / $total_counts, 1));
-            $response['rating'] = $rating;
-            $response['reviews'] = $total_counts;
 
             return $response;
         }
