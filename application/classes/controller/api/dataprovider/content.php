@@ -87,7 +87,7 @@
         protected function update($newobj)
         {
 
-            return $this->db->selectCollection($this->collection)->update(
+            return !$this->db->selectCollection($this->collection)->update(
                 array(
                     '_id' => new MongoId($this->id),
 
