@@ -231,6 +231,8 @@ jQuery(function(){
                 event.preventDefault();
                 log('User submitted a form to add/update some user');
                 
+                self.clearValidationErrors(editForm);
+                
                 var user = {};
                 var user_form = editForm.serializeArray();
                 jQuery.each(user_form, function(i, v){
@@ -245,10 +247,9 @@ jQuery(function(){
                         // success?
                         log('The request probably succeeded:');
                         log(data);
-                    }else{
-                        // failure?
-                        log('The request probably failed:');
-                        log(data);
+                    }else if(data.error && typeof data.error.validation_errors != 'undefined'){
+                        // validation failure
+                        self.displayValidationErrors(data.error.validation_errors, editForm);
                     }
                 }, 'json');
             });
@@ -256,6 +257,7 @@ jQuery(function(){
             this.userManagementSettings.delegate('a[data-action="edit"][data-user-id]', 'click', function(event){
                 // editing user data
                 event.preventDefault();
+                self.clearValidationErrors(editForm); // validation is not needed
                 var user_id = jQuery(this).attr('data-user-id');
                 jQuery.post('/api/settings/getuser', {
                     'params': {
@@ -269,11 +271,8 @@ jQuery(function(){
             
             this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
                 event.preventDefault();
-                jQuery(':input',editForm)
-                    .not(':button, :submit, :reset')
-                    .val('')
-                    .removeAttr('checked')
-                    .removeAttr('selected');
+                self.clearValidationErrors(editForm);
+                self.clearForm(editForm);
             });
 
             // this is for saving data, as there is no other way to submit a form
@@ -287,6 +286,16 @@ jQuery(function(){
         },
 
 
+
+        // clear form (does not work like reset - it clears all the fields,
+        // including type="hidden" inputs)
+        'clearForm': function(form){
+            jQuery(':input',form)
+                .not(':button, :submit, :reset')
+                .val('')
+                .removeAttr('checked')
+                .removeAttr('selected');
+        },
 
         // display validation information from the data given, into the validation messages' containers
         'clearValidationErrors': function(form){

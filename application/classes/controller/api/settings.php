@@ -591,7 +591,7 @@ class Controller_Api_Settings extends Controller {
             'lastname',
             'phone',
             'password',
-            'confirm_password',
+            'password_confirm',
         );
 
         try {
@@ -616,6 +616,17 @@ class Controller_Api_Settings extends Controller {
                 $user
                     ->values($user_data)
                     ->create();
+                // user has been created, now assign him to the location
+                DB::insert('location_users')
+                    ->columns(array(
+                        'user_id',
+                        'location_id',
+                    ))
+                    ->values(array(
+                        (int)$user->id,
+                        (int)$location_id,
+                    ))
+                    ->execute();
             }
 
             $this->apiResponse['result'] = array(
