@@ -10,7 +10,7 @@
     </div>
     <div class="left">
         <a href="<?php echo url::base(); ?>">
-            <?php echo html::image('images/logo.jpg', array('alt' => 'Logo')); ?>
+            <?php echo html::image('images/logo.png', array('alt' => 'Logo')); ?>
         </a>
     </div>
     <?php echo $menu; ?>
