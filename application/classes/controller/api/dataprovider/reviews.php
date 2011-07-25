@@ -172,16 +172,5 @@
             $this->apiResponse = array('error' => $error);
         }
 
-        protected function update($newobj)
-        {
-
-            $this->reviews->update(
-                array(
-                    '_id' => new MongoId($this->id),
-
-
-                ), $newobj
-
-            );
-        }
+       
     }
