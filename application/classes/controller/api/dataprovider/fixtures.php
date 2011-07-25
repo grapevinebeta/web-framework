@@ -33,23 +33,20 @@
             set_time_limit(0);
             $db = $this->mongo->selectDB('auto');
             $db->drop();
+            $this->fixtures_reviews($db);
+            $this->fixtures_socials($db);
 
-            for (
-                $i = 1; $i <= 4; $i++
-            ) {
-                $this->fixtures_social($db, $i);
-                $this->fixtures_reviews($db, $i);
-            }
+
         }
 
-        public function fixtures_reviews($db, $location_id)
+        public function fixtures_reviews($db)
         {
 
             $amount = 100;
             $displacement = 5;
             $distance = $amount / $displacement;
-            $start_date = strtotime('-' . ($distance / 2) . ' days');
-            $date = new MongoDate($start_date);
+            $default_start_date = strtotime('-' . ($distance / 2) . ' days');
+            $default_date = new MongoDate($default_start_date);
 
 
             $reviews = new MongoCollection($db, 'reviews');
@@ -82,128 +79,134 @@
 
                 )
             );
-            $scoreboard_overall['aggregates'][$location_id] = array(
-                'negative' => 0,
-                'positive' => 0,
-                'neutral' => 0,
-                'points' => 0,
-                'count' => 0
-            );
-            mt_srand(time());
             for (
-                $i = 1; $i <= $amount; $i++
+                $location_id = 1; $location_id <= 4; $location_id++
             ) {
-                if ($i % 5 == 0) {
-                    $start_date = strtotime('+1 day', $start_date);
-
-                    $date = new MongoDate($start_date);
-                }
-                foreach (
-                    $sites as $site
+                $scoreboard_overall['aggregates'][$location_id] = array(
+                    'negative' => 0,
+                    'positive' => 0,
+                    'neutral' => 0,
+                    'points' => 0,
+                    'count' => 0
+                );
+                $start_date = $default_start_date;
+                $date = $default_date;
+                mt_srand(time());
+                for (
+                    $i = 1; $i <= $amount; $i++
                 ) {
-                    $review_amount = rand(2, 5);
-                    for (
-                        $j = 0; $j < $review_amount; $j++
+                    if ($i % 5 == 0) {
+                        $start_date = strtotime('+1 day', $start_date);
+
+                        $date = new MongoDate($start_date);
+                    }
+                    foreach (
+                        $sites as $site
                     ) {
-                        $content = $this->random_gen(mt_rand(80, 150));
-                        $score = mt_rand(1, 5);
-                        $doc = array(
-                            'score' => $score,
-                            'date' => $date,
-                            'site' => $site,
-                            'tags' => array('tag', 'tag2'),
-                            'notes' => 'This is a sample note',
-                            'content' => $content,
-                            'title' => substr($content, 0, 40) . '...',
-                            'identity' => 'Guest' . mt_rand(600, 1000),
-                            'category' => '',
-                            'status' => 'OPENED',
-                            'lid' => $location_id
-
-                        );
-                        $review_entries[] = $doc;
-                        if (!isset($metric_entries['scoreboard'][$date->sec])) {
-                            $metric_entries['scoreboard'][$date->sec] = array(
-                                'type' => 'scoreboard',
+                        $review_amount = rand(2, 5);
+                        for (
+                            $j = 0; $j < $review_amount; $j++
+                        ) {
+                            $content = $this->random_gen(mt_rand(80, 150));
+                            $score = mt_rand(1, 5);
+                            $doc = array(
+                                'score' => $score,
                                 'date' => $date,
-                                'period' => 'day',
-                                'aggregates' => array()
+                                'site' => $site,
+                                'tags' => array('tag', 'tag2'),
+                                'notes' => 'This is a sample note',
+                                'content' => $content,
+                                'title' => substr($content, 0, 40) . '...',
+                                'identity' => 'Guest' . mt_rand(600, 1000),
+                                'category' => '',
+                                'status' => 'OPENED',
+                                'lid' => $location_id
 
                             );
-                            $metric_entries['reviews'][$date->sec] = array(
-                                'type' => 'reviews',
-                                'date' => $date,
-                                'period' => 'day',
-                                'aggregates' => array()
+                            $review_entries[] = $doc;
+                            if (!isset($metric_entries['scoreboard'][$date->sec])) {
+                                $metric_entries['scoreboard'][$date->sec] = array(
+                                    'type' => 'scoreboard',
+                                    'date' => $date,
+                                    'period' => 'day',
+                                    'aggregates' => array()
 
-                            );
+                                );
+                                $metric_entries['reviews'][$date->sec] = array(
+                                    'type' => 'reviews',
+                                    'date' => $date,
+                                    'period' => 'day',
+                                    'aggregates' => array()
 
-                        }
+                                );
 
-                        $scoreboard = &$metric_entries['scoreboard'][$date->sec];
-                        $review = &$metric_entries['reviews'][$date->sec];
+                            }
 
-                        if (!isset($scoreboard['aggregates'][$location_id])) {
-                            $scoreboard_entry = array(
-                                'negative' => 0,
-                                'positive' => 0,
-                                'neutral' => 0,
-                                'points' => 0,
-                                'count' => 0
-                            );
-                            $scoreboard['aggregates'][$location_id] = $scoreboard_entry;
+                            $scoreboard = &$metric_entries['scoreboard'][$date->sec];
+                            $review = &$metric_entries['reviews'][$date->sec];
 
-
-                            $all_sites = $sites;
-                            $review_entry = array();
-                            foreach (
-                                $all_sites as $card_site
-                            ) {
-                                $review_entry[$card_site] = array(
+                            if (!isset($scoreboard['aggregates'][$location_id])) {
+                                $scoreboard_entry = array(
                                     'negative' => 0,
                                     'positive' => 0,
                                     'neutral' => 0,
                                     'points' => 0,
                                     'count' => 0
                                 );
+                                $scoreboard['aggregates'][$location_id] = $scoreboard_entry;
+
+
+                                $all_sites = $sites;
+                                $review_entry = array();
+                                foreach (
+                                    $all_sites as $card_site
+                                ) {
+                                    $review_entry[$card_site] = array(
+                                        'negative' => 0,
+                                        'positive' => 0,
+                                        'neutral' => 0,
+                                        'points' => 0,
+                                        'count' => 0
+                                    );
+                                }
+
+                                $review['aggregates'][$location_id] = $review_entry;
+
+
                             }
+                            $id = time();
 
-                            $review['aggregates'][$location_id] = $review_entry;
+                            $s[$id] = &$scoreboard['aggregates'][$location_id];
+                            $r[$id] = &$review['aggregates'][$location_id];
 
-
-                        }
-                        $id = time();
-
-                        $s[$id] = &$scoreboard['aggregates'][$location_id];
-                        $r[$id] = &$review['aggregates'][$location_id];
-
-                        if ($score >= 4) {
-                            $s[$id]['positive'] += 1;
-                            $r[$id][$site]['positive'] += 1;
-                            $scoreboard_overall['aggregates'][$location_id]['positive']++;
-                        } else {
-                            if ($score >= 3) {
-                                $s[$id]['neutral'] += 1;
-                                $r[$id][$site]['neutral'] += 1;
-                                $scoreboard_overall['aggregates'][$location_id]['neutral']++;
+                            if ($score >= 4) {
+                                $s[$id]['positive'] += 1;
+                                $r[$id][$site]['positive'] += 1;
+                                $scoreboard_overall['aggregates'][$location_id]['positive']++;
                             } else {
-                                $s[$id]['negative'] += 1;
-                                $r[$id][$site]['negative'] += 1;
-                                $scoreboard_overall['aggregates'][$location_id]['negative']++;
+                                if ($score >= 3) {
+                                    $s[$id]['neutral'] += 1;
+                                    $r[$id][$site]['neutral'] += 1;
+                                    $scoreboard_overall['aggregates'][$location_id]['neutral']++;
+                                } else {
+                                    $s[$id]['negative'] += 1;
+                                    $r[$id][$site]['negative'] += 1;
+                                    $scoreboard_overall['aggregates'][$location_id]['negative']++;
+                                }
                             }
+                            $s[$id]['points'] += $score;
+                            $s[$id]['count'] += 1;
+                            $r[$id][$site]['points'] += $score;
+                            $r[$id][$site]['count'] += 1;
+                            $scoreboard_overall['aggregates'][$location_id]['points'] += $score;
+                            $scoreboard_overall['aggregates'][$location_id]['count'] += 1;
+
+
                         }
-                        $s[$id]['points'] += $score;
-                        $s[$id]['count'] += 1;
-                        $r[$id][$site]['points'] += $score;
-                        $r[$id][$site]['count'] += 1;
-                        $scoreboard_overall['aggregates'][$location_id]['points'] += $score;
-                        $scoreboard_overall['aggregates'][$location_id]['count'] += 1;
-
-
                     }
+
+
                 }
-
-
             }
             $all_metrics = array();
             foreach (
@@ -217,12 +220,13 @@
                 }
             }
             $all_metrics[] = $scoreboard_overall;
-            $this->track();
+            
+            $this->time();
             $metrics->batchInsert($all_metrics);
-            $this->track(false, "reviews.$location_id.metrics (" . count($all_metrics) . ')');
-            $this->track();
+            $this->time(false, "reviews.$location_id.metrics (" . count($all_metrics) . ')');
+            $this->time();
             $reviews->batchInsert($review_entries);
-            $this->track(false, "reviews.$location_id.entries (" . count($review_entries) . ')');
+            $this->time(false, "reviews.$location_id.entries (" . count($review_entries) . ')');
 
             /* $this->apiResponse = array(
                 'reviews' => $review_entries,
@@ -231,29 +235,15 @@
             // $this->apiResponse = array('dump' => print_r($metric_entries));
         }
 
-        private function track($start = true, $tag = null)
-        {
-            if ($start) {
-                $this->start = microtime();
-            } else {
 
-                list($old_usec, $old_sec) = explode(' ', $this->start);
-                list($new_usec, $new_sec) = explode(' ', microtime());
-                $old_mt = ((float)$old_usec + (float)$old_sec);
-                $new_mt = ((float)$new_usec + (float)$new_sec);
-                echo $tag . ' : ' . number_format($new_mt - $old_mt, 4) . " seconds\n";
-
-            }
-        }
-
-        public function fixtures_social($db, $location_id)
+        function fixtures_socials($db)
         {
 
             $amount = 100;
             $displacement = 5;
             $distance = $amount / $displacement;
-            $start_date = strtotime('-' . ($distance / 2) . ' days');
-            $date = new MongoDate($start_date);
+            $default_start_date = strtotime('-' . ($distance / 2) . ' days');
+            $default_date = new MongoDate($default_start_date);
 
             $social_actions = array(
 
@@ -366,142 +356,127 @@
                 'type' => 'social.activity',
                 'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
                 'period' => 'overall',
-                'aggregates'=>array()
-                
+                'aggregates' => array()
+
             );
-            $activity_overall['aggregates'][$location_id]=$default_activity;
             $subscriber_overall = array(
                 'type' => 'social.subscribers',
                 'date' => new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),
                 'period' => 'overall',
-                'aggregates'=>array()
-                
+                'aggregates' => array()
+
             );
-            $subscriber_overall['aggregates'][$location_id]=$default_subscriber;
-            mt_srand(time());
             for (
-                $i = 1; $i <= $amount; $i++
+                $location_id = 1; $location_id <= 4; $location_id++
             ) {
-                if ($i % 5 == 0) {
-                    $start_date = strtotime('+1 day', $start_date);
+                $activity_overall['aggregates'][$location_id] = $default_activity;
 
-                    $date = new MongoDate($start_date);
-                }
-                foreach (
-                    $sites as $site
+                $subscriber_overall['aggregates'][$location_id] = $default_subscriber;
+                $start_date = $default_start_date;
+                $date = $default_date;
+                mt_srand(time());
+                for (
+                    $i = 1; $i <= $amount; $i++
                 ) {
-                    $metrics_types = array('activity', 'subscribers');
+                    if ($i % 5 == 0) {
+                        $start_date = strtotime('+1 day', $start_date);
+
+                        $date = new MongoDate($start_date);
+                    }
                     foreach (
-                        $metrics_types as $metric
+                        $sites as $site
                     ) {
-                        $review_amount = rand(2, 5);
-                        for (
-                            $j = 0; $j < $review_amount; $j++
+                        $metrics_types = array('activity', 'subscribers');
+                        foreach (
+                            $metrics_types as $metric
                         ) {
-                            $content = $this->random_gen(mt_rand(40, 124));
-                            $defaults = $metric == 'activity' ? $default_activity : $default_subscriber;
-                            $keys = array_keys($defaults[$site]);
+                            $review_amount = rand(2, 5);
+                            for (
+                                $j = 0; $j < $review_amount; $j++
+                            ) {
+                                $content = $this->random_gen(mt_rand(40, 124));
+                                $defaults = $metric == 'activity' ? $default_activity : $default_subscriber;
+                                $keys = array_keys($defaults[$site]);
 
-                            $index = mt_rand(0, count($keys) - 1);
-                            try {
-                                $action = $keys [$index];
-                            } catch (Exception $e) {
-                                echo $e;
-                            }
-                            $doc = array(
+                                $index = mt_rand(0, count($keys) - 1);
+                                try {
+                                    $action = $keys [$index];
+                                } catch (Exception $e) {
+                                    echo $e;
+                                }
+                                $doc = array(
 
-                                'date' => $date,
-                                'site' => $site,
-                                'metric' => $metric,
-                                'action' => $action,
-                                'network' => ucfirst(substr($site, 0, -4)),
-                                'tags' => array(),
-                                'notes' => '',
-                                'content' => $content,
-                                'title' => substr($content, 0, 40) . '...',
-                                'identity' => 'Guest' . mt_rand(600, 1000),
-                                'category' => '',
-                                'status' => 'OPENED',
-                                'lid' => $location_id,
-                                'link' => "http://" . $site . '/' . $this->random_gen(mt_rand(10, 15))
-
-                            );
-                            $social_entries[] = $doc;
-                            if (!isset($metric_entries['social.activity'][$date->sec])) {
-                                $metric_entries['social.activity'][$date->sec] = array(
-                                    'type' => 'social.activity',
                                     'date' => $date,
-                                    'period' => 'day',
-                                    'aggregates' => array()
+                                    'site' => $site,
+                                    'metric' => $metric,
+                                    'action' => $action,
+                                    'network' => ucfirst(substr($site, 0, -4)),
+                                    'tags' => array(),
+                                    'notes' => '',
+                                    'content' => $content,
+                                    'title' => substr($content, 0, 40) . '...',
+                                    'identity' => 'Guest' . mt_rand(600, 1000),
+                                    'category' => '',
+                                    'status' => 'OPENED',
+                                    'lid' => $location_id,
+                                    'link' => "http://" . $site . '/' . $this->random_gen(mt_rand(10, 15))
 
                                 );
-                                $metric_entries['social.subscribers'][$date->sec] = array(
-                                    'type' => 'social.subscribers',
-                                    'date' => $date,
-                                    'period' => 'day',
-                                    'aggregates' => array()
+                                $social_entries[] = $doc;
+                                if (!isset($metric_entries['social.activity'][$date->sec])) {
+                                    $metric_entries['social.activity'][$date->sec] = array(
+                                        'type' => 'social.activity',
+                                        'date' => $date,
+                                        'period' => 'day',
+                                        'aggregates' => array()
 
-                                );
-                                /*$metric_entries['socials'][$date->sec] = array(
-                                    'type' => 'socials',
-                                    'date' => $date,
-                                    'period' => 'day',
-                                    'aggregates' => array()
+                                    );
+                                    $metric_entries['social.subscribers'][$date->sec] = array(
+                                        'type' => 'social.subscribers',
+                                        'date' => $date,
+                                        'period' => 'day',
+                                        'aggregates' => array()
 
-                                );*/
+                                    );
+
+
+                                }
+
+                                $activity = &$metric_entries['social.activity'][$date->sec];
+                                $subscribers = &$metric_entries['social.subscribers'][$date->sec];
+
+
+                                if (!isset($activity['aggregates'][$location_id])) {
+
+                                    $activity['aggregates'][$location_id] = $default_activity;
+
+                                    $subscribers ['aggregates'][$location_id] = $default_subscriber;
+
+
+                                }
+                                $id = time();
+
+                                $a[$id] = &$activity['aggregates'][$location_id];
+                                $s[$id] = &$subscribers['aggregates'][$location_id];
+
+
+                                if ($metric == 'activity') {
+                                    $a[$id][$site][$action] += 1;
+                                    $activity_overall['aggregates'][$location_id][$site][$action] += 1;
+                                } else {
+                                    $s[$id][$site][$action] += 1;
+                                    $subscriber_overall['aggregates'][$location_id][$site][$action] += 1;
+                                }
+
 
                             }
-
-                            $activity = &$metric_entries['social.activity'][$date->sec];
-                            $subscribers = &$metric_entries['social.subscribers'][$date->sec];
-
-
-                            if (!isset($activity['aggregates'][$location_id])) {
-
-                                $activity['aggregates'][$location_id] = $default_activity;
-
-                                $subscribers ['aggregates'][$location_id] = $default_subscriber;
-
-                                /*
-                              $all_sites = $sites;
-                              $review_entry = array();
-                              foreach (
-                                  $all_sites as $card_site
-                              ) {
-                                  $review_entry[$card_site] = array(
-                                      'negative' => 0,
-                                      'positive' => 0,
-                                      'neutral' => 0,
-                                      'points' => 0,
-                                      'count' => 0
-                                  );
-                              }
-
-                              $socials['aggregates'][$location_id] = $review_entry;*/
-
-
-                            }
-                            $id = time();
-
-                            $a[$id] = &$activity['aggregates'][$location_id];
-                            $s[$id] = &$subscribers['aggregates'][$location_id];
-
-
-                            if ($metric == 'activity') {
-                                $a[$id][$site][$action] += 1;
-                                $activity_overall['aggregates'][$location_id][$site][$action] += 1;
-                            } else {
-                                $s[$id][$site][$action] += 1;
-                                $subscriber_overall['aggregates'][$location_id][$site][$action] += 1;
-                            }
-
-
                         }
                     }
+
+
                 }
-
-
             }
+
             $all_metrics = array();
             foreach (
                 $metric_entries as $type
@@ -514,21 +489,20 @@
                 }
             }
             $all_metrics[] = $subscriber_overall;
-            $this->track();
+            $this->time();
             $metrics->batchInsert($all_metrics);
-            $this->track(false, "socials.$location_id.metrics (" . count($all_metrics) . ')');
-            $this->track();
+            $this->time(false, "socials.$location_id.metrics (" . count($all_metrics) . ')');
+            $this->time();
             $socials->batchInsert($social_entries);
-            $this->track(false, "socials.$location_id.entries (" . count($social_entries) . ')');
+            $this->time(false, "socials.$location_id.entries (" . count($social_entries) . ')');
 
-            /* $this->apiResponse = array(
-                'reviews' => $review_entries,
-                'metrics' => $metric_entries
-            );*/
-            // $this->apiResponse = array('dump' => print_r($metric_entries));
+
         }
 
-        public function map_activity($info)
+        public
+        function map_activity(
+            $info
+        )
         {
             $data = array();
             foreach (
@@ -540,7 +514,10 @@
 
         }
 
-        public function map_reach($info)
+        public
+        function map_reach(
+            $info
+        )
         {
             $data = array();
             foreach (

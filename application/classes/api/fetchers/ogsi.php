@@ -12,19 +12,22 @@
 
         private $_location;
         private $_locations;
+        private $_all = false;
         private $_db = 'auto';
 
-        /**
-         * @var \Mongo
-         */
-        private $_mongo;
 
         function __construct(Mongo $mongo, $location)
         {
-            $this->_mongo = $mongo;
+            parent::__construct($mongo);
             $this->_location = $location;
         }
 
+
+        public function all($value)
+        {
+            $this->_all = $value;
+            return $this;
+        }
 
         public function competition(array $locations)
         {
@@ -57,36 +60,110 @@
 
         public function fetch()
         {
-            $metrics = $this->_mongo->selectDB($this->_db)->selectCollection('reviews');
-            $keys = array();
+
+
             $locations = array_merge(array($this->_location), $this->_locations);
-           /* foreach (
-                $locations as $location
-            ) {
-                $keys["type"] = TRUE;
-                $keys['date']=TRUE;
-            }*/
-            $keys=array('type'=>1,'period'=>1);
 
-         /*   $options = array(
-                'condition'
+
+            $js_locations = '[' . join(',', $locations) . ']';
+            $map
+                    = "function(){
+                    var agg=this.aggregates;
+                    var locs = $js_locations;
+                    locs.forEach(function(location){
+                        if(agg[location]){
+                            emit(location,{count:agg[location].count,points:agg[location].points});
+                         }
+
+                    });
+                 }";
+
+            $reduce
+                    = 'function(key,values){
+                        var results={count:0,points:0};
+                        values.forEach(function(value){
+                               results.count+=value.count;
+                               results.points+=value.points;
+
+                          });
+
+                        return results;
+                    }';
+            $finalize
+                    = 'function(key,results){
+                    results.score = (results.points/results.count).toFixed(3);
+                    return results;
+                    
+            }';
+
+            $command = array(
+                'mapreduce' => 'metrics',
+                'map' => $map,
+                'reduce' => $reduce,
+                'query'
                 => array(
-                    'type' => 'reviews',
+                    'type' => 'scoreboard',
                     'date' => $this->_date,
-                    'period' => 'day'
+                    'period' => $this->_period
 
-                )
-            );*/
-            $initial = array('count' => 0);
+                ), 'out' => array('inline' => 1),
+                'finalize' => $finalize
+            );
 
-            $reduce = new MongoCode('function(obj,prev){ prev.count++; }');
+            $db = $this->_mongo->selectDB($this->_db);
+            $return = $db->command(
+                $command
+            );
 
-            print_r($keys);
-            print_r($initial);
-            print_r($reduce);
-           // print_r($options);
 
-            return $metrics->group($keys, $initial, $reduce);
+            $final = array();
+
+            $location_score = 0;
+            $competition_set_average = 0;
+            $for = $this->_all ? $locations : array($this->_location);
+            foreach (
+                $for as $location
+            ) {
+                $score = $this->compute($location, $return['results']);
+                if (!$this->_all) {
+                    return $score;
+                }
+                $final[$location] = $score;
+            }
+            return $final;
+
+
+            /*
+   echo "Total score: $competition_set_average \n";
+
+   $competition_set_average = $competition_set_average / count($results);
+   echo "competition_set_average : $competition_set_average\n";
+   echo "location $this->location score : " . $score = $results[$this->location]['score'] . "\n";
+   echo 'ogsi : ' . $ogsi = ($score / $competition_set_average) . "\n";
+   echo 'Percentage : ' . ($ogsi * 100) . "\n";*/
+
+
+        }
+
+        private function compute($location, array &$docs)
+        {
+            $competition_set_average = 0;
+            $locations = 0;
+            foreach (
+                $docs as $doc
+            ) {
+                if ($doc['_id'] == $location) {
+                    $location_score = $doc['value']['score'];
+                }
+                $competition_set_average += $doc['value']['score'];
+                $locations++;
+            }
+            /* echo "Total score: $competition_set_average \n";
+    echo "Total locations : " . count($locations) . "\n";*/
+            $competition_set_average = $competition_set_average / $locations;
+            /*  echo "competition_set_average : $competition_set_average\n";
+    echo "location $this->_location score : " . $location_score. "\n";*/
+            return ($location_score / $competition_set_average) * 100;
 
         }
     }

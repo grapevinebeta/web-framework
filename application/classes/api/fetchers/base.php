@@ -11,6 +11,23 @@
 
         protected $_date;
 
+        protected $_period = 'day';
+        /**
+         * @var \Mongo
+         */
+        protected $_mongo;
+
+        function __construct(Mongo $mongo)
+        {
+            $this->_mongo = $mongo;
+        }
+
+        public function period($period)
+        {
+            $this->_period = $period;
+            return $this;
+        }
+
         public function range(MongoDate $start, MongoDate $end = null)
         {
             if (is_null($end)) {
@@ -20,5 +37,10 @@
 
             }
             return $this;
+        }
+
+        public function fetch()
+        {
+            return null;
         }
     }

@@ -6,18 +6,15 @@
  * Time: 5:45 PM
  */
 
-    class Api_Fetchers_Metrics implements Iterator
+    class Api_Fetchers_Metrics extends Api_Fetchers_Base implements Iterator
     {
 
-        /**
-         * @var Mongo
-         */
-        private $mongo;
+        
         private $_type;
-        private $_date;
+        
         private $_location;
         private $db = 'auto';
-        private $_period = 'day';
+       
         private $_single = false;
         /**
          * @var MongoCursor
@@ -26,7 +23,7 @@
 
         function __construct(Mongo $mongo, $db = 'auto')
         {
-            $this->mongo = $mongo;
+            parent::__construct($mongo);
             $this->db = $db;
         }
 
@@ -36,16 +33,7 @@
             return $this;
         }
 
-        public function range(MongoDate $start, MongoDate $end = null)
-        {
-            if (is_null($end)) {
-                $this->_date = $start;
-            } else {
-                $this->_date = array('$gte' => $start, '$lte' => $end);
-
-            }
-            return $this;
-        }
+       
 
         public function single($value)
         {
@@ -60,14 +48,11 @@
             return $this;
         }
 
-        public function period($period)
-        {
-            $this->_period = $period;
-        }
+
 
         public function fetch()
         {
-            $metrics = $this->mongo->selectDB($this->db)->selectCollection('metrics');
+            $metrics = $this->_mongo->selectDB($this->db)->selectCollection('metrics');
 
 
             if ($this->_single) {
