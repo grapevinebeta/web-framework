@@ -119,7 +119,19 @@ class Controller_Account extends Controller_Template {
     
     public function action_billing()
     {
-        $this->_contentView = View::factory('account/billing');
+        // @todo This is only for development. Replace it with actual location ID
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die('Location not found');
+        }
+        
+        $location = ORM::factory('location')
+                ->where('location_id', '=', (int)$location_id)
+                ->find();
+        
+        $this->_contentView = View::factory('account/billing', array(
+            'billing_type' => $location->billing_type,
+        ));
     }
     
     
