@@ -13,6 +13,7 @@
     <h2 class="content-section-title"><?php echo __('Add / Edit User'); ?></h2>
     <div id="account-users-edit-section" class="padding-5">
         <div id="account-users-edit-holder">
+            <a href="#" title="" data-action="new"><?php echo __('New user'); ?></a>
             <form action="" method="post" class="userEditForm">
                 <input type="hidden" value="" name="id" />
                 <table>

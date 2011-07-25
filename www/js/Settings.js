@@ -245,6 +245,15 @@ jQuery(function(){
                     self.propagateFormData(data.result.user, editForm);
                 }, 'json');
             });
+            
+            this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
+                event.preventDefault();
+                jQuery(':input',editForm)
+                    .not(':button, :submit, :reset')
+                    .val('')
+                    .removeAttr('checked')
+                    .removeAttr('selected');
+            });
 
             this.userManagementSettings.delegate('form input[type="text"]', 'keydown', function(event){
                 if (event.keyCode == 13){
