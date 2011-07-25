@@ -1126,7 +1126,7 @@ var BC_Inbox = BoxController.extend({
 var BC_CompetitionScore = BoxController.extend({
     
     boxId: 'box-competition-score',
-    endpoint: 'competition/ogsi',
+    endpoint: '/api/dataProvider/competition/ogsi',
     
     populateColumns: function(ogsi, template, row) {
       
@@ -1146,14 +1146,15 @@ var BC_CompetitionScore = BoxController.extend({
         var avgStarRow = template.clone();
         var reviewsRow = template.clone();
         
-        ogsiRow.find('.score').text(ogsi.ogsi.value.toFixed(2) + "%");
-        ogsiRow.find('.growth').text(ogsi.ogsi.value.toFixed(2) + "%");
+        ogsiRow.find('.score').text(parseFloat(ogsi.ogsi.value).toFixed(2) + "%");
         ogsiRow.find('.rank').text(ogsi.ogsi.rank.value + " of " + ogsi.ogsi.rank.out);
         
-        avgStarRow.find('.score').text(ogsi.distribution.average.toFixed(2));
+        avgStarRow.find('.score').text(parseFloat(ogsi.rating.value).toFixed(2));
+        avgStarRow.find('.rank').text(ogsi.rating.rank.value + " of " + ogsi.rating.rank.out);
+        
         
         reviewsRow.find('.score').text(ogsi.reviews.value.toFixed(2));
-        reviewsRow.find('.rank').text(ogsi.reviews.value + " of " + ogsi.reviews.rank.out);
+        reviewsRow.find('.rank').text(ogsi.reviews.rank.value + " of " + ogsi.reviews.rank.out);
 
         var data = [ogsiRow, avgStarRow, reviewsRow];
 
@@ -1234,7 +1235,11 @@ var BC_CompetitionScore = BoxController.extend({
       
     },
     
-    construct: function () {}
+    construct: function () {
+        
+        this.noApiUrl = true;
+        
+    }
     
 });
 
@@ -2377,7 +2382,7 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
    
     boxId: 'box-competition-comparision',
     series: [],
-    endpoint: 'comparision',
+    endpoint: '/api/dataProvider/competition/comparsion',
     seriesLabels: [],
     firstTimestamp: null,
     pointInterval: null,
@@ -2412,6 +2417,7 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
         var seriesMappings = []; // maapping of label values to corresponding series index
         var seriesMappingInited = false;
         this.series = [];
+        var val;
         for (var tKey in this.graphData.comparision) {
             
             var timeObject = this.graphData.comparision[tKey];
@@ -2436,13 +2442,15 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
                     
                 }
                 
-                this.maxValue = this.maxValue < comparisionObject.value 
-                ? comparisionObject.value : this.maxValue;
+                val = parseFloat(comparisionObject.value);
+                
+                this.maxValue = this.maxValue < val 
+                ? val : this.maxValue;
                 
                 // add series single data to right place based on previously defined
                 // mappings
                 this.series[seriesMappings[comparisionObject.competition]]
-                .data.unshift(parseInt(comparisionObject.value, 10));
+                .data.unshift(val);
             
             }
             
@@ -2460,7 +2468,11 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
       
     },
    
-    construct: function() {}
+    construct: function() {
+        
+        this.noApiUrl = true;
+        
+    }
    
 });
 
@@ -2468,7 +2480,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
  
     boxId: 'box-competition-distribution',
  
-    endpoint: 'distribution',
+    endpoint: '/api/dataProvider/competition/distribution',
  
     prepareGraph: function () {
         if (!this.data) {
@@ -2529,9 +2541,9 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
             }]
         }
         
-        for (var i = 0; i < this.graphData.length; i++) {
+        for (var i in this.graphData) {
             var dist = this.graphData[i];
-            options.xAxis.categories.push(dist.dealership);
+            options.xAxis.categories.push(i);
             options.series[0].data.push(dist.negative);
             options.series[1].data.push(dist.neutral);
             options.series[2].data.push(dist.positive);
@@ -2543,7 +2555,8 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
     processData: function() {
         
         
-        var distribution = this.data.distribution,        
+        var c = 0,
+        distribution = this.data.distribution,        
         table = this.getContentDom().find('.data-grid-holder > table'),        
         trTemplate = table.find('tbody tr:first').clone(),
         tr = null,
@@ -2553,32 +2566,39 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
         
         trFooter.find('th:not(:first)').text('0');
         table.find('tbody tr').remove();
-        for (var i = 0; i < distribution.length; i++) {
+       
+        
+        for (var i in distribution) {
             tr = trTemplate.clone();
             for (n in distribution[i]) {
                 var value = distribution[i][n];
                 
                 tr.find('td.col-' + n).text(value);
-                if (n != 'dealership') {
-                    var currentTotalValue = 0;
-                    if (n == 'average') {
-                        currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
-                    } else {
-                        currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
-                    }
-                    trFooter.find('th.col-' + n).text(value + currentTotalValue);
+                var currentTotalValue = 0;
+                if (n == 'average') {
+                    currentTotalValue = parseFloat(trFooter.find('th.col-' + n).text());
+                } else {
+                    currentTotalValue = parseInt(trFooter.find('th.col-' + n).text());
                 }
+                trFooter.find('th.col-' + n).text(parseFloat(value) + currentTotalValue);
+                
+                tr.find('td.col-dealership').text(i);
             }
             table.find('tbody').append(tr);
+            c++;
         }
-        trFooter.find('th.col-average').text(
-            parseFloat(trFooter.find('th.col-average').text()) / 
-            distribution.length
-            );
+        
+        var number = parseFloat(trFooter.find('th.col-average').text()) / c;
+        number = number.toFixed(2);
+        trFooter.find('th.col-average').text(number)
         
     },
  
-    construct: function() {}
+    construct: function() {
+        
+        this.noApiUrl = true;
+        
+    }
  
  
  
