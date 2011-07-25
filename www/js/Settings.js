@@ -58,7 +58,14 @@ jQuery(function(){
         },
 
         'initializeAlertsSettings': function(){
+            var self = this;
             var form = this.alertsSettings.find('form.alertsSettingsForm');
+            
+            jQuery.post('/api/settings/getalert', {}, function(data){
+                if(data.result && typeof data.result.alert != 'undefined'){
+                    self.propagateFormData(data.result.alert, form);
+                }
+            });
             
             /**
              * The following part of the code should make request when the form

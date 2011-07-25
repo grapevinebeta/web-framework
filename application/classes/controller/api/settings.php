@@ -496,7 +496,7 @@ class Controller_Api_Settings extends Controller {
             'use_default',
         );
         $post = Arr::get($this->request->post(), 'params', array());
-        
+
         // use only 'params' part of POST request to populate fields
         $data = array_intersect_key($post, array_flip($editable));
         $data['location_id'] = (int)$location_id;
@@ -539,6 +539,35 @@ class Controller_Api_Settings extends Controller {
             );
         }
 
+    }
+    
+    /**
+     * Get alert data for specific location.
+     */
+    public function action_getalert() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die ('Location not found');
+        }
+        
+        // assume only one alert record exists for a location
+        $alert = ORM::factory('alert')
+            ->where('location_id','=',(int)$location_id)
+            ->find();
+        
+        if (empty($alert->id)) {
+            // if alert record does not exist, create one
+            $alert->create();
+        }
+        
+        $this->apiResponse['result'] = array(
+            'alert' => $alert->as_array(),
+        );
+        
     }
 
 }
