@@ -23,6 +23,7 @@
                         </td>
                         <td>
                             <?php echo form::input('firstname'); ?>
+                            <span class="validation-message" data-validation-for="firstname"></span>
                         </td>
                     </tr>
                     <tr>
@@ -31,6 +32,7 @@
                         </td>
                         <td>
                             <?php echo form::input('lastname'); ?>
+                            <span class="validation-message" data-validation-for="lastname"></span>
                         </td>
                     </tr>
                     <tr>
@@ -39,6 +41,7 @@
                         </td>
                         <td>
                             <?php echo form::input('email'); ?>
+                            <span class="validation-message" data-validation-for="email"></span>
                         </td>
                     </tr>
                     <tr>
@@ -47,6 +50,7 @@
                         </td>
                         <td>
                             <?php echo form::input('phone'); ?>
+                            <span class="validation-message" data-validation-for="phone"></span>
                         </td>
                     </tr>
                     <tr>
@@ -55,6 +59,7 @@
                         </td>
                         <td>
                             <?php echo form::input('username'); ?>
+                            <span class="validation-message" data-validation-for="username"></span>
                         </td>
                     </tr>
                     <tr>
@@ -62,7 +67,8 @@
                             <?php echo __('Password'); ?>:
                         </td>
                         <td>
-                            <?php echo form::input('password'); ?>
+                            <?php echo form::password('password'); ?>
+                            <span class="validation-message" data-validation-for="password"></span>
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +76,8 @@
                             <?php echo __('Confirm Password'); ?>:
                         </td>
                         <td>
-                            <?php echo form::input('password2'); ?>
+                            <?php echo form::password('password_confirm'); ?>
+                            <span class="validation-message" data-validation-for="password_confirm"></span>
                         </td>
                     </tr>
                 </table>

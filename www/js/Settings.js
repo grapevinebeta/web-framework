@@ -229,7 +229,28 @@ jQuery(function(){
 
             this.userManagementSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
-                alert('Not yet ready');
+                log('User submitted a form to add/update some user');
+                
+                var user = {};
+                var user_form = editForm.serializeArray();
+                jQuery.each(user_form, function(i, v){
+                    user[v.name] = v.value;
+                });
+                jQuery.post('/api/settings/updateuser', {
+                    'params': {
+                        'user': user
+                    }
+                }, function(data){
+                    if(data.result){
+                        // success?
+                        log('The request probably succeeded:');
+                        log(data);
+                    }else{
+                        // failure?
+                        log('The request probably failed:');
+                        log(data);
+                    }
+                }, 'json');
             });
 
             this.userManagementSettings.delegate('a[data-action="edit"][data-user-id]', 'click', function(event){
@@ -255,7 +276,8 @@ jQuery(function(){
                     .removeAttr('selected');
             });
 
-            this.userManagementSettings.delegate('form input[type="text"]', 'keydown', function(event){
+            // this is for saving data, as there is no other way to submit a form
+            this.userManagementSettings.delegate('form input[type="text"], form input[type="password"]', 'keydown', function(event){
                 if (event.keyCode == 13){
                     jQuery(this).parents('form').submit(); // submit form
                 }

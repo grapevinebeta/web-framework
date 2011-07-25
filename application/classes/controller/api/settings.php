@@ -570,4 +570,79 @@ class Controller_Api_Settings extends Controller {
         
     }
 
+    /**
+     * Create or update user records, assigned to the location
+     */
+    public function action_updateuser() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = $this->_location_id;
+
+        $user_data = Arr::path($this->request->post(), 'params.user');
+        
+        // names of the fields editable by user
+        $editable = array(
+            'username',
+            'email',
+            'password',
+            'firstname',
+            'lastname',
+            'phone',
+            'password',
+            'confirm_password',
+        );
+
+        try {
+            if (!empty ($user_data['id'])) {
+                // find user given by parameter
+                $user = ORM::factory('user')->findUserForLocation((int)$user_data['id'], (int)$location_id);
+            } else {
+                // assume new user
+                $user = ORM::factory('user');
+            }
+            
+            // filter off the data that is not editable by user
+            $user_data = array_intersect_key($user_data, array_flip($editable));
+            
+            if (!empty($user->id)) {
+                // user already exists, update him
+                $user
+                    ->values($user_data)
+                    ->update();
+            } else {
+                // user does not exist, create him
+                $user
+                    ->values($user_data)
+                    ->create();
+            }
+
+            $this->apiResponse['result'] = array(
+                'success' => true,
+                'message' => __('User data has been successfully saved'),
+                'user' => $user->as_array(),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('User data has not been saved'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('User data has not been saved'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+        
+    }
+
 }
