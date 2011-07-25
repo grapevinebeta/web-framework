@@ -13,6 +13,7 @@
     <h2 class="content-section-title"><?php echo __('Add / Edit User'); ?></h2>
     <div id="account-users-edit-section" class="padding-5">
         <div id="account-users-edit-holder">
+            <a href="#" title="" data-action="new"><?php echo __('New user'); ?></a>
             <form action="" method="post" class="userEditForm">
                 <input type="hidden" value="" name="id" />
                 <table>
@@ -22,6 +23,7 @@
                         </td>
                         <td>
                             <?php echo form::input('firstname'); ?>
+                            <span class="validation-message" data-validation-for="firstname"></span>
                         </td>
                     </tr>
                     <tr>
@@ -30,6 +32,7 @@
                         </td>
                         <td>
                             <?php echo form::input('lastname'); ?>
+                            <span class="validation-message" data-validation-for="lastname"></span>
                         </td>
                     </tr>
                     <tr>
@@ -38,6 +41,7 @@
                         </td>
                         <td>
                             <?php echo form::input('email'); ?>
+                            <span class="validation-message" data-validation-for="email"></span>
                         </td>
                     </tr>
                     <tr>
@@ -46,6 +50,7 @@
                         </td>
                         <td>
                             <?php echo form::input('phone'); ?>
+                            <span class="validation-message" data-validation-for="phone"></span>
                         </td>
                     </tr>
                     <tr>
@@ -54,6 +59,7 @@
                         </td>
                         <td>
                             <?php echo form::input('username'); ?>
+                            <span class="validation-message" data-validation-for="username"></span>
                         </td>
                     </tr>
                     <tr>
@@ -61,7 +67,8 @@
                             <?php echo __('Password'); ?>:
                         </td>
                         <td>
-                            <?php echo form::input('password'); ?>
+                            <?php echo form::password('password'); ?>
+                            <span class="validation-message" data-validation-for="password"></span>
                         </td>
                     </tr>
                     <tr>
@@ -69,7 +76,8 @@
                             <?php echo __('Confirm Password'); ?>:
                         </td>
                         <td>
-                            <?php echo form::input('password2'); ?>
+                            <?php echo form::password('password_confirm'); ?>
+                            <span class="validation-message" data-validation-for="password_confirm"></span>
                         </td>
                     </tr>
                 </table>

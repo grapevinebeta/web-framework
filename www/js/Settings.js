@@ -58,6 +58,36 @@ jQuery(function(){
         },
 
         'initializeAlertsSettings': function(){
+            var self = this;
+            var form = this.alertsSettings.find('form.alertsSettingsForm');
+            
+            jQuery.post('/api/settings/getalert', {}, function(data){
+                if(data.result && typeof data.result.alert != 'undefined'){
+                    self.propagateFormData(data.result.alert, form);
+                }
+            });
+            
+            /**
+             * The following part of the code should make request when the form
+             * content has been changed.
+             * @todo Make it work in a way that will send the request is being
+             *      sent only after some period of inactivity
+             */
+            form.delegate('form input, form textarea', 'change', function(event){
+                log('Someone has changed the content of one of the fields in alert edit form: ' + form.serialize());
+                var form_data = form.serializeArray();
+                var params = {};
+                jQuery.each(form_data, function(i, v){
+                    params[v.name] = v.value;
+                });
+                jQuery.post('/api/settings/updatealert', {
+                    'params': params
+                }, function(data){
+                    log('Request to update the data sent successfully. The response was:');
+                    log(data);
+                });
+            });
+            
             log('Alerts settings initialized');
         },
 
@@ -199,12 +229,40 @@ jQuery(function(){
 
             this.userManagementSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
-                alert('Not yet ready');
+                log('User submitted a form to add/update some user');
+                
+                self.clearValidationErrors(editForm);
+                
+                var user = {};
+                var user_form = editForm.serializeArray();
+                jQuery.each(user_form, function(i, v){
+                    user[v.name] = v.value;
+                });
+                jQuery.post('/api/settings/updateuser', {
+                    'params': {
+                        'user': user
+                    }
+                }, function(data){
+                    if(data.result){
+                        // success?
+                        log('The request probably succeeded:');
+                        log(data);
+                        self.clearForm(editForm); // clear recently added data
+                        if (typeof data.result.users_html != 'undefined'){
+                            self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
+                        }
+                    }else if(data.error && typeof data.error.validation_errors != 'undefined'){
+                        // validation failure
+                        self.displayValidationErrors(data.error.validation_errors, editForm);
+                    }
+                }, 'json');
             });
 
             this.userManagementSettings.delegate('a[data-action="edit"][data-user-id]', 'click', function(event){
                 // editing user data
                 event.preventDefault();
+                self.clearValidationErrors(editForm); // validation is not needed
+                self.clearForm(editForm); // get rid of the older data
                 var user_id = jQuery(this).attr('data-user-id');
                 jQuery.post('/api/settings/getuser', {
                     'params': {
@@ -216,7 +274,37 @@ jQuery(function(){
                 }, 'json');
             });
 
-            this.userManagementSettings.delegate('form input[type="text"]', 'keydown', function(event){
+            this.userManagementSettings.delegate('a[data-action="delete"][data-user-id]', 'click', function(event){
+                // editing user data
+                event.preventDefault();
+                if (confirm('Are you sure?')){
+                    var user_id = jQuery(this).attr('data-user-id');
+                    jQuery.post('/api/settings/deleteuser', {
+                        'params': {
+                            'user_id': user_id
+                        }
+                    }, function(data){
+                        if (data.result){
+                            log('User has been successfully deleted');
+                            if (typeof data.result.users_html != 'undefined'){
+                                self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
+                            }
+                        }else{
+                            log('Some error occured while trying to delete the user:');
+                            log(data);
+                        }
+                    }, 'json');
+                }
+            });
+            
+            this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
+                event.preventDefault();
+                self.clearValidationErrors(editForm);
+                self.clearForm(editForm);
+            });
+
+            // this is for saving data, as there is no other way to submit a form
+            this.userManagementSettings.delegate('form input[type="text"], form input[type="password"]', 'keydown', function(event){
                 if (event.keyCode == 13){
                     jQuery(this).parents('form').submit(); // submit form
                 }
@@ -226,6 +314,16 @@ jQuery(function(){
         },
 
 
+
+        // clear form (does not work like reset - it clears all the fields,
+        // including type="hidden" inputs)
+        'clearForm': function(form){
+            jQuery(':input',form)
+                .not(':button, :submit, :reset')
+                .val('')
+                .removeAttr('checked')
+                .removeAttr('selected');
+        },
 
         // display validation information from the data given, into the validation messages' containers
         'clearValidationErrors': function(form){

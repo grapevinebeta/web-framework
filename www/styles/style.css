@@ -1,11 +1,11 @@
 body {
-    background-color: #EDEDED;
+    
     margin: 0px;
     padding: 0px;
     font-family: Arial, Verdana, Helvetica, sans-serif;
     font-size: 12px;
     color: #593B7C;
-    background-color: white;
+    background: url(/images/bg.png) repeat-x top left #dddae6;
 }
 
 textarea {
@@ -74,7 +74,6 @@ input[type=submit] {
 }
 
 #main-wrapper {
-    background-color: white;
     width: 960px;
     margin: 0px auto;
 }
@@ -93,7 +92,7 @@ input[type=submit] {
 }
 
 .top-menu-item {
-    background-image: url(../images/top-menu-item-bg.jpg);
+    background-image: url(../images/top-menu-item-bg.png);
     background-repeat: no-repeat;
     display: inline-block;
     height: 30px;
@@ -109,7 +108,7 @@ input[type=submit] {
     font-size: 15px;
     line-height: 100%;
     background-position: left top;
-    background-image: url(../images/top-menu-item-bg.jpg);
+    background-image: url(../images/top-menu-item-bg.png);
     background-repeat: no-repeat;
     display: inline-block;
     cursor: pointer;
@@ -119,12 +118,12 @@ input[type=submit] {
 
 .top-menu-item.active {
     height: 34px;
-    background-image: url(../images/top-menu-item-bg-active.jpg);
+    background-image: url(../images/top-menu-item-bg-active.png);
     color: #553979;
 }
 
 .top-menu-item.active .top-menu-item-label {
-    background-image: url(../images/top-menu-item-bg-active.jpg);
+    background-image: url(../images/top-menu-item-bg-active.png);
     color: #553979;
 }
 
@@ -144,6 +143,7 @@ input[type=submit] {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     border-radius: 10px;
+    background: #fff;
     /*width: 980px;*/
 }
 
@@ -399,8 +399,7 @@ input[type=submit] {
 
 #copyrights {
     width: 220px;
-    margin: 5px auto;
-    border: 1px solid gray;
+    margin: 5px auto;    
 }
 
 #ajax-loader-holder {

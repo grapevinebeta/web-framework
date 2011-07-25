@@ -98,7 +98,7 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	// 'auth'       => MODPATH.'auth',       // Basic authentication
+	'auth'       => MODPATH.'auth',       // Basic authentication
 	// 'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
 	'database'   => MODPATH.'database',   // Database access
@@ -144,6 +144,7 @@ Route::set('social', 'social')
 		'action'     => 'index',
 	));
 
+
 // API routes
 Route::set('api_account_settings', 'api/settings')
 	->defaults(array(
@@ -162,6 +163,12 @@ Route::set('api_account_settings_deleteemail', 'api/settings/deleteemail')
 		'directory' => 'api',
 		'controller' => 'settings',
 		'action' => 'deleteemail',
+	));
+Route::set('api_account_settings_deleteuser', 'api/settings/deleteuser')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'deleteuser',
 	));
 Route::set('api_account_settings_get', 'api/settings/get')
 	->defaults(array(
@@ -187,12 +194,25 @@ Route::set('api_account_settings_getuser', 'api/settings/getuser')
 		'controller' => 'settings',
 		'action' => 'getuser',
 	));
+Route::set('api_account_settings_updatealert', 'api/settings/updatealert')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'updatealert',
+	));
 Route::set('api_account_settings_updategeneral', 'api/settings/updategeneral')
 	->defaults(array(
 		'directory' => 'api',
 		'controller' => 'settings',
 		'action' => 'updategeneral',
 	));
+Route::set('api_account_settings_updateuser', 'api/settings/updateuser')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'updateuser',
+	));
+
 
 Route::set('dataprovider', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => 'api/dataProvider'

@@ -475,5 +475,264 @@ class Controller_Api_Settings extends Controller {
         }
 
     }
+    
+    /**
+     * Update alert record for the specific location
+     */
+    public function action_updatealert() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die ('Location not found');
+        }
+
+        // list of fields editable by user
+        $editable = array(
+            'type',
+            'criteria',
+            'use_default',
+        );
+        $post = Arr::get($this->request->post(), 'params', array());
+
+        // use only 'params' part of POST request to populate fields
+        $data = array_intersect_key($post, array_flip($editable));
+        $data['location_id'] = (int)$location_id;
+
+        // assume only one alert record exists for a location
+        $alert = ORM::factory('alert')
+            ->where('location_id','=',(int)$location_id)
+            ->find();
+
+        try {
+            if (!empty($alert->location_id)) {
+                $alert
+                    ->values($data)
+                    ->update();
+            } else {
+                $alert
+                    ->values($data)
+                    ->create();
+            }
+
+            //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
+            $this->apiResponse['result']['alert'] = $alert->as_array();
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Your data is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Your data is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
+    }
+    
+    /**
+     * Get alert data for specific location.
+     */
+    public function action_getalert() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = Session::instance()->get('location_id');
+        if (!$location_id) {
+            die ('Location not found');
+        }
+        
+        // assume only one alert record exists for a location
+        $alert = ORM::factory('alert')
+            ->where('location_id','=',(int)$location_id)
+            ->find();
+        
+        if (empty($alert->id)) {
+            // if alert record does not exist, create one
+            $alert->create();
+        }
+        
+        $this->apiResponse['result'] = array(
+            'alert' => $alert->as_array(),
+        );
+        
+    }
+
+    /**
+     * Create or update user records, assigned to the location
+     */
+    public function action_updateuser() {
+
+        /**
+         * @todo Change it into something more flexible
+         */
+        $location_id = $this->_location_id;
+        
+        // find location record
+        $location = ORM::factory('location')
+                ->where('location_id', '=', (int)$location_id)
+                ->find();
+
+        $user_data = Arr::path($this->request->post(), 'params.user');
+        
+        // names of the fields editable by user
+        $editable = array(
+            'username',
+            'email',
+            'password',
+            'firstname',
+            'lastname',
+            'phone',
+            'password',
+            'password_confirm',
+        );
+
+        try {
+            if (!empty ($user_data['id'])) {
+                // find user given by parameter
+                $user = ORM::factory('user')->findUserForLocation((int)$user_data['id'], (int)$location_id);
+            } else {
+                // assume new user
+                $user = ORM::factory('user');
+            }
+            
+            // filter off the data that is not editable by user
+            $user_data = array_intersect_key($user_data, array_flip($editable));
+            
+            if (!empty($user->id)) {
+                // user already exists, update him
+                $user
+                    ->values($user_data)
+                    ->update();
+            } else {
+                // user does not exist, create him
+                $user
+                    ->values($user_data)
+                    ->create();
+                // user has been created, now assign him to the location
+                DB::insert('location_users')
+                    ->columns(array(
+                        'user_id',
+                        'location_id',
+                    ))
+                    ->values(array(
+                        (int)$user->id,
+                        (int)$location_id,
+                    ))
+                    ->execute();
+            }
+
+            $this->apiResponse['result'] = array(
+                'success' => true,
+                'message' => __('User data has been successfully saved'),
+                'user' => $user->as_array(),
+                'users_html' => View::factory('account/users/list', array(
+                    'users' => $location->getUsers(),
+                ))->render(),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('User data has not been saved'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('User data has not been saved'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+        
+    }
+    
+    /**
+     * Delete user from location
+     * @todo Decide what should really happen when the user is to be deleted.
+     *      Should the user be deleted from the database, or just the access
+     *      to the location settings should be removed? For now both things
+     *      happen (user is deleted from the database and his/her association
+     *      with the location is also revoked).
+     * @todo Check permissions?
+     */
+    public function action_deleteuser() {
+
+        // @todo dummy replacement, delete it and assign it from eg. session
+        $location_id = $this->_location_id;
+        
+        // get the actual location object
+        $location = ORM::factory('location')
+                ->where('location_id', '=', (int)$location_id)
+                ->find();
+
+        $user_id = Arr::path($this->request->post(), 'params.user_id');
+
+        try {
+            
+            $user = ORM::factory('user')
+                    ->where('id', '=', (int)$user_id)
+                    ->find();
+            
+            if (empty($user->id)) {
+                // user not found, do not proceed
+                $this->apiResponse['error'] = array(
+                    'message' => __('User has not been found'),
+                );
+            } else {
+                // user found
+                $user->delete();
+                
+                DB::delete('location_users')
+                        ->where('location_id', '=', (int)$location_id)
+                        ->and_where('user_id', '=', (int)$user_id)
+                        ->execute();
+                
+                $this->apiResponse['result'] = array(
+                    'message' => __('User has been successfully deleted'),
+                    'users_html' => View::factory('account/users/list', array(
+                        'users' => $location->getUsers(),
+                    ))->render(),
+                );
+            }
+            
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+
+    }
 
 }
