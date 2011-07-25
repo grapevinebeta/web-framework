@@ -59,22 +59,24 @@ class Model_Location extends ORM {
     public function getUsers() {
 
         // get ID of users as an array
-        $users = DB::select(array('users.id','user_id'))
-                ->from('users')
-                ->join('location_users')
-                ->on('location_users.user_id','=','users.id')
-                ->on('location_users.location_id','=',DB::expr((int)$this->location_id))
-                ->execute()
-                ->as_array(null, 'user_id');
-
+        $users = DB::select('user_id')
+                ->from('location_users')
+                ->where('location_id','=',DB::expr((int)$this->location_id))
+                ->execute();
+        
+        $users_ids = array();
+        foreach ($users as $user) {
+            $users_ids[] = (int)$user['user_id'];
+        }
+        
         // if array is empty, add something that will not be matched
-        if (empty($users)) {
-            $users = array(0);
+        if (empty($users_ids)) {
+            $users_ids = array(0);
         }
 
         // get the actual objects of users
         $users = ORM::factory('user')
-                ->where('id','IN',$users)
+                ->where('id','IN',$users_ids)
                 ->find_all();
 
         return $users;

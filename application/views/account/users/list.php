@@ -1,4 +1,4 @@
-<form action="" method="post">
+<form action="" method="post" class="usersSettingsList">
     <table class="wide data-grid" cellpadding="5">
         <tr>
             <th class="a-left">
@@ -32,10 +32,13 @@
                         <?php echo form::radio($_inputPrefix . '[role]', 'user', true); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo html::anchor(
-                            '#', 'x',
-                            array('class' => 'confirm-required',
-                                  'onclick' => "return confirm('". __('Are you sure?') ."')")) ?>
+                        <?php
+                        echo html::anchor('#', 'x', array(
+                            'class' => 'confirm-required',
+                            'data-action' => 'delete',
+                            'data-user-id' => (int)$user->id,
+                        ));
+                        ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
