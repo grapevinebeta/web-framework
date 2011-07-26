@@ -11,6 +11,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
     {
         parent::before();
         
+        
         $viewingRange = Session::instance()->get('viewingRange');
         
         if (empty($viewingRange)) {

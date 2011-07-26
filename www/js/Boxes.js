@@ -2352,7 +2352,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            boxManager.genericRequest('competition' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/static/competition' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));

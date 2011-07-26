@@ -635,7 +635,7 @@ input[type=submit] {
     
     .ogsi-score-value {
         padding: 0px;
-        font-size: 31px;
+        font-size: 24px;
         font-weight: bold;
         text-align: center;
         line-height: 100%;
@@ -910,6 +910,32 @@ input[type=submit] {
     
     .network a.delicious {
         background-position: -647px -408px;
+    }
+    
+    .buttons {
+    
+        margin-top: 15px;
+        
+    }
+    
+    .buttons label {
+        cursor: pointer;
+    }
+    
+    .buttons .icon {
+        height: 24px;
+        width:30px;
+        display: inline-block;
+        background-image: url(../images/icons/icons.png);
+        margin-bottom: -8px;
+    }
+
+    .buttons .facebook {
+        background-position: -602px -15px;
+    }
+    
+    .buttons .twitter {
+        background-position: -602px -81px;
     }
     
     
@@ -1194,9 +1220,41 @@ input[type=submit] {
         background-position: -454px -418px;
     }
     
+    .status-icon {
+        background-image: url(../images/icons/icons.png);
+        width: 35px;
+        height:33px;
+        display:inline-block;
+        position: absolute;
+    }
+    
+    .desc {
+        
+        display: block;
+        font-size: 15px;
+        margin-left: 42px;
+        padding-bottom: 14px;
+        
+    }
+    
+    .status-icon.todo {
+        
+        background-position: -386px -58px;
+        
+    }
+    .status-icon.alert {
+        
+        background-position: -386px -15px;
+        
+    }
+    
     .row {
         background: url("/images/bar.gif") repeat-x left bottom;
         margin: 0 0 15px;
+    }
+    
+    .row.end {
+        background: none;
     }
     
     .row .title {
@@ -1373,4 +1431,11 @@ input[type=submit] {
         display:none;
     }
     
+    .status-updater {
+        margin:20px;
+    }
     
+    .status-updater textarea {
+        width:100%;
+        height: 150px;
+    }
