@@ -5,8 +5,6 @@
  */
 class Model_Location extends ORM {
 
-    protected $_primary_key = 'location_id';
-
     public function rules() {
         return array(
             'location_name' => array(
@@ -61,7 +59,7 @@ class Model_Location extends ORM {
         // get ID of users as an array
         $users = DB::select('user_id')
                 ->from('locations_users')
-                ->where('location_id','=',DB::expr((int)$this->location_id))
+                ->where('location_id','=',DB::expr((int)$this->id))
                 ->execute();
         
         $users_ids = array();
