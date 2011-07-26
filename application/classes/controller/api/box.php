@@ -79,20 +79,46 @@ class Controller_Api_Box extends Controller_Api {
         
     }
     
-    public function action_auth() {
+    /**
+     * this endpoint stands for providing credentials and data for facebook 
+     * operations
+     */
+    public function action_status() {
 
+        $settings = false;
+        
         if (Auth::instance()->logged_in()) {
 
-            $settings = new Model_Location_Settings(1);
-            $token = $settings->getSetting('facebook_oauth_token');
-            $page = $settings->getSetting('facebook_page_id');
+            $s = new Model_Location_Settings(1);
+            $token = $s->getSetting('facebook_oauth_token');
+            $page = $s->getSetting('facebook_page_id');
 
-            $settings['auth_token'] = $token[0];
-            $settings['page_id'] = $page[0];
-            $settings['api_key'] = $page[0];
+            $post = array();
+            $post['message'] = strip_tags($this->request->post('message'));
+            $post['name'] = 'Grapevine update';
+            
+            
+            $config = array(
+                
+                'appId' => Kohana::config('globals.facebook_api_key'),
+                'secret' => Kohana::config('globals.facebook_secret'),
+                
+            );
+            
+            $fb = new Facebook($config);
+            $fb->setAccessToken($token[0]);
+            
+            
+            try {
+                $this->apiResponse = $fb->api($page[0] . '/feed', 'POST', $post);
+            }
+            catch(FacebookApiException $e) {
+                var_dump($e); 
+                exit;
+            }
+            
         }
         
-        $this->apiResponse = $settings;
     }
     
     public function action_export() {
