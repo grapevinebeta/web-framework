@@ -8,6 +8,18 @@ class Controller_Api extends Controller {
      */
     protected $_current_user = null;
 
+    /**
+     * Location that has been accessed
+     * @var Model_Location currently accessed location
+     */
+    protected $_location = null;
+
+    /**
+     * ID of the location. You should probably use $this->_location->id instead
+     * @var int
+     */
+    protected $_location_id = null;
+
     public function before() {
         parent::before();
 
@@ -24,6 +36,11 @@ class Controller_Api extends Controller {
 
         // bind current user to every view
         View::bind_global('_current_user', $this->_current_user);
+
+        // load first available location
+        $this->_location = $this->_current_user->getLocations()->current();
+
+        $this->_location_id = (int)$this->_location->id;
     }
 
     public function after() {
