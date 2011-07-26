@@ -3,12 +3,6 @@
 class Controller_Api_Settings extends Controller_Api {
 
     /**
-     * ID of the location.
-     * @todo Assign it on the basis on eg. database data
-     */
-    protected $_location_id = null;
-
-    /**
      * @var array API response in the format it will be returned, for distinguishing
      *      between successful responses and errors
      * */
@@ -20,8 +14,6 @@ class Controller_Api_Settings extends Controller_Api {
 
     public function before() {
         parent::before();
-
-        $this->_location_id = Session::instance()->get('location_id');
 
         /**
          * @todo Perform a security check. According to requirements, there are
@@ -115,21 +107,12 @@ class Controller_Api_Settings extends Controller_Api {
      * Get general location settings.
      */
     public function action_getgeneral() {
-        $data = $_GET; // @todo For debugging only; replace with POST data
-        // $data = $this->request->post();
+        $data = $this->request->post();
 
-        
-        // @todo Location ID must be assigned here from database, based on which
-        //      location should be visible here
-        $location_id = $this->_location_id;
-        if (empty($location_id)) {
-            $location_id = Arr::get($this->request->post(), 'location_id');
-        }
+        // location has been assigned at earlier stage, at higher level
+        $location = $this->_location;
 
-        $location = ORM::factory('location')
-                ->where('id', '=', $location_id)
-                ->find();
-        if (empty($location->location_id)) {
+        if (empty($location->id)) {
             /**
              * @todo Maybe create location here, if not found?
              */
@@ -141,7 +124,7 @@ class Controller_Api_Settings extends Controller_Api {
         } else {
             $this->apiResponse['result'] = array();
             $properties = array(
-                'location_id',
+                'id',
                 'owner_name',
                 'owner_email',
                 'owner_phone',
@@ -289,7 +272,7 @@ class Controller_Api_Settings extends Controller_Api {
         /**
          * @todo Change it into something more flexible
          */
-        $location_id = Arr::get($this->request->post(), 'location_id');
+        $location_id = Arr::get($this->request->post(), 'id');
 
         // list of fields accepted for setting and for viewing in general settings
         $editable = array(
@@ -317,15 +300,12 @@ class Controller_Api_Settings extends Controller_Api {
                 $general_settings
                     ->values($data)
                     ->update();
+                //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
+                $this->apiResponse['result']['general_settings'] = $general_settings->as_array();
             } else {
-                $general_settings
-                    ->values($data)
-                    ->create();
-                Session::instance()->set('location_id', $general_settings->id);
+                $this->apiResponse['error']['message'] = __('Location has not been found');
             }
 
-            //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
-            $this->apiResponse['result']['general_settings'] = $general_settings->as_array();
         } catch (ORM_Validation_Exception $e) {
             $this->apiResponse['error'] = array(
                 'message' => __('Your data is incorrect'), // @todo add more details
