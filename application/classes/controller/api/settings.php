@@ -127,7 +127,7 @@ class Controller_Api_Settings extends Controller {
         }
 
         $location = ORM::factory('location')
-                ->where('location_id', '=', $location_id)
+                ->where('id', '=', $location_id)
                 ->find();
         if (empty($location->location_id)) {
             /**
@@ -309,11 +309,11 @@ class Controller_Api_Settings extends Controller {
         $data = array_intersect_key($this->request->post(), array_flip($editable));
 
         $general_settings = ORM::factory('location')
-            ->where('location_id','=',(int)$location_id)
+            ->where('id','=',(int)$location_id)
             ->find();
 
         try {
-            if (!empty($general_settings->location_id)) {
+            if (!empty($general_settings->id)) {
                 $general_settings
                     ->values($data)
                     ->update();
@@ -321,7 +321,7 @@ class Controller_Api_Settings extends Controller {
                 $general_settings
                     ->values($data)
                     ->create();
-                Session::instance()->set('location_id', $general_settings->location_id);
+                Session::instance()->set('location_id', $general_settings->id);
             }
 
             //$this->apiResponse['result']['general_settings'] = array_intersect_key($general_settings->as_array(), array_flip($editable));
@@ -582,7 +582,7 @@ class Controller_Api_Settings extends Controller {
         
         // find location record
         $location = ORM::factory('location')
-                ->where('location_id', '=', (int)$location_id)
+                ->where('id', '=', (int)$location_id)
                 ->find();
 
         $user_data = Arr::path($this->request->post(), 'params.user');
@@ -680,7 +680,7 @@ class Controller_Api_Settings extends Controller {
         
         // get the actual location object
         $location = ORM::factory('location')
-                ->where('location_id', '=', (int)$location_id)
+                ->where('id', '=', (int)$location_id)
                 ->find();
 
         $user_id = Arr::path($this->request->post(), 'params.user_id');

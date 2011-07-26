@@ -42,7 +42,7 @@ class Controller_Account extends Controller_Template {
         }
 
         $location = ORM::factory('location')
-                ->where('location_id','=',(int)$location_id)
+                ->where('id','=',(int)$location_id)
                 ->find();
 
         $this->_contentView = View::factory('account/users');
@@ -126,7 +126,7 @@ class Controller_Account extends Controller_Template {
         }
         
         $location = ORM::factory('location')
-                ->where('location_id', '=', (int)$location_id)
+                ->where('id', '=', (int)$location_id)
                 ->find();
         
         $this->_contentView = View::factory('account/billing', array(
