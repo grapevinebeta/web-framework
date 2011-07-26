@@ -19,12 +19,12 @@
 
                 <div class="buttons right">
 
-                    <input id="facebook_send" type="checkbox" value="facebook" checked="checked" />
+                    <input id="facebook_send" type="checkbox" name="facebook" checked="checked" />
                     <label for="facebook_send" >
                         <span class="icon facebook"></span>
                         Łukasz Adamczewski    
                     </label>                           
-                    <input id="twitter_send" type="checkbox" value="twitter" checked="checked" />
+                    <input id="twitter_send" type="checkbox" name="twitter" checked="checked" />
                     <label for="twitter_send"><span class="icon twitter"></span>@tworzenieweb</label>
                     <button type="submit">Share</button>
 
@@ -40,11 +40,12 @@
                 
                 $('#wallPoster').bind('submit', function(e) {
                     
+                    
                     $('#wallPoster .content').attr('disabled', 'disabled');
                     
                     e.preventDefault();
                     
-                    $.post('/api/box/status', $(this).serialize(), function(data) {
+                    $.post('/api/box/status', {message: $(e.target).children('textarea').val()}, function(data) {
                         $('#wallPoster .content').removeAttr('disabled');
                     });
                     
