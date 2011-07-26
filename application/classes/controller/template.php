@@ -10,6 +10,20 @@ abstract class Controller_Template extends Kohana_Controller_Template
     public function before()
     {
         parent::before();
+
+        /**
+         * This is a temporary solution to force login of some user. In the
+         * future it should happen on different basis.
+         * @todo Replace it with actual authentication process
+         */
+        $user = ORM::factory('user')->find(); // find the first available user
+        Auth::instance()->force_login($user->username); // force login
+        $this->_current_user = ORM::factory('user')
+                ->where('username', '=', Auth::instance()->get_user())
+                ->find(); // cache currently logged in user
+
+        // bind current user to every view
+        View::bind_global('_current_user', $this->_current_user);
         
         $viewingRange = Session::instance()->get('viewingRange');
         

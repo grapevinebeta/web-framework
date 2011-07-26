@@ -622,7 +622,7 @@ class Controller_Api_Settings extends Controller {
                     ->values($user_data)
                     ->create();
                 // user has been created, now assign him to the location
-                DB::insert('location_users')
+                DB::insert('locations_users')
                     ->columns(array(
                         'user_id',
                         'location_id',
@@ -700,7 +700,7 @@ class Controller_Api_Settings extends Controller {
                 // user found
                 $user->delete();
                 
-                DB::delete('location_users')
+                DB::delete('locations_users')
                         ->where('location_id', '=', (int)$location_id)
                         ->and_where('user_id', '=', (int)$user_id)
                         ->execute();

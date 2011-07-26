@@ -1,0 +1,2 @@
+ALTER TABLE `companies_users`  ADD `level` TINYINT UNSIGNED NOT NULL COMMENT '0 - owner, 1 - admin, 2 - read only',  ADD INDEX (`level`) ;
+ALTER TABLE `locations_users`  ADD `level` TINYINT UNSIGNED NOT NULL COMMENT '0 - owner, 1 - admin, 2 - read only',  ADD INDEX (`level`) ;
