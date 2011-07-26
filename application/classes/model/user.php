@@ -35,4 +35,57 @@ class Model_User extends Model_Auth_User {
         
     }
 
+    /**
+     * Get locations user has access to. Optionally limit them to the locations
+     * he can administer (see and change settings). By default returns only
+     * locations that user can administer.
+     * Check for availability happens on two levels: companies and locations
+     * @param boolean $with_admin_access
+     * @return Database_Result collection of Model_Location objects
+     * @todo Split it into methods getting available companies and available
+     *      locations.
+     */
+    public function getLocations($with_admin_access = true) {
+
+        // get companies' ids
+        $available_companies = DB::select('company_id')
+                ->from('companies_users')
+                ->where('user_id', '=', (int)  $this->id);
+        if ($with_admin_access) {
+            // select only these with access allowing for administration
+            $available_companies = $available_companies
+                    ->and_where('level', '<', 2);
+        }
+        $available_companies = $available_companies
+                ->execute()
+                ->as_array(null, 'company_id');
+        if (empty($available_companies)) {
+            $available_companies = array(-1); // placeholder to avoid query builder's errors
+        }
+
+        // get locations' ids
+        $available_locations = DB::select('location_id')
+                ->from('locations_users')
+                ->where('user_id', '=', (int)  $this->id);
+        if ($with_admin_access) {
+            // select only these with access allowing for administration
+            $available_locations = $available_locations
+                    ->and_where('level', '<', 2);
+        }
+        $available_locations = $available_locations
+                ->execute()
+                ->as_array(null, 'location_id');
+        if (empty($available_locations)) {
+            $available_locations = array(-1); // placeholder to avoid query builder's errors
+        }
+        
+        $result = ORM::factory('location')
+                ->where('id', 'IN', $available_locations)
+                ->or_where('company_id', 'IN', $available_companies)
+                ->find_all();
+
+        return $result;
+
+    }
+
 }

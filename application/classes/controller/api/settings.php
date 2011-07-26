@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Api_Settings extends Controller {
+class Controller_Api_Settings extends Controller_Api {
 
     /**
      * ID of the location.

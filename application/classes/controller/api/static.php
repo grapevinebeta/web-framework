@@ -22,7 +22,7 @@ defined('SYSPATH') or die('No direct script access.');
  *      Default filter is ALL competition selected ON 
  * 
  */
-class Controller_Api_Static extends Controller {
+class Controller_Api_Static extends Controller_Api {
 
     /**
      * @var 
