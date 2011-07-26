@@ -1361,6 +1361,18 @@ var BC_Scoreboard = BoxController.extend({
     
 });
 
+var BC_StatusUpdate = BoxController.extend({
+    
+    boxId: 'box-status-updates',
+    endpoint: 'index',
+    
+    processData: function() {
+        
+    },
+    construct: function() {}
+    
+});
+
 var BC_Photos = BoxController.extend({
     
     boxId: 'box-photos',
@@ -2983,11 +2995,18 @@ boxManager = {
             self.positions = data;
            
             var populated = {};
+            
            
             for(var box in data) {
                 
                 var j = data[box],
                 current = self.collection[j.box_id];
+                
+                if(!current) {
+                    
+                    console.log(j.box_id, self.collection);
+                    
+                }
                 
                 populated[j.box_id] = true;
                 
@@ -3188,6 +3207,7 @@ $(document).ready(function () {
     .add(new BC_CompetitionScore())
     .add(new BC_Photos())
     .add(new BC_Videos())
+    .add(new BC_StatusUpdate())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter);
     // the initialization of boxManager is in TopMenu.js

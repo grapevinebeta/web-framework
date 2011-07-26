@@ -1228,7 +1228,7 @@ input[type=submit] {
         position: absolute;
     }
     
-    .desc {
+    .row .desc {
         
         display: block;
         font-size: 15px;
