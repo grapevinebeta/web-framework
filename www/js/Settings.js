@@ -318,9 +318,13 @@ jQuery(function(){
         // clear form (does not work like reset - it clears all the fields,
         // including type="hidden" inputs)
         'clearForm': function(form){
+            // text inputs, textareas (?) etc.
+            jQuery(':input',form)
+                .not(':button, :submit, :reset, :checkbox, :radio')
+                .val('');
+            // radio buttons, checkboxes etc.
             jQuery(':input',form)
                 .not(':button, :submit, :reset')
-                .val('')
                 .removeAttr('checked')
                 .removeAttr('selected');
         },
@@ -360,9 +364,24 @@ jQuery(function(){
             }
             var field;
             for (field_name in data){
-                log('Propagating ' + field_name + ' field with data: ' + data[field_name]);
-                field = form.find('input[name="' + field_name + '"]').val(data[field_name]);
-                log(field);
+                form.find('input[name="' + field_name + '"]').each(function(){
+                    if (jQuery.inArray(jQuery(this).attr('type'), ['radio', 'checkbox']) != -1){
+                        // radio button or checkbox - check if matches value, otherwise uncheck
+                        if (jQuery(this).val() == (''+data[field_name])){
+                            // this should be checked
+                            jQuery(this).attr('checked', true);
+                            log('Checking ' + field_name + ' ("' + data[field_name] + '") field');
+                        }else{
+                            // otherwise it should be unchecked
+                            jQuery(this).attr('checked', false);
+                            log('Unchecking ' + field_name + ' ("' + data[field_name] + '") field');
+                        }
+                    }else{
+                        jQuery(this).val(data[field_name]);
+                        log('Propagating ' + field_name + ' field with data:');
+                        log(data[field_name]);
+                    }
+                });
             }
         },
 
