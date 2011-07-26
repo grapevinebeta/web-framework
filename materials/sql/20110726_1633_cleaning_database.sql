@@ -152,3 +152,11 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
 INSERT INTO `users` (`logins`, `last_login`, `username`, `email`, `password`, `firstname`, `lastname`, `phone`) VALUES
 (0, NULL, 'tomasz.jaskowski', 'tomasz.jaskowski@polcode.com', '7f0e85b86469a1cd4c8ccf22c5ad65b7ad094521', 'Tomasz', 'Jaskowski', '+48 661696776');
 
+-- Default company
+INSERT INTO `companies` (`name`) VALUES ('GrapeVine Testing Company');
+
+-- Default location
+INSERT INTO `locations` (`company_id`, `location_name`, `address1`, `address2`, `city`, `state`, `zip`, `phone`, `url`, `owner_name`, `owner_email`, `owner_phone`, `owner_ext`, `billing_type`) VALUES ('1', 'GrapeVine Testing Location', 'Broadway', NULL, 'New York City', 'NY', NULL, NULL, 'http://www.grapevinebeta.com/', 'GV Owner', 'GV Email', 'GV Phone', NULL, 'charge');
+
+-- Owner level access for default user to the default location
+INSERT INTO `locations_users` (`location_id`, `user_id`, `level`) VALUES ('1', '1', '0');
