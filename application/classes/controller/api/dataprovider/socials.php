@@ -64,15 +64,16 @@
                         $actions as $name
                         => $value
                     ) {
-                        $key = "$site.$name";
-                        if (!isset($entries[$key])) {
-                            $entries[$key] = array(
+                       // $key = "$site.$name";
+                        if (!isset($entries[$site])) {
+                            $entries[$site] = array(
                                 'network' => $site,
-                                'action' => $name,
+                                'categories'=>array(),
                                 'total' => 0
                             );
                         }
-                        $entries[$key]['total'] += $value;
+                        $entries[$site]['categories'][$name]=$value;
+                        $entries[$site]['total'] += $value;
                     }
 
                 }
