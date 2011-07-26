@@ -60,7 +60,7 @@ class Model_Location extends ORM {
 
         // get ID of users as an array
         $users = DB::select('user_id')
-                ->from('location_users')
+                ->from('locations_users')
                 ->where('location_id','=',DB::expr((int)$this->location_id))
                 ->execute();
         

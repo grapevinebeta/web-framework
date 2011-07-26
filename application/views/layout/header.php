@@ -1,6 +1,8 @@
 <div id="header-holder">
     <div id="header-menu" class="right padding-10">
-        <?php echo __('Hello'), ' ',  'jacek.kromski@polcode.com'; //temporary ?>
+        <?php echo __('Hello :user_email', array(
+            ':user_email' => $_current_user->email,
+        )); //temporary ?>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         <?php echo html::anchor('account', __('Account Settings')) ?>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
