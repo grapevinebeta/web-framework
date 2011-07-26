@@ -26,12 +26,13 @@ class Model_Location_Settings {
      */
     private $_settings = array(
         'competitor'            => array(),
-        'newsletter'            => array(),
-        'facebook_oauth_token'  => array(),
-        'twitter_search'        => array(),
-        'twitter_account'       => array(),
-        'filter_search'         => array(),
         'gblog_search'          => array(),
+        'facebook_oauth_token'  => array(),
+        'facebook_page_id'      => array(),
+        'filter_search'         => array(),
+        'newsletter'            => array(),
+        'twitter_account'       => array(),
+        'twitter_search'        => array(),
         'youtube_search'        => array(),
     );
 
