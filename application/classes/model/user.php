@@ -17,9 +17,9 @@ class Model_User extends Model_Auth_User {
     public function findUserForLocation($user_id, $location_id) {
         
         $exists = (bool) DB::select(array(DB::expr('COUNT(`user_id`)'), 'total'))
-                ->from('location_users')
-                ->where('location_users.location_id', '=', (int)$location_id)
-                ->and_where('location_users.user_id', '=', (int)$user_id)
+                ->from('locations_users')
+                ->where('locations_users.location_id', '=', (int)$location_id)
+                ->and_where('locations_users.user_id', '=', (int)$user_id)
                 ->execute()
                 ->get('total');
         
