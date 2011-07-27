@@ -35,11 +35,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_users()
     {
-        // @todo This is only for development, replace this with actual location ID
-        $location_id = Session::instance()->get('location_id');
-        if (!$location_id) {
-            die('Location not found');
-        }
+        $location_id = $this->_location_id;
 
         $location = ORM::factory('location')
                 ->where('id','=',(int)$location_id)
@@ -54,11 +50,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_alerts()
     {
-        // @todo This is only for development, replace this with actual location ID
-        $location_id = Session::instance()->get('location_id');
-        if (!$location_id) {
-            die('Location not found');
-        }
+        $location_id = $this->_location_id;
         
         // this assumes there is only one alert for specific location, storing
         // big text field content that is then processed by some other mechanism
@@ -73,8 +65,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_reports()
     {
-        // @todo replace it with something actually meaningful
-        $location_id = Session::instance()->get('location_id');
+        $location_id = $this->_location_id;
 
         $this->_contentView = View::factory('account/reports');
 
@@ -93,9 +84,9 @@ class Controller_Account extends Controller_Template {
     
     public function action_competitors()
     {
+        $location_id = $this->_location_id;;
+
         $this->_contentView = View::factory('account/competitors');
-        
-        $location_id = Session::instance()->get('location_id');
         
         if (!$location_id) {
             // @todo Only debugging, replace it
@@ -119,15 +110,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_billing()
     {
-        // @todo This is only for development. Replace it with actual location ID
-        $location_id = Session::instance()->get('location_id');
-        if (!$location_id) {
-            die('Location not found');
-        }
-        
-        $location = ORM::factory('location')
-                ->where('id', '=', (int)$location_id)
-                ->find();
+        $location = $this->_location;
         
         $this->_contentView = View::factory('account/billing', array(
             'billing_type' => $location->billing_type,

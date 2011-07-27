@@ -46,6 +46,7 @@ class Controller_Api_Settings extends Controller_Api {
     /**
      * Returns settings that are associated with specific location and have
      * specific type.
+     * @todo Make it consistent with the way location is passed elsewhere
      */
     public function action_get() {
 
@@ -270,9 +271,10 @@ class Controller_Api_Settings extends Controller_Api {
     public function action_updategeneral() {
 
         /**
-         * @todo Change it into something more flexible
+         * Location is determined on a different level now.
+         * @todo Make it consistent with the other places where location is retrieved
          */
-        $location_id = Arr::get($this->request->post(), 'id');
+        $general_settings = $this->_location;
 
         // list of fields accepted for setting and for viewing in general settings
         $editable = array(
@@ -290,10 +292,6 @@ class Controller_Api_Settings extends Controller_Api {
             'url',
         );
         $data = array_intersect_key($this->request->post(), array_flip($editable));
-
-        $general_settings = ORM::factory('location')
-            ->where('id','=',(int)$location_id)
-            ->find();
 
         try {
             if (!empty($general_settings->id)) {
@@ -461,13 +459,7 @@ class Controller_Api_Settings extends Controller_Api {
      */
     public function action_updatealert() {
 
-        /**
-         * @todo Change it into something more flexible
-         */
-        $location_id = Session::instance()->get('location_id');
-        if (!$location_id) {
-            die ('Location not found');
-        }
+        $location_id = $this->_location_id;
 
         // list of fields editable by user
         $editable = array(
