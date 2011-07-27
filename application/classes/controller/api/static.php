@@ -57,7 +57,7 @@ class Controller_Api_Static extends Controller_Api {
 
     public function action_index() {
         
-
+        $this->apiResponse = true;
         
     }
     

@@ -107,6 +107,7 @@ Kohana::modules(array(
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
 	 'firephp'  => MODPATH. 'firephp',  // User guide and API documentation
 	 'swiftmailer' => MODPATH . 'swiftmailer',
+	 'facebook' => MODPATH . 'facebook',
 	));
 
 /**

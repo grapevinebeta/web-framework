@@ -48,6 +48,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         $this->_location_id = (int)$this->_location->id;
         
         
+        
         $viewingRange = Session::instance()->get('viewingRange');
         
         if (empty($viewingRange)) {
