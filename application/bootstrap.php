@@ -103,6 +103,7 @@ Kohana::modules(array(
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
 	'database'   => MODPATH.'database',   // Database access
 	// 'image'      => MODPATH.'image',      // Image manipulation
+	'oauth'        => MODPATH.'oauth',        // OAuth implementation for Kohana
 	'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
 	 'firephp'  => MODPATH. 'firephp',  // User guide and API documentation
