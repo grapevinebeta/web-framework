@@ -23,6 +23,9 @@ class Controller_Api extends Controller {
     public function before() {
         parent::before();
 
+        // salt the cookie (it is required for usage of Cookie::set())
+        Cookie::$salt = Kohana::config('cookie.salt');
+
         /**
          * This is a temporary solution to force login of some user. In the
          * future it should happen on different basis.

@@ -29,6 +29,9 @@ abstract class Controller_Template extends Kohana_Controller_Template
     {
         parent::before();
 
+        // salt the cookie (it is required for usage of Cookie::set())
+        Cookie::$salt = Kohana::config('cookie.salt');
+
         /**
          * This is a temporary solution to force login of some user. In the
          * future it should happen on different basis.

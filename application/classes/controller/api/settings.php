@@ -749,9 +749,93 @@ class Controller_Api_Settings extends Controller_Api {
                 ),
             );
         }
-        
-        
-        
+
+    }
+
+    /**
+     * Visit it to be sent to the Twitter for authorization
+     */
+    public function action_twitterconnect() {
+
+        // get ID of the location that should be influenced by callback
+        $location_id = $this->request->param('location_id') ? (int)$this->request->param('location_id') : null;
+
+        // get settings and create consumer object
+        $config = Kohana::config('oauth.twitter');
+        $consumer = OAuth_Consumer::factory($config);
+
+        // create provider object
+        $provider = OAuth_Provider::factory('twitter');
+
+        // determine the callback URL and assign it
+        $callback = Route::url('oauth_twitter_callback', ($location_id ? array(
+            'location_id' => $location_id,
+        ) : null), true);
+        $consumer->callback($callback);
+
+        // determine the token needed
+        $token = $provider->request_token($consumer);
+
+        // store the token for further use
+        Cookie::set('oauth_token', serialize($token));
+
+        $this->request->redirect($provider->authorize_url($token));
+
+        die(); // you should not reach this point, you should be redirected
+
+    }
+
+    /**
+     * The action to be called by Twitter as OAuth callback, after redirected
+     * from action_twitterconnect or similar request. Will check for validity
+     * of the token and die() will be invoked if request will be invalid.
+     * @todo fail gracefully if request was incorrect
+     * @todo fail gracefully also if no location ID was given - or support such
+     *      case in other way, if needed
+     */
+    public function action_twittercallback() {
+
+        // get ID of the location that should be influenced by callback
+        $location_id = $this->request->param('location_id') ? (int)$this->request->param('location_id') : null;
+
+        // get request token from cookie; will return object or FALSE if not set
+        $token = unserialize(Cookie::get('oauth_token'));
+        // get token from callback URL; will return string or NULL if not set
+        $request_token = Arr::get($_GET, 'oauth_token');
+
+        // check if the token in cookie matches request token
+        if ($token && $token->token !== $request_token) {
+            // @todo Replace the following with something in case the request is incorrect
+            die('Your request was incorrect.');
+        } else {
+            $verifier = Arr::get($_GET, 'oauth_verifier');
+            $token->verifier($verifier);
+
+            // get settings and create consumer object
+            $config = Kohana::config('oauth.twitter');
+            $consumer = OAuth_Consumer::factory($config);
+            // create provider object
+            $provider = OAuth_Provider::factory('twitter');
+
+            // get access token on the basis of request token
+            $access_token = $provider->access_token($consumer, $token);
+            // @todo If we need secret contained above, we can extract it also
+            $access_token = $access_token->token;
+
+            /**
+             * At this point we should have $access_token containing access
+             * token to the account of the specific user.
+             */
+            if ($location_id) {
+                // add or replace access token to the given location
+                // @todo Or should it gather access tokens even if there already
+                //      exists at least one for given location?
+            }
+
+            echo '<pre>',var_dump($access_token),'</pre>';
+            die();
+        }
+
     }
 
 }

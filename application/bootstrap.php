@@ -215,6 +215,23 @@ Route::set('api_account_settings_updateuser', 'api/settings/updateuser')
 		'action' => 'updateuser',
 	));
 
+Route::set('oauth_twitter_connect', 'api/settings/twitterconnect(/loc/<location_id>)', array(
+                'location_id' => '[[:digit:]]+',
+        ))
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'twitterconnect',
+	));
+Route::set('oauth_twitter_callback', 'api/settings/twittercallback(/loc/<location_id>)', array(
+                'location_id' => '[[:digit:]]+',
+        ))
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'twittercallback',
+	));
+
 
 Route::set('dataprovider', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => 'api/dataProvider'
