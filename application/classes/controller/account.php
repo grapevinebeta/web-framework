@@ -99,9 +99,9 @@ class Controller_Account extends Controller_Template {
 
     public function action_socials()
     {
-        $this->_contentView = View::factory('account/socials');
-        
-        
+        $this->_contentView = View::factory('account/socials', array(
+            'location_id' => (int)$this->_location_id,
+        ));
     }
     
     public function action_billing()

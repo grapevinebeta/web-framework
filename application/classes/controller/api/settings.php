@@ -827,13 +827,32 @@ class Controller_Api_Settings extends Controller_Api {
              * token to the account of the specific user.
              */
             if ($location_id) {
-                // add or replace access token to the given location
-                // @todo Or should it gather access tokens even if there already
+                // add access token to the given location
+                // @todo Or should it replace access token even if there already
                 //      exists at least one for given location?
-            }
+                $location = ORM::factory('location')
+                        ->where('id', '=', (int)$location_id)
+                        ->find();
 
-            echo '<pre>',var_dump($access_token),'</pre>';
-            die();
+                if (empty($location->id)) {
+                    // @todo fail gracefully
+                    die('Location not found!');
+                }
+
+                // add access token to the database (does not replace existing ones)
+                $twitter_oauth_token = ORM::factory('location_setting')
+                        ->values(array(
+                            'type' => 'twitter_oauth_token',
+                            'value' => (string)$access_token,
+                            'location_id' => (int)$location->id,
+                        ))
+                        ->create();
+
+                // redirect to settings page
+                $this->request->redirect(Route::url('account_settings_social'));
+            } else {
+                die('Location could not have been identified!');
+            }
         }
 
     }

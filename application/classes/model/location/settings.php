@@ -33,6 +33,7 @@ class Model_Location_Settings {
         'filter_search'         => array(),
         'newsletter'            => array(),
         'twitter_account'       => array(),
+        'twitter_oauth_token'   => array(),
         'twitter_search'        => array(),
         'youtube_search'        => array(),
     );
