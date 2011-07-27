@@ -35,11 +35,7 @@ class Controller_Account extends Controller_Template {
     
     public function action_users()
     {
-        $location_id = $this->_location_id;
-
-        $location = ORM::factory('location')
-                ->where('id','=',(int)$location_id)
-                ->find();
+        $location = $this->_location;
 
         $this->_contentView = View::factory('account/users');
 
