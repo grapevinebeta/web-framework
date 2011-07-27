@@ -714,5 +714,52 @@ class Controller_Api_Settings extends Controller_Api {
         }
 
     }
+    
+    
+    public function action_facebook() {
+        
+        
+        $location_id = $this->_location_id;
+        $keys = array_keys($this->request->post());
+        
+        // clean previous settings instead of updating
+        DB::delete('location_settings')
+                ->where('type', 'IN', $keys)
+                ->and_where('location_id', '=', $location_id)
+                ->execute();
+        
+        $query = DB::insert('location_settings', array('type', 'value','location_id'));
+        
+        foreach($keys as $key) {
+            
+            $query->values(array(
+            
+                'type' => $key,
+                'value' => $this->request->post($key),
+                'location_id' => (int) $location_id,
+            
+            ));
+            
+        }
+        
+        try {
+            $result = $query->execute();
+            
+            $this->apiResponse['result'] = true;
+            
+        } catch (Database_Exception $e) {
+            
+            $this->apiResponse['error'] = array(
+                'message' => __('Error with database write'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+        
+        
+        
+    }
 
 }

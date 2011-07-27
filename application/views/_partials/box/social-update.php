@@ -9,7 +9,6 @@
     ?>
     <div class="box-content">
         <div class="data-grid-holder">
-            <p>for preview please look at <a href="http://www.facebook.com/pages/Adamczewski-inc/225509304157435?sk=wall"><strong>this wall</strong></a></p>
             <div class="status-updater network">
                 
                 
@@ -22,7 +21,7 @@
                     <input id="facebook_send" type="checkbox" name="facebook" checked="checked" />
                     <label for="facebook_send" >
                         <span class="icon facebook"></span>
-                        Łukasz Adamczewski    
+                        <span class="page_name"></span>
                     </label>                           
                     <input id="twitter_send" type="checkbox" name="twitter" checked="checked" />
                     <label for="twitter_send"><span class="icon twitter"></span>@tworzenieweb</label>
@@ -34,26 +33,5 @@
                 </form>
             </div>
         </div>    
-        <script>
-                        
-            (function() {
-                
-                $('#wallPoster').bind('submit', function(e) {
-                    
-                    
-                    $('#wallPoster .content').attr('disabled', 'disabled');
-                    
-                    e.preventDefault();
-                    
-                    $.post('/api/box/status', {message: $(e.target).children('textarea').val()}, function(data) {
-                        $('#wallPoster .content').removeAttr('disabled');
-                    });
-                    
-                });
-                
-                
-            }());
-        </script>
-
     </div>
 </div>

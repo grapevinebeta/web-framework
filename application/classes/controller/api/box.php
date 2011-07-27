@@ -79,6 +79,19 @@ class Controller_Api_Box extends Controller_Api {
         
     }
     
+    public function action_auth() {
+        
+        $s = new Model_Location_Settings($this->_location_id);
+        $page = $s->getSetting('facebook_page_name');
+        $this->apiResponse = array(
+            
+            'appId' => (int) Kohana::config('globals.facebook_api_key'),
+            'facebook_page_name' => isset($page[0]) ? $page[0] : false
+            
+        );
+        
+    }
+    
     /**
      * this endpoint stands for providing credentials and data for facebook 
      * operations
@@ -86,39 +99,32 @@ class Controller_Api_Box extends Controller_Api {
     public function action_status() {
 
         $settings = false;
-        
-        if (Auth::instance()->logged_in()) {
 
-            $s = new Model_Location_Settings(1);
-            $token = $s->getSetting('facebook_oauth_token');
-            $page = $s->getSetting('facebook_page_id');
 
-            $post = array();
-            $post['message'] = strip_tags($this->request->post('message'));
-            $post['name'] = 'Grapevine update';
-            
-            
-            $config = array(
-                
-                'appId' => Kohana::config('globals.facebook_api_key'),
-                'secret' => Kohana::config('globals.facebook_secret'),
-                
-            );
-            
-            $fb = new Facebook($config);
-            $fb->setAccessToken($token[0]);
-            
-            
-            try {
-                $this->apiResponse = $fb->api($page[0] . '/feed', 'POST', $post);
-            }
-            catch(FacebookApiException $e) {
-                var_dump($e); 
-                exit;
-            }
-            
+        $s = new Model_Location_Settings(1);
+        $token = $s->getSetting('facebook_oauth_token');
+        $page = $s->getSetting('facebook_page_id');
+
+        $post = array();
+        $post['message'] = strip_tags($this->request->post('message'));
+        $post['name'] = 'Grapevine update';
+
+
+        $config = array(
+            'appId' => Kohana::config('globals.facebook_api_key'),
+            'secret' => Kohana::config('globals.facebook_secret'),
+        );
+
+        $fb = new Facebook($config);
+        $fb->setAccessToken($token[0]);
+
+
+        try {
+            $this->apiResponse = $fb->api($page[0] . '/feed', 'POST', $post);
+        } catch (FacebookApiException $e) {
+            var_dump($e);
+            exit;
         }
-        
     }
     
     public function action_export() {

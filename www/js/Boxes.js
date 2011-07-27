@@ -1364,12 +1364,38 @@ var BC_Scoreboard = BoxController.extend({
 var BC_StatusUpdate = BoxController.extend({
     
     boxId: 'box-status-updates',
-    endpoint: 'index',
+    endpoint: '/api/box/auth',
+    
+    attachBoxEvents: function() {
+        
+        this.getContentDom().delegate('#wallPoster', 'submit', function(e) {
+            
+            e.preventDefault();
+            
+            var textarea = $(e.target)
+            .children('textarea.content')
+            .attr('disabled', 'disabled');
+            
+            $.post('/api/box/status', {
+                message: textarea.val()
+            }, function(data) {
+                textarea.removeAttr('disabled');
+            });
+            
+        });
+        
+    },
     
     processData: function() {
         
+        this.getContentDom().find('.page_name').text(this.data.facebook_page_name);
+        
     },
-    construct: function() {}
+    construct: function() {
+        
+        this.noApiUrl = true;
+        
+    }
     
 });
 
@@ -2989,58 +3015,61 @@ boxManager = {
             }
         });
       
-      
-        this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {
+        if($("#boxes-holder").length) {
+         
+            this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {
           
-            self.positions = data;
+                self.positions = data;
            
-            var populated = {};
+                var populated = {};
             
            
-            for(var box in data) {
+                for(var box in data) {
                 
-                var j = data[box],
-                current = self.collection[j.box_id];
+                    var j = data[box],
+                    current = self.collection[j.box_id];
                 
-                if(!current) {
+                    if(!current) {
                     
-                    console.log(j.box_id, self.collection);
+                        console.log(j.box_id, self.collection);
                     
+                    }
+                
+                    populated[j.box_id] = true;
+                
+                    box_holder = current.getBoxDom().parent();
+                    holder_id = box_holder.attr('id');
+                
+                    if(holder_id != j.holder_id) {
+                    
+                        var holder_2 = $('#' + j.holder_id);
+                        var holder_2_box = holder_2.children();
+                    
+                        holder_2.html(current.getBoxDom());
+                        holder_2.removeClass('empty').addClass('active');
+                        box_holder.html(holder_2_box);
+                    
+                    
+                    }
+                
+                    current.init();
+                
                 }
-                
-                populated[j.box_id] = true;
-                
-                box_holder = current.getBoxDom().parent();
-                holder_id = box_holder.attr('id');
-                
-                if(holder_id != j.holder_id) {
-                    
-                    var holder_2 = $('#' + j.holder_id);
-                    var holder_2_box = holder_2.children();
-                    
-                    holder_2.html(current.getBoxDom());
-                    holder_2.removeClass('empty').addClass('active');
-                    box_holder.html(holder_2_box);
-                    
-                    
-                }
-                
-                current.init();
-                
-            }
             
-            for (var i in boxManager.collection) {
+                for (var i in boxManager.collection) {
              
-                if(populated[i]) 
-                    continue;
+                    if(populated[i]) 
+                        continue;
                 
-                boxManager.collection[i].init();
-            }
+                    boxManager.collection[i].init();
+                }
            
-            self.initDragAndDrop();
-            $('.box-container').removeClass('hide');
+                self.initDragAndDrop();
+                $('.box-container').removeClass('hide');
           
-        });
+            });
+         
+        }
       
       
     },
