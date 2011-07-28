@@ -78,6 +78,10 @@ class Controller_Api_Box extends Controller_Api {
         
     }
     
+    
+    /**
+     * this action gives information about twitter and facebook linking status
+     */
     public function action_auth() {
         
         
@@ -125,6 +129,9 @@ class Controller_Api_Box extends Controller_Api {
         
     }
     
+    /**
+     * return callback for Twitter to verify data and populate location settings
+     */
     public function action_callback() {
         $tmhOAuth = new tmhOAuth(array(
                     'consumer_key' => Kohana::config('globals.twitter_consumer_key'),
@@ -252,7 +259,7 @@ class Controller_Api_Box extends Controller_Api {
         
         
         try {
-            return $fb->api($page[0] . '/feed', 'POST', $message);
+            return $fb->api($config['facebook_page_id'] . '/feed', 'POST', $message);
         } catch (FacebookApiException $e) {
             return $e;
         }
@@ -282,6 +289,7 @@ class Controller_Api_Box extends Controller_Api {
         if(isset($fbtoken[0])) {
             
             $config['facebook_token'] = $fbtoken[0];
+            $config['facebook_page_id'] = $page[0];
             
         }
         else {

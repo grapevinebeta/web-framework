@@ -1386,7 +1386,7 @@ var BC_StatusUpdate = BoxController.extend({
             });
             
             
-            $.post('/api/box/update', params, function(data) {
+            $.post('/social/update', params, function(data) {
                 textarea.removeAttr('disabled');
             });
             
