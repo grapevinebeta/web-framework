@@ -103,6 +103,7 @@ Kohana::modules(array(
 	// 'codebench'  => MODPATH.'codebench',  // Benchmarking tool
 	'database'   => MODPATH.'database',   // Database access
 	// 'image'      => MODPATH.'image',      // Image manipulation
+	'oauth'        => MODPATH.'oauth',        // OAuth implementation for Kohana
 	'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
 	 'firephp'  => MODPATH. 'firephp',  // User guide and API documentation
@@ -215,6 +216,31 @@ Route::set('api_account_settings_updateuser', 'api/settings/updateuser')
 		'action' => 'updateuser',
 	));
 
+// Twitter OAuth URLs
+Route::set('oauth_twitter_connect', 'api/settings/twitterconnect(/loc/<location_id>)', array(
+                'location_id' => '[[:digit:]]+',
+        ))
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'twitterconnect',
+	));
+Route::set('oauth_twitter_callback', 'api/settings/twittercallback(/loc/<location_id>)', array(
+                'location_id' => '[[:digit:]]+',
+        ))
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'twittercallback',
+	));
+
+// Account Settings URLs
+// @todo Add remaining sections here
+Route::set('account_settings_social', 'account/socials')
+	->defaults(array(
+		'controller' => 'account',
+		'action' => 'socials',
+	));
 
 Route::set('dataprovider', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => 'api/dataProvider'

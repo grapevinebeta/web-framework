@@ -80,5 +80,15 @@ class Model_Location extends ORM {
         return $users;
 
     }
+
+    /**
+     * Get settings for current location.
+     * @return Model_Location_Settings settings collection for location
+     */
+    public function getSettings() {
+
+        return new Model_Location_Settings($this->id);
+
+    }
     
 }

@@ -29,10 +29,11 @@ class Model_Location_Settings {
         'gblog_search'          => array(),
         'facebook_oauth_token'  => array(),
         'facebook_page_id'      => array(),
-        'facebook_page_name'      => array(),
+        'facebook_page_name'    => array(),
         'filter_search'         => array(),
         'newsletter'            => array(),
         'twitter_account'       => array(),
+        'twitter_oauth_token'   => array(),
         'twitter_search'        => array(),
         'youtube_search'        => array(),
     );
