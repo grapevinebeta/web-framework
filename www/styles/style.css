@@ -1439,3 +1439,33 @@ input[type=submit] {
         width:100%;
         height: 150px;
     }
+    
+    /*
+    
+    account settings
+    
+    */
+    
+    .login, .twitter_login {
+        
+        padding:10px;
+        color: #000;
+        
+    }
+    
+    .twitter {
+        
+        background: url(/images/icons/darker.png) no-repeat top left;
+        display:block;
+        width: 151px;
+        height: 24px;
+        
+    }
+    
+    .twitter span {
+        
+        display: none;
+        
+    }
+    
+    

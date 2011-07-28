@@ -7,7 +7,6 @@ class Controller_Api_Box extends Controller_Api {
      * */
     protected $apiResponse;
     protected $apiRequest;
-    protected $location = 1;
 
     public function after() {
         $this->response->headers('Content-Type', 'application/json');
@@ -51,7 +50,7 @@ class Controller_Api_Box extends Controller_Api {
         
         $b = Model::factory('box');
         
-        $rs = $b->getPositions($this->location, $id);
+        $rs = $b->getPositions($this->_location_id, $id);
         
         if(count($rs))
         {
@@ -65,7 +64,7 @@ class Controller_Api_Box extends Controller_Api {
             try {
                 $b->persists($holders);
 
-                $rs = $b->getPositions($this->location, $id);
+                $rs = $b->getPositions($this->_location_id, $id);
                 $this->apiResponse = $rs->as_array('holder_id');
 
             }
@@ -81,24 +80,126 @@ class Controller_Api_Box extends Controller_Api {
     
     public function action_auth() {
         
+        
+        // return url for twitter
+        Session::instance()->set('return_url', Url::site($this->request->referrer(), true));
+        
         $s = new Model_Location_Settings($this->_location_id);
         $page = $s->getSetting('facebook_page_name');
+        $screen = $s->getSetting('twitter_account');
         $this->apiResponse = array(
             
             'appId' => (int) Kohana::config('globals.facebook_app_id'),
-            'facebook_page_name' => isset($page[0]) ? $page[0] : false
+            'facebook_page_name' => Arr::get($page, '0', false),
             
         );
         
-    }
-    public function action_test() {
-        
-        
-        var_dump($this->request->post());
+        if ($screen) {
+            $this->apiResponse['twitter_account'] = Arr::get($screen, '0', false);
+        } else {
+            $this->apiResponse['twitter_url'] = $this->getTwitterUrl();
+        }
         
     }
     
-    public function action_twitter() {
+    
+    private function fetchUser($id) {
+        
+        
+        $tmhOAuth = new tmhOAuth(array(
+                    'consumer_key' => Kohana::config('globals.twitter_consumer_key'),
+                    'consumer_secret' => Kohana::config('globals.twitter_consumer_secret'),
+                ));
+        
+        $code = $tmhOAuth->request('GET', $tmhOAuth->url('/1/users/lookup'), array('user_id' => $id));
+        
+        if($code == 200) {
+            
+            $user = json_decode($tmhOAuth->response['response']);
+            
+            return $user[0];
+            
+        }
+        
+        return false;
+        
+    }
+    
+    public function action_callback() {
+        $tmhOAuth = new tmhOAuth(array(
+                    'consumer_key' => Kohana::config('globals.twitter_consumer_key'),
+                    'consumer_secret' => Kohana::config('globals.twitter_consumer_secret'),
+                ));
+
+        if ($this->request->query('oauth_verifier') && Session::instance()->get('oauth')) {
+
+            $tmhOAuth->config['user_token'] = Arr::path($_SESSION, 'oauth.oauth_token');
+            $tmhOAuth->config['user_secret'] = Arr::path($_SESSION, 'oauth.oauth_secret');
+
+            $code = $tmhOAuth->request('POST', $tmhOAuth->url('oauth/access_token', ''), 
+                    array(
+                        'oauth_verifier' => $this->request->query('oauth_verifier')
+                    ));
+            
+            if($code == 200) {
+
+                $response = $tmhOAuth->extract_params($tmhOAuth->response['response']);
+                
+                $location_id = $this->_location_id;
+                $keys = array('oauth_token', 'oauth_token_secret', 'user_id', 'screen_name');
+                
+                
+
+                // clean previous settings instead of updating
+                DB::delete('location_settings')
+                        ->where('type', 'IN', $keys)
+                        ->and_where('location_id', '=', $location_id)
+                        ->execute();
+
+                $query = DB::insert('location_settings', array('type', 'value', 'location_id'));
+
+                $mappings = array(
+                    
+                    'screen_name' => 'twitter_account',
+                    'oauth_token' => 'twitter_oauth_token',
+                    'oauth_token_secret' => 'twitter_oauth_token_secret',
+                    'user_id' => 'twitter_user_id',
+                    
+                );
+                
+                
+                foreach ($keys as $key) {
+
+                    $query->values(array(
+                        'type' => isset($mappings[$key]) ? $mappings[$key] : $key,
+                        'value' => $response[$key],
+                        'location_id' => (int) $location_id,
+                    ));
+                }
+
+                try {
+                    $result = $query->execute();
+
+                    $this->apiResponse['result'] = true;
+                } catch (Database_Exception $e) {
+
+                    $this->apiResponse['error'] = array(
+                        'message' => __('Error with database write'), // @todo add more details
+                        'error_data' => array(
+                            'code' => $e->getCode(),
+                            'message' => $e->getMessage(),
+                        ),
+                    );
+                }
+                
+                Session::instance()->delete('oauth');
+                $this->request->redirect(Session::instance()->get('return_url'));
+                
+            }
+        }
+    }
+    
+    private function getTwitterUrl() {
         
         $tmhOAuth = new tmhOAuth(array(
             'consumer_key'    => Kohana::config('globals.twitter_consumer_key'),
@@ -107,7 +208,7 @@ class Controller_Api_Box extends Controller_Api {
         
         $params = array();
         $params['x_auth_access_type'] = 'write';
-        $params['oauth_callback'] = tmhUtilities::php_self() . '/api/test/';
+        $params['oauth_callback'] = Kohana::config('globals.oauth_callback');
 
         $code = $tmhOAuth->request('POST', $tmhOAuth->url('oauth/request_token', ''), $params);
         
@@ -116,50 +217,97 @@ class Controller_Api_Box extends Controller_Api {
             Session::instance()->set('oauth', $tmhOAuth->extract_params($tmhOAuth->response['response']));
             $method = isset($_REQUEST['authenticate']) ? 'authenticate' : 'authorize';
             $force = isset($_REQUEST['force']) ? '&force_login=1' : '';
-            $authurl = $tmhOAuth->url("oauth/{$method}", '') . "?oauth_token={$_SESSION['oauth']['oauth_token']}{$force}";
-            
-            
-            $response = array();
-            $response['url'] =  $authurl;
+            $token = Arr::path($_SESSION, 'oauth.oauth_token');
+            $authurl = $tmhOAuth->url("oauth/{$method}", '') . "?oauth_token={$token}{$force}";
+            return $authurl;
             
         }
+        
+        return false;
+        
+    }
+    
+    private function sendTwitter($message, $config) {
+        
+        $tmhOAuth = new tmhOAuth(array(
+                    'consumer_key' => Kohana::config('globals.twitter_consumer_key'),
+                    'consumer_secret' => Kohana::config('globals.twitter_consumer_secret'),
+                    'user_token' => $config['twitter_token'],
+                    'user_secret' => $config['twitter_secret'],
+                ));
+
+        $code = $tmhOAuth->request('POST', $tmhOAuth->url('1/statuses/update'), array(
+                    'status' => $message['message']
+                ));
+
+        return json_decode($tmhOAuth->response['response']);
         
         
     }
     
-    /**
-     * this endpoint stands for providing credentials and data for facebook 
-     * operations
-     */
-    public function action_status() {
+    private function sendFacebook($message, $config) {
+
+        $fb = new Facebook($config);
+        $fb->setAccessToken($config['facebook_token']);
+        
+        
+        try {
+            return $fb->api($page[0] . '/feed', 'POST', $message);
+        } catch (FacebookApiException $e) {
+            return $e;
+        }
+    }
+    
+
+    public function action_update() {
 
         $settings = false;
-
-
-        $s = new Model_Location_Settings(1);
-        $token = $s->getSetting('facebook_oauth_token');
-        $page = $s->getSetting('facebook_page_id');
-
         $post = array();
-        $post['message'] = strip_tags($this->request->post('message'));
-        $post['name'] = 'Grapevine update';
-
-
+        
+        $s = new Model_Location_Settings($this->_location_id);
+        $fbtoken = $s->getSetting('facebook_oauth_token');
+        $page = $s->getSetting('facebook_page_id');
+        
+        $twitterToken = $s->getSetting('twitter_oauth_token');
+        $twitterSecret = $s->getSetting('twitter_oauth_token_secret');
+        
         $config = array(
             'appId' => Kohana::config('globals.facebook_app_id'),
             'secret' => Kohana::config('globals.facebook_secret'),
         );
-
-        $fb = new Facebook($config);
-        $fb->setAccessToken($token[0]);
-
-
-        try {
-            $this->apiResponse = $fb->api($page[0] . '/feed', 'POST', $post);
-        } catch (FacebookApiException $e) {
-            var_dump($e);
-            exit;
+        
+        $callbacks = array('facebook' => 'sendFacebook', 'twitter' => 'sendTwitter');
+        $callbacks = array_intersect_key($callbacks, $this->request->post());
+        
+        if(isset($fbtoken[0])) {
+            
+            $config['facebook_token'] = $fbtoken[0];
+            
         }
+        else {
+            unset($callbacks['facebook']);
+        }
+        
+        if(isset($twitterToken[0]) && isset($twitterSecret[0])) {
+            
+            $config['twitter_token'] = $twitterToken[0];
+            $config['twitter_secret'] = $twitterSecret[0];
+            
+        }
+        else {
+            unset($callback['twitter']);
+        }
+
+        $post['message'] = strip_tags($this->request->post('message'));
+        $post['name'] = 'Grapevine update';
+
+        
+        foreach($callbacks as $key => $call) {
+            $this->apiResponse[$key] 
+                    = call_user_func_array(array($this, $call), array($post, $config));
+        }
+
+
     }
     
     public function action_export() {

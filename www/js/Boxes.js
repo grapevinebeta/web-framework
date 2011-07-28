@@ -1376,9 +1376,17 @@ var BC_StatusUpdate = BoxController.extend({
             .children('textarea.content')
             .attr('disabled', 'disabled');
             
-            $.post('/api/box/status', {
-                message: textarea.val()
-            }, function(data) {
+            var params = {};
+            params.message = textarea.val();
+            
+            $($(this).serializeArray()).each(function() {
+                
+                params[this.name] = true
+                
+            });
+            
+            
+            $.post('/api/box/update', params, function(data) {
                 textarea.removeAttr('disabled');
             });
             
@@ -1388,7 +1396,20 @@ var BC_StatusUpdate = BoxController.extend({
     
     processData: function() {
         
-        this.getContentDom().find('.page_name').text(this.data.facebook_page_name);
+        if(this.data.facebook_page_name) {
+            
+            this.getContentDom().find('.page_name').text(this.data.facebook_page_name);
+        }
+        else
+            this.getContentDom().find('.facebook_checkbox').remove();
+        
+        
+        if(this.data.twitter_account) {
+            
+            this.getContentDom().find('.twitter_account').text(this.data.twitter_account);
+        }
+        else
+            this.getContentDom().find('.twitter_checkbox').remove();
         
     },
     construct: function() {
