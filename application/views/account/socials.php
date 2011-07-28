@@ -177,7 +177,7 @@
             
             credentials = data;
             
-            if(data.twitter_url) {
+            if(data.twitter_url != '') {
 
                 $('.twitter').attr({
                 href: data.twitter_url
