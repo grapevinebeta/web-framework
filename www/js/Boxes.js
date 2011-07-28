@@ -1368,7 +1368,7 @@ var BC_StatusUpdate = BoxController.extend({
     
     attachBoxEvents: function() {
         
-        this.getContentDom().delegate('#wallPoster', 'submit', function(e) {
+        this.getContentDom().delegate('form#wallPoster', 'submit', function(e) {
             
             e.preventDefault();
             
@@ -1386,8 +1386,18 @@ var BC_StatusUpdate = BoxController.extend({
             });
             
             
-            $.post('/social/update', params, function(data) {
+            $.post('/api/box/update', params, function(data) {
+                
+            }).error(function() {
+                
+                
+                
+            })
+            .complete(function() {
+                
                 textarea.removeAttr('disabled');
+                textarea.val('');
+                
             });
             
         });
@@ -1410,6 +1420,12 @@ var BC_StatusUpdate = BoxController.extend({
         }
         else
             this.getContentDom().find('.twitter_checkbox').remove();
+        
+        
+        this.getContentDom().find(".status-updater textarea").charCount({
+            allowed: 120,		
+            warning: 20	
+        });
         
     },
     construct: function() {
@@ -1877,10 +1893,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
              e.preventDefault();
             
-             $(this).remove();
-             
-             tr.find('.action-todo').remove();
-            
              boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                  status: 'CLOSED'
              }, function() {
@@ -1900,10 +1912,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
             e.preventDefault();
             
-            $(this).remove();
-             
-            tr.find('.action-complete').remove();
-            
             boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                 status: 'TODO'
             }, function() {
@@ -1918,14 +1926,12 @@ var BC_ReviewInbox = BC_Inbox.extend({
             })
             
         });
-
-
-        if(status == 'closed') {
-            tr.find('.actions-todo, .actions-completed').remove();
-        }
-        else
-            tr.find('.actions-' + status).remove();
         
+        tr.find('.single-check input').bind('click', function(e) {
+            
+            $(this).parent().children('.action').trigger('click');
+            
+        });
         
         tr.find('select[name="category"]').val(message.category)
         .bind('change', 
@@ -1940,7 +1946,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 )
             );
         
-        tr.find('input.review-tags').val(message.tags.join(','))
+        tr.find('input.review-tags').val(message.tags ? message.tags.join(',') : '')
         .bind('save', 
             data.context.genericCallbackEventWrapper(
                 data.context.expandEndpointCallback, 
@@ -2073,29 +2079,63 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
             return;
         }
         
-        var graphHolderId = this.boxId + '-graph-holder';
+        var graphHolderId = this.boxId + '-graph-holder',
+        data = [],
+        self = this,
+        s = function(name, categories, data, color) {
+            self.graph.xAxis[0].setCategories(categories);
+            self.graph.series[0].remove();
+            self.graph.addSeries({
+                name: name,
+                data: data,
+                color: color || 'white'
+            });
+        },
+        bigCategories = [],
+        colors = Highcharts.getOptions().colors,
+        i=0;
+        
+        for(var key in this.graphData) {
+            
+            bigCategories.push(this.graphData[key].network);
+            
+            var categories = [], values = [];
+            
+            for(var c in this.graphData[key].categories) {
+                categories.push(c);
+                values.push(this.graphData[key].categories[c]);
+            }
+            
+            
+            data.push({
+                
+                y:  this.graphData[key].total,
+                color: colors[i],
+                drilldown: {
+                    
+                    name: this.graphData[key].network,
+                    categories: categories,
+                    data: values,
+                    color: colors[i++]
+                    
+                }
+                
+            });
+            
+        }
+        
         
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                defaultSeriesType: 'bar'
+                type: 'bar'
             },
             title: {
-                text: ''
+                text: false
             },
-            colors: [
-            '#80699B', 
-            '#AA4643', 
-            '#4572A7', 
-            '#89A54E', 
-            '#3D96AE', 
-            '#DB843D', 
-            '#92A8CD', 
-            '#A47D7C', 
-            '#B5CA92'
-            ],
+            
             xAxis: {
-                categories: [],
+                categories: bigCategories,
                 title: {
                     text: ''
                 }
@@ -2103,8 +2143,7 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
             yAxis: {
                 min: 0,
                 title: {
-                    text: '',
-                    align: 'high'
+                    text: false
                 }
             },
             legend: {
@@ -2113,34 +2152,54 @@ var BC_SocialActivity = BC_GraphBoxController.extend({
             credits: {
                 enabled: false
             },
+            
             plotOptions: {
-                series: {
-                    colorByPoint: true
+                bar: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                
+                                if (drilldown) { // drill down
+                                    s(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                } else { // restore
+                                    s(false, bigCategories, data);
+                                }
+                            }
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            fontWeight: 'bold'
+                        },
+                        formatter: function() {
+                            return this.y;
+                        }
+                    }               
                 }
             },
-            exporting: {enabled: false},
-            series: []
+            tooltip: {
+                formatter: function() {
+                    var point = this.point,
+                    s = this.x +':<b>'+ this.y +' actions</b><br/>';
+                    if (point.drilldown) {
+                        s += 'Click to view details';
+                    } else {
+                        s += 'Click to return to overall graph';
+                    }
+                    return s;
+                }
+            },
+            series: [{
+                data: data
+            }],
+            
+            exporting: {
+                enabled: false
+            }
         }
-         
-        var data = [];
-        
-
-        
-        for (var i in this.graphData) {
-            
-            var site = this.graphData[i];
-            
-            data.push(site.total);
-            options.xAxis.categories.push(site.action);
-            
-            
-        }
-        
-        options.series.push({
-            name: 'value',
-            data: data
-        });
-        
         
         this.graph = new Highcharts.Chart(options);
     },
@@ -2219,29 +2278,63 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             return;
         }
         
-        var graphHolderId = this.boxId + '-graph-holder';
+        var graphHolderId = this.boxId + '-graph-holder',
+        data = [],
+        self = this,
+        s = function(name, categories, data, color) {
+            self.graph.xAxis[0].setCategories(categories);
+            self.graph.series[0].remove();
+            self.graph.addSeries({
+                name: name,
+                data: data,
+                color: color || 'white'
+            });
+        },
+        bigCategories = [],
+        colors = Highcharts.getOptions().colors,
+        i=0;
+        
+        for(var key in this.graphData) {
+            
+            bigCategories.push(this.graphData[key].network);
+            
+            var categories = [], values = [];
+            
+            for(var c in this.graphData[key].categories) {
+                categories.push(c);
+                values.push(this.graphData[key].categories[c]);
+            }
+            
+            
+            data.push({
+                
+                y:  this.graphData[key].total,
+                color: colors[i],
+                drilldown: {
+                    
+                    name: this.graphData[key].network,
+                    categories: categories,
+                    data: values,
+                    color: colors[i++]
+                    
+                }
+                
+            });
+            
+        }
+        
         
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                defaultSeriesType: 'bar'
+                type: 'bar'
             },
             title: {
-                text: ''
+                text: false
             },
-            colors: [
-            '#80699B', 
-            '#AA4643', 
-            '#4572A7', 
-            '#89A54E', 
-            '#3D96AE', 
-            '#DB843D', 
-            '#92A8CD', 
-            '#A47D7C', 
-            '#B5CA92'
-            ],
+            
             xAxis: {
-                categories: [],
+                categories: bigCategories,
                 title: {
                     text: ''
                 }
@@ -2249,8 +2342,7 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             yAxis: {
                 min: 0,
                 title: {
-                    text: '',
-                    align: 'high'
+                    text: false
                 }
             },
             legend: {
@@ -2259,36 +2351,57 @@ var BC_SocialSubscribers = BC_GraphBoxController.extend({
             credits: {
                 enabled: false
             },
+            
             plotOptions: {
-                series: {
-                    colorByPoint: true
+                bar: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function() {
+                                var drilldown = this.drilldown;
+                                
+                                if (drilldown) { // drill down
+                                    s(drilldown.name, drilldown.categories, drilldown.data, drilldown.color);
+                                } else { // restore
+                                    s(false, bigCategories, data);
+                                }
+                            }
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            fontWeight: 'bold'
+                        },
+                        formatter: function() {
+                            return this.y;
+                        }
+                    }               
                 }
             },
-            exporting: {enabled: false},
-            series: []
+            tooltip: {
+                formatter: function() {
+                    var point = this.point,
+                    s = this.x +':<b>'+ this.y +' actions</b><br/>';
+                    if (point.drilldown) {
+                        s += 'Click to view details';
+                    } else {
+                        s += 'Click to return to overall graph';
+                    }
+                    return s;
+                }
+            },
+            series: [{
+                data: data
+            }],
+            
+            exporting: {
+                enabled: false
+            }
         }
-         
-        var data = [];
-        
-
-        
-        for (var i in this.graphData) {
-            
-            var site = this.graphData[i];
-            
-            data.push(site.total);
-            options.xAxis.categories.push(site.network);
-            
-            
-        }
-        
-        options.series.push({
-            name: 'value',
-            data: data
-        });
-        
         
         this.graph = new Highcharts.Chart(options);
+        
     },
     
     processData: function() {

@@ -14,6 +14,8 @@
                     
                 <textarea class="content" name="message"></textarea>
 
+                <span class="counter"></span>
+                
                 <div class="buttons right">
                     
                     <span class="facebook_checkbox">
@@ -41,3 +43,7 @@
         </div>    
     </div>
 </div>
+<?php echo html::script('js/jquery.charCount.js'); ?>
+<script>
+
+</script>

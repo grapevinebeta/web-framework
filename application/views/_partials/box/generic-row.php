@@ -41,22 +41,24 @@
                         (<?php echo __('After responding to a review check the completed box'); ?>)
                     </p>
                 </div>
-                <div class="actions-completed v-padding-5">
+                <div class="single-check actions-completed v-padding-5">
+                    <?php echo Form::radio('status', 'completed') ?>
                     <a href="#" class="action action-completed">
                         <span class="mono-icon icon-checkbox"></span>
                         <?php echo __('Completed'); ?>
+                    </a>
+                </div>
+                <div class="single-check actions-todo v-padding-5">
+                    <?php echo Form::radio('status', 'todo') ?>
+                    <a href="#" class="action action-todo">
+                        <span class="mono-icon icon-todo"></span>
+                        <?php echo __('Flag "To Do"'); ?>
                     </a>
                 </div>
                 <div class="actions-email v-padding-5">
                     <a href="#" class="action action-email">
                         <span class="mono-icon icon-email"></span>
                         Email
-                    </a>
-                </div>
-                <div class="actions-todo v-padding-5">
-                    <a href="#" class="action action-todo">
-                        <span class="mono-icon icon-todo"></span>
-                        <?php echo __('Flag "To Do"'); ?>
                     </a>
                 </div>
                 <div class="actions-review v-padding-5">

@@ -1469,3 +1469,13 @@ input[type=submit] {
     }
     
     
+    .status-updater form .counter {
+        bottom: 25px;
+        font-size: 14px;
+        font-weight: bold;
+        left: 24px;
+        position: absolute;
+    }
+    .status-updater form .warning{color:#600;}	
+    .status-updater form .exceeded{color:#e00;}
+    

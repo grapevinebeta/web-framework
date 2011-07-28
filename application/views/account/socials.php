@@ -108,12 +108,13 @@
                 
                 FB.Event.subscribe('auth.statusChange', function(response) {
                     
+                    
                     if(response.status == "connected")
                     {
 
                         FB.api('/me/accounts', function(response) {
                             if (!response || response.error) {
-                                console.log(response)
+                                alert('Error with facebook connection');
                             } else {
                                 var option, select = document.createElement('select');
                                 select.setAttribute('name', 'page_selector');
@@ -177,7 +178,7 @@
             
             credentials = data;
             
-            if(data.twitter_account != '') {
+            if(data.twitter_account == '') {
 
                 $('.twitter').attr({
                 href: data.twitter_url
