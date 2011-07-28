@@ -22,8 +22,8 @@
     <h2 class="content-section-title"><?php echo __('Twitter'); ?>:</h2>
     <div id="account-socials-twitter-section" class="padding-5">
         <?php echo __('For best results, please click on "Connect with Twitter" button. If you don\'t have an access to or are not an admin for your business Twitter account, please contact your Twitter account administrator (including any responsible 3rd party) on assistance on this step.'); ?>
-        <p>
-            <?php echo html::anchor('#', __('Connect with Twitter')); ?>
+        <p style="padding: 10px;">
+            <?php echo html::anchor('#', '<span>' . __('Connect with Twitter') . '</span>', array('class' => 'twitter')); ?>
         </p>
         <p>
             <?php echo __('You may also add a general Twitter "tweet-search" related to your business. You will need to spacify which words (called "tags") and phrses should be used to identify data that is revelant to you. You may type single tags, or entire phrases. You may type any number and combination of tags and phrases, as long as you separate each term with a comma.'); ?>
@@ -54,7 +54,25 @@
         Description ...
     </div>
 </div>
-
+<style>
+    
+    
+    .twitter {
+        
+        background: url(/images/icons/darker.png) no-repeat top left;
+        display:block;
+        width: 151px;
+        height: 24px;
+        
+    }
+    
+    .twitter span {
+        
+        display: none;
+        
+    }
+    
+</style>
 
 <script>
     
@@ -67,7 +85,7 @@
             var perms = $.parseJSON(response.perms);
             for(var i=0; i < perms.extended.length; i++) {
                 
-                if(perms.extended[i] == 'offline_access') {
+                if(perms.extended[i] == 'offline_access' && credentials.facebook_page_id) {
                     
                     $('.login').removeClass('hide').html('<p style="font-size:16px; font-weight:bold;">You are linked as ' + credentials.facebook_page_name + '</p>');
                     

@@ -108,6 +108,7 @@ Kohana::modules(array(
 	 'firephp'  => MODPATH. 'firephp',  // User guide and API documentation
 	 'swiftmailer' => MODPATH . 'swiftmailer',
 	 'facebook' => MODPATH . 'facebook',
+	 'twitter' => MODPATH . 'twitter',
 	));
 
 /**

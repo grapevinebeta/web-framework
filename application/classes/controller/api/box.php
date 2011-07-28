@@ -85,10 +85,45 @@ class Controller_Api_Box extends Controller_Api {
         $page = $s->getSetting('facebook_page_name');
         $this->apiResponse = array(
             
-            'appId' => (int) Kohana::config('globals.facebook_api_key'),
+            'appId' => (int) Kohana::config('globals.facebook_app_id'),
             'facebook_page_name' => isset($page[0]) ? $page[0] : false
             
         );
+        
+    }
+    public function action_test() {
+        
+        
+        var_dump($this->request->post());
+        
+    }
+    
+    public function action_twitter() {
+        
+        $tmhOAuth = new tmhOAuth(array(
+            'consumer_key'    => Kohana::config('globals.twitter_consumer_key'),
+            'consumer_secret' => Kohana::config('globals.twitter_consumer_secret'),
+        ));
+        
+        $params = array();
+        $params['x_auth_access_type'] = 'write';
+        $params['oauth_callback'] = tmhUtilities::php_self() . '/api/test/';
+
+        $code = $tmhOAuth->request('POST', $tmhOAuth->url('oauth/request_token', ''), $params);
+        
+        if($code == 200) {
+            
+            Session::instance()->set('oauth', $tmhOAuth->extract_params($tmhOAuth->response['response']));
+            $method = isset($_REQUEST['authenticate']) ? 'authenticate' : 'authorize';
+            $force = isset($_REQUEST['force']) ? '&force_login=1' : '';
+            $authurl = $tmhOAuth->url("oauth/{$method}", '') . "?oauth_token={$_SESSION['oauth']['oauth_token']}{$force}";
+            
+            
+            $response = array();
+            $response['url'] =  $authurl;
+            
+        }
+        
         
     }
     
@@ -111,7 +146,7 @@ class Controller_Api_Box extends Controller_Api {
 
 
         $config = array(
-            'appId' => Kohana::config('globals.facebook_api_key'),
+            'appId' => Kohana::config('globals.facebook_app_id'),
             'secret' => Kohana::config('globals.facebook_secret'),
         );
 
