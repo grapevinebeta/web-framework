@@ -1891,6 +1891,14 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('.review-details-content').text(message.content);
         
         
+        checkboxes.prop('checked', false);
+        checkboxes.each(function() {
+            
+            if($(this).val() == status)
+                $(this).prop('checked', true);
+            
+        });
+        
         checkboxes.bind('change', function() {
             
             var checked = $(this).is(':checked');

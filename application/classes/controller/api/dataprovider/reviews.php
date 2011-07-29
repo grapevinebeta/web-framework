@@ -48,8 +48,18 @@
          */
         public function action_categories()
         {
-            $this->apiResponse['categories']
-                    = array(1 => 'shopping', 2 => 'important', 3 => 'it', 4 => 'travel', 5 => 'sport');
+       
+            $automotive = array(
+                '' => 'Select',
+                'General', 'Sales', 'Service', 'Parts', 'Finance'
+            );    
+            
+            $restaurants = array(
+                '' => 'Select',
+                'General', 'Food', 'Service'
+            );    
+                
+            $this->apiResponse['categories'] = $automotive;
 
         }
 
