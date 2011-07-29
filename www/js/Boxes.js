@@ -1647,7 +1647,6 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
     },
     
     construct: function () {
-        
     }
     
 });
@@ -1809,6 +1808,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
     boxId: 'box-recent-reviews',
     
     endpoint: '/api/dataProvider/reviews',
+    
+    alerts: {}, // store all status counts
+    
 
     dateHelper: function(date) {
         
@@ -1899,6 +1901,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
         });
         
+        
         checkboxes.bind('change', function() {
             
             var checked = $(this).is(':checked');
@@ -1911,12 +1914,18 @@ var BC_ReviewInbox = BC_Inbox.extend({
             if(checked) {
                 checkboxes.prop('checked', false);
                 $(this).prop('checked', true);
-                
                
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                     status: value.toUpperCase()
                 }, function() {
                 
+                    // update alert value
+                    
+                    data.context.alerts[value]++;
+                    data.context.alerts[status]--;
+                    data.context.renderAlerts();
+                    
+                    status = value;
                     
                     tr.find('.recent-review-status-icon')
                     .removeClass('open closed todo')
@@ -1940,6 +1949,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     tr.find('.recent-review-status-icon')
                     .removeClass('open closed todo')
                     .addClass('opened');
+                
+                    data.context.alerts['opened']++;
+                    data.context.alerts[status]--;
+                    data.context.renderAlerts();
+                    status = 'opened';
                 
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
                     tr.prev().find('.col-status').html(reviewStatus); 
@@ -2036,10 +2050,15 @@ var BC_ReviewInbox = BC_Inbox.extend({
         var trContent = null;
         table.find('tbody tr').remove();
         var data = this.data.reviews;
+        
         for (var i = 0; i < data.length; i++) {
             
-            var currentId = data[i].id;
+            var currentId = data[i].id,
+            status = data[i].status,
+            statusLower = status.toLowerCase();
                       
+            tr = this.prepareMessage(trTemplate, data[i]);
+            
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
                 this.expandedPopulate, 
@@ -2050,7 +2069,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 )
             );
             
-            tr = this.prepareMessage(trTemplate, data[i]);
+            if(this.alerts[statusLower]) {
+                this.alerts[statusLower]++;
+            }
+            else
+                this.alerts[statusLower] = 1;
             
             
             if (i % 2) {
@@ -2068,9 +2091,28 @@ var BC_ReviewInbox = BC_Inbox.extend({
             table.children('tbody').append(trContent); // append two elements
             
         }
+        
+        this.renderAlerts();
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
         
+    },
+    
+    renderAlerts: function() {
+      
+      var alerts = $('#alerts .light-box-content');
+      
+      if(!alerts.length)
+          return;
+      
+      for(var key in this.alerts) {
+          
+          alerts.find('.desc .' + key).text(this.alerts[key]);
+          
+      }
+      
+      alerts.parent().removeClass('hide');
+      
     },
     
     construct: function () {
@@ -3183,7 +3225,7 @@ boxManager = {
                 
                     if(!current) {
                     
-                        console.log(j.box_id, self.collection);
+                        return;
                     
                     }
                 

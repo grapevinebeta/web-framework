@@ -918,6 +918,16 @@ input[type=submit] {
         
     }
     
+    .buttons button {
+
+    background: -moz-linear-gradient(center top , #D1CDDC, #573975) repeat scroll 0 0 transparent;
+    border: 1px solid #573975;
+    border-radius: 4px 4px 4px 4px;
+    color: #FFFFFF;
+    padding: 2px 3px;
+
+    }
+    
     .buttons label {
         cursor: pointer;
     }
