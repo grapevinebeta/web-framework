@@ -72,6 +72,7 @@
                 $location_name = $location_names[$location];
                 $results[$location_name]['ogsi'] = array(
                     'value' => number_format($score, 2),
+                    'competition'=>$location_name,
                     'rank'
                     => array(
                         'out' => $total_locations,
@@ -115,6 +116,7 @@
                 $location_name = $location_names[$location];
                 $results[$location_name]['reviews'] = array(
                     'value' => $doc['count'],
+                    'competition'=>$location_name,
                     'rank'
                     => array(
                         'value' => $rank++,
@@ -135,6 +137,7 @@
                 $location_name = $location_names[$location];
                 $results[$location_name]['rating'] = array(
                     'value' => number_format($doc['score'], 2),
+                    'competition'=>$location_name,
                     'rank'
                     => array(
                         'value' => $rank++,
@@ -180,6 +183,7 @@
                     'neutral' => $doc['neutral'],
                     'total' => $doc['count'],
                     'average' => number_format($doc['score'], 2),
+                    'competition'=>$location_name,
                     'rank'
                     => array(
                         'out' => $total_locations,
