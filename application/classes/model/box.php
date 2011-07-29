@@ -40,7 +40,7 @@ class Model_Box extends Model_Database {
         if($deletePrevious) {
             DB::delete(self::TABLE)
             ->where('box_id', '=', $settings['box_id'])
-            ->where('section_id', '=', $settings['section_id'])->execute($this->_db);
+            ->execute($this->_db);
             DB::insert(self::TABLE, array_keys($settings))->values(array_values($settings))->execute($this->_db);
         }
         
