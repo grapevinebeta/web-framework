@@ -2517,7 +2517,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     boxId: 'box-competition-review-inbox',
     
-    endpoint: 'competition',
+    endpoint: '/api/dataProvider/competition',
 
     
     prepareMessage: function(template, message) {
@@ -2571,7 +2571,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     customPopulateFields: function(text, data) {
         
-        var message = text.competition;
+        var message = text.review;
         
         var tr = $(data.trContext);
         
@@ -2584,7 +2584,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            boxManager.genericRequest('/api/static/competition' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/dataProvider/competition' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2601,11 +2601,11 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         var trContent = null;
         table.find('tbody tr').remove();
         
-        var data = this.data.competitions;
+        var data = this.data.reviews;
         
         for (var i = 0; i < data.length; i++) {
             
-            var currentId = parseInt(data[i].id);
+            var currentId = data[i].id;
             
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
@@ -2634,7 +2634,11 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         this.getContentDom().find('.data-grid-holder').show();
     },
     
-    construct: function () {}
+    construct: function () {
+     
+        this.noApiUrl = true;
+     
+    }
     
 });
 
@@ -2875,7 +2879,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'social',
+    endpoint: '/api/dataProvider/socials',
     
 
     prepareMessage: function(template, message) {
@@ -2943,7 +2947,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            boxManager.genericRequest('/api/static/social' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/dataProvider/socials' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2993,7 +2997,9 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     },
     
     construct: function () {
-        
+     
+        this.noApiUrl = true;
+     
     }
     
 });
