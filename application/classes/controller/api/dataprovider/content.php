@@ -13,6 +13,9 @@
         protected $default_fields;
         protected $expanded_fields;
 
+
+        protected $content = array();
+
         public function action_index()
         {
             $expand = !is_null($this->id);
@@ -46,6 +49,19 @@
 
             }
 
+            $cursor = $this->findContent($fields, $limit);
+            $this->apiResponse = array(
+                'filters' => $this->filterResponse,
+                'pagination'
+                => array('page' => $this->request->post('page'), 'pagesCount' => ceil($cursor->count() / 10))
+            );
+            $this->apiResponse[$this->collection] = $this->content;
+
+
+        }
+
+        protected function findContent($fields, $limit)
+        {
             $results = array();
             $cursor = $this->find($this->collection, $this->query, $fields, $limit);
 
@@ -63,13 +79,8 @@
 
                 }
             }
-            $this->apiResponse = array(
-                'filters' => $this->filterResponse,
-                'pagination'
-                => array('page' => $this->request->post('page'), 'pagesCount' => ceil($cursor->count() / 10))
-            );
-            $this->apiResponse[$this->collection] = $results;
-
+            $this->content = $results;
+            return $cursor;
 
         }
 

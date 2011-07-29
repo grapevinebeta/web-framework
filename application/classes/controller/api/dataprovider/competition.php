@@ -6,9 +6,37 @@
  * Time: 8:32 AM
  */
 
-    class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvider_Base
+    class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvider_Content
     {
 
+
+        protected $collection = "reviews";
+        protected $default_fields
+        = array('lid' => 1, 'status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
+        protected $expanded_fields
+        = array('lid' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
+
+
+        protected function findContent($fields, $limit)
+        {
+            $this->query['lid'] = array('$in' => array(2, 3, 4));
+            $cursor = parent::findContent($fields, $limit);
+            // TODO keyston : fetch location names
+            $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
+            foreach (
+                $this->content as &$doc
+            ) {
+
+                $doc['competition'] = $location_names[$doc['lid']];
+            }
+            return $cursor;
+        }
+
+
+        public function setFilters()
+        {
+            $this->filters = array();
+        }
 
         public function action_ogsi()
         {
@@ -43,7 +71,7 @@
             ) {
                 $location_name = $location_names[$location];
                 $results[$location_name]['ogsi'] = array(
-                    'value' => number_format($score,2),
+                    'value' => number_format($score, 2),
                     'rank'
                     => array(
                         'out' => $total_locations,
@@ -106,7 +134,7 @@
             ) {
                 $location_name = $location_names[$location];
                 $results[$location_name]['rating'] = array(
-                    'value' => number_format($doc['score'],2),
+                    'value' => number_format($doc['score'], 2),
                     'rank'
                     => array(
                         'value' => $rank++,
@@ -151,7 +179,7 @@
                     'negative' => $doc['negative'],
                     'neutral' => $doc['neutral'],
                     'total' => $doc['count'],
-                    'average' => number_format($doc['score'],2),
+                    'average' => number_format($doc['score'], 2),
                     'rank'
                     => array(
                         'out' => $total_locations,
@@ -163,6 +191,7 @@
             $this->apiResponse['distribution'] = $results;
         }
 
+
         public function action_comparsion()
         {
             $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
@@ -173,10 +202,10 @@
                 $dateInterval = 6;
             }
             $start_time = $this->startDate->sec;
-            
-            
+
+
             $end_time = $this->endDate->sec;
-            
+
             $seconds_step = floor(($end_time - $start_time) / $dateInterval);
             $dates = array();
             for (
@@ -185,7 +214,7 @@
                 $dates[] = strtotime('+ ' . ($seconds_step * $i) . ' seconds', $start_time);
             }
 
-            
+
             $js_locations = '[' . join(',', array_keys($location_names)) . ']';
             $js_dates = '[' . join(',', $dates) . ']';
             $map
@@ -269,7 +298,7 @@
                     }
                     $final[$date][] = array(
                         'competition' => $name,
-                        'value' => number_format($value,2)
+                        'value' => number_format($value, 2)
                     );
                 }
             }
