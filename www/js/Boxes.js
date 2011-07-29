@@ -1647,7 +1647,6 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
     },
     
     construct: function () {
-        
     }
     
 });
@@ -1809,6 +1808,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
     boxId: 'box-recent-reviews',
     
     endpoint: '/api/dataProvider/reviews',
+    
+    alerts: {}, // store all status counts
+    
 
     dateHelper: function(date) {
         
@@ -1899,6 +1901,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
         });
         
+        
         checkboxes.bind('change', function() {
             
             var checked = $(this).is(':checked');
@@ -1911,12 +1914,18 @@ var BC_ReviewInbox = BC_Inbox.extend({
             if(checked) {
                 checkboxes.prop('checked', false);
                 $(this).prop('checked', true);
-                
                
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                     status: value.toUpperCase()
                 }, function() {
                 
+                    // update alert value
+                    
+                    data.context.alerts[value]++;
+                    data.context.alerts[status]--;
+                    data.context.renderAlerts();
+                    
+                    status = value;
                     
                     tr.find('.recent-review-status-icon')
                     .removeClass('open closed todo')
@@ -1940,6 +1949,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     tr.find('.recent-review-status-icon')
                     .removeClass('open closed todo')
                     .addClass('opened');
+                
+                    data.context.alerts['opened']++;
+                    data.context.alerts[status]--;
+                    data.context.renderAlerts();
+                    status = 'opened';
                 
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
                     tr.prev().find('.col-status').html(reviewStatus); 
@@ -2036,10 +2050,15 @@ var BC_ReviewInbox = BC_Inbox.extend({
         var trContent = null;
         table.find('tbody tr').remove();
         var data = this.data.reviews;
+        
         for (var i = 0; i < data.length; i++) {
             
-            var currentId = data[i].id;
+            var currentId = data[i].id,
+            status = data[i].status,
+            statusLower = status.toLowerCase();
                       
+            tr = this.prepareMessage(trTemplate, data[i]);
+            
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
                 this.expandedPopulate, 
@@ -2050,7 +2069,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 )
             );
             
-            tr = this.prepareMessage(trTemplate, data[i]);
+            if(this.alerts[statusLower]) {
+                this.alerts[statusLower]++;
+            }
+            else
+                this.alerts[statusLower] = 1;
             
             
             if (i % 2) {
@@ -2068,9 +2091,28 @@ var BC_ReviewInbox = BC_Inbox.extend({
             table.children('tbody').append(trContent); // append two elements
             
         }
+        
+        this.renderAlerts();
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
         
+    },
+    
+    renderAlerts: function() {
+      
+      var alerts = $('#alerts .light-box-content');
+      
+      if(!alerts.length)
+          return;
+      
+      for(var key in this.alerts) {
+          
+          alerts.find('.desc .' + key).text(this.alerts[key]);
+          
+      }
+      
+      alerts.parent().removeClass('hide');
+      
     },
     
     construct: function () {
@@ -2475,7 +2517,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     boxId: 'box-competition-review-inbox',
     
-    endpoint: 'competition',
+    endpoint: '/api/dataProvider/competition',
 
     
     prepareMessage: function(template, message) {
@@ -2529,7 +2571,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     customPopulateFields: function(text, data) {
         
-        var message = text.competition;
+        var message = text.review;
         
         var tr = $(data.trContext);
         
@@ -2542,7 +2584,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            boxManager.genericRequest('/api/static/competition' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/dataProvider/competition' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2559,11 +2601,11 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         var trContent = null;
         table.find('tbody tr').remove();
         
-        var data = this.data.competitions;
+        var data = this.data.reviews;
         
         for (var i = 0; i < data.length; i++) {
             
-            var currentId = parseInt(data[i].id);
+            var currentId = data[i].id;
             
             trContent = trContentTemplate.clone().attr('data-row-id', currentId)
             .bind('expand',this.genericCallbackEventWrapper(
@@ -2592,7 +2634,11 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         this.getContentDom().find('.data-grid-holder').show();
     },
     
-    construct: function () {}
+    construct: function () {
+     
+        this.noApiUrl = true;
+     
+    }
     
 });
 
@@ -2833,7 +2879,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'social',
+    endpoint: '/api/dataProvider/socials',
     
 
     prepareMessage: function(template, message) {
@@ -2901,7 +2947,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     expandedPopulateCallback: function(data) {
 
             
-            boxManager.genericRequest('/api/static/social' + '/expand/' + data.id, {}, 
+            boxManager.genericRequest('/api/dataProvider/socials' + '/expand/' + data.id, {}, 
             data.context.genericCallbackEventWrapper(
                 data.context.populateFields, 
                 data));
@@ -2951,7 +2997,9 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
     },
     
     construct: function () {
-        
+     
+        this.noApiUrl = true;
+     
     }
     
 });
@@ -3183,7 +3231,7 @@ boxManager = {
                 
                     if(!current) {
                     
-                        console.log(j.box_id, self.collection);
+                        return;
                     
                     }
                 
