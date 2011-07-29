@@ -1879,6 +1879,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
         var message = text.review,
         tr = $(data.trContext),
+        checkboxes = tr.find('.single-check > input:checkbox'),
         status = message.status.toLowerCase(),
         self = tr;
                 
@@ -1889,47 +1890,56 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-content').text(message.content);
         
-        tr.find('.action-completed').bind('click', function(e) {
-            
-             e.preventDefault();
-            
-             boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                 status: 'CLOSED'
-             }, function() {
-                
-                tr.find('.recent-review-status-icon')
-                .removeClass('open closed todo')
-                .addClass('closed');
-                
-                var reviewStatus = $('<div class="reviewStatus reviewStatus-closed"><span>[ x ]</span></div>');
-                tr.prev().find('.col-status').html(reviewStatus); 
-                 
-             })
-            
-        });
         
-        tr.find('.action-todo').bind('click', function(e) {
+        checkboxes.bind('change', function() {
             
-            e.preventDefault();
+            var checked = $(this).is(':checked');
             
-            boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                status: 'TODO'
-            }, function() {
+            var nbrChecked = checkboxes.filter(':checked').length;
+            
+            var value = $(this).val();
+            checkboxes.attr('disabled','disabled');
+            
+            if(checked) {
+                checkboxes.prop('checked', false);
+                $(this).prop('checked', true);
                 
-                tr.find('.recent-review-status-icon')
-                .removeClass('open closed todo')
-                .addClass('todo');
+               
+                boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
+                    status: value.toUpperCase()
+                }, function() {
                 
-                var reviewStatus = $('<div class="reviewStatus reviewStatus-todo"><span>[ ! ]</span></div>');
-                tr.prev().find('.col-status').html(reviewStatus); 
-                 
-            })
+                    
+                    tr.find('.recent-review-status-icon')
+                    .removeClass('open closed todo')
+                    .addClass(value);
+                    
+                    var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
+                
+                    tr.prev().find('.col-status').html(reviewStatus); 
+                    checkboxes.removeAttr('disabled');
+                })
+               
+                
+            }
+            else if(!nbrChecked && message.score >= 3) {
+                
+                boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
+                    status: 'OPENED'
+                }, function() {
+                
+                    tr.find('.recent-review-status-icon')
+                    .removeClass('open closed todo')
+                    .addClass('opened');
+                
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
+                    tr.prev().find('.col-status').html(reviewStatus); 
+                    checkboxes.removeAttr('disabled');
+                })
+                
+            }
             
-        });
-        
-        tr.find('.single-check input').bind('click', function(e) {
-            
-            $(this).parent().children('.action').trigger('click');
             
         });
         

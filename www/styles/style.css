@@ -1353,21 +1353,23 @@ input[type=submit] {
         text-align:right;
         
     }
-        
-    .light-box-content .ogsi-score-bg-right {
-        background-image: url("../images/ogsi_mini.png");
-        background-position: -166px -131px;
-        background-repeat: no-repeat;
-        padding-right: 32px;
-    }
     
     .light-box-content .ogsi-score-bg-left {
-        background-image: url("../images/ogsi_mini.png");
+        background-image: url("../images/ogsi-bg.png");
         background-position: left top;
         background-repeat: no-repeat;
-        height: 106px;
-        padding-left: 0px;
-        padding-top: 5px;
+        height: 101px;
+        padding-left: 0;
+    }
+    
+    
+    .light-box-content .ogsi-score-bg-right {
+        background-image: url("../images/ogsi-bg.png");
+        background-position: right bottom;
+        background-repeat: no-repeat;
+        padding-right: 32px;
+        width: 89px;
+        margin-left: 12px;
     }
     
     .assets .controls {

@@ -60,6 +60,9 @@ class Controller_Api_Box extends Controller_Api {
         {    
 
             $holders = $this->request->post('holders');
+            
+            if(!$holders)
+                return;
 
             try {
                 $b->persists($holders);
