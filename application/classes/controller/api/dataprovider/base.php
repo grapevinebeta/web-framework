@@ -199,7 +199,11 @@
             $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
             $cursor = $collection->find($query, $fields);
             if ($limit > -1) {
-                $skip = 1; //intval($this->request->post('page', 1));
+                $skip = $this->request->post('page');
+                if (empty($skip)) {
+                    $skip = 1;
+                }
+                $skip = intval($skip);
                 $skip = ($skip - 1) * $limit;
                 $cursor->limit($limit)->skip($skip);
             }
