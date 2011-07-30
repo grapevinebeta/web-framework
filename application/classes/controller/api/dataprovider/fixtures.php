@@ -50,7 +50,10 @@
 
 
             $reviews = new MongoCollection($db, 'reviews');
-            $reviews->ensureIndex(array('date' => 1, 'lid' => 1), array('background' => TRUE));
+            $reviews->ensureIndex(
+                array('date' => 1, 'loc' => 1, 'status' => 1, 'rating' => 1, 'site' => 1), array('background' => TRUE)
+            );
+
 
             $metrics = new MongoCollection($db, 'metrics');
             $metrics->ensureIndex(array('date' => 1, 'type' => 1, 'period' => 1), array('background' => TRUE));
@@ -115,15 +118,16 @@
                                 'site' => $site,
                                 'tags' => null,
                                 'notes' => '',
+                                'rating' => '',
                                 'content' => $content,
                                 'title' => substr($content, 0, 40) . '...',
                                 'identity' => 'Guest' . mt_rand(600, 1000),
                                 'category' => '',
                                 'status' => 'OPENED',
-                                'lid' => $location_id
+                                'loc' => $location_id
 
                             );
-                            $review_entries[] = $doc;
+
                             if (!isset($metric_entries['scoreboard'][$date->sec])) {
                                 $metric_entries['scoreboard'][$date->sec] = array(
                                     'type' => 'scoreboard',
@@ -183,17 +187,21 @@
                                 $s[$id]['positive'] += 1;
                                 $r[$id][$site]['positive'] += 1;
                                 $scoreboard_overall['aggregates'][$location_id]['positive']++;
+                                $doc['rating'] = 'positive';
                             } else {
                                 if ($score >= 3) {
                                     $s[$id]['neutral'] += 1;
                                     $r[$id][$site]['neutral'] += 1;
                                     $scoreboard_overall['aggregates'][$location_id]['neutral']++;
+                                    $doc['rating'] = 'neutral';
                                 } else {
                                     $s[$id]['negative'] += 1;
                                     $r[$id][$site]['negative'] += 1;
                                     $scoreboard_overall['aggregates'][$location_id]['negative']++;
+                                    $doc['rating'] = 'negative';
                                 }
                             }
+                            $review_entries[] = $doc;
                             $s[$id]['points'] += $score;
                             $s[$id]['count'] += 1;
                             $r[$id][$site]['points'] += $score;
@@ -220,7 +228,7 @@
                 }
             }
             $all_metrics[] = $scoreboard_overall;
-            
+
             $this->time();
             $metrics->batchInsert($all_metrics);
             $this->time(false, "reviews.$location_id.metrics (" . count($all_metrics) . ')');

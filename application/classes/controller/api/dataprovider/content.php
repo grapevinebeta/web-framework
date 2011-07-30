@@ -63,17 +63,86 @@
         protected function findContent($fields, $limit)
         {
             $results = array();
-            $cursor = $this->find($this->collection, $this->query, $fields, $limit);
 
-            $cursor->sort(array('date' => -1));
+            $query = $this->defaultQuery();
 
-            $reviews = array();
+            $filters = $this->request->post('filters');
+            $status = Arr::get($filters, 'status');
+            $sources = Arr::get($filters, 'sources');
+            $conditions = array(
+                'rating' => array(),
+                'site' => array(),
+                'status' => array(),
+
+            );
+            if (!empty($status)) {
+
+
+                foreach (
+                    $status as $status
+                ) {
+                    switch ($status) {
+                    case 'negative':
+                    case 'positive':
+                    case 'neutral':
+                        $conditions['rating'][] = $status;
+                        break;
+                    default:
+                        $conditions['status'][] = $status;
+                    }
+
+                }
+            }
+            if (!empty($source)) {
+                foreach (
+                    $sources as $source
+                ) {
+                    $conditions['site'] = $source;
+                }
+            }
+            foreach (
+                $conditions as $cond
+                => $values
+            ) {
+
+                if (empty($values)) {
+                    continue;
+                }
+                if (count($values) == 1) {
+                    $query[$cond] = $values[0];
+                } else {
+                    $query[$cond] = array('$in' => $values);
+                }
+
+
+            }
+
+
+            //  die(print_r($query));
+            $cursor
+                    = $this->find($this->collection, $query, $fields, $limit);
+
+            $cursor->sort(
+                array(
+                    'date'
+                    => -1
+                )
+            );
+
+            $reviews
+                    = array();
             foreach (
                 $cursor as $doc
-            ) {
+            )
+            {
                 if ($this->matches_filter($doc)) {
-                    $doc['date'] = $doc['date']->sec;
-                    $doc['id'] = $doc['_id']->{'$id'};
+                    $doc['date']
+                            = $doc['date']->sec;
+                    $doc['id']
+                            = $doc['_id']->
+                    {
+                    '$id'
+                    };
                     unset($doc['_id']);
                     $results[] = $doc;
 
@@ -84,18 +153,23 @@
 
         }
 
-        public function action_expand()
+        public
+        function action_expand()
         {
             $this->action_index();
 
         }
 
-        protected function setFilters()
+        protected
+        function setFilters()
         {
 
         }
 
-        protected function update($newobj)
+        protected
+        function update(
+            $newobj
+        )
         {
 
             return !$this->db->selectCollection($this->collection)->update(

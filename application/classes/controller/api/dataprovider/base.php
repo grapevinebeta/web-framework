@@ -103,18 +103,27 @@
 
 
             //
-            $this->query = array('date' => array('$gte' => $this->startDate, '$lte' => $this->endDate));
 
+            //TODO Keyston : have location fetch fallbck to session
 
-            $location = $this->request->post('loc');
-            if (empty($location)) {
-                $location = 1;
-            }
-            $this->location = intval($location);
-            $this->mongo = new Mongo();
+            $this->location = (int)$this->request->post('loc');
+            $this->location = $this->location ? $this->location : 1;
+
+            $this->query = array(
+                'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
+            );
+
+            $this->mongo = new Mongo("mongodb://50.57.109.174:27017");
             $this->db = $this->mongo->auto;
 
 
+        }
+
+        protected function defaultQuery()
+        {
+            return array(
+                'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
+            );
         }
 
         protected function time($start = true, $tag = null)

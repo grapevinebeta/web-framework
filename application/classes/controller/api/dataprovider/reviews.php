@@ -45,7 +45,11 @@
         {
             $status = $this->request->post('status');
 
-            $this->apiResponse['alerts'] = $this->find('reviews', array('status' => $status))->count();
+            $this->apiResponse['alerts'] = $this->find(
+                'reviews', array(
+                    'loc' => $this->location, 'status' => $status
+                )
+            )->count();
 
         }
 

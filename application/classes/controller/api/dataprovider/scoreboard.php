@@ -12,7 +12,7 @@
 
         public function fetch_overall()
         {
-            $reviews = $this->db->selectCollection('metrics');
+            
             $date = new MongoDate(mktime(0, 0, 0, 1, 1, 1970));
             $dist = new Api_Fetchers_Distribution($this->mongo, array($this->location));
             $doc = $dist->range($date)->period('overall')->fetch();
