@@ -72,7 +72,7 @@
                 $location_name = $location_names[$location];
                 $results[$location_name]['ogsi'] = array(
                     'value' => number_format($score, 2),
-                    'competition'=>$location_name,
+                    'competition' => $location_name,
                     'rank'
                     => array(
                         'out' => $total_locations,
@@ -108,7 +108,7 @@
             }*/
             //reviews
             $sort = new Sorter('count', -1);
-            $sort->sort($distributions);
+            $distributions = $sort->sort($distributions);
             foreach (
                 $distributions as $location
                 => $doc
@@ -116,7 +116,7 @@
                 $location_name = $location_names[$location];
                 $results[$location_name]['reviews'] = array(
                     'value' => $doc['count'],
-                    'competition'=>$location_name,
+                    'competition' => $location_name,
                     'rank'
                     => array(
                         'value' => $rank++,
@@ -129,7 +129,7 @@
             //ratings/score
             $rank = 1;
             $sort = new Sorter('score', -1);
-            $sort->sort($distributions);
+            $distributions = $sort->sort($distributions);
             foreach (
                 $distributions as $location
                 => $doc
@@ -137,7 +137,7 @@
                 $location_name = $location_names[$location];
                 $results[$location_name]['rating'] = array(
                     'value' => number_format($doc['score'], 2),
-                    'competition'=>$location_name,
+                    'competition' => $location_name,
                     'rank'
                     => array(
                         'value' => $rank++,
@@ -183,7 +183,7 @@
                     'neutral' => $doc['neutral'],
                     'total' => $doc['count'],
                     'average' => number_format($doc['score'], 2),
-                    'competition'=>$location_name,
+                    'competition' => $location_name,
                     'rank'
                     => array(
                         'out' => $total_locations,

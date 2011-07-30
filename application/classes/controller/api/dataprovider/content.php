@@ -129,20 +129,14 @@
                 )
             );
 
-            $reviews
-                    = array();
+            $reviews = array();
             foreach (
                 $cursor as $doc
             )
             {
                 if ($this->matches_filter($doc)) {
-                    $doc['date']
-                            = $doc['date']->sec;
-                    $doc['id']
-                            = $doc['_id']->
-                    {
-                    '$id'
-                    };
+                    $doc['date'] = $doc['date']->sec;
+                    $doc['id'] = $doc['_id']->{'$id'};
                     unset($doc['_id']);
                     $results[] = $doc;
 
@@ -153,8 +147,7 @@
 
         }
 
-        public
-        function action_expand()
+        public function action_expand()
         {
             $this->action_index();
 

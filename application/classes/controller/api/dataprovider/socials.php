@@ -60,19 +60,21 @@
                     $doc as $site
                     => $actions
                 ) {
+                    $site = str_replace('.com', '', $site);
+                    $site = ucfirst($site);
                     foreach (
                         $actions as $name
                         => $value
                     ) {
-                       // $key = "$site.$name";
+
                         if (!isset($entries[$site])) {
                             $entries[$site] = array(
                                 'network' => $site,
-                                'categories'=>array(),
+                                'categories' => array(),
                                 'total' => 0
                             );
                         }
-                        $entries[$site]['categories'][$name]=$value;
+                        $entries[$site]['categories'][$name] = $value;
                         $entries[$site]['total'] += $value;
                     }
 

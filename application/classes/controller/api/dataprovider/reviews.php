@@ -99,7 +99,8 @@
                     $doc as $site
                     => $site_info
                 ) {
-
+                    $site = str_replace('.com', '', $site);
+                    $site = ucfirst($site);
 
                     if (!isset($sites[$site])) {
                         $sites[$site] = array(
