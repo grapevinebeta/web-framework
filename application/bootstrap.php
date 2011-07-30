@@ -80,7 +80,7 @@ if (isset($_SERVER['KOHANA_ENV']))
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => '/',
+	'base_url'   => '/grapevine',
 	'index_file' => '',
 ));
 
@@ -281,6 +281,9 @@ Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 	));
 Route::set('api_rest', '<directory>(/<controller>(/<action>/<field>(/<id>)))', array(
 		'directory' => '(api)'
+	));
+    Route::set('admin', '<directory>(/<controller>(/<action>(/<id>)))', array(
+		'directory' => '(admin)'
 	));
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(

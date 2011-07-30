@@ -29,10 +29,38 @@
         {
             $location = $this->request->query('location');
 
-            $results = $this->search($location, array_keys($this->sites));
-            var_dump($results);
+            # $results = $this->search($location, array_keys($this->sites));
+
+            $this->search_judysbook($location, 'San Antonio', 'TX');
+            #var_dump($results);
 
 
+        }
+
+        private function search_judysbook($location, $city, $state)
+        {
+
+            $url = 'http://www.judysbook.com/searchresult/';
+            $url .= urlencode($city) . '/';
+            $url .= urlencode($state) . '?';
+
+            $params = array(
+                'q' => $location,
+                'afsq' => $location . " $city $state",
+                'loc' => ''
+            );
+
+            //  $url .= http_build_query($params);
+
+            $request = Request::factory($url)->method('GET')->query($params);
+    
+            var_dump($request);
+            $response = $request->execute();
+            var_dump($response);
+
+            /*San+Antonio/TX?q=Northside+Ford+12300+San+Pedro+Ave+San+Antonio+TX+78216
+                    &afsq=Northside+Ford+12300+San+Pedro+Ave+San+Antonio+TX+78216+San+Antonio%2c+TX&loc=
+            http://www.judysbook.com/searchresult/San+Antonio/TX?q=Northside+Ford+12300+San+Pedro+Ave+San+Antonio+TX+78216&afsq=Northside+Ford+12300+San+Pedro+Ave+San+Antonio+TX+78216+San+Antonio%2c+TX&loc=*/
         }
 
         private function search($location, $sites, $retry = true)
