@@ -41,6 +41,14 @@
             );
         }
 
+        public function action_alerts()
+        {
+            $status = $this->request->post('alerts');
+
+            $this->apiResponse['alerts'] = $this->find('reviews', array('alerts' => $status))->count();
+
+        }
+
 
         /**
          * @todo Eric change it to the proper implementation, this is
@@ -48,17 +56,17 @@
          */
         public function action_categories()
         {
-       
+
             $automotive = array(
                 '' => 'Select',
                 'General', 'Sales', 'Service', 'Parts', 'Finance'
-            );    
-            
+            );
+
             $restaurants = array(
                 '' => 'Select',
                 'General', 'Food', 'Service'
-            );    
-                
+            );
+
             $this->apiResponse['categories'] = $automotive;
 
         }
@@ -67,7 +75,7 @@
         {
             $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
             $this->apiResponse = $ogsi->competition(array(2, 3, 4))
-                    ->range(new MongoDate(mktime(0, 0, 0, 1, 1, 1970)),$this->endDate)->fetch();
+                    ->range(new MongoDate(mktime(0, 0, 0, 1, 1, 1970)), $this->endDate)->fetch();
         }
 
         public function action_sites()
@@ -182,5 +190,5 @@
             $this->apiResponse = array('error' => $error);
         }
 
-       
+
     }
