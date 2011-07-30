@@ -53,6 +53,8 @@
          */
         protected $query;
 
+        protected $include_date = TRUE;
+
 
         public function before()
         {
@@ -86,6 +88,10 @@
                 $period = "-1 month";
             }
             $start = strtotime(date('m/d/Y'));
+            $include_date = $this->request->post('include_date');
+            if (!empty($include_date)) {
+                $this->include_date = (bool)$include_date;
+            }
             $this->endDate = new MongoDate($start);
             $this->startDate = new MongoDate(strtotime($period, $start));
 
@@ -113,7 +119,7 @@
                 'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
             );
 
-            $this->mongo = new Mongo("mongodb://50.57.109.174:27017");
+            $this->mongo = new Mongo();
             $this->db = $this->mongo->auto;
 
 
@@ -121,9 +127,16 @@
 
         protected function defaultQuery()
         {
+            if ($this->include_date) {
+                return array(
+                    'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
+                );
+            }
+
             return array(
-                'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
+                'loc' => $this->location
             );
+
         }
 
         protected function time($start = true, $tag = null)
