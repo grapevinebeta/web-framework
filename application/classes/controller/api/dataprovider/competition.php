@@ -12,14 +12,14 @@
 
         protected $collection = "reviews";
         protected $default_fields
-        = array('lid' => 1, 'status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
+        = array('loc' => 1, 'status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
         protected $expanded_fields
-        = array('lid' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
+        = array('loc' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
 
         protected function findContent($fields, $limit)
         {
-            $this->query['lid'] = array('$in' => array(2, 3, 4));
+            $this->query['loc'] = array('$in' => array(2, 3, 4));
             $cursor = parent::findContent($fields, $limit);
             // TODO keyston : fetch location names
             $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
@@ -27,7 +27,7 @@
                 $this->content as &$doc
             ) {
 
-                $doc['competition'] = $location_names[$doc['lid']];
+                $doc['competition'] = $location_names[$doc['loc']];
             }
             return $cursor;
         }

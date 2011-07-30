@@ -342,7 +342,7 @@
             $default_subscriber = array_map(array($this, 'map_reach'), $social_actions);
 
             $socials = new MongoCollection($db, 'socials');
-            $socials->ensureIndex(array('date' => 1, 'lid' => 1), array('background' => TRUE));
+            $socials->ensureIndex(array('date' => 1, 'loc' => 1), array('background' => TRUE));
 
             $metrics = new MongoCollection($db, 'metrics');
             $metrics->ensureIndex(array('date' => 1, 'type' => 1, 'period' => 1), array('background' => TRUE));
@@ -426,7 +426,7 @@
                                     'identity' => 'Guest' . mt_rand(600, 1000),
                                     'category' => '',
                                     'status' => 'OPENED',
-                                    'lid' => $location_id,
+                                    'loc' => $location_id,
                                     'link' => "http://" . $site . '/' . $this->random_gen(mt_rand(10, 15))
 
                                 );
