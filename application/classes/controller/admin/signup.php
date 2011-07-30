@@ -14,12 +14,12 @@
         = array(
 
             'yelp.com' => '/biz\//',
-            'judysbook.com' => '/cities\/[^0-9]+[0-9]+\/[^\.]+\.htm/',
-            'superpages.com' => '/bp\/.+\/.*L[0-9]+\.htm/',
+            /* 'superpages.com' => '/bp\/.+\/.*L[0-9]+\.htm/',*/
+            'yellowpages.com' => '/-[0-9]+/',
             'insiderpages.com' => '/b\/[0-9]+\//',
             'citysearch.com' => '/profile\/[0-9]+\/[^\.]+\.html/',
+
             'edmunds.com' => '/dealerships\//',
-            'mydealerreport.com' => '/DealerID=[0-9]+/',
             'dealerrater.com' => '/review-[0-9]+\//'
 
 
@@ -29,10 +29,11 @@
         {
             $location = $this->request->query('location');
 
-            # $results = $this->search($location, array_keys($this->sites));
+            $results = $this->search($location, array_keys($this->sites));
 
-            $this->search_judysbook($location, 'San Antonio', 'TX');
-            #var_dump($results);
+            $results = array_merge($results, $this->search_judysbook($location, 'San Antonio', 'TX'));
+
+            var_dump($results);
 
 
         }
@@ -42,7 +43,7 @@
 
             $url = 'http://www.judysbook.com/searchresult/';
             $url .= urlencode($city) . '/';
-            $url .= urlencode($state) . '?';
+            $url .= urlencode($state);
 
             $params = array(
                 'q' => $location,
@@ -50,13 +51,31 @@
                 'loc' => ''
             );
 
-            //  $url .= http_build_query($params);
 
-            $request = Request::factory($url)->method('GET')->query($params);
-    
-            var_dump($request);
+            //$url .= http_build_query($params);
+            /**
+             * @var $request Request
+             */
+            $request = Request::factory($url)->query($params);
+            $client = $request->get_client();
+            $useragent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
+            $client->options(CURLOPT_USERAGENT, $useragent);
+
+
             $response = $request->execute();
-            var_dump($response);
+
+            $content = $response->body();
+            $matches = array();
+            //'judysbook.com' => '',
+            preg_match('/cities\/[^0-9]+[0-9]+\/[^\.]+\.htm/', $content, $matches);
+            if (count($matches)) {
+                return array(
+                    'judysbook.com'
+                    => array('title' => 'Found you !!!', 'url' => 'http://www.judysbook.com/' . $matches[0])
+                );
+            }
+            return array();
+
 
             /*San+Antonio/TX?q=Northside+Ford+12300+San+Pedro+Ave+San+Antonio+TX+78216
                     &afsq=Northside+Ford+12300+San+Pedro+Ave+San+Antonio+TX+78216+San+Antonio%2c+TX&loc=
