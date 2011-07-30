@@ -43,9 +43,9 @@
 
         public function action_alerts()
         {
-            $status = $this->request->post('alerts');
+            $status = $this->request->post('status');
 
-            $this->apiResponse['alerts'] = $this->find('reviews', array('alerts' => $status))->count();
+            $this->apiResponse['alerts'] = $this->find('reviews', array('status' => $status))->count();
 
         }
 
