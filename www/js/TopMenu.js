@@ -186,7 +186,7 @@ jQuery(function(){
                             boxManager.exportBoxes({ 
                                 emails: emails, 
                                 callback: function() {
-                                    self.helpers.tips.text('Email was sended correctly. This message will close in 2 seconds.');
+                                    self.helpers.tips.html('<strong>Email was sended correctly. This message will close in 2 seconds.</strong>');
                                 
                                     setTimeout(function() {
                                         d.dialog("close");
