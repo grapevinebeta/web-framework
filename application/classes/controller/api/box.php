@@ -321,42 +321,82 @@ class Controller_Api_Box extends Controller_Api {
 
     }
     
+    private function initCurl() {
+        
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        
+        return $ch;
+        
+    }
+    
     public function action_export() {
-
-
-
+        
+        $recipients = $this->request->post('email');
+        
         $markup = View::factory('_partials/export_template', array(
-                    'html' => $this->request->post('html'),
-                ));
+            'html' => $this->request->post('html'),
+        ));
 
         $apiKey = Kohana::config('globals.api_key');
         $url = sprintf(Kohana::config('globals.docraptor_url'), $apiKey);
 
-        $ch = curl_init();
-
-        $name = substr(md5(time()), 0, 7) . '.pdf';
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        /**
+         * we made initial request to get document if export button is clicked
+         * or fetch it asynchronous when email button is clicked
+         */
+        $ch = $this->initCurl();
+        
+        $postArray = array(
             'doc[document_content]' => $markup,
             'doc[document_type]' => 'pdf',
-            'doc[name]' => $name,
             'doc[test]' => Kohana::config('globals.test_mode'),
             'doc[strict]' => 'none',
-        ));
-
-
+        );
+              
+        
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $postArray['doc[name]'] = $name = substr(md5(time()), 0, 7) . '.pdf';
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postArray);
         $result = curl_exec($ch);
         curl_close($ch);
+        
+        if(!$recipients) {
+            
+            
+            header('Content-type: application/pdf');
+            header('Content-disposition: attachment; filename="' . $name . '"');
+            die($result);
 
-        header('Content-type: application/pdf');
-        header('Content-disposition: attachment; filename="' . $name . '"');
+            
+        }
+        else {
+            
+            $count = 0;
+            foreach ($recipients as $recipient) {
+                
+                $count += Model_Mailer::getInstance()->send($recipient, 'Test email with Page ', 'Test', $result);
+            }
+            
+            return $this->apiResponse['success'] = $count;
+            
+        }
 
+        
+        
+        
+        return $this->apiResponse['error'] = 1;
+        
 
-        die($result);
+        
     }
 
 }

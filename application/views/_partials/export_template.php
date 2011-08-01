@@ -78,8 +78,21 @@ tfoot tr th {
 }
 
 .block {
-    float:left;
+    
     width:50%;
+}
+
+.box-container-right {
+    float:right;
+
+}
+
+.clear {
+    clear:both;
+}
+
+.box-container-left {
+    float:left;
 }
 
 .block2 {

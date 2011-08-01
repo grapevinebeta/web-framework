@@ -3,7 +3,7 @@
 /**
  * 
  * 
- * example use:
+ * example of use:
  * 
  * Model_Mailer::getInstance()
  *  ->send(array('tworzenieweb@gmail.com' => 'Łukasz Adamczewski'), 'Test', 'Test');
@@ -31,7 +31,7 @@ class Model_Mailer extends Model {
     
     /**
      * Return singleton instance
-     * @return Model_Email
+     * @return Model_Mailer
      */
     public static function getInstance()
     {
@@ -50,13 +50,17 @@ class Model_Mailer extends Model {
      * @return The return value is the number of recipients who were accepted for
    * delivery.
      */
-    public function send($to, $subject, $body) {
+    public function send($to, $subject, $body, $attachment) {
+        
+        
+        $a = Swift_Attachment::newInstance($attachment, "export.pdf", "application/pdf");
         
         $message = Swift_Message::newInstance()
                 ->setSubject($subject)
                 ->setFrom(Kohana::config('globals.from_email'))
                 ->setTo($to)
-                ->setBody($body, 'text/html');
+                ->setBody($body, 'text/html')
+                ->attach($a);
         
         
         $mailer = new Swift_Mailer($this->transport);

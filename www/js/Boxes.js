@@ -3367,22 +3367,28 @@ boxManager = {
     /**
      * get all boxes from manager and fetch graph, inbox and tabular data
      */
-    exportBoxes: function () {
+    exportBoxes: function (params) {
       
-        for (i in this.collection) {
+      if(!params) {
+          params = null;
+      }
+      
+      $('#boxes-holder .box-container .box').each(function() {
 
             var block;
             var content;
-            var box = this.collection[i];
+            var box = boxManager.getBox(this.id);
         
-            if(box.ignore)
-                continue;
+            if(!box || box.ignore)
+                return;
 
             if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
                 block = Exporter.template.blockWide.clone();
             }
-            else
-                block = Exporter.template.block.clone();
+            else {
+                block = Exporter.template.block.clone().addClass(box.getBoxDom().parent().attr('class'));
+                
+            }
             
 
             if(box.hasOwnProperty('graph')) {
@@ -3393,7 +3399,7 @@ boxManager = {
             
                 title2.add(content2).appendTo(block2.find('.inner'));
 
-                block2.appendTo(this.exporter.template.container);
+                block2.appendTo(boxManager.exporter.template.container);
                 
             }
         
@@ -3408,12 +3414,16 @@ boxManager = {
                 var title = $("<h2/>").text(box.getHeaderDom()
                     .find('.box-header-title').text());
                 title.add(content).appendTo(block.find('.inner'));
-                block.appendTo(this.exporter.template.container);
+                block.appendTo(boxManager.exporter.template.container);
+                
+                if(box.getBoxDom().parent().is('.box-container-right')) {
+                    $('<div class="clear"/>').appendTo(boxManager.exporter.template.container);
+                }
             }
  
-        }
+        });
  
-        this.exporter.submit();
+        boxManager.exporter.submit(params);
 
     }
 };
@@ -3474,8 +3484,7 @@ var Exporter = {
             
     },
        
-    submit: function() {
-            
+    submit: function(params) {
             
         var H = Highcharts;
         var self = this;
@@ -3488,16 +3497,29 @@ var Exporter = {
         }, {
             display: 'NONE'
         }, document.body);
-            
-            
+
         H.createElement('input', {
             type: 'HIDDEN',
             name: 'html',
             value: self.template.container.html()
         }, null, form);
+        
+        if(params && params['emails']) {
             
-        form.submit();
+            $.post('/api/box/export', {
+                
+                html: self.template.container.html(),
+                email: params['emails']
+                
+            }, function() {
+                
+                params.callback();
+                
+            });
             
+        }
+        else   
+            form.submit();
             
         H.discardElement(form);
             

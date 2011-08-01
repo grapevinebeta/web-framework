@@ -47,15 +47,30 @@ jQuery(function(){
         
         },
         
+        openEmailExport: function() {
+            
+            $( "#dialog-export" ).dialog( "open" );
+            
+            
+        },
+        
         attachEvents: function() {
+            
+            var self = this;
           
             $('.export').bind('click', function() {
             
                 boxManager.exportBoxes();
             
             });
+            
+            
+            $('.email').bind('click', function(e) {
+                e.preventDefault();
+                self.openEmailExport();
+            
+            });
         
-            var self = this;
         
             this.periodSelector.selectbox().bind('change', function() {
          
@@ -104,6 +119,95 @@ jQuery(function(){
           
         },
         
+        helpers: {
+            
+            tips: $( ".validateTips" ),
+            
+            updateTips: function(t) {
+                this.tips
+                .text( t )
+                .addClass( "ui-state-highlight" );
+                setTimeout(function() {
+                    tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            },
+    
+            checkLength: function( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    this.updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+    
+            checkRegexp: function(o, value, regexp, n ) {
+                if ( !( regexp.test( value ) ) ) {
+                    o.addClass( "ui-state-error" );
+                    this.updateTips( n );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            
+        },
+        
+        initExport: function() {
+          
+            var email = $( "#email" ),
+            allFields = $( [] ).add( email );
+            
+            var self = this;
+          
+            $( "#dialog-export" ).dialog({
+                autoOpen: false,
+                height: 250,
+                width: 350,
+                modal: true,
+                buttons: {
+                    "Export": function() {
+                        var bValid = true;
+                        allFields.removeClass( "ui-state-error" );
+                
+                        bValid = bValid && self.helpers.checkLength(email, "email", 6, 80);
+                
+                        var emails = email.val().split(',');
+                
+                        for(var e in emails) {
+                            bValid = bValid && 
+                            self.helpers.checkRegexp(email,emails[e], /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
+                        }
+                
+                        var d = $(this);
+                        if (bValid) {
+                            boxManager.exportBoxes({ 
+                                emails: emails, 
+                                callback: function() {
+                                    self.helpers.tips.text('Email was sended correctly. This message will close in 2 seconds.');
+                                
+                                    setTimeout(function() {
+                                        d.dialog("close");
+                                    }, 3000);
+                                
+                                }
+                            });
+                        
+                        }
+                    },
+                    Cancel: function() {
+                        $(this).dialog("close");
+                    }
+                },
+                close: function() {
+                    allFields.val("").removeClass("ui-state-error");
+                }
+            });
+          
+        },
+        
         initialize: function() {
           
             this.periodSelector = $("#period-selector");
@@ -113,7 +217,6 @@ jQuery(function(){
             this.maxDate = this.dateSelector.val();
             this.form = $("#range-form");
             this.dateRange = $("#date-range");
-       
        
             this.maxDate = this.maxDate.length ? new Date(this.maxDate) : '-1d';
             if(this.maxDate instanceof Date) {
@@ -149,6 +252,7 @@ jQuery(function(){
           if($("#period-selector").length) {  
             this.initialize();
             this.initRange();
+            this.initExport();
             this.attachEvents();
           }
        
