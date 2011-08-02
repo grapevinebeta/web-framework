@@ -24,7 +24,7 @@
                     <tbody>
                         <tr>
                             <td class="col-score"></td>
-                            <td class="col-date a-center"></td>
+                            <td class="col-date a-center" style="width:36px;"></td>
                             <td class="col-title" style="width:466px;"><div class="wrapper"><div class="in"></div></div></td>
                             <td class="col-site a-right"></td>
                             <td class="col-competition a-right" style="width:70px;"></td>

@@ -234,6 +234,13 @@ Route::set('oauth_twitter_callback', 'api/settings/twittercallback(/loc/<locatio
 		'action' => 'twittercallback',
 	));
 
+// static pages
+Route::set('pages', 'pages(/<name>)')
+	->defaults(array(
+		'controller' => 'resources',
+		'action' => 'index',
+	));
+
 // Account Settings URLs
 // @todo Add remaining sections here
 Route::set('account_settings_social', 'account/socials')

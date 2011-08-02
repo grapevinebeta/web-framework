@@ -61,7 +61,7 @@
                     <tr class="data nb-reviews">  
                         <th>
                             <span class="score">No. of Reviews</span>
-                            <span class="rank">-Rank</span>
+                            <span class="rank">Rank</span>
                         </th>
                         <th>
                             <span class="score"></span>

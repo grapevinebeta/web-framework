@@ -25,14 +25,26 @@
 			counterElement: 'span',
 			cssWarning: 'warning',
 			cssExceeded: 'exceeded',
-			counterText: ''
+			counterText: '',
+                        submitEnable: null // enable submit when text is entered
 		}; 
 			
 		var options = $.extend(defaults, options); 
 		
 		function calculate(obj){
+                    
 			var count = $(obj).val().length;
 			var available = options.allowed - count;
+                        
+                        if(count >= 2 && options.submitEnable && options.submitEnable.attr('disabled')) {
+                            
+                            options.submitEnable.removeAttr('disabled').removeAttr('style');
+                            
+                        }
+                        else if(options.submitEnable && count < 2 ) {
+                            options.submitEnable.attr('disabled', 'disabled').css('opacity', 0.4);
+                        }
+                        
 			if(available <= options.warning && available >= 0){
 				$(obj).next().addClass(options.cssWarning);
 			} else {

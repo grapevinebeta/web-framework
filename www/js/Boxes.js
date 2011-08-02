@@ -829,7 +829,7 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
                     align: 'high'
                 },
                 min: 0,
-                max: this.maxValue + 1,
+                max: 6,
                 endOnTick: false
             },
             exporting: {enabled: false},
@@ -1368,6 +1368,8 @@ var BC_StatusUpdate = BoxController.extend({
     
     attachBoxEvents: function() {
         
+        var self = this;
+        
         this.getContentDom().delegate('form#wallPoster', 'submit', function(e) {
             
             e.preventDefault();
@@ -1397,6 +1399,11 @@ var BC_StatusUpdate = BoxController.extend({
                 
                 textarea.removeAttr('disabled');
                 textarea.val('');
+                self.getContentDom().find('.message span').fadeIn();
+                
+                setTimeout(function() {
+                    self.getContentDom().find('.message span').fadeOut();
+                }, 3000);
                 
             });
             
@@ -1424,7 +1431,8 @@ var BC_StatusUpdate = BoxController.extend({
         
         this.getContentDom().find(".status-updater textarea").charCount({
             allowed: 120,		
-            warning: 20	
+            warning: 20,
+            submitEnable: this.getContentDom().find('.buttons button')
         });
         
     },
@@ -2577,7 +2585,6 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-content').text(message.content);
-        tr.find('.details-network').addClass(message.network.toLowerCase());
         
     },
 
@@ -3375,13 +3382,15 @@ boxManager = {
       
       $('#boxes-holder .box-container .box').each(function() {
 
-            var block;
-            var content;
-            var box = boxManager.getBox(this.id);
+            var block,
+            content,
+            box = boxManager.getBox(this.id);
         
+            // not all boxes are handled by js
             if(!box || box.ignore)
                 return;
 
+            // choose template corresponding to box floating
             if(!box.getBoxDom().parent().is('.box-container-left, .box-container-right')) {
                 block = Exporter.template.blockWide.clone();
             }
@@ -3390,8 +3399,7 @@ boxManager = {
                 
             }
             
-
-            // we show only the selected option
+            // we show only the selected view of box
             if(box.hasOwnProperty('graph') && box.getHeaderDom().find('.box-header-button-show-graph.active').length) {
                 
                 var block2 = block.clone();
@@ -3406,7 +3414,8 @@ boxManager = {
             else {
 
                 content = box.getContentDom()
-                .find('.data-grid-holder table:visible:first').clone();
+                .find('.data-grid-holder table:visible:first')
+                .clone();
             
                 content.find('tr.expanded').remove();
 

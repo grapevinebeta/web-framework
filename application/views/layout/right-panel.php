@@ -5,7 +5,7 @@
     <?php else: ?>
         <?php echo view::factory('_partials/box/alerts'); ?>
     <?php endif; ?>
-    <?php echo view::factory('_partials/box/recent_activity'); ?>
+    <?php echo view::factory('_partials/box/social_activity'); ?>
 
     <?php if(0): ?>
     <div class="light-box">

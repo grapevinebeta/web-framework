@@ -17,7 +17,9 @@ function determineMonthDiff(period)
         case '6m':
             return 6;
         case '1y':
-            return 12;   
+            return 12;
+        default:
+            return false;
     }
 }
 

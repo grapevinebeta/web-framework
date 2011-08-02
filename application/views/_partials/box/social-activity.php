@@ -13,21 +13,18 @@
                 <thead>
                     <tr>
                         <th class="a-left"><?php echo __('Network'); ?></th>
-                        <th class="a-left"><?php echo __('Action'); ?></th>
                         <th><?php echo __('Total'); ?></th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th class="a-left"><?php echo __('Total'); ?></th>
-                        <th></th>
                         <th class="col-total a-center"></th>
                     </tr>
                 </tfoot>
                 <tbody>
                     <tr>
                         <td class="col-network"></td>
-                        <td class="col-action"></td>
                         <td class="col-total a-center"></td>
                     </tr>
                 </tbody>

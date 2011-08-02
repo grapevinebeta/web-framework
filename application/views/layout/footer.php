@@ -1,12 +1,28 @@
 <div id="footer-holder">
-    <?php echo html::anchor(url::base(), __('Home')); ?> |
-    <?php echo html::anchor('#', __('Help')); ?> |
-    <?php echo html::anchor('#', __('Legal')); ?> |
-    <?php echo html::anchor('#', __('Terms of Service')); ?> |
-    <?php echo html::anchor('#', __('Privacy')); ?> |
-    <?php echo html::anchor('#', __('Blog')); ?>
     
+    <?php $routes = array(
+        
+        'legal' => 'Legal',
+        'tos' => 'Terms of Service',
+        'privacy' => 'Privacy',
+        'blog' => 'Blog',
+        
+    ); ?>
+    
+    <?php echo html::anchor(url::base(), __('Home')); ?> |
+    <?php foreach($routes as $route => $label): ?>
+    
+        <?php echo html::anchor(
+            Route::get('pages')->uri(array(
+                'name' => $route
+            )),
+            $label
+        ), ' | '; ?>
+    
+    <?php endforeach; ?>
+
     <div id="copyrights">
         &copy; Copyright <?php echo html::anchor(url::base(), 'Grapevine') ?> 2011
     </div>
 </div>
+

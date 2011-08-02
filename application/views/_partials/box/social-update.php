@@ -11,6 +11,10 @@
         <div class="data-grid-holder">
             <div class="status-updater network">
                 <form method="post" action="/api/box/status" id="wallPoster">
+                
+                    <div class="message">
+                        <span>Your message has been shared</span>
+                    </div>
                     
                 <textarea class="content" name="message"></textarea>
 

@@ -44,7 +44,6 @@
                 <div class="single-check actions-completed v-padding-5">
                     <?php echo Form::checkbox('status', 'closed') ?>
                     <span class="action action-completed">
-                        <span class="mono-icon icon-checkbox"></span>
                         <?php echo __('Completed'); ?>
                     </span>
                 </div>
@@ -56,14 +55,14 @@
                     </span>
                 </div>
                 <div class="actions-email v-padding-5">
+                    <span class="mono-icon icon-email"></span>
                     <a href="#" class="action action-email">
-                        <span class="mono-icon icon-email"></span>
                         Email
                     </a>
                 </div>
                 <div class="actions-review v-padding-5">
+                    <span class="mono-icon icon-goto"></span>
                     <a href="#" class="action action-review">
-                        <span class="mono-icon icon-goto"></span>
                         <?php echo __('Go to Review'); ?>
                     </a>
                 </div>

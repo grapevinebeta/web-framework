@@ -5,7 +5,7 @@ class Controller_Resources extends Controller_Template {
     public function before() {
         parent::before();
         
-$this->template->topOptions = View::factory('layout/top-options');
+        $this->template->topOptions = View::factory('layout/top-options');
         $this->template->rightPanel = View::factory('layout/right-panel');
     }
     
@@ -15,7 +15,8 @@ $this->template->topOptions = View::factory('layout/top-options');
     
     public function action_index() {
         
-        $this->template->body = View::factory('resources/index');
+        $name = filter_var($this->request->param('name'), FILTER_SANITIZE_STRING);
+        $this->template->body = View::factory('resources/' . $name);
         
     }
     

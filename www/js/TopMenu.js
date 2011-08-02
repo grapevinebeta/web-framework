@@ -15,7 +15,7 @@ jQuery(function(){
         dateRange: null,
         dataPickerConfig: {
             showOn: "button",
-            buttonImage: "images/as-select-bg.jpg",
+            buttonImage: "/images/as-select-bg.jpg",
             buttonImageOnly: true,
             numberOfMonths: 2,
             maxDate: '-1d',
@@ -49,7 +49,14 @@ jQuery(function(){
         
         openEmailExport: function() {
             
-            $( "#dialog-export" ).dialog( "open" );
+            $( "#dialog-export" ).dialog("open");
+            
+            
+        },
+
+        openSupport: function() {
+            
+            $("#dialog-support").dialog();
             
             
         },
@@ -70,6 +77,13 @@ jQuery(function(){
                 self.openEmailExport();
             
             });
+            
+            $('#support').bind('click', function(e) {
+                e.preventDefault();
+                
+                self.openSupport();
+            
+            });
         
         
             this.periodSelector.selectbox().bind('change', function() {
@@ -78,9 +92,32 @@ jQuery(function(){
                 self.period = determineMonthDiff(self.selectValue);
            
                 var min = self.datapicker.datepicker('getDate');
-                self.endDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
-                min.setMonth(min.getMonth() - self.period);
-                self.startDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+           
+                if(self.period !== false) {
+           
+                    self.endDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+                    min.setMonth(min.getMonth() - self.period);
+                    self.startDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+                    
+                }
+                else {
+                    
+                    switch(self.selectValue) {
+                        
+                        case 'ytd':
+                            
+                            self.endDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+                            min.setMonth(0, 1);
+                            self.startDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+                            
+                            break;
+                        case 'all':
+                            break;
+                        
+                    }
+                    
+                }
+           
            
                 self.datapicker.datepicker('option', 'minDate', min);
            
@@ -173,7 +210,6 @@ jQuery(function(){
                         allFields.removeClass( "ui-state-error" );
                 
                         bValid = bValid && self.helpers.checkLength(email, "email", 6, 80);
-                
                         var emails = email.val().split(',');
                 
                         for(var e in emails) {
@@ -183,9 +219,11 @@ jQuery(function(){
                 
                         var d = $(this);
                         if (bValid) {
+                            email.attr('disabled', 'disabled');
                             boxManager.exportBoxes({ 
                                 emails: emails, 
                                 callback: function() {
+                                    email.removeAttr('disabled');
                                     self.helpers.tips.html('<strong>Email was sended correctly. This message will close in 2 seconds.</strong>');
                                 
                                     setTimeout(function() {
@@ -221,23 +259,60 @@ jQuery(function(){
             this.maxDate = this.maxDate.length ? new Date(this.maxDate) : '-1d';
             if(this.maxDate instanceof Date) {
                 this.minDate = new Date(this.maxDate);
-                this.minDate.setMonth(this.minDate.getMonth() - this.period);
+                
+                if(this.period !== false) {
+                    
+                    this.minDate.setMonth(this.minDate.getMonth() - this.period);
+                    
+                }
+                else {
+                    
+                    switch(this.selectValue) {
+                        
+                        case 'ytd':
+                            this.minDate.setMonth(0, 1);
+                            console.log(this.minDate);
+                            break;
+                        case 'all':
+                            break;
+                        
+                    }
+                    
+                }
         
                 this.startDate = (this.minDate.getMonth() + 1) + "/" + this.minDate.getDate() + "/" + this.minDate.getFullYear();
                 this.endDate = (this.maxDate.getMonth() + 1) + "/" + this.maxDate.getDate() + "/" + this.maxDate.getFullYear();
         
             }
             else {
-                var m = new Date();
-                m.setMonth(m.getMonth() - this.period);
+                
+                if(this.period !== false) {
+                    
+                    var m = new Date();
+                    m.setMonth(m.getMonth() - this.period);
+                    this.minDate = (-this.period) + "m";
+                }
+                else {
+                    
+                    switch(this.selectValue) {
+                        
+                        case 'ytd':
+                            var m = new Date();
+                            m.setMonth(0,1);
+                            this.minDate = "ytd";
+                            break;
+                        case 'all':
+                            break;
+                        
+                    }
+                    
+                }
         
                 var mx = new Date();
                 mx.setDate(m.getDay() -1);
         
                 this.startDate = (m.getMonth() + 1) + "/" + m.getDate() + "/" + m.getFullYear();
                 this.endDate = (mx.getMonth() + 1) + "/" + mx.getDate() + "/" + mx.getFullYear();
-        
-                this.minDate = (-this.period) + "m";
         
             }
         
