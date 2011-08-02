@@ -47,9 +47,6 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
     public function action_index()
     {
         $expand = !is_null($this->id);
-        if (!$expand) {
-            $this->setFilters();
-        }
 
 
         $fields = $this->default_fields;
@@ -101,6 +98,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
             'rating' => array(),
             'site' => array(),
             'status' => array(),
+            'action' => array()
 
         );
         if (!empty($status)) {
@@ -115,8 +113,13 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 case 'neutral':
                     $conditions['rating'][] = $status;
                     break;
-                default:
+                case 'todo':
+                case 'closed':
+                case 'opened':
                     $conditions['status'][] = $status;
+                    break;
+                default:
+                    $conditions['action'][] = $status;
                 }
 
             }
@@ -162,7 +165,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
             $cursor as $doc
         )
         {
-            $this->matches_filter($doc);
+
             $doc['date'] = $doc['date']->sec;
             $doc['id'] = $doc['_id']->{'$id'};
             unset($doc['_id']);
@@ -176,26 +179,37 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
     }
 
-    private function getFilteredCounts($query)
+
+    protected function getFilteredCountsMap()
     {
-        $map
-                = 'function(){
+        return 'function(){
                      emit({},{status:this.status,site:this.site,rating:this.rating});
 
             }';
+    }
 
-        $reduce
-                = 'function(key,values){
+    protected function getFilteredCountsReduce()
+    {
+        return
+                'function(key,values){
             var results={source:{},status:{}};
 
             values.forEach(function(value){
                results.source[value.site]=(results.source[value.site]||0)+1;
                results.status[value.status]=(results.status[value.status]||0)+1;
-               results.status[value.rating]=(results.status[value.status]||0)+1;
+               results.status[value.rating]=(results.status[value.rating]||0)+1;
             });
 
             return results;
         }';
+    }
+
+    private function getFilteredCounts($query)
+    {
+        $map = $this->getFilteredCountsMap();
+        $reduce = $this->getFilteredCountsReduce();
+
+
         $command = array(
             'mapreduce' => $this->collection,
             'map' => $map,
@@ -220,6 +234,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         }
 
         $return = $this->db->command($command);
+
         $results = $return['results'][0]['value'];
 
 

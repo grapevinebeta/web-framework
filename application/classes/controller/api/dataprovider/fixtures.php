@@ -42,7 +42,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
     public function fixtures_reviews($db)
     {
 
-        $amount = 100;
+        $amount =20;
         $displacement = 5;
         $distance = $amount / $displacement;
         $default_start_date = strtotime('-' . ($distance / 2) . ' days');
@@ -247,7 +247,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
     function fixtures_socials($db)
     {
 
-        $amount = 100;
+        $amount = 20;
         $displacement = 5;
         $distance = $amount / $displacement;
         $default_start_date = strtotime('-' . ($distance / 2) . ' days');
@@ -351,7 +351,6 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
 
             'twitter.com',
             'facebook.com',
-
             'foursquare.com'
 
         );
@@ -402,8 +401,10 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
                         for (
                             $j = 0; $j < $review_amount; $j++
                         ) {
-                            $content = $this->random_gen(mt_rand(40, 124));
+
                             $defaults = $metric == 'activity' ? $default_activity : $default_subscriber;
+                            if(!isset($defaults[$site]) || !count($defaults[$site]))continue;
+                            $content = $this->random_gen(mt_rand(40, 124));
                             $keys = array_keys($defaults[$site]);
 
                             $index = mt_rand(0, count($keys) - 1);
@@ -528,6 +529,9 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
     )
     {
         $data = array();
+        if (!isset($info['subscriber'])) {
+            $info['subscriber'] = array();
+        }
         foreach (
             $info['subscriber'] as $type
         ) {
