@@ -3391,7 +3391,8 @@ boxManager = {
             }
             
 
-            if(box.hasOwnProperty('graph')) {
+            // we show only the selected option
+            if(box.hasOwnProperty('graph') && box.getHeaderDom().find('.box-header-button-show-graph.active').length) {
                 
                 var block2 = block.clone();
                 var content2 = box.graph.getSVG();
@@ -3402,24 +3403,28 @@ boxManager = {
                 block2.appendTo(boxManager.exporter.template.container);
                 
             }
-        
-            content = box.getContentDom()
-            .find('.data-grid-holder table:visible:first').clone();
-            
-            content.find('tr.expanded').remove();
+            else {
 
-            content.find('td').removeAttr('style');
+                content = box.getContentDom()
+                .find('.data-grid-holder table:visible:first').clone();
+            
+                content.find('tr.expanded').remove();
+
+                content.find('td').removeAttr('style');
         
-            if(content.length) {
-                var title = $("<h2/>").text(box.getHeaderDom()
-                    .find('.box-header-title').text());
-                title.add(content).appendTo(block.find('.inner'));
-                block.appendTo(boxManager.exporter.template.container);
+                if(content.length) {
+                    var title = $("<h2/>").text(box.getHeaderDom()
+                        .find('.box-header-title').text());
+                    title.add(content).appendTo(block.find('.inner'));
+                    block.appendTo(boxManager.exporter.template.container);
                 
-                if(box.getBoxDom().parent().is('.box-container-right')) {
-                    $('<div class="clear"/>').appendTo(boxManager.exporter.template.container);
+                    if(box.getBoxDom().parent().is('.box-container-right')) {
+                        $('<div class="clear"/>').appendTo(boxManager.exporter.template.container);
+                    }
                 }
+        
             }
+        
  
         });
  
