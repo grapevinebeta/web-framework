@@ -97,6 +97,7 @@
 
             //
             $filters = $this->request->post('filters');
+            
             $this->activeFilters = array();
             if (isset($filters['source'])) {
                 $this->activeFilters = $filters['source'];
@@ -105,6 +106,7 @@
             if (isset($filters['status'])) {
                 $this->activeFilters = array_merge($this->activeFilters, $filters['status']);
             }
+            
             $this->filterEnabled = count($this->activeFilters) ? true : false;
 
 
