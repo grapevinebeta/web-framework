@@ -1546,3 +1546,19 @@ input[type=submit] {
         width: 145px;
         margin-right: 10px;
     }
+
+/* Account Settings styles */
+
+.action-delete {
+    background-image: url(../images/icons/delete.png);
+    display: block;
+    height: 18px;
+    width: 18px;
+}
+
+.action-edit {
+    background-image: url(../images/icons/edit.png);
+    display: block;
+    height: 18px;
+    width: 18px;
+}

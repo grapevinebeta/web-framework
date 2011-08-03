@@ -20,7 +20,8 @@
                 <tr class="<?php echo ($k % 2?'even':'odd'); ?>">
                     <td>
                         <?php echo form::hidden($_inputPrefix . '[id]', $user->id); ?>
-                        <?php echo $user->firstname.' '.$user->lastname, ' ', html::anchor('#', __('edit'), array(
+                        <?php echo $user->firstname.' '.$user->lastname, ' ', html::anchor('#', '', array(
+                            'class' => 'action-edit',
                             'data-action' => 'edit',
                             'data-user-id' => $user->id,
                         )); ?>
@@ -33,8 +34,8 @@
                     </td>
                     <td class="a-center">
                         <?php
-                        echo html::anchor('#', 'x', array(
-                            'class' => 'confirm-required',
+                        echo html::anchor('#', '', array(
+                            'class' => 'confirm-required action-delete',
                             'data-action' => 'delete',
                             'data-user-id' => (int)$user->id,
                         ));
