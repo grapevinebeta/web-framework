@@ -97,6 +97,7 @@
 
             //
             $filters = $this->request->post('filters');
+            
             $this->activeFilters = array();
             if (isset($filters['source'])) {
                 $this->activeFilters = $filters['source'];
@@ -105,6 +106,10 @@
             if (isset($filters['status'])) {
                 $this->activeFilters = array_merge($this->activeFilters, $filters['status']);
             }
+            if (isset($filters['action'])) {
+                $this->activeFilters = array_merge($this->activeFilters, $filters['action']);
+            }
+            
             $this->filterEnabled = count($this->activeFilters) ? true : false;
 
 
@@ -119,7 +124,7 @@
                 'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
             );
 
-            $this->mongo = new Mongo();
+            $this->mongo = new Mongo("mongodb://192.168.1.72:27017");
             $this->db = $this->mongo->auto;
 
 

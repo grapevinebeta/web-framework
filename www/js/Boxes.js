@@ -1946,7 +1946,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 $(this).prop('checked', true);
                
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: value.toUpperCase()
+                    status: value.toLowerCase()
                 }, function() {
                 
                     // update alert value
@@ -1973,7 +1973,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
                 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'OPENED'
+                    status: 'opened'
                 }, function() {
                 
                     tr.find('.recent-review-status-icon')
