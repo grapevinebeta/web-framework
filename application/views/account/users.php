@@ -80,6 +80,14 @@
                             <span class="validation-message" data-validation-for="password_confirm"></span>
                         </td>
                     </tr>
+                    <tr>
+                        <td class="a-right">
+                            <!-- empty cell -->
+                        </td>
+                        <td>
+                            <?php echo form::submit('', __('Save')); ?>
+                        </td>
+                    </tr>
                 </table>
             </form>
         </div>
