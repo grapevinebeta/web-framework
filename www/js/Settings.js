@@ -144,29 +144,6 @@ jQuery(function(){
         },
 
         'initializeGeneralLocationSettings': function(){
-            var self = this;
-
-            this.refreshGeneralLocationSettings();
-
-            // attach events
-            this.generalLocationSettings.delegate('form','submit',function(event){
-                event.preventDefault();
-                var form = jQuery(this);
-                jQuery.post('/api/settings/updategeneral', form.serialize(), function(data){
-                    if (data.result){
-                        log('Data retrieved');
-                        self.clearValidationErrors();
-                        if (typeof data.result.general_settings != 'undefined'){
-                            self.refreshGeneralLocationSettings(data.result.general_settings);
-                        }
-                    }else{
-                        if (typeof data.error.validation_errors != 'undefined'){
-                            self.displayValidationErrors(data.error.validation_errors, this.generalLocationSettings);
-                        }
-                    }
-                }, 'json');
-            });
-
             log('General settings initialized');
         },
 
