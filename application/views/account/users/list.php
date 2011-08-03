@@ -2,7 +2,7 @@
     <table class="wide data-grid" cellpadding="5">
         <tr>
             <th class="a-left">
-                <?php echo __('User Accounts'); ?>
+                <!--<?php echo __('User Accounts'); ?>-->
             </th>
             <th class="a-center">
                 <?php echo __('Admin'); ?>

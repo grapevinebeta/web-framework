@@ -13,6 +13,9 @@
             <div>
                 <?php echo form::textarea('criteria', $alert->criteria, array('class'=> 'wide', 'rows' => 5)); ?>
             </div>
+            <div>
+                <?php echo form::submit('', __('Save')); ?>
+            </div>
         </form>
     </div>
     <h2 class="content-section-title"><?php echo __('Alerts Review'); ?>:</h2>
