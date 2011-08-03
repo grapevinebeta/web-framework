@@ -347,7 +347,6 @@ var BoxController = Class.extend({
      * @todo Actually set filter in compliance to API
      */
     addFilter: function(name, value) {
-        
         var exists = false;
         for(var cValue in this.filters[name])
         {
@@ -367,6 +366,7 @@ var BoxController = Class.extend({
             
             this.filters[name].push(value);
         }
+        
         return this;
     },
 
@@ -1010,10 +1010,12 @@ var BC_Inbox = BoxController.extend({
             
         }
         
-        if(!activeCount)
-        {
-            filterHolder.find('.show-all').addClass('active');
+        if(activeCount > 1) {
+            
+            filterHolder.find('.show-all').removeClass('active');
+            
         }
+
         
     },
     
@@ -1908,15 +1910,24 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('.review-details-content').text(message.content);
         
         
+         if(message.link)
+                tr.find('.action-review').attr('href', message.link);    
+         else
+                tr.find('.actions-review').remove();
+        
         // we include asynchronious the response js and check site
         $.getScript('/js/managerResponses.js', function() {
         
             var url = Site.check(message.site);
             
             if(url)
-                tr.find('.action-review').attr('href', url);    
-            else
-                tr.find('.action-review').html('Management Responses Not Available for this Review Site ');
+                tr.find('.actions-reply').attr('href', url);    
+            else {
+             
+                tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
+                tr.find('.actions-reply').remove()
+             
+            }
             
             
         });
