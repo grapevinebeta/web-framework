@@ -1550,15 +1550,9 @@ input[type=submit] {
 /* Account Settings styles */
 
 .action-delete {
-    background-image: url(../images/icons/delete.png);
-    display: block;
-    height: 18px;
-    width: 18px;
+    content: url(../images/icons/delete.png);
 }
 
 .action-edit {
-    background-image: url(../images/icons/edit.png);
-    display: block;
-    height: 18px;
-    width: 18px;
+    content: url(../images/icons/edit.png);
 }
