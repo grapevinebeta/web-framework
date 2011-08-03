@@ -11,7 +11,7 @@
     <?php echo View::factory(
         '_partials/box/filters', 
         array(
-            'filters' => array('activity' => 'Review Filter'),
+            'filters' => array('status' => 'Status Filter', 'source' => 'Source Filter'),
             'has_pager' => true
             )
         ); 

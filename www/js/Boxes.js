@@ -347,7 +347,6 @@ var BoxController = Class.extend({
      * @todo Actually set filter in compliance to API
      */
     addFilter: function(name, value) {
-        
         var exists = false;
         for(var cValue in this.filters[name])
         {
@@ -367,6 +366,7 @@ var BoxController = Class.extend({
             
             this.filters[name].push(value);
         }
+        
         return this;
     },
 
@@ -906,6 +906,8 @@ var BC_Inbox = BoxController.extend({
                 self.resetFilters(key);
             }
             
+            // reset pages
+            self.currentPage = 1;
             self.addFilter(key , filter_value);
             self.refresh();
         });
@@ -1010,10 +1012,12 @@ var BC_Inbox = BoxController.extend({
             
         }
         
-        if(!activeCount)
-        {
-            filterHolder.find('.show-all').addClass('active');
+        if(activeCount > 1) {
+            
+            filterHolder.find('.show-all').removeClass('active');
+            
         }
+
         
     },
     
@@ -1065,14 +1069,14 @@ var BC_Inbox = BoxController.extend({
         var pager = this.data.pagination;
         
         this.currentPage = pager.page;
-        this.totalPages = pager.pages;
+        this.totalPages = pager.pagesCount;
         this.pagerInited = true;
       
         if(this.getPagerHolder()) {
             
             
             this.getPagerHolder().find('.page').text(pager.page);
-            this.getPagerHolder().find('.pageCount').text(pager.pages);
+            this.getPagerHolder().find('.pageCount').text(pager.pagesCount);
             
         }
         
@@ -1864,6 +1868,13 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>'));
                     break;
                 case 'status':
+                    
+                                
+                    if(message.rating == 'negative') {
+                        
+                        value = 'TODO';
+                    }
+                    
                     value = value.toLowerCase();
                     var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
                     col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>'));
@@ -1899,6 +1910,30 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-content').text(message.content);
+        
+        
+         if(message.link)
+                tr.find('.action-review').attr('href', message.link);    
+         else
+                tr.find('.actions-review').remove();
+        
+        // we include asynchronious the response js and check site
+        $.getScript('/js/managerResponses.js', function() {
+        
+            var url = Site.check(message.site);
+            
+            if(url)
+                tr.find('.actions-reply').attr('href', url);    
+            else {
+             
+                tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
+                tr.find('.actions-reply').remove()
+             
+            }
+            
+            
+        });
+        
         
         
         checkboxes.prop('checked', false);
@@ -1951,7 +1986,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
                 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'OPENED'
+                    status: 'opened'
                 }, function() {
                 
                     tr.find('.recent-review-status-icon')
@@ -2127,6 +2162,27 @@ var BC_ReviewInbox = BC_Inbox.extend({
         this.noApiUrl = true;
     }
     
+});
+
+var BC_SocialActivityBox = BC_GraphBoxController.extend({
+    
+    /**
+     * @var String DOM id of the container div 
+     */
+    boxId: 'box-social-activity-box',
+    
+    /**
+     * @var String Name of the requested resource, used in Ajax URL
+     */
+    endpoint: '/api/box/social',
+    
+    processData: function() {
+        
+    },
+    
+    construct: function() {
+        
+    }
 });
 
 
@@ -2579,12 +2635,21 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     customPopulateFields: function(text, data) {
         
+        
         var message = text.review;
         
         var tr = $(data.trContext);
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-content').text(message.content);
+        
+        if(message.link !== undefined)
+            tr.find('.goto-link').attr('href', message.link);
+        else
+            tr.find('.goto').remove();
+        
+        
+        tr.find('.actions-network').remove();
         
     },
 
@@ -2949,6 +3014,10 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
+        if(message.link !== undefined)
+            tr.find('.goto-link').attr('href', message.link);
+        else
+            tr.find('.goto').remove();
     },
 
     expandedPopulateCallback: function(data) {
@@ -3461,6 +3530,7 @@ $(document).ready(function () {
     .add(new BC_Photos())
     .add(new BC_Videos())
     .add(new BC_StatusUpdate())
+    .add(new BC_SocialActivityBox())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter);
     // the initialization of boxManager is in TopMenu.js

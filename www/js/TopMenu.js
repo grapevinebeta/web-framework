@@ -112,6 +112,9 @@ jQuery(function(){
                             
                             break;
                         case 'all':
+                            self.endDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
+                            min = new Date(0);
+                            self.startDate = min.getMonth() + 1 + "/" + min.getDate() + "/" + min.getFullYear();
                             break;
                         
                     }
@@ -271,9 +274,9 @@ jQuery(function(){
                         
                         case 'ytd':
                             this.minDate.setMonth(0, 1);
-                            console.log(this.minDate);
                             break;
                         case 'all':
+                            this.minDate = new Date(0);
                             break;
                         
                     }
@@ -302,6 +305,8 @@ jQuery(function(){
                             this.minDate = "ytd";
                             break;
                         case 'all':
+                            m = new Date(0);
+                            this.minDate = "all";
                             break;
                         
                     }

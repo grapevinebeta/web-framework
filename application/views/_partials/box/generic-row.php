@@ -69,7 +69,7 @@
             </div>
             <div class="clear"></div>
             <p class="recentReviewDetailsButtons a-right">
-                <a class="actions-reply reply-to-review-button" href=#""></a>
+                <a class="actions-reply reply-to-review-button" href="#"></a>
                 <a class="save-button" href="#"></a>
             </p>
         </div>

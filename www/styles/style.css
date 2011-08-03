@@ -811,10 +811,12 @@ input[type=submit] {
 .box .box-filter-label {
     font-weight: bold;
     float:left;
+    width: 80px;
 }
 
 .box .box-filter {
-    float:left
+    float:left;
+    width: 597px;
 }
 
 .box .box-filter a {
@@ -858,6 +860,7 @@ input[type=submit] {
 {
     margin-left: 4px;
     margin-right: 4px;
+    display: inline-block;
 }
 
 .box .box-pager {
@@ -1529,3 +1532,17 @@ input[type=submit] {
     #dialog-export  fieldset { padding:0; border:0; margin-top:25px; }
     .ui-dialog .ui-state-error { padding: .3em; }
     #dialog-export .validateTips { border: 1px solid transparent; padding: 0.1em; }
+    
+    .man-disabled {
+        background: url("/images/bg.png") repeat-x scroll left bottom transparent;
+        color: #000000;
+        display: inline-block;
+        font-size: 10px;
+        font-weight: bold;
+        height: 24px;
+        padding: 4px;
+        text-align: left;
+        vertical-align: middle;
+        width: 145px;
+        margin-right: 10px;
+    }

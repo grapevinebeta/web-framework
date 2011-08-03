@@ -11,8 +11,9 @@
     <?php echo View::factory(
         '_partials/box/filters', 
         array(
-            'filters' => array('activity' => 'Activity Filter'),
-            'has_pager' => true
+            'filters' => array('source' => 'Source Filter', 'actions' => 'Actions Filter'),
+            'has_pager' => true,
+            'width' => 612
             )
         ); 
     ?>

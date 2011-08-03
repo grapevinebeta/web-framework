@@ -23,6 +23,40 @@ class Controller_Api_Box extends Controller_Api {
         );
     }
     
+    public function action_social() {
+
+        $config = array(
+            'appId' => Kohana::config('globals.facebook_app_id'),
+            'secret' => Kohana::config('globals.facebook_secret'),
+        );
+
+        $s = new Model_Location_Settings($this->_location_id);
+        $fbtoken = $s->getSetting('facebook_oauth_token');
+        $page = $s->getSetting('facebook_page_id');
+        
+
+        if(isset($fbtoken[0])) {
+            
+            $config['facebook_token'] = $fbtoken[0];
+            $config['facebook_page_id'] = $page[0];
+            
+        }
+        
+        $fb = new Facebook($config);
+        $fb->setAccessToken($config['facebook_token']);
+
+
+        
+        try {
+            $response = $fb->api($config['facebook_page_id'] . '/feed');
+            
+            var_dump($response); exit;
+            
+        } catch (FacebookApiException $e) {
+            echo $e->getMessage(); exit;
+        }
+    }
+    
     public function action_move() {
         
         $collection = $this->request->post('holders');
