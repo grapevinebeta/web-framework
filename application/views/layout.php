@@ -46,7 +46,7 @@
     <div id="ajax-loader-holder">
         <div class="ajax-loader">
             <?php echo html::image(
-                'images/ajax-loader.gif',
+                'images/preloader.gif',
                 array(
                     'class' => __('ajax-loading-gif'),
                     'alt' => __('loading ...'), 

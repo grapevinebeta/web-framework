@@ -94,7 +94,12 @@
                 );
                 $start_date = $default_start_date;
                 $date = $default_date;
-                mt_srand(time());
+                
+                
+                list( $msecs, $uts ) = explode(' ', microtime());
+                mt_srand(floor(($uts + $msecs) * 1000));
+                
+                
                 for (
                     $i = 1; $i <= $amount; $i++
                 ) {
@@ -111,7 +116,7 @@
                             $j = 0; $j < $review_amount; $j++
                         ) {
                             $content = $this->random_gen(mt_rand(80, 150));
-                            $score = mt_rand(1, 5);
+                            $score = mt_rand(1, 100) % 6;
                             $doc = array(
                                 'score' => $score,
                                 'date' => $date,

@@ -20,9 +20,9 @@
                                 <span class="mono-icon icon-email"></span>
                                 Email
                             </div>
-                            <div class="v-padding-2">
+                            <div class="v-padding-2 goto">
                                 <span class="mono-icon icon-goto"></span>
-                                <?php echo __('Go to Posting'); ?>
+                                <a class="goto-link"><?php echo __('Go to Review'); ?></a>
                             </div>
                             <div class="v-padding-2">
                             <a class="close-button" href="#" style="float:right;">&nbsp;</a>

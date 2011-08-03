@@ -1864,6 +1864,13 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>'));
                     break;
                 case 'status':
+                    
+                                
+                    if(message.rating == 'negative') {
+                        
+                        value = 'TODO';
+                    }
+                    
                     value = value.toLowerCase();
                     var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
                     col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>'));
@@ -1899,6 +1906,21 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-content').text(message.content);
+        
+        
+        // we include asynchronious the response js and check site
+        $.getScript('/js/managerResponses.js', function() {
+        
+            var url = Site.check(message.site);
+            
+            if(url)
+                tr.find('.action-review').attr('href', url);    
+            else
+                tr.find('.action-review').html('Management Responses Not Available for this Review Site ');
+            
+            
+        });
+        
         
         
         checkboxes.prop('checked', false);
@@ -2579,12 +2601,21 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
      */
     customPopulateFields: function(text, data) {
         
+        
         var message = text.review;
         
         var tr = $(data.trContext);
         
         tr.find('.details-title').text(message.title);
         tr.find('.details-content').text(message.content);
+        
+        if(message.link !== undefined)
+            tr.find('.goto-link').attr('href', message.link);
+        else
+            tr.find('.goto').remove();
+        
+        
+        tr.find('.actions-network').remove();
         
     },
 
@@ -2949,6 +2980,10 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
+        if(message.link !== undefined)
+            tr.find('.goto-link').attr('href', message.link);
+        else
+            tr.find('.goto').remove();
     },
 
     expandedPopulateCallback: function(data) {
