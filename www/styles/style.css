@@ -1498,7 +1498,7 @@ input[type=submit] {
         
     }
     
-    .twitter {
+    .twitter, .twitter-connect-button {
         
         background: url(/images/icons/darker.png) no-repeat top left;
         display:block;
@@ -1507,7 +1507,7 @@ input[type=submit] {
         
     }
     
-    .twitter span {
+    .twitter span, .twitter-connect-button span {
         
         display: none;
         

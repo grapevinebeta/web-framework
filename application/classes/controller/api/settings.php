@@ -792,9 +792,9 @@ class Controller_Api_Settings extends Controller_Api {
      * @todo fail gracefully if request was incorrect
      * @todo fail gracefully also if no location ID was given - or support such
      *      case in other way, if needed
+     * @todo Move "add-delete settings" logic into Location_Settings model
      */
     public function action_twittercallback() {
-
         // get ID of the location that should be influenced by callback
         $location_id = $this->request->param('location_id') ? (int)$this->request->param('location_id') : null;
 
@@ -847,6 +847,46 @@ class Controller_Api_Settings extends Controller_Api {
                             'location_id' => (int)$location->id,
                         ))
                         ->create();
+
+                // find older tokens...
+                $old_twitter_oauth_tokens = ORM::factory('location_setting')
+                        ->where_open()
+                            ->where('id', '!=', $twitter_oauth_token->id)
+                            ->and_where('location_id', '=', (int)$location->id)
+                            ->and_where('type', '=', 'twitter_oauth_token')
+                        ->where_close()
+                        ->find_all();
+
+                // ... and delete them one-by-one
+                foreach ($old_twitter_oauth_tokens as $token) {
+                    $token->delete();
+                }
+
+                $twitter_account = new Model_TwitterAccount();
+                $twitter_account->setAccessToken($access_token);
+                $twitter_screen_name = $twitter_account->getScreenName();
+
+                $twitter_account_name = ORM::factory('location_setting')
+                        ->values(array(
+                            'type' => 'twitter_account',
+                            'value' => (string)$twitter_screen_name,
+                            'location_id' => (int)$location->id,
+                        ))
+                        ->create();
+
+                // find old account names...
+                $old_twitter_account_names = ORM::factory('location_setting')
+                        ->where_open()
+                            ->where('id', '!=', $twitter_account_name->id)
+                            ->and_where('location_id', '=', (int)$location->id)
+                            ->and_where('type', '=', 'twitter_account')
+                        ->where_close()
+                        ->find_all();
+
+                // ... and delete one-by-one
+                foreach ($old_twitter_account_names as $account_name) {
+                    $account_name->delete();
+                }
 
                 // redirect to settings page
                 $this->request->redirect(Route::url('account_settings_social'));

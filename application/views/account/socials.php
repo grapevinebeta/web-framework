@@ -23,7 +23,11 @@
     <div id="account-socials-twitter-section" class="padding-5">
         <?php echo __('For best results, please click on "Connect with Twitter" button. If you don\'t have an access to or are not an admin for your business Twitter account, please contact your Twitter account administrator (including any responsible 3rd party) on assistance on this step.'); ?>
         <div class="twitter_login">
-            <?php echo html::anchor('#', '<span>' . __('Connect with Twitter') . '</span>', array('class' => 'twitter')); ?>
+            <?php
+                echo html::anchor(Route::url('oauth_twitter_connect', array(
+                    'location_id' => (int)$location_id,
+                )), '<span>' . __('Connect with Twitter') . '</span>', array('class' => 'twitter-connect-button'));
+            ?>
         </div>
         <p>
             <?php echo __('You may also add a general Twitter "tweet-search" related to your business. You will need to spacify which words (called "tags") and phrses should be used to identify data that is revelant to you. You may type single tags, or entire phrases. You may type any number and combination of tags and phrases, as long as you separate each term with a comma.'); ?>
