@@ -6,8 +6,8 @@ return array(
     'facebook_app_id' => '114877061941522', // application key for facebook oauth
     'facebook_api_key' => 'fa19888079b4a46affe2e8ca3096e882', // application key for facebook oauth
     'facebook_secret' => '0dd927c3d819e19903bc84ae99705b58', // application key for facebook oauth
-    'twitter_consumer_key' => 'TeVHFIUCuIqhj9tWawBPA', // application key for facebook oauth
-    'twitter_consumer_secret' => 'jU4F59n8vEVQY4Ou7gZGQCbMBA8MQsyUcPLtUmGTsw', // application key for facebook oauth
+    'twitter_consumer_key' => Kohana::config('oauth.twitter')->key, // application key for twitter oauth
+    'twitter_consumer_secret' => Kohana::config('oauth.twitter')->secret, // application secret for twitter oauth
     'oauth_callback' => 'http://grapevine.dev.com/api/box/callback/', // application key for facebook oauth
     'docraptor_url' => 'https://docraptor.com/docs?user_credentials=%s',
     'test_mode' => true, // docraptor test mode 

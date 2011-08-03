@@ -9,7 +9,7 @@ return array(
 	 * be provided when making OAuth requests.
 	 */
 	'twitter' => array(
-		'key' => 'HoURwuePePYQtLQtpwNw',
-		'secret' => 'bhDtwbSHoHqLLRp5Y2fPSt0maCc1OB0UPLLV3iOnjk'
+		'key' => 'TeVHFIUCuIqhj9tWawBPA',
+		'secret' => 'jU4F59n8vEVQY4Ou7gZGQCbMBA8MQsyUcPLtUmGTsw',
 	),
 );
