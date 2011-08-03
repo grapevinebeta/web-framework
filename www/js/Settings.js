@@ -66,14 +66,23 @@ jQuery(function(){
                     self.propagateFormData(data.result.alert, form);
                 }
             });
+
+            form.delegate('[name="criteria"]', 'keydown', function(){
+                var checked = form.find(':radio[name="type"][value="my"]').prop('checked');
+                if (!checked){
+                    form.find(':radio[name="type"][value="my"]').prop('checked', true);
+                    log('User has modified default criteria. Checking "my tags" checkbox');
+                }
+            });
+
+            form.delegate(':radio[name="type"]', 'change', function(){
+                var element = jQuery(this);
+                form.find('[name="criteria"]').val(element.attr('data-alerts-tags'));
+                log('Criteria field value changed into the following: "' + element.attr('data-alerts-tags') + '"');
+            });
             
-            /**
-             * The following part of the code should make request when the form
-             * content has been changed.
-             * @todo Make it work in a way that will send the request is being
-             *      sent only after some period of inactivity
-             */
-            form.delegate('form input, form textarea', 'change', function(event){
+            this.alertsSettings.delegate('form', 'submit', function(event){
+                event.preventDefault();
                 log('Someone has changed the content of one of the fields in alert edit form: ' + form.serialize());
                 var form_data = form.serializeArray();
                 var params = {};
