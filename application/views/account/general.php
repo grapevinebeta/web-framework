@@ -135,4 +135,11 @@
             <?php echo form::submit('', __('Save')); ?>
         </div>
     </form>
+    <div>
+        <p><?php
+            echo __('Want to change your Account Information? :contact_link', array(
+                ':contact_link' => HTML::mailto('info@grapevinebeta.com', __('Contact Us')),
+            ));
+        ?></p>
+    </div>
 </div>
