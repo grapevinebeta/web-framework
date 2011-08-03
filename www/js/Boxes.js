@@ -906,6 +906,8 @@ var BC_Inbox = BoxController.extend({
                 self.resetFilters(key);
             }
             
+            // reset pages
+            self.currentPage = 1;
             self.addFilter(key , filter_value);
             self.refresh();
         });
@@ -1067,14 +1069,14 @@ var BC_Inbox = BoxController.extend({
         var pager = this.data.pagination;
         
         this.currentPage = pager.page;
-        this.totalPages = pager.pages;
+        this.totalPages = pager.pagesCount;
         this.pagerInited = true;
       
         if(this.getPagerHolder()) {
             
             
             this.getPagerHolder().find('.page').text(pager.page);
-            this.getPagerHolder().find('.pageCount').text(pager.pages);
+            this.getPagerHolder().find('.pageCount').text(pager.pagesCount);
             
         }
         
@@ -1957,7 +1959,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 $(this).prop('checked', true);
                
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: value.toLowerCase()
+                    status: value.toUpperCase()
                 }, function() {
                 
                     // update alert value

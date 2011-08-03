@@ -811,10 +811,12 @@ input[type=submit] {
 .box .box-filter-label {
     font-weight: bold;
     float:left;
+    width: 80px;
 }
 
 .box .box-filter {
-    float:left
+    float:left;
+    width: 597px;
 }
 
 .box .box-filter a {
@@ -858,6 +860,7 @@ input[type=submit] {
 {
     margin-left: 4px;
     margin-right: 4px;
+    display: inline-block;
 }
 
 .box .box-pager {
