@@ -8,6 +8,10 @@
     <div class="box-container active">          
         <?php echo view::factory('_partials/box/social-update'); ?>
     </div>
+
+    <div class="box-container active">          
+        <?php echo view::factory('_partials/box/social-activity-box'); ?>
+    </div>
     
     <div class="box-container active box-container-left">
         <?php echo view::factory('_partials/box/social-activity'); ?>
