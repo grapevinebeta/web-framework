@@ -34,11 +34,21 @@ class Controller_Api_Box extends Controller_Api {
         $fbtoken = $s->getSetting('facebook_oauth_token');
         $page = $s->getSetting('facebook_page_id');
         
+        $twitterToken = $s->getSetting('twitter_oauth_token');
+        $twitterSecret = $s->getSetting('twitter_oauth_token_secret');
+        
 
         if(isset($fbtoken[0])) {
             
             $config['facebook_token'] = $fbtoken[0];
             $config['facebook_page_id'] = $page[0];
+            
+        }
+        
+        if(isset($twitterToken[0]) && isset($twitterSecret[0])) {
+            
+            $config['twitter_user_token'] = $twitterToken[0];
+            $config['twitter_user_secret'] = $twitterSecret[0];
             
         }
         
@@ -49,8 +59,29 @@ class Controller_Api_Box extends Controller_Api {
         
         try {
             $response = $fb->api($config['facebook_page_id'] . '/feed');
+            $messages = array();
+            foreach($response['data'] as $message) {
+                
+                
+                $messages[strtotime($message['created_time'])] = array(
+                    'id' => $message['id'],
+                    'from' => $message['from']['name'],
+                    'message' => $message['message'],
+                    'type' => $message['type'],
+                    'network' => 'facebook'
+                );
+                
+            }
             
-            var_dump($response); exit;
+            $tmhOAuth = new tmhOAuth(array(
+                    'consumer_key' => Kohana::config('globals.twitter_consumer_key'),
+                    'consumer_secret' => Kohana::config('globals.twitter_consumer_secret'),
+                    'user_token' => $config['twitter_user_token'],
+                    'user_secret' => $config['twitter_user_secret']
+                ));
+        
+            list($id) = explode('-', $config['twitter_user_token']);
+            $code = $tmhOAuth->request('GET', $tmhOAuth->url('/1/statuses/user_timeline'), array('user_id' => $id));
             
         } catch (FacebookApiException $e) {
             echo $e->getMessage(); exit;
