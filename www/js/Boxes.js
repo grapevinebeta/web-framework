@@ -1071,7 +1071,10 @@ var BC_Inbox = BoxController.extend({
     
     processData: function() {
 
-        if(!this.data.reviews.length) {
+        var reviews = this.data.reviews !== null ? this.data.reviews : false;
+        var socials = this.data.socials !== null ? this.data.socials : false;
+
+        if((reviews && !reviews.length) || (socials && !socials.length)) {
             
             if(!this.template)
                 this.template = this.getContentDom().find('.data-grid-holder').html();

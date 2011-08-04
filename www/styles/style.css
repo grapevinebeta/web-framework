@@ -933,6 +933,10 @@ input[type=submit] {
         background-position: -647px -408px;
     }
     
+    .network a.foursquare {
+        background-position: -647px -451px;
+    }
+    
     .buttons {
     
         margin-top: 15px;
@@ -1016,6 +1020,10 @@ input[type=submit] {
         background-position: -602px -311px;
     }
     
+    #box-social-media-inbox tr td.col-network a.foursquare {
+        background-position: -602px -344px;
+    }
+    
     
 /*    expanded icons */
     
@@ -1049,6 +1057,10 @@ input[type=submit] {
     
     .details .actions-network .delicious {
         background-position: -626px -500px;
+    }
+    
+    .details .actions-network .foursquare {
+        background-position: -533px -500px;
     }
     
    .details .actions-network .details-network {
