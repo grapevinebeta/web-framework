@@ -5,7 +5,7 @@
     <h2 class="content-section-title"><?php echo __('Email Addresses for Reports'); ?>:</h2>
     <div id="account-reports-list-section" class="padding-5">
         <p>
-            <?php echo __('We send a weekly Grapevine report to highlight key item like your OGSI Score, Current Star Rating, Review samples and more. Please add your desired email recipients below.'); ?>
+            <?php echo __('We send a monthly Grapevine report to highlight key item like your OGSI Score, Current Star Rating, Review samples and more. Please add your desired email recipients below.'); ?>
         </p>
         <?php echo View::factory('account/_partials/reports_emails', array(
             'emails' => (empty($emails) ? array() : $emails),
