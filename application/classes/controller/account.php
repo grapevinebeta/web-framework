@@ -30,7 +30,9 @@ class Controller_Account extends Controller_Template {
     
     public function action_general()
     {
-        $this->_contentView = View::factory('account/general');
+        $this->_contentView = View::factory('account/general', array(
+            'location' => $this->_location,
+        ));
     }
     
     public function action_users()

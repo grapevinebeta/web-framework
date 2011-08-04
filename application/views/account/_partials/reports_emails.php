@@ -16,8 +16,8 @@
                 </td>
                 <td class="a-center">
                     <?php
-                    echo html::anchor('#', 'x',array(
-                        'class' => 'confirm-required', // @todo is it really still needed?
+                    echo html::anchor('#', '',array(
+                        'class' => 'confirm-required action-delete', // @todo is it really still needed?
                         'data-action' => 'delete',
                         'data-email' => html::chars($email),
                     ));

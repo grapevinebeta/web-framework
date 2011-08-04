@@ -235,7 +235,11 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
         $return = $this->db->command($command);
 
-        $results = $return['results'][0]['value'];
+        if (count($return['results'])) {
+            $results = $return['results'][0]['value'];
+        } else {
+            $results = array();
+        }
 
 
         $kinds = $this->getFilters();

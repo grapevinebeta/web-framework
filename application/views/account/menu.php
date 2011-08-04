@@ -5,52 +5,24 @@
         </div>
         <div class="menu-section">
             <div class="menu-section-title">
-                <?php echo __('General'); ?>
+                <?php echo html::anchor('account/general', __('General'), array('class' => 'menu-section-item-link')); ?>
             </div>
-            <div class="menu-section-item last">
-                <?php echo html::anchor('account/general', __('Manage'), array('class' => 'menu-section-item-link')); ?>
-            </div>
-        </div>
-        <div class="menu-section">
             <div class="menu-section-title">
-                <?php echo __('Users'); ?>
+                <?php echo html::anchor('account/users', __('Users'), array('class' => 'menu-section-item-link')); ?>
             </div>
-            <div class="menu-section-item last">
-                <?php echo html::anchor('account/users', __('Manage'), array('class' => 'menu-section-item-link')); ?>
-            </div>
-        </div>
-        <div class="menu-section">
             <div class="menu-section-title">
-                <?php echo __('Alerts & Reports'); ?>
-            </div>
-            <div class="menu-section-item">
                 <?php echo html::anchor('account/alerts', __('Alerts'), array('class' => 'menu-section-item-link')); ?>
             </div>
-            <div class="menu-section-item last">
+            <div class="menu-section-title">
                 <?php echo html::anchor('account/reports', __('Reports'), array('class' => 'menu-section-item-link')); ?>
             </div>
-        </div>
-        <div class="menu-section">
             <div class="menu-section-title">
-                <?php echo __('Competitors'); ?>
+                <?php echo html::anchor('account/competitors', __('Competitors'), array('class' => 'menu-section-item-link')); ?>
             </div>
-            <div class="menu-section-item last">
-                <?php echo html::anchor('account/competitors', __('Manage'), array('class' => 'menu-section-item-link')); ?>
-            </div>
-        </div>
-        <div class="menu-section">
             <div class="menu-section-title">
-                <?php echo __('Social Media'); ?>
+                <?php echo html::anchor('account/socials', __('Social Media'), array('class' => 'menu-section-item-link')); ?>
             </div>
-            <div class="menu-section-item last">
-                <?php echo html::anchor('account/socials', __('Manage'), array('class' => 'menu-section-item-link')); ?>
-            </div>
-        </div>
-        <div class="menu-section">
             <div class="menu-section-title">
-                <?php echo __('Billing'); ?>
-            </div>
-            <div class="menu-section-item last">
                 <?php echo html::anchor('account/billing', __('Manage'), array('class' => 'menu-section-item-link')); ?>
             </div>
         </div>

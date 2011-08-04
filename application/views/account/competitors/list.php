@@ -25,8 +25,8 @@
                     </td>
                     <td class="a-center">
                         <?php
-                        echo html::anchor('#', 'x',array(
-                            'class' => 'confirm-required',
+                        echo html::anchor('#', '',array(
+                            'class' => 'confirm-required action-delete',
                             'data-action' => 'delete',
                             'data-competitor' => $competitor,
                         ));
