@@ -106,7 +106,7 @@ jQuery(function(){
 
         'initializeCompetitorsSettings': function(){
             var self = this;
-            
+            /*
             this.competitorsSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
                 log('User attempts to add new competitor');
@@ -148,6 +148,7 @@ jQuery(function(){
                     });
                 }
             });
+            */
 
             log('Competitors settings initialized');
         },
