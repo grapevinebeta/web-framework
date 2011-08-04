@@ -469,41 +469,13 @@ var BC_RecentActivity = BoxController.extend({
         
         template.find('.network').html(titleLink);
         
+        var url = Site.check(data.site);
         
-        if(!boxManager.Site) {
-            
-         
-            $.getScript('/js/managerResponses.js', function() {
-        
-                boxManager.Site = Site;
-        
-                var url = boxManager.Site.check(data.site);
-            
-                if(url)
-                    template.find('.reply').attr('href', url);    
-                else {
-             
-                    template.find('.reply').remove()
-             
-                }
-            
-            
-            });
-         
-            
-        }
+        if(url)
+            template.find('.reply').attr('href', url);    
         else {
             
-            var url = boxManager.Site.check(message.site);
-            
-            if(url)
-                tr.find('.actions-reply').attr('href', url);    
-            else {
-             
-                tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
-                tr.find('.actions-reply').remove()
-             
-            }
+            template.find('.reply').remove()
             
         }
       
@@ -1553,7 +1525,27 @@ var BC_ScoreboardCurrent = BoxController.extend({
             var maxValue = Math.max(rating.negative, rating.positive, rating.negative),
             total = rating.negative + rating.positive + rating.neutral;
             
-            holder.find('.days').text(getPeriodInDays(this.range['period']));
+            var months = getPeriodInDays(this.range['period']);
+            var days;
+            
+            if(!months && this.range['period'] == 'ytd') {
+                
+                var now = new Date();
+                var ytd = new Date();
+                
+                ytd.setMonth(0, 1);
+                days = Math.ceil((now.getTime() - ytd.getTime()) / (1000 * 3600 * 31));
+                
+            }
+            else if(months) {
+                days = months;
+            }
+            else {
+                days = 'All';
+            }
+            
+            
+            holder.find('.days').text(days);
             
             holder.find('.ogsi-score-value').text(ogsi.ogsi);
             
@@ -1976,17 +1968,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
          if(message.link)
                 tr.find('.action-review').attr('href', message.link);    
-         else
+         else {
                 tr.find('.actions-review').remove();
         
-        if(!boxManager.Site) {
-            
-         
-            $.getScript('/js/managerResponses.js', function() {
         
-                boxManager.Site = Site;
-        
-                var url = boxManager.Site.check(message.site);
+                var url = Site.check(message.site);
             
                 if(url)
                     tr.find('.actions-reply').attr('href', url);    
@@ -1996,24 +1982,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     tr.find('.actions-reply').remove()
              
                 }
-            
-            
-            });
          
-            
-        }
-        else {
-            
-            var url = boxManager.Site.check(message.site);
-            
-            if(url)
-                tr.find('.actions-reply').attr('href', url);    
-            else {
-             
-                tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
-                tr.find('.actions-reply').remove()
-             
-            }
             
         }
         
@@ -3169,7 +3138,6 @@ boxManager = {
     section_id: null, // the name of selected tab
     
     dataProvider: null,
-    Site: null, 
     range: null,
     
     positions: null, //positions of boxes from db
@@ -3695,4 +3663,46 @@ var Exporter = {
 
     }
     
+};
+
+/**
+ * This is helper function to help with check sites for reviews reply
+ */
+
+Site = {
+
+    sites: [],
+    init: function() {
+        
+        this.sites.push({site: 'dealerrater.com', isResponse: true, url: 'http://www.dealerrater.com/login.aspx' });
+        this.sites.push({site: 'mydealerreport.com', isResponse: true, url: 'http://www.mydealerreport.com/dealers/index.php' });
+        this.sites.push({site: 'edmunds.com', isResponse: true, url: 'http://www.edmunds.com/era/secure/lb/login.jsp?toUrl=http%3A%2F%2Fwww.edmunds.com%2F' });
+        this.sites.push({site: 'maps.google.com', isResponse: true, url: 'https://www.google.com/accounts/ServiceLogin?service=lbc' });
+        this.sites.push({site: 'citysearch.com', isResponse: true, url: 'http://www.citysearch.com/members/start' });
+        this.sites.push({site: 'insiderpages.com', isResponse: true, url: 'http://www.insiderpages.com/session/new?header_link=true' });
+        this.sites.push({site: 'local.yahoo.com', isResponse: true, url: 'https://login.yahoo.com/' });
+        this.sites.push({site: 'judysbook.com', isResponse: true, url: 'http://www.judysbook.com/login' });
+        this.sites.push({site: 'yp.com', isResponse: true, url: 'http://www.yellowpages.com/oauth/login?url=%2Flogin_success' });
+        this.sites.push({site: 'yelp.com', isResponse: true, url: 'https://www.yelp.com/login' });
+        this.sites.push({site: 'tripadvisor.com', isResponse: true, url: 'http://www.tripadvisor.com/' });
+        this.sites.push({site: 'urbanspoon.com', isResponse: true, url: 'http://www.urbanspoon.com/u/signin?' });
+        this.sites.push({site: 'zagat.com', isResponse: false, url: '' });
+        
+    },
+    check: function(site) {
+        
+        if(!this.sites.length)
+            this.init();
+        
+        for(var i=0, max=this.sites.length; i < max; i++) {
+            
+            if(this.sites[i].site == site)
+                return this.sites[i].isResponse ? this.sites[i].url : false;
+            
+        }
+    
+        return false;
+        
+    }
+  
 };
