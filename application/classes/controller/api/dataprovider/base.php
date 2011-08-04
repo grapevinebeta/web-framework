@@ -129,8 +129,9 @@
                 'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
             );
 
-            $this->mongo = new Mongo("mongodb://192.168.1.72:27017");
-//            $this->mongo = new Mongo("mongodb://127.0.0.1");
+//            $this->mongo = new Mongo("mongodb://192.168.1.72:27017");
+            $this->mongo = new Mongo("mongodb://127.0.0.1");
+            
             $this->db = $this->mongo->auto;
 
 

@@ -1070,8 +1070,23 @@ var BC_Inbox = BoxController.extend({
     },
     
     processData: function() {
-      
-        this.loadInboxData();
+
+        if(!this.data.reviews.length) {
+            
+            if(!this.template)
+                this.template = this.getContentDom().find('.data-grid-holder').html();
+            
+            this.showNoData('.data-grid-holder');
+        }
+        else {
+            
+            if(this.template !== null) {
+                
+                this.getContentDom().find('.data-grid-holder').html(this.template);
+                
+            }
+            this.loadInboxData();
+        }
         
         var filters = this.data.filters;
         
