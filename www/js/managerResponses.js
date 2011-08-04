@@ -2,7 +2,7 @@
  * This is helper function to help with check sites for reviews reply
  */
 
-var Site = {
+Site = {
 
     sites: [],
     init: function() {

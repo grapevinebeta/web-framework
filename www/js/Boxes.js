@@ -446,7 +446,7 @@ var BC_RecentActivity = BoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'social',
+    endpoint: '/api/dataProvider/socials',
     
     limit: 4,
     
@@ -468,6 +468,44 @@ var BC_RecentActivity = BoxController.extend({
         titleLink.attr('class', data.network.toLowerCase());
         
         template.find('.network').html(titleLink);
+        
+        
+        if(!boxManager.Site) {
+            
+         
+            $.getScript('/js/managerResponses.js', function() {
+        
+                boxManager.Site = Site;
+        
+                var url = boxManager.Site.check(data.site);
+            
+                if(url)
+                    template.find('.reply').attr('href', url);    
+                else {
+             
+                    template.find('.reply').remove()
+             
+                }
+            
+            
+            });
+         
+            
+        }
+        else {
+            
+            var url = boxManager.Site.check(message.site);
+            
+            if(url)
+                tr.find('.actions-reply').attr('href', url);    
+            else {
+             
+                tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
+                tr.find('.actions-reply').remove()
+             
+            }
+            
+        }
       
         return template;
       
@@ -508,7 +546,11 @@ var BC_RecentActivity = BoxController.extend({
       
     },
     
-    construct: function () {}
+    construct: function () {
+        
+        this.noApiUrl = true;
+        
+    }
 
 });
 
@@ -905,10 +947,12 @@ var BC_Inbox = BoxController.extend({
             if($(this).hasClass('show-all')) {
                 self.resetFilters(key);
             }
+            else {
+                self.addFilter(key , filter_value);
+            }
             
             // reset pages
             self.currentPage = 1;
-            self.addFilter(key , filter_value);
             self.refresh();
         });
         
@@ -1917,10 +1961,32 @@ var BC_ReviewInbox = BC_Inbox.extend({
          else
                 tr.find('.actions-review').remove();
         
-        // we include asynchronious the response js and check site
-        $.getScript('/js/managerResponses.js', function() {
+        if(!boxManager.Site) {
+            
+         
+            $.getScript('/js/managerResponses.js', function() {
         
-            var url = Site.check(message.site);
+                boxManager.Site = Site;
+        
+                var url = boxManager.Site.check(message.site);
+            
+                if(url)
+                    tr.find('.actions-reply').attr('href', url);    
+                else {
+             
+                    tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
+                    tr.find('.actions-reply').remove()
+             
+                }
+            
+            
+            });
+         
+            
+        }
+        else {
+            
+            var url = boxManager.Site.check(message.site);
             
             if(url)
                 tr.find('.actions-reply').attr('href', url);    
@@ -1931,9 +1997,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
              
             }
             
-            
-        });
-        
+        }
         
         
         checkboxes.prop('checked', false);
@@ -2181,7 +2245,9 @@ var BC_SocialActivityBox = BC_GraphBoxController.extend({
     },
     
     construct: function() {
-        
+     
+        this.noApiUrl = true;
+     
     }
 });
 
@@ -3085,7 +3151,7 @@ boxManager = {
     section_id: null, // the name of selected tab
     
     dataProvider: null,
-
+    Site: null, 
     range: null,
     
     positions: null, //positions of boxes from db
