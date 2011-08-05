@@ -30,9 +30,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 'Neutral' => 'neutral',
                 'Positive' => 'positive',
                 'Negative' => 'negative',
-                'Alert' => 'ALERT',
-                'Flagged' => 'TODO',
-                'Completed' => 'CLOSED'
+                'Alert' => 'alert',
+                'Flagged' => 'todo',
+                'Completed' => 'closed'
             ),
             'source' => $auto_sources
 
