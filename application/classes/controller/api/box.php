@@ -36,6 +36,7 @@ class Controller_Api_Box extends Controller_Api {
         
         $twitterToken = $s->getSetting('twitter_oauth_token');
         $twitterSecret = $s->getSetting('twitter_oauth_token_secret');
+        $twitterAccount = $s->getSetting('twitter_account');
         
 
         if(isset($fbtoken[0])) {
@@ -49,6 +50,7 @@ class Controller_Api_Box extends Controller_Api {
             
             $config['twitter_user_token'] = $twitterToken[0];
             $config['twitter_user_secret'] = $twitterSecret[0];
+            $config['twitter_account'] = $twitterAccount[0];
             
         }
         
@@ -79,9 +81,51 @@ class Controller_Api_Box extends Controller_Api {
                     'user_token' => $config['twitter_user_token'],
                     'user_secret' => $config['twitter_user_secret']
                 ));
-        
-            list($id) = explode('-', $config['twitter_user_token']);
-            $code = $tmhOAuth->request('GET', $tmhOAuth->url('/1/statuses/user_timeline'), array('user_id' => $id));
+            
+            $code = $tmhOAuth->request('GET', $tmhOAuth->url('1/statuses/user_timeline'), array(
+                        'include_entities' => '1',
+                        'include_rts' => '1',
+                        'screen_name' => $config['twitter_account'],
+                        'count' => 100,
+                    ));
+            
+            if($code == 200) {
+                
+                $results = json_decode($tmhOAuth->response['response'], true);
+                
+                foreach($results as $message) {
+                    
+                    $timestamp = strtotime($message['created_at']);
+                    
+                    $tweet = array(
+                        'id' => $message['id_str'],
+                        'from' => $message['source'],
+                        'message' => $message['text'],
+                        'type' => 0,
+                        'network' => 'twitter'
+                    );
+                    
+                    if(isset($messages[$timestamp])) {
+                        
+                        $messages[$timestamp] = array(
+                            
+                            $messages[$timestamp],
+                            $tweet
+                            
+                        );
+                        
+                    }
+                    else
+                        $messages[$timestamp] = $tweet;
+                    
+                    
+                    
+                }
+                
+                
+            }
+            krsort($messages);
+            $this->apiResponse['messages'] = $messages;
             
         } catch (FacebookApiException $e) {
             echo $e->getMessage(); exit;

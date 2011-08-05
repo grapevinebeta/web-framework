@@ -46,6 +46,9 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 
         );
     }
+    protected function getFilterKinds(){
+        return array("status","actions");
+    }
      protected function getFilteredCountsMap()
     {
         return 'function(){
@@ -58,11 +61,11 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
     {
         return
                 'function(key,values){
-            var results={source:{},status:{}};
+            var results={source:{},actions:{}};
 
             values.forEach(function(value){
                results.source[value.site]=(results.source[value.site]||0)+1;
-               results.status[value.action]=(results.status[value.action]||0)+1;
+               results.actions[value.action]=(results.actions[value.action]||0)+1;
                
             });
 

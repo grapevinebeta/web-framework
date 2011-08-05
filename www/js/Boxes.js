@@ -2252,6 +2252,19 @@ var BC_SocialActivityBox = BC_GraphBoxController.extend({
     
     processData: function() {
         
+        var messages = this.data.messages;
+        var box = this.getContentDom().find('.messages');
+        var source = box.children('.post');
+        var template = source.clone();
+        source.remove();
+        
+        for(var message in messages) {
+            
+            template.find('.date').text(message);
+            template.find('.author').text(messages[message].from);
+            template.appendTo(box);
+        }
+        
     },
     
     construct: function() {
@@ -3728,4 +3741,4 @@ Site = {
         
     }
   
-};
+}
