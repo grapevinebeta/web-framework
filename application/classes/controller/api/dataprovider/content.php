@@ -90,9 +90,11 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         $query = $this->defaultQuery();
 
         $filters = Arr::get($_REQUEST, 'filters'); //$this->request->post('filters');
-        $status = Arr::get($filters, 'status');
+        $status = Arr::get($filters, 'status', array());
+        $status = array_merge($status, Arr::get($filters, 'actions', array()));
         $sources = Arr::get($filters, 'source');
-        $conditions = array(
+        $actions
+                = $conditions = array(
             'rating' => array(),
             'site' => array(),
             'status' => array(),
