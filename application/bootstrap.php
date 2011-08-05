@@ -116,6 +116,28 @@ Kohana::modules(array(
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
+
+// frontpage
+// @todo change it to lead to the actual frontpage
+Route::set('frontpage', '/')
+	->defaults(array(
+		'controller' => 'dashboard',
+		'action'     => 'index',
+	));
+
+// login page
+Route::set('login', 'login')
+	->defaults(array(
+		'controller' => 'session',
+		'action'     => 'new',
+	));
+// logout action
+Route::set('logout', 'logout')
+	->defaults(array(
+		'controller' => 'session',
+		'action'     => 'destroy',
+	));
+
 // Competition tab
 Route::set('competition', 'competition')
 	->defaults(array(
