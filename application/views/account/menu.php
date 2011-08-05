@@ -23,7 +23,7 @@
                 <?php echo html::anchor('account/socials', __('Social Media'), array('class' => 'menu-section-item-link')); ?>
             </div>
             <div class="menu-section-title">
-                <?php echo html::anchor('account/billing', __('Manage'), array('class' => 'menu-section-item-link')); ?>
+                <?php echo html::anchor('account/billing', __('Billing'), array('class' => 'menu-section-item-link')); ?>
             </div>
         </div>
     </div>
