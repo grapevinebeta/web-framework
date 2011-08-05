@@ -42,7 +42,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
     public function fixtures_reviews($db)
     {
 
-        $amount =20;
+        $amount = 20;
         $displacement = 5;
         $distance = $amount / $displacement;
         $default_start_date = strtotime('-' . ($distance / 2) . ' days');
@@ -123,7 +123,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
                             'title' => substr($content, 0, 40) . '...',
                             'identity' => 'Guest' . mt_rand(600, 1000),
                             'category' => '',
-                            'status' => 'OPENED',
+                            'status' => $score <= 3 ? 'alert' : 'opened',
                             'loc' => $location_id
 
                         );
@@ -403,7 +403,9 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
                         ) {
 
                             $defaults = $metric == 'activity' ? $default_activity : $default_subscriber;
-                            if(!isset($defaults[$site]) || !count($defaults[$site]))continue;
+                            if (!isset($defaults[$site]) || !count($defaults[$site])) {
+                                continue;
+                            }
                             $content = $this->random_gen(mt_rand(40, 124));
                             $keys = array_keys($defaults[$site]);
 
