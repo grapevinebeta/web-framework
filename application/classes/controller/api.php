@@ -26,13 +26,10 @@ class Controller_Api extends Controller {
         // salt the cookie (it is required for usage of Cookie::set())
         Cookie::$salt = Kohana::config('cookie.salt');
 
-        /**
-         * This is a temporary solution to force login of some user. In the
-         * future it should happen on different basis.
-         * @todo Replace it with actual authentication process
-         */
-        $user = ORM::factory('user')->find(); // find the first available user
-        Auth::instance()->force_login($user->username); // force login
+        if (!Auth::instance()->logged_in()) {
+            die('Unauthorized access'); // @todo replace it with proper message to the API client
+        }
+
         $this->_current_user = ORM::factory('user')
                 ->where('username', '=', Auth::instance()->get_user())
                 ->find(); // cache currently logged in user

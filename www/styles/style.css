@@ -1583,3 +1583,16 @@ input[type=submit] {
 .action-edit {
     content: url(../images/icons/edit_12px.png);
 }
+
+/* error box specific styles */
+.error-message {
+    border: 1px solid red;
+    margin: 10px;
+    padding: 10px;
+}
+    .error-message p {
+        color: red;
+        font-weight: bold;
+        margin: 0px;
+        padding: 0px;
+    }

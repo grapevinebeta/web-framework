@@ -88,4 +88,50 @@ class Model_User extends Model_Auth_User {
 
     }
 
+    /**
+     * Get the username matching given credentials or FALSE if none found
+     * @param string $username username for the user
+     * @param string $password password of the user
+     * @return Model_User user object or FALSE if data incorrect
+     * @uses checkPassword() for checking password matching
+     */
+    public function verifyLoginData($username, $password) {
+
+        if (empty($username) || empty($password)) {
+            // no username or password given, so there is nothing to check
+            return false;
+        }
+
+        // find user by username
+        $user = ORM::factory('user')
+                ->where('username', '=', $username)
+                ->find();
+
+        if (empty($user->id)) {
+            // user not found
+            return false;
+        }
+
+        if (!$user->checkPassword($password)) {
+            // password is incorrect
+            return false;
+        }
+
+        return $user;
+
+    }
+
+    /**
+     * Check if the given password matches current user's password
+     * @param string $password
+     * @return bool TRUE if matches stored password, FALSE otherwise\
+     * @uses Auth::hash()
+     * @uses Auth::instance()
+     */
+    protected function checkPassword($password) {
+
+        return Auth::instance()->hash($password) == $this->password;
+
+    }
+
 }

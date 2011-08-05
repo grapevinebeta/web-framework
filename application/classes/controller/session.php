@@ -13,11 +13,35 @@ class Controller_Session extends Controller_Template {
      */
     public function action_new() {
 
-        $user = ORM::factory('user')->values($this->request->post())->as_array();
+        if (count($this->request->post()) && !Auth::instance()->logged_in()) {
+            // some data has been posted by not logged in user
 
-        $this->template->body = View::factory('session/new', array(
-            'user' => $user,
-        ));
+            // get the user matching posted credentials
+            $user = ORM::factory('user')->verifyLoginData($this->request->post('username'), $this->request->post('password'));
+
+            if (!empty($user)) {
+                // credentials are ok
+                Auth::instance()->force_login($user->username);
+                $this->request->redirect(Route::url('frontpage'));
+            } else {
+                // credentials were incorrect
+                $this->template->body = View::factory('session/new', array(
+                    'error_message' => __('Username or password incorrect'),
+                    'user' => $user,
+                ));
+            }
+            
+        } elseif (Auth::instance()->logged_in()) {
+            // user is logged in
+            // @todo Replace it with anything apropriate for such case
+            Auth::instance()->logout();
+            $this->request->redirect(Route::url('login')); // redirect to this action again
+        } else {
+            $user = ORM::factory('user')->values($this->request->post())->as_array();
+            $this->template->body = View::factory('session/new', array(
+                'user' => $user,
+            ));
+        }
 
     }
 

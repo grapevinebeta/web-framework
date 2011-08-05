@@ -24,6 +24,15 @@ abstract class Controller_Template extends Kohana_Controller_Template
      * @var int
      */
     protected $_location_id = null;
+
+    /**
+     * List of controller names that can be accessed by anonymous users
+     * @var array
+     */
+    protected $_public_controllers = array(
+        'resources',
+        'session',
+    );
     
     public function before()
     {
@@ -33,23 +42,38 @@ abstract class Controller_Template extends Kohana_Controller_Template
         Cookie::$salt = Kohana::config('cookie.salt');
 
         /**
-         * This is a temporary solution to force login of some user. In the
-         * future it should happen on different basis.
-         * @todo Replace it with actual authentication process
+         * Check permissions to access specific controller while logged out
+         * @todo Move it outside and apply also on API controllers for security
          */
-        $user = ORM::factory('user')->find(); // find the first available user
-        Auth::instance()->force_login($user->username); // force login
-        $this->_current_user = ORM::factory('user')
-                ->where('username', '=', Auth::instance()->get_user())
-                ->find(); // cache currently logged in user
+        if (!in_array(strtolower($this->request->controller()), $this->_public_controllers) && !Auth::instance()->logged_in()) {
+            // user must be logged in - he is accessing non-public controller while not logged in
+            $this->request->redirect(Route::url('login'));
+        } elseif (Auth::instance()->logged_in()) {
+            // user is logged in - you can assign data based on specific user
+            $this->_current_user = ORM::factory('user')
+                    ->where('username', '=', Auth::instance()->get_user())
+                    ->find(); // cache currently logged in user
 
-        // bind current user to every view
-        View::bind_global('_current_user', $this->_current_user);
+            // bind current user to every view
+            View::bind_global('_current_user', $this->_current_user);
 
-        $this->_location = $this->_current_user->getLocations()->current();
+            /**
+             * @todo It must be replaced with some kind of Route parameter or
+             *      maybe GET parameter - for now (before the final shape of the
+             *      application and the relation between company account and
+             *      the location clarifies) it and Controller_Api use the first
+             *      location found in the database and accessible to user
+             */
+            $this->_location = $this->_current_user->getLocations()->current();
 
-        $this->_location_id = (int)$this->_location->id;
-        
+            $this->_location_id = (int)$this->_location->id;
+        } else {
+            /**
+             * @todo User went through the security checks, but is still logged
+             *      out. Check here, whether the user is really allowed to
+             *      access the application at this point
+             */
+        }
         
         
         $viewingRange = Session::instance()->get('viewingRange');
@@ -90,8 +114,12 @@ abstract class Controller_Template extends Kohana_Controller_Template
         );
         
         $this->template->body = 'test';
-        
-        $this->template->set('header', View::factory('layout/header'));
+
+        if (Auth::instance()->logged_in()) {
+            $this->template->set('header', View::factory('layout/header'));
+        } else {
+            $this->template->set('header', View::factory('layout/header_public'));
+        }
         $this->template->set('footer', View::factory('layout/footer'));
         $this->template->header->menu = View::factory('layout/menu');
     }
