@@ -30,9 +30,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 'Neutral' => 'neutral',
                 'Positive' => 'positive',
                 'Negative' => 'negative',
-                'Alert' => 'ALERT',
-                'Flagged' => 'TODO',
-                'Completed' => 'CLOSED'
+                'Alert' => 'alert',
+                'Flagged' => 'todo',
+                'Completed' => 'closed'
             ),
             'source' => $auto_sources
 
@@ -232,6 +232,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         }
 
         $return = $this->db->command($command);
+        
 
         if (count($return['results'])) {
             $results = $return['results'][0]['value'];

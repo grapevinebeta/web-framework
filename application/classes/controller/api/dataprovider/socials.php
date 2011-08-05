@@ -40,7 +40,7 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
         );
         $actions = array_combine(array_map('ucfirst', array_values($actions)), array_values($actions));
         return array(
-            'actions'
+            'status'
             => $actions,
             'source' => $auto_sources
 
