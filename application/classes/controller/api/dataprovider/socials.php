@@ -40,11 +40,14 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
         );
         $actions = array_combine(array_map('ucfirst', array_values($actions)), array_values($actions));
         return array(
-            'status'
+            'actions'
             => $actions,
             'source' => $auto_sources
 
         );
+    }
+    protected function getFilterKinds(){
+        return array("status","actions");
     }
      protected function getFilteredCountsMap()
     {
@@ -58,11 +61,11 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
     {
         return
                 'function(key,values){
-            var results={source:{},status:{}};
+            var results={source:{},actions:{}};
 
             values.forEach(function(value){
                results.source[value.site]=(results.source[value.site]||0)+1;
-               results.status[value.action]=(results.status[value.action]||0)+1;
+               results.actions[value.action]=(results.actions[value.action]||0)+1;
                
             });
 

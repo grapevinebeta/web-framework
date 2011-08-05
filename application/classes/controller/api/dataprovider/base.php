@@ -111,8 +111,8 @@
             if (isset($filters['status'])) {
                 $this->activeFilters = array_merge($this->activeFilters, $filters['status']);
             }
-            if (isset($filters['action'])) {
-                $this->activeFilters = array_merge($this->activeFilters, $filters['action']);
+            if (isset($filters['actions'])) {
+                $this->activeFilters = array_merge($this->activeFilters, $filters['actions']);
             }
             
             $this->filterEnabled = count($this->activeFilters) ? true : false;
