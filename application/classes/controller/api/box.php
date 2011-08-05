@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Api_Box extends Controller_Api {
