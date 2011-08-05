@@ -202,6 +202,11 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         }';
     }
 
+    protected function getFilterKinds()
+    {
+        return array("status", "source");
+    }
+
     private function getFilteredCounts($query)
     {
         $map = $this->getFilteredCountsMap();
@@ -219,7 +224,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
         $response = array();
         foreach (
-            array('status', 'source') as $kind
+            $this->getFilterKinds() as $kind
         ) {
             $response[$kind] = array(
                 'Total'
@@ -232,7 +237,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         }
 
         $return = $this->db->command($command);
-        
+
 
         if (count($return['results'])) {
             $results = $return['results'][0]['value'];
