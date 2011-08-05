@@ -779,10 +779,13 @@ class Controller_Api_Settings extends Controller_Api {
             $consumer = OAuth_Consumer::factory($config);
             // create provider object
             $provider = OAuth_Provider::factory('twitter');
-
+            /* @var $provider OAuth_Provider_Twitter */            
+            
             // get access token on the basis of request token
             $access_token = $provider->access_token($consumer, $token);
             // @todo If we need secret contained above, we can extract it also
+            
+            $access_token_secret = $access_token->secret;
             $access_token = $access_token->token;
 
             /**
@@ -800,6 +803,29 @@ class Controller_Api_Settings extends Controller_Api {
                 if (empty($location->id)) {
                     // @todo fail gracefully
                     die('Location not found!');
+                }
+
+                // add access token to the database (does not replace existing ones)
+                $twitter_oauth_token_secret = ORM::factory('location_setting')
+                        ->values(array(
+                            'type' => 'twitter_oauth_token_secret',
+                            'value' => (string)$access_token_secret,
+                            'location_id' => (int)$location->id,
+                        ))
+                        ->create();
+
+                // find older tokens...
+                $old_twitter_oauth_tokens = ORM::factory('location_setting')
+                        ->where_open()
+                            ->where('id', '!=', $twitter_oauth_token_secret->id)
+                            ->and_where('location_id', '=', (int)$location->id)
+                            ->and_where('type', '=', 'twitter_oauth_token_secret')
+                        ->where_close()
+                        ->find_all();
+
+                // ... and delete them one-by-one
+                foreach ($old_twitter_oauth_tokens as $token) {
+                    $token->delete();
                 }
 
                 // add access token to the database (does not replace existing ones)

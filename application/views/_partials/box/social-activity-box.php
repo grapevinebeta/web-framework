@@ -9,7 +9,16 @@
     ?>
     <div class="box-content">
         <div class="data-grid-holder">
-            
+            <div class="messages">
+                
+                <div class="post">
+                    <span class="date"></span>
+                    <span class="author"></span>
+                    <span class="message"></span>
+                    <span class="network"></span>
+                </div>
+                
+            </div>
         </div>
     </div>
 </div>
