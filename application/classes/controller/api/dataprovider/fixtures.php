@@ -123,7 +123,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
                             'title' => substr($content, 0, 40) . '...',
                             'identity' => 'Guest' . mt_rand(600, 1000),
                             'category' => '',
-                            'status' => 'opened',
+                            'status' => 'OPENED',
                             'loc' => $location_id
 
                         );

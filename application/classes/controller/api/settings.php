@@ -105,47 +105,6 @@ class Controller_Api_Settings extends Controller_Api {
     }
 
     /**
-     * Get general location settings.
-     */
-    public function action_getgeneral() {
-        $data = $this->request->post();
-
-        // location has been assigned at earlier stage, at higher level
-        $location = $this->_location;
-
-        if (empty($location->id)) {
-            /**
-             * @todo Maybe create location here, if not found?
-             */
-
-            // Location not found
-            $this->apiResponse['error'] = array(
-                'message' => __('Location not found'),
-            );
-        } else {
-            $this->apiResponse['result'] = array();
-            $properties = array(
-                'id',
-                'owner_name',
-                'owner_email',
-                'owner_phone',
-                'owner_ext',
-                'location_name',
-                'address1',
-                'address2',
-                'city',
-                'state',
-                'zip',
-                'phone',
-                'url',
-            );
-            foreach ($properties as $property_name) {
-                $this->apiResponse['result'][$property_name] = $location->$property_name;
-            }
-        }
-    }
-
-    /**
      * Get emails used for reports
      */
     public function action_getemails() {
@@ -328,8 +287,10 @@ class Controller_Api_Settings extends Controller_Api {
     
     /**
      * Action to add competitor into location settings
+     * @deprecated This action has been disabled on request. It may be safely deleted.
      */
     public function action_addcompetitor() {
+        die('Not available'); // @todo Remove if action should be re-enabled
 
         // @todo dummy replacement, delete it and assign it from eg. session
         $location_id = $this->_location_id;
@@ -383,8 +344,10 @@ class Controller_Api_Settings extends Controller_Api {
     
     /**
      * Delete competitor from location settings
+     * @deprecated This action has been disabled on request. It may be safely deleted.
      */
     public function action_deletecompetitor() {
+        die('Not available'); // @todo Remove if action should be re-enabled
 
         // @todo dummy replacement, delete it and assign it from eg. session
         $location_id = $this->_location_id;

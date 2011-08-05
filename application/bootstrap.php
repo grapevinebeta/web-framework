@@ -185,12 +185,6 @@ Route::set('api_account_settings_getemails', 'api/settings/getemails')
 		'controller' => 'settings',
 		'action' => 'getemails',
 	));
-Route::set('api_account_settings_getgeneral', 'api/settings/getgeneral')
-	->defaults(array(
-		'directory' => 'api',
-		'controller' => 'settings',
-		'action' => 'getgeneral',
-	));
 Route::set('api_account_settings_getuser', 'api/settings/getuser')
 	->defaults(array(
 		'directory' => 'api',
@@ -238,6 +232,14 @@ Route::set('oauth_twitter_callback', 'api/settings/twittercallback(/loc/<locatio
 Route::set('pages', 'pages(/<name>)')
 	->defaults(array(
 		'controller' => 'resources',
+		'action' => 'index',
+	));
+
+
+// alerts
+Route::set('alerts', 'alerts(/<name>)')
+	->defaults(array(
+		'controller' => 'alerts',
 		'action' => 'index',
 	));
 

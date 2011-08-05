@@ -3,10 +3,16 @@
 </h1>
 <div id="billingSettings">
     <div id="account-billing-section" class="padding-5">
-        <?php $billingMethod = $billing_type ? ucwords($billing_type) : __('not set'); ?>
-        <?php echo __('Current Billing Method'); ?>:
-        <?php echo html::anchor('#', $billingMethod); ?>
+        <?php
+        echo __('Current Billing Method: :method', array(
+            ':method' => $billing_type ? ucwords($billing_type) : __('not set'),
+        ));
+        ?>
         <br /><br />
-        <?php echo __('Want to change your billing?'), ' ', html::anchor(Route::url('contact'), __('Contact Us')); ?>
+        <?php
+        echo __('Want to change your billing? :contact_link', array(
+            ':contact_link' => HTML::mailto('info@grapevinebeta.com', __('Contact Us')),
+        ));
+        ?>
     </div>
 </div>

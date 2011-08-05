@@ -54,6 +54,8 @@
         protected $query;
 
         protected $include_date = TRUE;
+        
+        protected $limit; // results limit
 
 
         public function before()
@@ -62,6 +64,9 @@
 
 
             $this->id = $this->request->param('id');
+            $this->limit = $this->request->post('limit');
+            $this->limit = $this->limit ? $this->limit : 10;
+            
             $range = $this->request->post('range');
             if (!empty($range)) {
                 Session::instance()->set(
@@ -124,7 +129,9 @@
                 'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
             );
 
-            $this->mongo = new Mongo();
+//            $this->mongo = new Mongo("mongodb://192.168.1.72:27017");
+            $this->mongo = new Mongo("mongodb://127.0.0.1");
+            
             $this->db = $this->mongo->auto;
 
 

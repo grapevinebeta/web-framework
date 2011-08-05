@@ -15,16 +15,20 @@
         <div class="row">
             <span class="status-icon alert"></span>
             <span class="desc">
-                <strong class="opened"></strong> 
-                <?php echo __('reviews need your attention'); ?>
+                <a href="/alerts/show" class="alert-show">
+                    <strong class="alert"></strong> 
+                    <?php echo __('reviews need your attention'); ?>
+                </a>
             </span>
         </div>
 
         <div class="row end">
             <span class="status-icon todo"></span>
             <span class="desc">
+            <a href="/alerts/todo" class="todo-show">
                 <strong class="todo"></strong> 
                 <?php echo __('reviews are still flagged'); ?>
+            </a>
             </span>
         </div>
     </div>

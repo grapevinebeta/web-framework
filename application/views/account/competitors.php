@@ -8,12 +8,12 @@
         <?php echo View::factory('account/competitors/list', array(
             'competitors' => $competitors,
         )); ?>
-        <form action="" method="post">
-            <p>
-                <input type="text" name="competitor" />
-                <?php echo form::submit('', __('Add Competitor')); ?>
-                <span class="validation-message" data-validation-for="competitor"></span>
-            </p>
-        </form>
+        <p><?php
+
+        echo __('Want to change your Competitors? :contact_link', array(
+            ':contact_link' => HTML::mailto('info@grapevinebeta.com', __('Contact Us')),
+        ));
+
+        ?></p>
     </div>
 </div>

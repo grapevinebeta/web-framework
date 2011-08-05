@@ -30,9 +30,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 'Neutral' => 'neutral',
                 'Positive' => 'positive',
                 'Negative' => 'negative',
-                'Alert' => 'alert',
-                'Flagged' => 'todo',
-                'Completed' => 'closed'
+                'Alert' => 'ALERT',
+                'Flagged' => 'TODO',
+                'Completed' => 'CLOSED'
             ),
             'source' => $auto_sources
 
@@ -53,8 +53,6 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         // fetch the id
         $fields['_id'] = 1;
 
-        $limit = 10;
-
         if ($expand) {
             $fields = array_merge(
                 $fields, $this->expanded_fields
@@ -74,7 +72,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
         }
 
-        $cursor = $this->findContent($fields, $limit);
+        $cursor = $this->findContent($fields, $this->limit);
         $this->apiResponse = array(
             'filters' => $this->filterResponse,
             'pagination'

@@ -560,6 +560,9 @@ input[type=submit] {
         #box-recent-reviews .reviewStatus-todo {
             background-position: -553px -193px;
         }
+        #box-recent-reviews .reviewStatus-alert {
+            background-position: -553px -85px;
+        }
 
         
     /* Styling of the expanded review details */
@@ -933,6 +936,10 @@ input[type=submit] {
         background-position: -647px -408px;
     }
     
+    .network a.foursquare {
+        background-position: -647px -451px;
+    }
+    
     .buttons {
     
         margin-top: 15px;
@@ -1016,6 +1023,10 @@ input[type=submit] {
         background-position: -602px -311px;
     }
     
+    #box-social-media-inbox tr td.col-network a.foursquare {
+        background-position: -602px -344px;
+    }
+    
     
 /*    expanded icons */
     
@@ -1049,6 +1060,10 @@ input[type=submit] {
     
     .details .actions-network .delicious {
         background-position: -626px -500px;
+    }
+    
+    .details .actions-network .foursquare {
+        background-position: -533px -500px;
     }
     
    .details .actions-network .details-network {
@@ -1251,6 +1266,10 @@ input[type=submit] {
         background-position: -454px -418px;
     }
     
+    #box-recent-reviews .recent-review-status-icon.alert {
+    background-position: -454px -418px;
+}
+    
     .status-icon {
         background-image: url(../images/icons/icons.png);
         width: 35px;
@@ -1290,10 +1309,18 @@ input[type=submit] {
     
     .row .title {
         float: right;
-        margin: 0;
+        margin: 0 0 10px 0;
         width: 113px;
         font-weight: normal;
         font-size: 11px;
+        white-space: pre;           /* CSS 2.0 */
+        white-space: pre-wrap;      /* CSS 2.1 */
+        white-space: pre-line;      /* CSS 3.0 */
+        white-space: -pre-wrap;     /* Opera 4-6 */
+        white-space: -o-pre-wrap;   /* Opera 7 */
+        white-space: -moz-pre-wrap; /* Mozilla */
+        white-space: -hp-pre-wrap;  /* HP Printers */
+        word-wrap: break-word;      /* IE 5+ */
     }
     
     .row .network {
@@ -1550,15 +1577,9 @@ input[type=submit] {
 /* Account Settings styles */
 
 .action-delete {
-    background-image: url(../images/icons/delete.png);
-    display: block;
-    height: 18px;
-    width: 18px;
+    content: url(../images/icons/delete_12px.png);
 }
 
 .action-edit {
-    background-image: url(../images/icons/edit.png);
-    display: block;
-    height: 18px;
-    width: 18px;
+    content: url(../images/icons/edit_12px.png);
 }
