@@ -49,15 +49,43 @@ class Controller_Account extends Controller_Template {
     public function action_alerts()
     {
         $location_id = $this->_location_id;
+
+        $default_alert_tags = array('aggravate', 'aggravated', 'angry', 'annoy',
+            'annoyed', 'argue', 'attack', 'attacked', 'awful', 'bad', 'badgered',
+            'belittle', 'belittled', 'bitch', 'bitched', 'boring', 'bother',
+            'bothered', 'bullied', 'bully', 'cheat', 'cheated', 'clueless',
+            'conn', 'conned', 'cowardly', 'crap', 'crappy', 'criticized',
+            'criticized', 'damage', 'damaged', 'defective', 'defiant',
+            'degrade', 'degraded', 'dehumanized', 'demean', 'demeaned',
+            'despicable', 'dirty', 'disagreeable', 'disappointed',
+            'disappointing', 'discriminate', 'discriminated', 'dishonest',
+            'dislike', 'disliked', 'disrespect', 'disrespected', 'dumb',
+            'egotistical', 'embarrass', 'embarrassed', 'fake', 'frustrated',
+            'furious', 'harass', 'harassed', 'hateful', 'horrible', 'ill-temper',
+            'ill-tempered', 'incompetent', 'infuriate', 'infuriated', 'insult',
+            'insulted', 'irritate', 'irritated', 'lied', 'mad', 'mean',
+            'mistreat', 'mistreated', 'offend', 'offended', 'phony', 'pissed',
+            'ridiculous', 'rude', 'sarcastic');
         
         // this assumes there is only one alert for specific location, storing
         // big text field content that is then processed by some other mechanism
         $alert = ORM::factory('alert')
                 ->where('location_id', '=', (int)$location_id)
                 ->find();
+
+        if (empty($alert->id)) {
+            $alert = ORM::factory('alert')
+                    ->values(array(
+                        'location_id' => (int)$location_id,
+                        'type' => 'grapevine',
+                        'criteria' => (string)implode(', ', $default_alert_tags),
+                    ))
+                    ->create();
+        }
         
         $this->_contentView = View::factory('account/alerts', array(
             'alert' => $alert,
+            'default_alert_tags' => $default_alert_tags,
         ));
     }
     
