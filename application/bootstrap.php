@@ -235,6 +235,14 @@ Route::set('pages', 'pages(/<name>)')
 		'action' => 'index',
 	));
 
+
+// alerts
+Route::set('alerts', 'alerts(/<name>)')
+	->defaults(array(
+		'controller' => 'alerts',
+		'action' => 'index',
+	));
+
 // Account Settings URLs
 // @todo Add remaining sections here
 Route::set('account_settings_social', 'account/socials')

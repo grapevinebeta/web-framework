@@ -1007,7 +1007,7 @@ var BC_Inbox = BoxController.extend({
         for(var filter in filters) {
             
             var filterLink = $('<a href="#" data-filter-status="' + 
-                filter.toLowerCase() + '"></a>');
+                filters[filter].value + '"></a>');
             if (filters[filter].total) {
                 filterLink.text(filters[filter].total +' ');
             }
@@ -1926,7 +1926,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                                 
                     if(message.rating == 'negative') {
                         
-                        value = 'TODO';
+                        value = 'ALERT';
                     }
                     
                     value = value.toLowerCase();
@@ -2012,14 +2012,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
                     status: value.toUpperCase()
                 }, function() {
-                
-                    // update alert value
                     
-                    data.context.alerts[value]++;
-                    data.context.alerts[status]--;
                     data.context.renderAlerts();
                     
-                    status = value;
                     
                     tr.find('.recent-review-status-icon')
                     .removeClass('open closed todo')
@@ -2037,16 +2032,13 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
                 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'opened'
+                    status: 'OPENED'
                 }, function() {
                 
                     tr.find('.recent-review-status-icon')
                     .removeClass('open closed todo')
                     .addClass('opened');
                 
-                    data.context.alerts['opened']++;
-                    data.context.alerts[status]--;
-                    data.context.renderAlerts();
                     status = 'opened';
                 
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
@@ -2163,12 +2155,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 )
             );
             
-            if(this.alerts[statusLower]) {
-                this.alerts[statusLower]++;
-            }
-            else
-                this.alerts[statusLower] = 1;
-            
             
             if (i % 2) {
                 tr.addClass('odd');
@@ -2186,7 +2172,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
         }
         
-        this.renderAlerts();
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
         
@@ -2199,18 +2184,56 @@ var BC_ReviewInbox = BC_Inbox.extend({
       if(!alerts.length)
           return;
       
-      for(var key in this.alerts) {
-          
-          alerts.find('.desc .' + key).text(this.alerts[key]);
-          
-      }
       
-      alerts.parent().removeClass('hide');
+      var self = this;
+      $.post('/api/dataProvider/reviews/alerts', {status: 'ALERT'}, function(data) {
+          
+        self.alerts['alert'] = data.alerts;
+          
+      });
+      
+      $.post('/api/dataProvider/reviews/alerts', {status: 'TODO'}, function(data) {
+          
+        self.alerts['todo'] = data.alerts;  
+        
+        if(self.alerts['alert'] !== null) {
+            
+            for(var key in self.alerts) {
+
+                alerts.find('.desc .' + key).text(self.alerts[key]);
+
+            }
+
+            alerts.parent().removeClass('hide');
+            
+        }
+          
+      });
+      
+     
+      
+    },
+    
+    initBoxEvents: function() {
+      
+      this.renderAlerts();
+      
+      $('a.alert-show').bind('click', function() {
+          
+        var strWindowFeatures = "width=400,height=400, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+        windowObjectReference = window.open(this.href, "alerts-widow", strWindowFeatures);
+          
+      });
+      
+      $('a.todo-show').bind('click', function() {
+          
+      });
       
     },
     
     construct: function () {
         this.noApiUrl = true;
+        this.initBoxEvents();
     }
     
 });
@@ -3674,19 +3697,19 @@ Site = {
     sites: [],
     init: function() {
         
-        this.sites.push({site: 'dealerrater.com', isResponse: true, url: 'http://www.dealerrater.com/login.aspx' });
-        this.sites.push({site: 'mydealerreport.com', isResponse: true, url: 'http://www.mydealerreport.com/dealers/index.php' });
-        this.sites.push({site: 'edmunds.com', isResponse: true, url: 'http://www.edmunds.com/era/secure/lb/login.jsp?toUrl=http%3A%2F%2Fwww.edmunds.com%2F' });
-        this.sites.push({site: 'maps.google.com', isResponse: true, url: 'https://www.google.com/accounts/ServiceLogin?service=lbc' });
-        this.sites.push({site: 'citysearch.com', isResponse: true, url: 'http://www.citysearch.com/members/start' });
-        this.sites.push({site: 'insiderpages.com', isResponse: true, url: 'http://www.insiderpages.com/session/new?header_link=true' });
-        this.sites.push({site: 'local.yahoo.com', isResponse: true, url: 'https://login.yahoo.com/' });
-        this.sites.push({site: 'judysbook.com', isResponse: true, url: 'http://www.judysbook.com/login' });
-        this.sites.push({site: 'yp.com', isResponse: true, url: 'http://www.yellowpages.com/oauth/login?url=%2Flogin_success' });
-        this.sites.push({site: 'yelp.com', isResponse: true, url: 'https://www.yelp.com/login' });
-        this.sites.push({site: 'tripadvisor.com', isResponse: true, url: 'http://www.tripadvisor.com/' });
-        this.sites.push({site: 'urbanspoon.com', isResponse: true, url: 'http://www.urbanspoon.com/u/signin?' });
-        this.sites.push({site: 'zagat.com', isResponse: false, url: '' });
+        this.sites.push({site: 'dealerrater.com', isResponse: true, url: 'http://www.dealerrater.com/login.aspx'});
+        this.sites.push({site: 'mydealerreport.com', isResponse: true, url: 'http://www.mydealerreport.com/dealers/index.php'});
+        this.sites.push({site: 'edmunds.com', isResponse: true, url: 'http://www.edmunds.com/era/secure/lb/login.jsp?toUrl=http%3A%2F%2Fwww.edmunds.com%2F'});
+        this.sites.push({site: 'maps.google.com', isResponse: true, url: 'https://www.google.com/accounts/ServiceLogin?service=lbc'});
+        this.sites.push({site: 'citysearch.com', isResponse: true, url: 'http://www.citysearch.com/members/start'});
+        this.sites.push({site: 'insiderpages.com', isResponse: true, url: 'http://www.insiderpages.com/session/new?header_link=true'});
+        this.sites.push({site: 'local.yahoo.com', isResponse: true, url: 'https://login.yahoo.com/'});
+        this.sites.push({site: 'judysbook.com', isResponse: true, url: 'http://www.judysbook.com/login'});
+        this.sites.push({site: 'yp.com', isResponse: true, url: 'http://www.yellowpages.com/oauth/login?url=%2Flogin_success'});
+        this.sites.push({site: 'yelp.com', isResponse: true, url: 'https://www.yelp.com/login'});
+        this.sites.push({site: 'tripadvisor.com', isResponse: true, url: 'http://www.tripadvisor.com/'});
+        this.sites.push({site: 'urbanspoon.com', isResponse: true, url: 'http://www.urbanspoon.com/u/signin?'});
+        this.sites.push({site: 'zagat.com', isResponse: false, url: ''});
         
     },
     check: function(site) {

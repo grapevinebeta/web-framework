@@ -171,7 +171,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
     public function action_status()
     {
         $status = $this->request->post('status');
-        if (in_array($status, array('OPEN', 'CLOSED', 'TODO'))) {
+        if (in_array($status, array('OPENED', 'CLOSED', 'TODO', 'ALERT'))) {
             $error = $this->update(array('$set' => array('status' => $status)));
         } else {
             $error = true;
