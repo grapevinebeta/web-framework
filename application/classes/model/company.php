@@ -6,6 +6,9 @@
  */
 class Model_Company extends ORM {
 
+    protected $_has_many=array('users'=>array('through'=>'companies_users'),
+        'locations'=>array('through'=>'companies_locations'));
+
     /**
      * Get locations associated with current company
      * @return Database_Result collection of Model_Location objects

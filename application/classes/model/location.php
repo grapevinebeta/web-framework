@@ -5,6 +5,8 @@
  */
 class Model_Location extends ORM {
 
+    protected $_belongs_to=array('company'=>array());
+    protected $_has_many=array('users'=>array('through'=>'locations_users'));
     public function rules() {
         return array(
             'location_name' => array(
