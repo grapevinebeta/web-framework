@@ -32,7 +32,6 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
             'photo-post',
             'video-post',
             'check-in',
-
             'active-users',
             'check-in',
             'tip',
