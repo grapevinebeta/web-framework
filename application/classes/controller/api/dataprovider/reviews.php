@@ -43,7 +43,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
     public function action_alerts()
     {
-        $status = $this->request->post('status');
+        $status = $_REQUEST['status'];//$this->request->post('status');
 
         $this->apiResponse['alerts'] = $this->find(
             'reviews', array(
