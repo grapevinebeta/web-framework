@@ -106,7 +106,6 @@ Kohana::modules(array(
 	'oauth'        => MODPATH.'oauth',        // OAuth implementation for Kohana
 	'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	 'firephp'  => MODPATH. 'firephp',  // User guide and API documentation
 	 'swiftmailer' => MODPATH . 'swiftmailer',
 	 'facebook' => MODPATH . 'facebook',
 	 'twitter' => MODPATH . 'twitter',

@@ -1922,12 +1922,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>'));
                     break;
                 case 'status':
-                    
-                                
-                    if(message.rating == 'negative') {
-                        
-                        value = 'ALERT';
-                    }
+             
                     
                     value = value.toLowerCase();
                     var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
