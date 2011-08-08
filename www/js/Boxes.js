@@ -2181,13 +2181,13 @@ var BC_ReviewInbox = BC_Inbox.extend({
       
       
       var self = this;
-      $.post('/api/dataProvider/reviews/alerts', {status: 'ALERT'}, function(data) {
+      $.post('/api/dataProvider/reviews/alerts', {status: 'alert'}, function(data) {
           
         self.alerts['alert'] = data.alerts;
           
       });
       
-      $.post('/api/dataProvider/reviews/alerts', {status: 'TODO'}, function(data) {
+      $.post('/api/dataProvider/reviews/alerts', {status: 'todo'}, function(data) {
           
         self.alerts['todo'] = data.alerts;  
         
