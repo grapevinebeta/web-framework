@@ -94,6 +94,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'styles/tipTip.css',
             'styles/colorbox/colorbox.css',
             'styles/mask/jquery.loadmask.css',
+            'styles/datepicker.css',
         );
         $this->template->scripts = array(
             'js/jquery-1.6.min.js',
@@ -107,6 +108,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/highcharts/modules/exporting.js',
             'js/jquery.loadmask.min.js',
             'js/jquery.livequery.js',
+            'js/datepicker.js',
             'js/Boxes.js',
             'js/TopMenu.js',
             'js/common.js', // adds some common functions
