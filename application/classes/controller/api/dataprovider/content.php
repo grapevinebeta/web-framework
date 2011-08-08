@@ -116,6 +116,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 case 'todo':
                 case 'closed':
                 case 'opened':
+                case 'alert' :
                     $conditions['status'][] = $status;
                     break;
                 default:
