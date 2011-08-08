@@ -7,6 +7,10 @@ class Controller_Competition extends Controller_Template {
         
         $this->template->topOptions = View::factory('layout/top-options');
         $this->template->rightPanel = View::factory('layout/right-panel');
+
+        if ($this->_location->package != 'pro') {
+            die('Location package insufficient'); // @todo replace with fancy message
+        }
     }
     
     public function after() {
