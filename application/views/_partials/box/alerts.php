@@ -15,7 +15,7 @@
         <div class="row">
             <span class="status-icon alert"></span>
             <span class="desc">
-                <a href="/alerts/show" class="alert-show">
+                <a href="/alerts/alert" class="alert-show">
                     <strong class="alert"></strong> 
                     <?php echo __('reviews need your attention'); ?>
                 </a>

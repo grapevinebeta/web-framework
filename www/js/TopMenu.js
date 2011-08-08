@@ -238,6 +238,8 @@ jQuery(function(){
             
             var parsed;
             
+            console.log(this.dateSelector.val());
+            
             if(!this.minDate) {
                 
                 this.minDate = new Date();
@@ -272,9 +274,20 @@ jQuery(function(){
                         break;
                     default:
                         
-                        this.minDate.setMonth(this.maxDate.getMonth() - this.period);
+                        
+                        if(this.minDate instanceof Date) {
+                            
+                            this.minDate.setMonth(this.maxDate.getMonth() - this.period);
+                        }
+                        else {
+                            this.minDate = new Date();
+                            this.maxDate = new Date(this.minDate);
+                            this.minDate.setMonth(this.minDate.getMonth() - 1);
+                            
+                        }
                         break;
                     
+                                       
                 }
 
             }

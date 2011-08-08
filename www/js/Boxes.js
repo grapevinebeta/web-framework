@@ -2218,9 +2218,10 @@ var BC_ReviewInbox = BC_Inbox.extend({
       
       this.renderAlerts();
       
-      $('a.alert-show').bind('click', function() {
-          
-        var strWindowFeatures = "width=400,height=400, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+      $('a.alert-show').bind('click', function(e) {
+        
+        e.preventDefault();
+        var strWindowFeatures = "width=740,height=540, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
         windowObjectReference = window.open(this.href, "alerts-widow", strWindowFeatures);
           
       });
