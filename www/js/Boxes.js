@@ -1960,6 +1960,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
         tr.find('.review-details-title').text(message.title);
         tr.find('.review-details-content').text(message.content);
         
+        if(message.identity) {
+            
+            tr.find('.author').text(message.identity);
+            
+        }
         
          if(message.link)
                 tr.find('.action-review').attr('href', message.link);    
@@ -3103,6 +3108,12 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         tr.find('.details-title').text(message.title);
         tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
+        
+        if(message.identity) {
+            
+            tr.find('.author').text(message.identity);
+            
+        }
         
         if(message.link !== undefined)
             tr.find('.goto-link').attr('href', message.link);
