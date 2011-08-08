@@ -10,6 +10,11 @@ class Controller_Account extends Controller_Template {
         parent::before();
         $this->template->body = View::factory('account/body');
         $this->_menuView = View::factory('account/menu');
+
+        // If the user is not allowed to see current location's settings, deny:
+        if (!$this->_current_user->canManageLocation($this->_location)) {
+            die('Permission denied'); // @todo replace it with some fancier message or redirect
+        }
     }
     
     public function after() {
