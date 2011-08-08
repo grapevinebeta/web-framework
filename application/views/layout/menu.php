@@ -12,9 +12,11 @@
         Route::url('social'), 
         '<span class="top-menu-item-label">' . __('Social') . '</span>', 
         array('class' => 'top-menu-item' . ($currentController == 'social'?' active':''))); ?>
-    <?php echo html::anchor(
-        Route::url('competition'), 
-        '<span class="top-menu-item-label">' . __('Competition') . '</span>', 
-        array('class' => 'top-menu-item' . ($currentController == 'competition'?' active':''))); ?>
+    <?php if ($_current_location->package == 'pro'): ?>
+        <?php echo html::anchor(
+            Route::url('competition'),
+            '<span class="top-menu-item-label">' . __('Competition') . '</span>',
+            array('class' => 'top-menu-item' . ($currentController == 'competition'?' active':''))); ?>
+    <?php endif; ?>
     <div class="clear"></div>
 </div>

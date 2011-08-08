@@ -17,11 +17,10 @@ class Controller_Session extends Controller_Template {
             // some data has been posted by not logged in user
 
             // get the user matching posted credentials
-            $user = ORM::factory('user')->verifyLoginData($this->request->post('username'), $this->request->post('password'));
-
-            if (!empty($user)) {
+            $user = Auth::instance()->login($this->request->post('username'), $this->request->post('password'), true);
+            
+            if ($user) {
                 // credentials are ok
-                Auth::instance()->force_login($user->username);
                 $this->request->redirect(Route::url('frontpage'));
             } else {
                 // credentials were incorrect
