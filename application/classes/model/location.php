@@ -92,5 +92,15 @@ class Model_Location extends ORM {
         return new Model_Location_Settings($this->id);
 
     }
+
+    /**
+     * Get the company associated with this location
+     * @return Model_Company
+     */
+    public function getCompany() {
+        return ORM::factory('company')
+                ->where('id', '=', $this->company_id)
+                ->find();
+    }
     
 }

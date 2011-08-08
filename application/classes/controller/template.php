@@ -64,7 +64,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
              *      the location clarifies) it and Controller_Api use the first
              *      location found in the database and accessible to user
              */
-            $this->_location = $this->_current_user->getLocations()->current();
+            $this->_location = $this->_current_user->getLocations(false)->current();
 
             $this->_location_id = (int)$this->_location->id;
         } else {
