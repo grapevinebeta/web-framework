@@ -792,7 +792,6 @@
 							options.date.setHours(0,0,0,0);
 						}
 						if (options.mode != 'single') {
-                                                        console.log(options.date);
 							if (options.date.constructor != Array) {
 								options.date = [options.date.valueOf()];
 								if (options.mode == 'range') {
