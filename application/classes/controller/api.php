@@ -30,9 +30,7 @@ class Controller_Api extends Controller {
             die('Unauthorized access'); // @todo replace it with proper message to the API client
         }
 
-        $this->_current_user = ORM::factory('user')
-                ->where('username', '=', Auth::instance()->get_user())
-                ->find(); // cache currently logged in user
+        $this->_current_user = Auth::instance()->get_user(); // cache currently logged in user
 
         // bind current user to every view
         View::bind_global('_current_user', $this->_current_user);
