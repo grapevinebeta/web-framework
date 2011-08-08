@@ -83,7 +83,15 @@ jQuery(function(){
                     
                     }
 
-                    self.picker.DatePickerSetDate([self.minDate, self.maxDate], true);
+
+                    var formated = [];
+            
+                    formated[0] = self.minDate.getDate() + " " + self.minDate.getMonthName(true) + ", " + self.minDate.getFullYear();
+                    formated[1] = self.maxDate.getDate() + " " + self.maxDate.getMonthName(true) + ", " + self.maxDate.getFullYear();
+
+                    $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
+                    
+                    self.picker.DatePickerSetDate([self.minDate, self.maxDate], false);
                     self.form.trigger('submit');
                 }
                 
@@ -257,7 +265,18 @@ jQuery(function(){
 
             }
             
-            console.log(this.minDate, this.maxDate);
+            Date.prototype.getMonthName = function(fullName) {
+                var months= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		return months[this.getMonth()];
+            };
+            
+            formated = [];
+            
+            formated[0] = this.minDate.getDate() + " " + this.minDate.getMonthName(true) + ", " + this.minDate.getFullYear();
+            formated[1] = this.maxDate.getDate() + " " + this.maxDate.getMonthName(true) + ", " + this.maxDate.getFullYear();
+            
+            $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
+            
         },
    
    
@@ -295,9 +314,6 @@ jQuery(function(){
                         self.periodSelector.find("option:contains('custom')").attr('value',d2);
                         
                     }
-                    
-                    
-
                     
                     $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
                     
