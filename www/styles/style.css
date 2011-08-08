@@ -1237,6 +1237,13 @@ input[type=submit] {
             width: 110px;
         }
         
+        #box-competition-review-inbox .inner {
+            margin-right: 80px !important;
+        }
+        #box-competition-review-inbox .rightCol {
+            margin-left: -80px !important;
+        }
+        
 #box-revent-review {
     
 }

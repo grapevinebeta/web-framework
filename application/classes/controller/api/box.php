@@ -448,7 +448,10 @@ class Controller_Api_Box extends Controller_Api {
     
     public function action_export() {
         
-        $recipients = $this->request->post('email');
+        $emails = $this->request->post('email');
+
+        $recipients = $emails['to'];
+        $from = $emails['from'];
         
         $markup = View::factory('_partials/export_template', array(
             'html' => $this->request->post('html'),
@@ -492,7 +495,7 @@ class Controller_Api_Box extends Controller_Api {
             $count = 0;
             foreach ($recipients as $recipient) {
                 
-                $count += Model_Mailer::getInstance()->send($recipient, 'Test email with Page ', 'Test', $result);
+                $count += Model_Mailer::getInstance()->send($recipient, 'Grapevine Export Notification', 'Check Your attachment to see export results', $result, $from);
             }
             
             return $this->apiResponse['success'] = $count;

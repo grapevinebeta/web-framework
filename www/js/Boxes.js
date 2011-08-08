@@ -2732,6 +2732,12 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         else
             tr.find('.goto').remove();
         
+        if(message.identity) {
+            
+            tr.find('.author').text(message.identity);
+            
+        }
+        
         
         tr.find('.actions-network').remove();
         
