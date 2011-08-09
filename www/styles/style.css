@@ -1378,7 +1378,7 @@ input[type=submit] {
     
     .row {
         background: url("/images/bar.gif") repeat-x left bottom;
-        margin: 0 0 15px;
+        margin: 0 0 7px;
     }
     
     .row.end {
@@ -1403,6 +1403,7 @@ input[type=submit] {
     
     .row .network {
         float:left;
+        margin-bottom: 5px;
     }
     
     .row .date {

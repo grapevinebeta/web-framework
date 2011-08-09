@@ -446,76 +446,50 @@ var BC_RecentActivity = BoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: '/api/dataProvider/socials',
+    endpoint: '/api/box/social',
     
     limit: 4,
     
     ignore: true,
 
-    prepareMessage: function(template, data) {
-      
-        template = template.clone();
-      
-        template.find('.title').text(data.title);
-      
-        var tmpDate = new Date(data.date * 1000);
-        var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
-        '/' + tmpDate.getFullYear();
-      
-        template.find('.date').text(formatted);
-      
-        titleLink = $('<a href="#"><span></span></a>');
-        titleLink.attr('class', data.network.toLowerCase());
-        
-        template.find('.network').html(titleLink);
-        
-        var url = Site.check(data.site);
-        
-        if(url)
-            template.find('.reply').attr('href', url);    
-        else {
-            
-            template.find('.reply').remove()
-            
-        }
-      
-        return template;
-      
-    },
-    
-    /**
-     * Load Data by Ajax
-     */
-    loadData: function () {
-        this.beforeLoadData();
-        
-        this.data = this.dataProvider
-        .setEndpoint(this.endpoint)
-        .setDateRange(this.range)
-        .setFilters(this.filters)
-        .setDateInterval(null)
-        .setLimit(this.limit)
-        .setCallback(this.loadDataCallback(this))
-        .fetch();
-        
-        return this;
-    },
-    
     processData: function() {
-      
-        var content = this.getContentDom().find('.data-grid-holder'),
-        template = content.find('.row:first'),
-        row,
-        socials = this.data.socials;
         
-        content.find('.row').remove();
-        for (var i = 0; i < socials.length; i++) {
+        var messages = this.data.messages;
 
-            row = this.prepareMessage(template, socials[i]);   
-            content.append(row); // append two elements
+        var content = this.getContentDom().find('.data-grid-holder'),
+        template = content.find('.row:first');
+        content.find('.row').remove();
+        
+        for(var message in messages) {
             
+            var data = messages[message];
+            
+            template = template.clone();
+            var tmpDate = new Date(message * 1000);
+            
+            var h = tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours()
+            var m = tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes()
+            
+            var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
+            '/' + tmpDate.getFullYear() + " " + h + ":" + m ;
+            
+            template.find('.date').text(formatted);
+            
+            var titleLink2 = $('<a></a>')
+            .attr('href', data.link)
+            .text(data.message.substr(0, 50) + '...');
+            
+            template.find('.title').html(titleLink2);
+            
+            titleLink = $('<a href="#"><span></span></a>');
+            titleLink.attr('class', data.network);
+        
+            template.find('.network').html(titleLink);
+            
+            
+            template.appendTo(content);
         }
-      
+        
     },
     
     construct: function () {
