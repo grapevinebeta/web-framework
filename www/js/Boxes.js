@@ -2241,7 +2241,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 include_date: false
             }
             
-            $('.close').bind('click', function() {
+            $('.window-close').bind('click', function() {
                 window.close(); 
             });
             
