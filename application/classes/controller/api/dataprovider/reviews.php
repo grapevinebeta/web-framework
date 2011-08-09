@@ -68,6 +68,8 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
         if(!$rs)
             return;
         
+        $key = current($rs);    
+         
         $automotive = array(
             '' => 'Select',
             'General', 'Sales', 'Service', 'Parts', 'Finance'
@@ -78,7 +80,20 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
             'General', 'Food', 'Service'
         );
 
-        $this->apiResponse['categories'] = ${current($rs)};
+        
+        if (!$key) {
+
+            $result = array(
+                '' => 'Select',
+                'General'
+            );
+        }
+        else {
+            $result = ${$key};
+        }
+           
+        
+        $this->apiResponse['categories'] = $result;
 
     }
 
