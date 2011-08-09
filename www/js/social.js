@@ -1,12 +1,13 @@
 var credentials;
 function checkCredentials(response, callback) {
         
-        
     if (response.perms) {
             
         var perms = $.parseJSON(response.perms);
         for(var i=0; i < perms.extended.length; i++) {
-                
+            
+            
+            
             if(perms.extended[i] == 'offline_access' && credentials.facebook_page_name) {
                     
                 $('.login').removeClass('hide').html('<p style="font-size:16px; font-weight:bold;">You are linked as ' + credentials.facebook_page_name + '</p>');
@@ -20,6 +21,22 @@ function checkCredentials(response, callback) {
                 
         }
             
+    }
+    else {
+        
+        // we are not logged in
+        
+        if(credentials.facebook_page_name) {
+                    
+            $('.login').removeClass('hide').html('<p style="font-size:16px; font-weight:bold;">You are linked as ' + credentials.facebook_page_name + '</p>');
+                    
+            if(callback)
+                callback();
+                    
+            return;
+                    
+        }
+        
     }
         
     if(callback)

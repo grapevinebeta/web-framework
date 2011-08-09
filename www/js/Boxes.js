@@ -2353,15 +2353,26 @@ var BC_SocialActivityBox = BC_GraphBoxController.extend({
         
         for(var message in messages) {
             
-            template.find('.date').text(message);
+            template = template.clone();
+            var tmpDate = new Date(message * 1000);
+            
+            var h = tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours()
+            var m = tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes()
+            
+            var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
+            '/' + tmpDate.getFullYear() + " " + h + ":" + m ;
+            
+            template.find('.date').text(formatted);
             template.find('.author').text(messages[message].from);
+            template.find('.message').text(messages[message].message);
+            template.find('.network').addClass(messages[message].network);
             template.appendTo(box);
         }
         
     },
     
     construct: function() {
-     
+        this.noApiUrl = true;
     }
 });
 

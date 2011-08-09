@@ -976,6 +976,57 @@ input[type=submit] {
         background-position: -602px -81px;
     }
     
+    .messages .network {
+
+        display: inline-block;
+        background-image: url(../images/icons/icons.png);
+        width: 32px;
+        height: 32px;
+    }
+    
+    .messages .facebook {
+        background-position: -602px -15px;
+    }
+    
+    .messages .flickr {
+        background-position: -602px -48px;
+    }
+
+    .messages .twitter {
+        background-position: -602px -81px;
+    }
+
+    .messages .google {
+        background-position: -602px -114px;
+    }
+
+    .messages .youtube {
+        background-position: -602px -146px;
+    }
+    
+    .messages .reddit {
+        background-position: -602px -180px;
+    }
+    
+    .messages .stumbleupon {
+        background-position: -602px -212px;
+    }
+
+    .messages .rss {
+        background-position: -602px -245px;
+    }
+
+    .messages .blogger {
+        background-position: -602px -279px
+    }
+    
+    .messages .delicious {
+        background-position: -602px -311px;
+    }
+    
+    .messages .foursquare {
+        background-position: -602px -344px;
+    }
     
 /* small row icon    */
     
