@@ -886,4 +886,40 @@ class Controller_Api_Settings extends Controller_Api {
 
     }
 
+    /**
+     * Disconnect from specific social network
+     */
+    public function action_socialdisconnect() {
+
+        try {
+
+            $network = Arr::path($this->request->post(), 'params.network');
+
+            $settings = new Model_Location_Settings((int)$this->_location->id);
+
+            // find and delete settings associated with specific network
+            $this->apiResponse['result']['success'] = $settings->disconnectNetwork($network);
+
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+                'validation_errors' => $e->errors('validation'),
+            );
+        } catch (Database_Exception $e) {
+            // This should not happen and should be handled by validation!
+            $this->apiResponse['error'] = array(
+                'message' => __('Competitor name is incorrect'), // @todo add more details
+                'error_data' => array(
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage(),
+                ),
+            );
+        }
+        
+    }
+
 }
