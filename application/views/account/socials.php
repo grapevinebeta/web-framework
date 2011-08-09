@@ -12,7 +12,14 @@
                     <fb:login-button perms="offline_access, manage_pages, publish_stream"><?php echo __('Connect to Facebook'); ?></fb:login-button>
                     
                 </div>
-            </div>  
+            </div>
+            <p>
+                <?php
+                echo View::factory('account/_partials/_social_disconnect', array(
+                    'network' => 'Facebook',
+                ));
+                ?>
+            </p>
             
             <div class="a-right">
 
@@ -29,6 +36,13 @@
                 )), '<span>' . __('Connect with Twitter') . '</span>', array('class' => 'twitter-connect-button'));
             ?>
         </div>
+        <p>
+            <?php
+            echo View::factory('account/_partials/_social_disconnect', array(
+                'network' => 'Twitter',
+            ));
+            ?>
+        </p>
         <p>
             <?php echo __('You may also add a general Twitter "tweet-search" related to your business. You will need to spacify which words (called "tags") and phrses should be used to identify data that is revelant to you. You may type single tags, or entire phrases. You may type any number and combination of tags and phrases, as long as you separate each term with a comma.'); ?>
         </p>

@@ -73,10 +73,10 @@ class Controller_Api_DataProvider_Base extends Controller
                 'viewingRange', $range
             );
         } else {
-            $range = array('date' => 'now', 'period' => '1m');
+            $range = array('date' => 'now', 'period' => '+1 month');
         }
         $period = $range['period'];
-        /*switch ($period) {
+        switch ($period) {
         case '1m':
             $period = "-1 month";
             break;
@@ -89,10 +89,10 @@ class Controller_Api_DataProvider_Base extends Controller
         case '1y':
             $period = "-1 year";
             break;
-        default:
-            $period = "-1 month";
-        }*/
-        
+
+
+        }
+
         $include_date = $this->request->post('include_date');
         if (!empty($include_date)) {
             $this->include_date = (bool)$include_date;
