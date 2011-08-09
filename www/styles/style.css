@@ -819,7 +819,7 @@ input[type=submit] {
 
 .box .box-filter {
     float:left;
-    width: 597px;
+    width: 600px;
 }
 
 .box .box-filter a {
@@ -976,6 +976,57 @@ input[type=submit] {
         background-position: -602px -81px;
     }
     
+    .messages .network {
+
+        display: inline-block;
+        background-image: url(../images/icons/icons.png);
+        width: 32px;
+        height: 32px;
+    }
+    
+    .messages .facebook {
+        background-position: -602px -15px;
+    }
+    
+    .messages .flickr {
+        background-position: -602px -48px;
+    }
+
+    .messages .twitter {
+        background-position: -602px -81px;
+    }
+
+    .messages .google {
+        background-position: -602px -114px;
+    }
+
+    .messages .youtube {
+        background-position: -602px -146px;
+    }
+    
+    .messages .reddit {
+        background-position: -602px -180px;
+    }
+    
+    .messages .stumbleupon {
+        background-position: -602px -212px;
+    }
+
+    .messages .rss {
+        background-position: -602px -245px;
+    }
+
+    .messages .blogger {
+        background-position: -602px -279px
+    }
+    
+    .messages .delicious {
+        background-position: -602px -311px;
+    }
+    
+    .messages .foursquare {
+        background-position: -602px -344px;
+    }
     
 /* small row icon    */
     
@@ -1237,6 +1288,13 @@ input[type=submit] {
             width: 110px;
         }
         
+        #box-competition-review-inbox .inner {
+            margin-right: 80px !important;
+        }
+        #box-competition-review-inbox .rightCol {
+            margin-left: -80px !important;
+        }
+        
 #box-revent-review {
     
 }
@@ -1269,6 +1327,26 @@ input[type=submit] {
     #box-recent-reviews .recent-review-status-icon.alert {
     background-position: -454px -418px;
 }
+
+    .window-close:hover {
+        
+        text-decoration: none;
+        background: #D1CDDC;
+        
+    }
+    
+    .window-close {
+        padding: 6px 12px;
+        border: 1px solid gray;
+        position: absolute;
+        top:0;
+        right:0;
+        z-index: 10;
+        background: #fff;
+        font-weight: bold;
+        text-decoration: none;
+        
+    }
     
     .status-icon {
         background-image: url(../images/icons/icons.png);
@@ -1559,6 +1637,10 @@ input[type=submit] {
     #dialog-export  fieldset { padding:0; border:0; margin-top:25px; }
     .ui-dialog .ui-state-error { padding: .3em; }
     #dialog-export .validateTips { border: 1px solid transparent; padding: 0.1em; }
+
+    #email-export input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    #email-export  fieldset { padding:0; border:0; margin-top:25px; }
+    #email-export .validateTips { border: 1px solid transparent; padding: 0.1em; }
     
     .man-disabled {
         background: url("/images/bg.png") repeat-x scroll left bottom transparent;
@@ -1596,3 +1678,5 @@ input[type=submit] {
         margin: 0px;
         padding: 0px;
     }
+    
+    

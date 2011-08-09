@@ -10,6 +10,11 @@ class Controller_Account extends Controller_Template {
         parent::before();
         $this->template->body = View::factory('account/body');
         $this->_menuView = View::factory('account/menu');
+
+        // If the user is not allowed to see current location's settings, deny:
+        if (!$this->_current_user->canManageLocation($this->_location)) {
+            die('Permission denied'); // @todo replace it with some fancier message or redirect
+        }
     }
     
     public function after() {
@@ -50,22 +55,7 @@ class Controller_Account extends Controller_Template {
     {
         $location_id = $this->_location_id;
 
-        $default_alert_tags = array('aggravate', 'aggravated', 'angry', 'annoy',
-            'annoyed', 'argue', 'attack', 'attacked', 'awful', 'bad', 'badgered',
-            'belittle', 'belittled', 'bitch', 'bitched', 'boring', 'bother',
-            'bothered', 'bullied', 'bully', 'cheat', 'cheated', 'clueless',
-            'conn', 'conned', 'cowardly', 'crap', 'crappy', 'criticized',
-            'criticized', 'damage', 'damaged', 'defective', 'defiant',
-            'degrade', 'degraded', 'dehumanized', 'demean', 'demeaned',
-            'despicable', 'dirty', 'disagreeable', 'disappointed',
-            'disappointing', 'discriminate', 'discriminated', 'dishonest',
-            'dislike', 'disliked', 'disrespect', 'disrespected', 'dumb',
-            'egotistical', 'embarrass', 'embarrassed', 'fake', 'frustrated',
-            'furious', 'harass', 'harassed', 'hateful', 'horrible', 'ill-temper',
-            'ill-tempered', 'incompetent', 'infuriate', 'infuriated', 'insult',
-            'insulted', 'irritate', 'irritated', 'lied', 'mad', 'mean',
-            'mistreat', 'mistreated', 'offend', 'offended', 'phony', 'pissed',
-            'ridiculous', 'rude', 'sarcastic');
+        $default_alert_tags = Model_Alert::$default_tags;
         
         // this assumes there is only one alert for specific location, storing
         // big text field content that is then processed by some other mechanism

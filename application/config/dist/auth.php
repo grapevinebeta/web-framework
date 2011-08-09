@@ -2,7 +2,7 @@
 
 return array(
 
-	'driver'       => 'file',
+	'driver'       => 'orm',
 	'hash_method'  => 'sha1',
 	'hash_key'     => '1234567890ZXCVBNMASDFGHJKL', // @todo replace it with something else
 	'lifetime'     => 1209600,

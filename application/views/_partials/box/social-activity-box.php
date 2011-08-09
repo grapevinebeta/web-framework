@@ -12,10 +12,10 @@
             <div class="messages">
                 
                 <div class="post">
+                    <span class="network"></span>
                     <span class="date"></span>
                     <span class="author"></span>
                     <span class="message"></span>
-                    <span class="network"></span>
                 </div>
                 
             </div>

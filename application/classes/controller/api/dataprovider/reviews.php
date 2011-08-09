@@ -54,13 +54,22 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
     }
 
 
-    /**
-     * @todo Eric change it to the proper implementation, this is
-     * just a placeholder
-     */
     public function action_categories()
     {
+        
+        $rs = DB::select('industry')
+                ->from('locations')
+                ->where('id', '=', $this->location)
+                ->limit(1)
+                ->as_assoc()
+                ->execute()
+                ->current();
 
+        if(!$rs)
+            return;
+        
+        $key = current($rs);    
+         
         $automotive = array(
             '' => 'Select',
             'General', 'Sales', 'Service', 'Parts', 'Finance'
@@ -71,7 +80,20 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
             'General', 'Food', 'Service'
         );
 
-        $this->apiResponse['categories'] = $automotive;
+        
+        if (!$key) {
+
+            $result = array(
+                '' => 'Select',
+                'General'
+            );
+        }
+        else {
+            $result = ${$key};
+        }
+           
+        
+        $this->apiResponse['categories'] = $result;
 
     }
 

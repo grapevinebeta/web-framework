@@ -23,6 +23,8 @@ class Model_Location_Settings {
      * Associative array with names of settings as keys and collections of
      * settings errors as values
      * @var array
+     * @internal If you update this list, please make sure you also update
+     *      self::disconnectNetwork() method to not use deleted settings' types
      */
     private $_settings = array(
         'competitor'            => array(),
@@ -105,6 +107,75 @@ class Model_Location_Settings {
             $result = $this->_settings;
         }
         return $result;
+    }
+
+    /**
+     * Delete settings of the given type
+     * @param string $type type of the setting
+     * @return boolean FALSE if failed
+     */
+    public function deleteSettings($type) {
+
+        if (!in_array($type, array_keys($this->_settings))) {
+            // @todo Change the class of this exception for something better
+            throw new Kohana_Exception('There is no location setting of ":type" type', array(
+                ':type' => (string)$type,
+            ));
+        }
+
+        $settings = ORM::factory('location_setting')
+                ->where('type', '=', (string)$type)
+                ->and_where('location_id', '=', (int)$this->_location_id)
+                ->find_all();
+
+        if (count($settings)) {
+            foreach ($settings as $setting) {
+                $setting->delete();
+            }
+            return true; // assume success
+        }
+
+        return false; // no records found, no records deleted
+
+    }
+
+    /**
+     * Delete all current location's settings associated with the connection to
+     * given social network.
+     * @param string $network network to be removed
+     * @return bool TRUE if success, FALSE if not
+     */
+    public function disconnectNetwork($network) {
+
+        // determine list of settings to be deleted
+        switch (strtolower($network)) {
+            case 'facebook':
+                $settings_types = array(
+                    'facebook_oauth_token',
+                    'facebook_page_id',
+                    'facebook_page_name',
+                );
+                break;
+            case 'twitter':
+                $settings_types = array(
+                    'twitter_account',
+                    'twitter_oauth_token',
+                    'twitter_oauth_token_secret',
+                    'twitter_search',
+                    'twitter_user_id',
+                );
+                break;
+            default:
+                return false;
+        }
+
+        // delete settings one-by-one
+        foreach ($settings_types as $settings_type) {
+            $this->deleteSettings($settings_type);
+        }
+
+        return true;
+
     }
 
 }

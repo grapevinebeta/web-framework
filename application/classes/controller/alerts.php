@@ -2,6 +2,8 @@
 
 class Controller_Alerts extends Controller_Template {
     
+    public $template = 'custom';
+    
     public function before() {
         parent::before();
         
@@ -17,12 +19,9 @@ class Controller_Alerts extends Controller_Template {
         
         $name = filter_var($this->request->param('name'), FILTER_SANITIZE_STRING);
         
-        $response = Request::factory('api/dataProvider/reviews/alerts')
-                ->method(HTTP_Request::POST)
-                ->post('status', $name)
-                ->execute();
         
-        var_dump($response); exit;
+         $this->template->body = View::factory('alerts/inbox');
+         $this->template->body->alert = $name;
         
     }
     

@@ -50,9 +50,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             $this->request->redirect(Route::url('login'));
         } elseif (Auth::instance()->logged_in()) {
             // user is logged in - you can assign data based on specific user
-            $this->_current_user = ORM::factory('user')
-                    ->where('username', '=', Auth::instance()->get_user())
-                    ->find(); // cache currently logged in user
+            $this->_current_user = Auth::instance()->get_user(); // cache currently logged in user
 
             // bind current user to every view
             View::bind_global('_current_user', $this->_current_user);
@@ -64,8 +62,10 @@ abstract class Controller_Template extends Kohana_Controller_Template
              *      the location clarifies) it and Controller_Api use the first
              *      location found in the database and accessible to user
              */
-            $this->_location = $this->_current_user->getLocations()->current();
+            $this->_location = $this->_current_user->getLocations(false)->current();
 
+            // bind current location to every view
+            View::bind_global('_current_location', $this->_location);
             $this->_location_id = (int)$this->_location->id;
         } else {
             /**
@@ -98,6 +98,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         );
         $this->template->scripts = array(
             'js/jquery-1.6.min.js',
+            'js/common.js', // adds some common functions
             'js/highcharts/highcharts.src.js',
             'js/flowplayer/flowplayer-3.2.6.min.js',
             'js/jquery-ui-1.8.13.custom.min.js',
@@ -111,7 +112,6 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/datepicker.js',
             'js/Boxes.js',
             'js/TopMenu.js',
-            'js/common.js', // adds some common functions
             'js/Settings.js',
         );
         
