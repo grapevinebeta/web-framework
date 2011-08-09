@@ -202,9 +202,25 @@ jQuery(function(){
         },
 
         'initializeSocialMediaSettings': function(){
+            var self = this;
+
             this.socialMediaSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
                 alert('Not yet ready');
+            });
+
+            this.socialMediaSettings.delegate('.social-disconnect[data-action="disconnect"]', 'click', function(event){
+                event.preventDefault();
+                var network = jQuery(this).attr('data-network');
+                var network_name = jQuery(this).attr('data-network-name');
+                self.disconnectFromSocialNetwork(network, function(result){
+                    if (result){
+                        log('Correctly disconnected from "' + network_name + '" network');
+                        window.location.reload(true); // reload the page - shortcut to refreshing the data
+                    } else {
+                        log('Disconnecting from "' + network_name + '" network failed');
+                    }
+                });
             });
 
             log('Social media settings initialized');
@@ -327,6 +343,23 @@ jQuery(function(){
                 log(element);
             });
             log('Validation errors cleared');
+        },
+
+        // deals with disconnecting from social network
+        'disconnectFromSocialNetwork': function(network, callback){
+            jQuery.post('/api/settings/socialdisconnect', {
+                'params': {
+                    'network': network
+                }
+            }, function(data){
+                if (typeof data.result.success !== 'undefined' && data.result.success){
+                    // success
+                    callback(true);
+                } else {
+                    // failure
+                    callback(false);
+                }
+            }, 'json');
         },
         
         // display validation information from the data given, into the validation messages' containers
