@@ -29,7 +29,56 @@ function checkCredentials(response, callback) {
         
     return;
 }
+
+function showSelectPage() {
     
+    FB.api('/me/accounts', function(response) {
+        if (!response || response.error) {
+            alert('Error with facebook connection');
+        } else {
+            var option, select = document.createElement('select');
+            select.setAttribute('name', 'page_selector');
+            select.setAttribute('id', 'page_selector');
+                                
+            option = document.createElement('option');
+            option.setAttribute('value', '');
+            option.innerHTML = 'Please select page that you want to connect';
+            select.appendChild(option);
+
+            for(var i in response.data) {
+                                    
+                option = document.createElement('option');
+                option.setAttribute('value', response.data[i].id);
+                option.setAttribute('token', response.data[i].access_token);
+                option.innerHTML = response.data[i].name;
+                select.appendChild(option);
+                                    
+            }
+                           
+            $('.login').html(select).delegate('select','change', function() {
+                                    
+                var selected = $(this).children("option:selected");
+                                    
+                if(!selected.attr('value'))
+                    return;
+                                    
+                $.post('/api/settings/facebook', {
+                    'facebook_oauth_token' : selected.attr('token'),
+                    'facebook_page_id' : selected.attr('value'),
+                    'facebook_page_name' : selected.text()
+                }, function() {
+                                        
+                    $('.login').removeClass('hide').html('<p style="font-size:16px; font-weight:bold;">You are linked as ' + selected.text() + '</p>');
+                                        
+                });
+                                    
+            });
+
+        }
+    });
+    
+}
+
 window.fbAsyncInit = function() {
     FB.init({
         appId  : credentials.appId,
@@ -37,61 +86,30 @@ window.fbAsyncInit = function() {
         cookie : true, // enable cookies to allow the server to access the session
         xfbml  : true  // parse XFBML
     });
-        
-    FB.getLoginStatus(function(response) {
+    
+    if(credentials.facebook_page_name === false) {
             
+        var session = FB.getSession();
+          
+        if(session && session.access_token) {
+              
+            showSelectPage();
+              
+        }
+            
+            
+    }
+
+    FB.getLoginStatus(function(response) {
+        
         checkCredentials(response, function() {
                 
             FB.Event.subscribe('auth.statusChange', function(response) {
-                    
-                    
+                       
                 if(response.status == "connected")
                 {
 
-                    FB.api('/me/accounts', function(response) {
-                        if (!response || response.error) {
-                            alert('Error with facebook connection');
-                        } else {
-                            var option, select = document.createElement('select');
-                            select.setAttribute('name', 'page_selector');
-                            select.setAttribute('id', 'page_selector');
-                                
-                            option = document.createElement('option');
-                            option.setAttribute('value', '');
-                            option.innerHTML = 'Please select page that you want to connect';
-                            select.appendChild(option);
-
-                            for(var i in response.data) {
-                                    
-                                option = document.createElement('option');
-                                option.setAttribute('value', response.data[i].id);
-                                option.setAttribute('token', response.data[i].access_token);
-                                option.innerHTML = response.data[i].name;
-                                select.appendChild(option);
-                                    
-                            }
-                           
-                            $('.login').html(select).delegate('select','change', function() {
-                                    
-                                var selected = $(this).children("option:selected");
-                                    
-                                if(!selected.attr('value'))
-                                    return;
-                                    
-                                $.post('/api/settings/facebook', {
-                                    'facebook_oauth_token' : selected.attr('token'),
-                                    'facebook_page_id' : selected.attr('value'),
-                                    'facebook_page_name' : selected.text()
-                                }, function() {
-                                        
-                                    $('.login').removeClass('hide').html('<p style="font-size:16px; font-weight:bold;">You are linked as ' + selected.text() + '</p>');
-                                        
-                                });
-                                    
-                            });
-
-                        }
-                    });
+                    showSelectPage();
 
 
                 }
@@ -113,6 +131,7 @@ window.fbAsyncInit = function() {
             
             
         credentials = data;
+            
             
         if(data.twitter_url) {
 
