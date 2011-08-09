@@ -212,6 +212,12 @@ Route::set('api_account_settings_getuser', 'api/settings/getuser')
 		'controller' => 'settings',
 		'action' => 'getuser',
 	));
+Route::set('api_account_settings_socialdisconnect', 'api/settings/socialdisconnect')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'socialdisconnect',
+	));
 Route::set('api_account_settings_updatealert', 'api/settings/updatealert')
 	->defaults(array(
 		'directory' => 'api',
