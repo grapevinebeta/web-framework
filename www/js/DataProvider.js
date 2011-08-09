@@ -34,6 +34,8 @@ var DataProvider = function() {
     var page;
     
     var limit;
+    
+    var extraParams;
 
     return {
         
@@ -61,6 +63,13 @@ var DataProvider = function() {
         setPage: function (value) {
             
             page = value;
+            return this;
+            
+        },
+        
+        setExtraParams: function (values) {
+            
+            extraParams = values;
             return this;
             
         },
@@ -98,6 +107,14 @@ var DataProvider = function() {
             }
             
             var url = this.noApiUrl ? endpoint : ApiUrl + endpoint;
+            
+            
+            if(extraParams) {
+                
+                $.extend(params, extraParams);
+
+                
+            }
             
             $.ajax({
                 type: "POST",

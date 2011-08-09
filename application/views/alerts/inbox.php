@@ -1,3 +1,4 @@
+<a href="#" class="window-close">Close</a>
 <div id="boxes-holder">
     <div id="box-recent-reviews" class="box" filter="<?php echo $alert; ?>">
         <?php

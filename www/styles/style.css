@@ -1276,6 +1276,26 @@ input[type=submit] {
     #box-recent-reviews .recent-review-status-icon.alert {
     background-position: -454px -418px;
 }
+
+    .window-close:hover {
+        
+        text-decoration: none;
+        background: #D1CDDC;
+        
+    }
+    
+    .window-close {
+        padding: 6px 12px;
+        border: 1px solid gray;
+        position: absolute;
+        top:0;
+        right:0;
+        z-index: 10;
+        background: #fff;
+        font-weight: bold;
+        text-decoration: none;
+        
+    }
     
     .status-icon {
         background-image: url(../images/icons/icons.png);
@@ -1603,3 +1623,5 @@ input[type=submit] {
         margin: 0px;
         padding: 0px;
     }
+    
+    

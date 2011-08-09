@@ -877,6 +877,7 @@ var BC_Inbox = BoxController.extend({
     totalPages: null,
     limit: 10,
     ignore: false,
+    extraParams: null,
     
     /**
      * @return jQuery DOM element which holds pager of the box
@@ -1090,6 +1091,7 @@ var BC_Inbox = BoxController.extend({
         .setFilters(this.filters)
         .setDateInterval(null)
         .setPage(this.currentPage)
+        .setExtraParams(this.extraParams)
         .setLimit(this.limit)
         .setCallback(this.loadDataCallback(this));
         
@@ -2218,15 +2220,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
       
       this.renderAlerts();
       
-      $('a.alert-show').bind('click', function(e) {
+      $('a.alert-show, a.todo-show').bind('click', function(e) {
         
         e.preventDefault();
-        var strWindowFeatures = "width=740,height=540, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+        var strWindowFeatures = "width=800,height=540, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
         windowObjectReference = window.open(this.href, "alerts-widow", strWindowFeatures);
-          
-      });
-      
-      $('a.todo-show').bind('click', function() {
           
       });
       
@@ -2234,6 +2232,21 @@ var BC_ReviewInbox = BC_Inbox.extend({
     
     construct: function () {
         this.noApiUrl = true;
+        
+        
+        if(this.filter = this.getBoxDom().attr('filter')) {
+            
+            this.addFilter('status' , this.filter);
+            this.extraParams = {
+                include_date: false
+            }
+            
+            $('.close').bind('click', function() {
+                window.close(); 
+            });
+            
+        }
+        
         this.initBoxEvents();
     }
     
@@ -2269,8 +2282,6 @@ var BC_SocialActivityBox = BC_GraphBoxController.extend({
     },
     
     construct: function() {
-     
-        this.noApiUrl = true;
      
     }
 });
