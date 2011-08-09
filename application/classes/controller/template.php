@@ -98,6 +98,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         );
         $this->template->scripts = array(
             'js/jquery-1.6.min.js',
+            'js/common.js', // adds some common functions
             'js/highcharts/highcharts.src.js',
             'js/flowplayer/flowplayer-3.2.6.min.js',
             'js/jquery-ui-1.8.13.custom.min.js',
@@ -111,7 +112,6 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/datepicker.js',
             'js/Boxes.js',
             'js/TopMenu.js',
-            'js/common.js', // adds some common functions
             'js/Settings.js',
         );
         

@@ -7,6 +7,48 @@ Function.prototype.clone = function() {
     return temp;
 };
 
+jQuery(function(){
+    helpers = {
+            
+            tips: $( ".validateTips" ),
+            
+            updateTips: function(t) {
+                this.tips
+                .text( t )
+                .addClass( "ui-state-highlight" );
+                
+                var that = this;
+                
+                setTimeout(function() {
+                    that.tips.removeClass( "ui-state-highlight", 1500 );
+                }, 500 );
+            },
+    
+            checkLength: function( o, n, min, max ) {
+                if ( o.val().length > max || o.val().length < min ) {
+                    o.addClass( "ui-state-error" );
+                    this.updateTips( "Length of " + n + " must be between " +
+                        min + " and " + max + "." );
+                    return false;
+                } else {
+                    return true;
+                }
+            },
+    
+            checkRegexp: function(o, value, regexp, n ) {
+                if ( !( regexp.test( value ) ) ) {
+                    o.addClass( "ui-state-error" );
+                    this.updateTips( n );
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            
+        };
+});
+
+
 function determineMonthDiff(period)
 {
     switch(period) {
