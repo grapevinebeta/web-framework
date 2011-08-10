@@ -228,11 +228,11 @@ jQuery(function(){
                 switch(this.selectValue) {
                     
                     case 'ytd':
+                        this.maxDate = new Date();
+                        this.maxDate.setDate(this.maxDate.getDate() -1);
                         
                         this.minDate.setMonth(0, 1);
                         this.minDate.setFullYear(this.maxDate.getFullYear());
-                        this.maxDate = new Date();
-                        this.maxDate.setDate(this.maxDate.getDate() -1);
                         break;
                     case 'all':
                         this.minDate = new Date(0);

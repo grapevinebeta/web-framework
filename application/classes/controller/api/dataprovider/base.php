@@ -88,6 +88,10 @@ class Controller_Api_DataProvider_Base extends Controller
             break;
         case '1y':
             $period = "+1 year";
+        case 'ytd':
+            $period = "-1 day";
+        case 'all':
+            $period = "-1 day";
             break;
         default:
             $period = false;
@@ -110,11 +114,18 @@ class Controller_Api_DataProvider_Base extends Controller
         
         $start = strtotime($range['date']);
         
-        if($period)
-            $end = strtotime($period, $start);
+        if($period) {
+            if(in_array($range['period'], array('all', 'ytd'))) {
+                $end = strtotime($period);
+            }
+            else
+                $end = strtotime($period, $start);
+        }
         else
             $end = strtotime($range['period']); // this is the case when period has date value
         
+//        
+//        echo date('Y m d', $start), " ", date('Y m d', $end); exit;
         
         $this->startDate = new MongoDate($start);
         $this->endDate = new MongoDate($end);
