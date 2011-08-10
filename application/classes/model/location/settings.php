@@ -161,7 +161,7 @@ class Model_Location_Settings {
                     'twitter_account',
                     'twitter_oauth_token',
                     'twitter_oauth_token_secret',
-                    'twitter_search',
+                    //'twitter_search', // @todo Should it be deleted when disconnecting?
                     'twitter_user_id',
                 );
                 break;
