@@ -266,7 +266,7 @@ var BoxController = Class.extend({
                              
                                 boxController.template = 
                                 boxController.getContentDom()
-                                .find('.data-grid-holder').html();
+                                .children('.data-grid-holder').html();
                              
                                 
                             }
@@ -283,7 +283,7 @@ var BoxController = Class.extend({
                             if(boxController.template !== null) {
                         
                         
-                                boxController.getContentDom().children().html(boxController.template);
+                                boxController.getContentDom().children('.data-grid-holder').html(boxController.template);
                                 
                                 boxController.empty = false;
                             }
