@@ -66,7 +66,6 @@ jQuery(function(){
                     return;
                 }
                 else {                
-                
                     switch(self.selectValue) {
                     
                         case 'ytd':
@@ -82,7 +81,11 @@ jQuery(function(){
                             break;
                     
                     }
-
+   
+                        
+                    var d = self.minDate.getMonth()+1 + '/' + self.minDate.getDate() + '/' + self.minDate.getFullYear();
+                    
+                    self.dateSelector.val(d);
 
                     var formated = [];
             
@@ -91,10 +94,11 @@ jQuery(function(){
 
                     $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
                     
+                    
                     self.picker.DatePickerSetDate([self.minDate, self.maxDate], false);
-                    self.form.trigger('submit');
                 }
                 
+                self.form.trigger('submit');
             
             });
         
@@ -162,7 +166,7 @@ jQuery(function(){
                             email.attr('disabled', 'disabled');
                             reply.attr('disabled', 'disabled');
                             boxManager.exportBoxes({ 
-                                emails: { from: email.val(), to: emails },
+                                emails: {from: email.val(), to: emails},
                                 callback: function() {
                                     email.removeAttr('disabled');
                                     reply.removeAttr('disabled');
@@ -202,21 +206,12 @@ jQuery(function(){
             
             var parsed;
             
-            console.log(this.dateSelector.val());
-            
-            if(!this.minDate) {
-                
-                this.minDate = new Date();
-                this.minDate.setMonth(this.minDate.getMonth() - 1);
-                
-            }
-            
+
             if(parsed = Date.parse(this.minDate)) {
                 
                 this.minDate = new Date(parsed);
                 
-            }
-            
+            } 
             
             // we parse maxDate that can be 1m 3m 6m 1y custom in format 1/1/2004
             if(parsed = Date.parse(this.selectValue)) {
@@ -224,34 +219,27 @@ jQuery(function(){
                 this.maxDate = new Date(parsed);
                 
             }
-            else {                
-                
-                this.maxDate = new Date(this.minDate);
-                
+            else {
+
                 switch(this.selectValue) {
                     
                     case 'ytd':
+                        
                         this.minDate.setMonth(0, 1);
+                        this.minDate.setFullYear(this.maxDate.getFullYear());
+                        this.maxDate = new Date();
+                        this.maxDate.setDate(this.maxDate.getDate() -1);
                         break;
                     case 'all':
                         this.minDate = new Date(0);
+                        this.maxDate = new Date();
+                        this.maxDate.setDate(this.maxDate.getDate() -1);
                         break;
                     default:
-                        
-                        
-                        if(this.minDate instanceof Date) {
-                            
-                            this.minDate.setMonth(this.maxDate.getMonth() - this.period);
-                        }
-                        else {
-                            this.minDate = new Date();
-                            this.maxDate = new Date(this.minDate);
-                            this.minDate.setMonth(this.minDate.getMonth() - 1);
-                            
-                        }
+                        this.maxDate = new Date(this.minDate);
+                        this.maxDate.setMonth(this.maxDate.getMonth() + this.period);
                         break;
                     
-                                       
                 }
 
             }
@@ -283,32 +271,41 @@ jQuery(function(){
                 mode: 'range',
                 starts: 1,
                 onChange: function(formated, date) {
+                   
+                    if(date[1].getDate() != date[0].getDate()) {
+                     
+                        self.minDate = date[0];
+                        self.maxDate = date[1];
+                        
+                        
+                        var d = date[0].getMonth()+1 + '/' + date[0].getDate() + '/' + date[0].getFullYear();
+                        var d2 = date[1].getMonth()+1 + '/' + date[1].getDate() + '/' + date[1].getFullYear();
                     
-                    var d = date[0].getMonth()+1 + '/' + date[0].getDate() + '/' + date[0].getFullYear();
-                    var d2 = date[1].getMonth()+1 + '/' + date[1].getDate() + '/' + date[1].getFullYear();
-                    
-                    self.dateSelector.val(d);
+                        self.dateSelector.val(d);
                                         
-                    if(!self.periodSelector.has("option:contains('custom')").length) {
+                        if(!self.periodSelector.has("option:contains('custom')").length) {
                         
-                        self.periodSelector.append($(document.createElement("option")).
-                        attr("value", d2).text("custom"))
+                            self.periodSelector.append($(document.createElement("option")).
+                                attr("value", d2).text("custom"))
                     
-                        self.periodSelector.parents('.jquery-selectbox').unselectbox();
+                            self.periodSelector.parents('.jquery-selectbox').unselectbox();
                         
-                        self.periodSelector.find("option:contains('custom')").prop("selected", "selected");
-                        self.periodSelector.selectbox();
+                            self.periodSelector.find("option:contains('custom')").prop("selected", "selected");
+                            self.periodSelector.selectbox();
                         
+                        }
+                        else {
+                        
+                            self.periodSelector.find("option:contains('custom')").attr('value',d2);
+                        
+                        }
+                    
+                        $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
+                    
+                    
+                        TopMenu.form.trigger('submit');
+                     
                     }
-                    else {
-                        
-                        self.periodSelector.find("option:contains('custom')").attr('value',d2);
-                        
-                    }
-                    
-                    $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
-                    
-                    TopMenu.form.trigger('submit');
                 },
                 onRender: function(date) {
                     

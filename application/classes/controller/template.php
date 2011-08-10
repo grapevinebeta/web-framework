@@ -79,10 +79,12 @@ abstract class Controller_Template extends Kohana_Controller_Template
         $viewingRange = Session::instance()->get('viewingRange');
         
         if (empty($viewingRange)) {
+            
             $viewingRange = array(
                 'period' => '1m',
-                'date' => date('m/d/Y'),
+                'date' => date('m/d/Y', strtotime('-1 month -1 day')),
                 );
+            
             Session::instance()->set('viewingRange', $viewingRange);
         }
         

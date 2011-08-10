@@ -73,23 +73,25 @@ class Controller_Api_DataProvider_Base extends Controller
                 'viewingRange', $range
             );
         } else {
-            $range = array('date' => 'now', 'period' => '+1 month');
+            $range = array('date' => '-1 month -1 day', 'period' => '-1 day');
         }
         $period = $range['period'];
         switch ($period) {
         case '1m':
-            $period = "-1 month";
+            $period = "+1 month";
             break;
         case '3m':
-            $period = "-3 months";
+            $period = "+3 months";
             break;
         case '6m':
-            $period = "-6 months";
+            $period = "+6 months";
             break;
         case '1y':
-            $period = "-1 year";
+            $period = "+1 year";
             break;
-
+        default:
+            $period = false;
+            break;
 
         }
 
@@ -97,8 +99,25 @@ class Controller_Api_DataProvider_Base extends Controller
         if (!empty($include_date)) {
             $this->include_date = (bool)$include_date;
         }
-        $this->startDate = new MongoDate(strtotime($range['date']));
-        $this->endDate = new MongoDate(strtotime($range['period']));
+        
+        
+        /**
+         *  i change the code and assumed that $range['date'] always return start date
+         * and $range['offset'] return positive offset that need to be add to start date.
+         * 
+         * 
+         */
+        
+        $start = strtotime($range['date']);
+        
+        if($period)
+            $end = strtotime($period, $start);
+        else
+            $end = strtotime($range['period']); // this is the case when period has date value
+        
+        
+        $this->startDate = new MongoDate($start);
+        $this->endDate = new MongoDate($end);
 
         //
         $filters = $this->request->post('filters');
