@@ -1698,7 +1698,19 @@ var BC_ScoreboardCurrent = BoxController.extend({
                 days = months;
             }
             else {
-                days = 'All';
+                
+                if(this.range['period'] == 'all')
+                    days = 'All';
+                else {
+                    
+                    var start = Date.parse(this.range['date']);
+                    var end = Date.parse(this.range['period']);
+                    
+                    var timestamp = Math.ceil((end - start) / (1000 * 3600 * 30));
+                    
+                    days = timestamp;
+                    
+                }
             }
             
             
