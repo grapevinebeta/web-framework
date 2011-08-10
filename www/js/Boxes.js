@@ -101,6 +101,13 @@ var BoxController = Class.extend({
     
     noApiUrl: false,
     
+    /**
+     * we need template to cache the original layout of box and recover it after 
+     * no data indicator that will clear the content
+     */
+    
+    template: null,
+    
     construct: function () {},
     
     init: function () {
@@ -232,11 +239,48 @@ var BoxController = Class.extend({
         
                 boxController.data = data;
                 
+                var store = {
+                    sites: 1,
+                    tags: 1,
+                    reviews: 1,
+                    socials: 1,
+                    networks: 1,
+                    comparision: 1,
+                    distribution: 1,
+                    overall: 1, 
+                    current: 1
+                };
+                
+                for(var field in data) {
+                    
+                    if(field in store) {
+                        
+                        console.log(data[field], data[field] != 0);
+                        
+                    }
+                    
+                }
+                
+                
                 if(data) {
+                    
+                    if(boxController.template !== null) {
+                        
+                        boxController.getContentDom().find('.data-grid-holder').html(boxController.template);
+                        
+                    }
+                    
                     boxController.processData();
                     boxController.afterLoadData();
                 }
                 else {
+                    
+                    if(!boxController.template)
+                        boxController.template = 
+                        boxController.getContentDom()
+                        .find('.data-grid-holder').html();
+                    
+                    
                     // when no data is loaded this variable indicate it
                     boxController.empty = true;
                     
@@ -822,9 +866,23 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
             },
             exporting: {enabled: false},
             
-            series: this.series
+            series: this.series,
+            
+            plotOptions: {
+                series: {
+                    events: {
+                        legendItemClick: function(event) {
+                           
+                           return false;
+                           
+                        }
+                    }
+                }
+            }
         }
         
+        
+        console.log(options);
         this.graph = new Highcharts.Chart(options);
        
     },
@@ -1721,6 +1779,20 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
                         enabled: false
                     },
                     showInLegend: true
+                },
+                series: {
+                    legendItemClick: function(event) {
+                        event.preventDefault();
+                        return false;
+                    },
+                    point: {
+                        events: {
+                            legendItemClick: function(event) {
+                                event.preventDefault();
+                                return false;
+                            }
+                        }
+                    }
                 }
             },
 
@@ -1837,7 +1909,16 @@ var BC_ReviewSites = BC_GraphBoxController.extend({
             },
             plotOptions: {
                 series: {
-                    stacking: 'normal'
+                    stacking: 'normal',
+                    events: {
+                        
+                        legendItemClick: function(event) {
+                            
+                            event.preventDefault();
+                            return false;
+                        }
+                        
+                    }
                 }
             },
             legend: {
@@ -3061,7 +3142,18 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
                 data: [],
                 color: '#218D48',
                 shadow: false
-            }]
+            }],
+            plotOptions: {
+                series: {
+                    events: {
+                        legendItemClick: function(event) {
+                           
+                            return false;
+                           
+                        }
+                    }
+                }
+            }
         }
         
         for (var i in this.graphData) {
