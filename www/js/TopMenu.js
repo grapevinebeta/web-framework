@@ -76,8 +76,10 @@ jQuery(function(){
                             self.minDate = new Date(0);
                             break;
                         default:
-                            self.minDate.setMonth(self.maxDate.getMonth() - self.period);
-                            self.minDate.setFullYear(self.maxDate.getFullYear());
+                            self.minDate = new Date();
+                            self.minDate.setMonth(self.minDate.getMonth() - self.period, self.minDate.getDate() - 1);
+                            self.maxDate = new Date();
+                            self.maxDate.setDate(self.maxDate.getDate() - 1);
                             break;
                     
                     }
