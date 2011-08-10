@@ -361,7 +361,13 @@ jQuery(function(){
                     
                         TopMenu.form.trigger('submit');
                         
-                        $('#widgetCalendar').DatePickerHide();
+                        $('#widgetCalendar')
+                        .stop()
+                        .animate({
+                            height:  $('#widgetField>a').hasClass('toggled') ? 0 : $('#widgetCalendar div.datepicker').get(0).offsetHeight
+                            }, 500);
+                
+                         $('#widgetField>a').toggleClass('toggled');
                      
                     }
                 },

@@ -205,6 +205,10 @@ var BoxController = Class.extend({
         return this;
     },
     
+    afterLoadDataCustom: function() {
+        
+    },
+    
     /**
      * Called after ajax request, generaly used for unset ajax-loader.gif 
      * and show new data or display an error
@@ -219,7 +223,7 @@ var BoxController = Class.extend({
         if(this.empty) {
             
             this.showNoData('.data-grid-holder');
-            
+            this.afterLoadDataCustom();
         }
 
         
@@ -255,36 +259,42 @@ var BoxController = Class.extend({
                     
                     if(field in store) {
                         
-                        console.log(data[field], data[field] != 0);
+                        if(data[field] == false) {
+                            
+                            if(!boxController.template) {
+                                
+                             
+                                boxController.template = 
+                                boxController.getContentDom()
+                                .find('.data-grid-holder').html();
+                             
+                                
+                            }
+                    
+                            // when no data is loaded this variable indicate it
+                            boxController.empty = true;
+                            boxController.afterLoadData();
+                    
+                            
+                        }
+                        else {
+                            
+                            
+                            if(boxController.template !== null) {
+                        
+                        
+                                boxController.getContentDom().children().html(boxController.template);
+                                
+                                boxController.empty = false;
+                            }
+                    
+                            boxController.processData();
+                            boxController.afterLoadData();
+                            
+                        }
                         
                     }
                     
-                }
-                
-                
-                if(data) {
-                    
-                    if(boxController.template !== null) {
-                        
-                        boxController.getContentDom().find('.data-grid-holder').html(boxController.template);
-                        
-                    }
-                    
-                    boxController.processData();
-                    boxController.afterLoadData();
-                }
-                else {
-                    
-                    if(!boxController.template)
-                        boxController.template = 
-                        boxController.getContentDom()
-                        .find('.data-grid-holder').html();
-                    
-                    
-                    // when no data is loaded this variable indicate it
-                    boxController.empty = true;
-                    
-                    boxController.afterLoadData();
                 }
     
             };
@@ -1074,27 +1084,8 @@ var BC_Inbox = BoxController.extend({
         alert('You must implement it by yourself');
     },
     
-    processData: function() {
-
-        var reviews = this.data.reviews !== null ? this.data.reviews : false;
-        var socials = this.data.socials !== null ? this.data.socials : false;
-
-        if((reviews && !reviews.length) || (socials && !socials.length)) {
-            
-            if(!this.template)
-                this.template = this.getContentDom().find('.data-grid-holder').html();
-            
-            this.showNoData('.data-grid-holder');
-        }
-        else {
-            
-            if(this.template !== null) {
-                
-                this.getContentDom().find('.data-grid-holder').html(this.template);
-                
-            }
-            this.loadInboxData();
-        }
+    initFilters: function() {
+        
         
         var filters = this.data.filters;
         
@@ -1107,6 +1098,20 @@ var BC_Inbox = BoxController.extend({
                 this.loadFilters(activeFilter); 
             }
         }
+        
+    },
+    
+    afterLoadDataCustom: function() {
+      
+      this.initFilters();
+      
+    },
+    
+    processData: function() {
+
+        this.loadInboxData();
+        
+        this.initFilters();
         
         this.initPager();
       
