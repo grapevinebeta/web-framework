@@ -909,7 +909,6 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
         }
         
         
-        console.log(options);
         this.graph = new Highcharts.Chart(options);
        
     },
@@ -3776,7 +3775,7 @@ boxManager = {
             }
             
             // we show only the selected view of box
-            if(box.hasOwnProperty('graph') && box.getHeaderDom().find('.box-header-button-show-graph.active').length) {
+            if(box.hasOwnProperty('graph') && (box.getHeaderDom().find('.box-header-button-show-graph.active').length || box.getContentDom().children().length == 1)) {
                 
                 var block2 = block.clone();
                 var content2 = box.graph.getSVG();
