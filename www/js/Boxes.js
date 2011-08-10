@@ -552,10 +552,11 @@ var BC_RecentActivity = BoxController.extend({
             template.find('.title').html(titleLink2);
             
             titleLink = $('<a href="#"><span></span></a>');
-            titleLink.attr('class', data.network);
+            titleLink.attr('class', data.network).attr('target', '_blank');
         
             template.find('.network').html(titleLink);
-            template.find('.reply').attr('href', data.link);
+            template.find('.reply').attr('href', data.link).attr('target', '_blank');
+            
             
             
             template.appendTo(content);
