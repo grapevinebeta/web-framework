@@ -146,11 +146,11 @@ jQuery(function(){
                 width: 350,
                 modal: true,
                 buttons: {
-                    "Export": function() {
+                    "Send": function() {
                         var bValid = true;
                         allFields.removeClass( "ui-state-error" );
                 
-                        bValid = bValid && helpers.checkLength(reply, "Reply Email", 6, 80);
+                        bValid = bValid && helpers.checkLength(reply, "Send to Email", 6, 80);
                         bValid = bValid && helpers.checkLength(email, "From Email", 6, 80);
                         var emails = reply.val().split(',');
                 
@@ -164,6 +164,7 @@ jQuery(function(){
                 
                         var d = $(this);
                         if (bValid) {
+                            helpers.tips.html('Email is sending to recipients, please wait...');
                             email.attr('disabled', 'disabled');
                             reply.attr('disabled', 'disabled');
                             boxManager.exportBoxes({ 
@@ -171,9 +172,11 @@ jQuery(function(){
                                 callback: function() {
                                     email.removeAttr('disabled');
                                     reply.removeAttr('disabled');
-                                    helpers.tips.html('<strong>Email was sended correctly. This message will close in 2 seconds.</strong>');
+                                    helpers.tips.html('<strong>Email was sent correctly. This message will close in 2 seconds.</strong>');
                                 
                                     setTimeout(function() {
+                                        allFields.attr('value', '')
+                                        helpers.tips.html('Please provide email addresses you would like to send this report to‭ (‬use commas to send to multiple‭) .');
                                         d.dialog("close");
                                     }, 3000);
                                 

@@ -28,3 +28,4 @@
     <div class="box-container empty"></div>
     
 </div>
+<?php echo View::factory('_partials/box/export'); ?>

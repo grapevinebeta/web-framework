@@ -1058,6 +1058,7 @@ var BC_Inbox = BoxController.extend({
      * Load Data by Ajax
      */
     loadData: function () {
+        this.initEmailExport();
         this.beforeLoadData();
 
         this.dataProvider.setEndpoint(this.endpoint)
@@ -1072,6 +1073,76 @@ var BC_Inbox = BoxController.extend({
         this.data = this.dataProvider.fetch();
         
         return this;
+    },
+    
+    initEmailExport: function() {
+          
+        var email = $("#email-export .from"),
+        reply = $("#email-export .reply"),
+        allFields = $( [] ).add( email, reply );
+          
+        $( "#email-export" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Send": function() {
+                    
+                    var bValid = true;
+                    allFields.removeClass( "ui-state-error" );
+                
+                    bValid = bValid && helpers.checkLength(reply, "Send to", 6, 80);
+                    bValid = bValid && helpers.checkLength(email, "From Email", 6, 80);
+                    var emails = reply.val().split(',');
+                
+                    bValid = bValid && 
+                    helpers.checkRegexp(email,email.val(), /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
+
+                    for(var e in emails) {
+                        bValid = bValid && 
+                        helpers.checkRegexp(reply,emails[e], /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
+                    }
+                
+                    var d = $(this);
+                    
+                    
+                    if (bValid) {
+                        email.attr('disabled', 'disabled');
+                        reply.attr('disabled', 'disabled');
+                        
+                        helpers.tips.html('Email is sending to recipients, please wait...');
+                        
+                        $.post('/api/box/email/post',
+                            {
+                                from: email.val(), 
+                                to: emails,
+                                data: d.data('post')
+                            },
+                            function() {
+                                email.removeAttr('disabled');
+                                reply.removeAttr('disabled');
+                                helpers.tips.html('<strong>Email was sent correctly . This message will close in 2 seconds.</strong>');
+                                
+                                setTimeout(function() {
+                                    allFields.attr('value', '')
+                                    helpers.tips.html('Please provide email addresses you would like to send this report to‭ (‬use commas to send to multiple‭) .');
+                                    d.dialog("close");
+                                }, 3000);
+                                
+                            });
+                        
+                    }
+                },
+                Cancel: function() {
+                    $(this).dialog("close");
+                }
+            },
+            close: function() {
+                allFields.val("").removeClass("ui-state-error");
+            }
+        });
+        
     },
     
     initPager: function() {
@@ -1116,6 +1187,20 @@ var BC_Inbox = BoxController.extend({
         
         data.context.customPopulateFields(text, data);
         
+        
+        tr.find('.action-email').bind('click', function(e) {
+
+            e.preventDefault();
+
+
+            if(text.reviews)
+                $("#email-export").data('post', text.reviews);
+            else
+                $("#email-export").data('post', text.social);
+
+            $("#email-export").dialog("open");
+
+        });
         
         data.trContext.prev().find('.expand-preloader').removeClass('expand-preloader').addClass('expand');
         tr.removeClass('hidden-row');
@@ -1302,7 +1387,7 @@ var BC_Scoreboard = BoxController.extend({
                 
             holder.find('.ogsi-rating-value').text(ogsi.rating.score);
             
-            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.score / 5) * 100 + '%');
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.score / 5) * 100 + 5 + '%');
 
             holder.find('.ogsi-reviews-value').text(ogsi.reviews);
             
@@ -1527,7 +1612,7 @@ var BC_ScoreboardCurrent = BoxController.extend({
             
                 
             holder.find('.ogsi-rating-value').text(ogsi.rating.score);
-            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.score / 5) * 100 + '%');
+            holder.find('.ogsi-rating-stars-on').css('width', (ogsi.rating.score / 5) * 100 + 5 + '%');
 
             holder.find('.ogsi-reviews-value').text(ogsi.reviews);
             
@@ -2076,14 +2161,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
             
         });
         
-        tr.find('.action-email').bind('click', function() {
-            
-            $( "#email-export" ).data('post', message);
-            
-            $( "#email-export" ).dialog("open");
-            
-        });
-        
     },
 
     expandedPopulateCallback: function(data) {
@@ -2218,70 +2295,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
       
     },
     
-    initEmailExport: function() {
-          
-        var email = this.getBoxDom().find(".from"),
-        reply = this.getBoxDom().find(".reply"),
-        allFields = $( [] ).add( email, reply );
-          
-        $( "#email-export" ).dialog({
-            autoOpen: false,
-            height: 300,
-            width: 350,
-            position: ['center', -300],
-            modal: true,
-            buttons: {
-                "Export": function() {
-                    
-                    var bValid = true;
-                    allFields.removeClass( "ui-state-error" );
-                
-                    bValid = bValid && helpers.checkLength(reply, "Reply Email", 6, 80);
-                    bValid = bValid && helpers.checkLength(email, "From Email", 6, 80);
-                    var emails = reply.val().split(',');
-                
-                    bValid = bValid && 
-                    helpers.checkRegexp(email,email.val(), /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-
-                    for(var e in emails) {
-                        bValid = bValid && 
-                        helpers.checkRegexp(reply,emails[e], /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i, "eg. ui@jquery.com" );
-                    }
-                
-                    var d = $(this);
-                    if (bValid) {
-                        email.attr('disabled', 'disabled');
-                        reply.attr('disabled', 'disabled');
-                        $.post('/api/box/email/post',
-                            {
-                                from: email.val(), 
-                                to: emails,
-                                data: $(this).data('post')
-                            },
-                            function() {
-                                email.removeAttr('disabled');
-                                reply.removeAttr('disabled');
-                                helpers.tips.html('<strong>Email was sended correctly. This message will close in 2 seconds.</strong>');
-                                
-                                setTimeout(function() {
-                                    d.dialog("close");
-                                }, 3000);
-                                
-                            });
-                        
-                    }
-                },
-                Cancel: function() {
-                    $(this).dialog("close");
-                }
-            },
-            close: function() {
-                allFields.val("").removeClass("ui-state-error");
-            }
-        });
-        
-    },
-    
     construct: function () {
         this.noApiUrl = true;
         
@@ -2300,7 +2313,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
         }
         
         this.initBoxEvents();
-        this.initEmailExport();
     }
     
 });
@@ -3195,6 +3207,8 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             tr.find('.goto-link').attr('href', message.link);
         else
             tr.find('.goto').remove();
+        
+        
     },
 
     expandedPopulateCallback: function(data) {

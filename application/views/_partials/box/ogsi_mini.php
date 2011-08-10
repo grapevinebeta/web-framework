@@ -43,10 +43,11 @@
                                 <div class="bar-negative">
                                     <div class="bar-neutral">
                                         <div class="bar-positive">
-
+                                            <span class="bar-value">1</span>
                                         </div>
-
+                                        <span class="bar-value">1</span>
                                     </div>
+                                    <span class="bar-value">1</span>
                                 </div>
                             </div>
                         </div>

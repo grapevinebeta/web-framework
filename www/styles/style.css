@@ -1446,6 +1446,14 @@ input[type=submit] {
         text-align: center;
     }
     
+    .light-box-content .bar-value {
+        color: white;
+        display: inline-block;
+        font-size: 10px;
+        font-weight: bold;
+        padding-top: 1px;
+    }
+    
     .light-box-content .ogsi-reviews-reviews {
         font-size: 17px;
         margin-bottom: 10px;

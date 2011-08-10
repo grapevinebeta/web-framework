@@ -55,14 +55,18 @@ class Model_Mailer extends Model {
         
         $from = $from ? $from : Kohana::config('globals.from_email');
         
-        $a = Swift_Attachment::newInstance($attachment, "export.pdf", "application/pdf");
 
         $message = Swift_Message::newInstance()
                 ->setSubject($subject)
                 ->setFrom($from)
                 ->setTo($to)
-                ->setBody($body, 'text/html')
-                ->attach($a);
+                ->setBody($body, 'text/html');
+                
+                
+        if($attachment) {
+            $a = Swift_Attachment::newInstance($attachment, "export.pdf", "application/pdf");
+            $message->attach($a);
+        }
         
         
         $mailer = new Swift_Mailer($this->transport);
