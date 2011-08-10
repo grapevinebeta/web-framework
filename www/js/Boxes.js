@@ -555,6 +555,7 @@ var BC_RecentActivity = BoxController.extend({
             titleLink.attr('class', data.network);
         
             template.find('.network').html(titleLink);
+            template.find('.reply').attr('href', data.link);
             
             
             template.appendTo(content);
