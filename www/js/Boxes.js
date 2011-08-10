@@ -546,13 +546,13 @@ var BC_RecentActivity = BoxController.extend({
             template.find('.date').text(formatted);
             
             var titleLink2 = $('<a></a>')
-            .attr('href', data.link)
+            .attr('href', data.link).attr('target', '_blank')
             .text(data.message.substr(0, 50) + '...');
             
             template.find('.title').html(titleLink2);
             
             titleLink = $('<a href="#"><span></span></a>');
-            titleLink.attr('class', data.network).attr('target', '_blank');
+            titleLink.attr('class', data.network);
         
             template.find('.network').html(titleLink);
             template.find('.reply').attr('href', data.link).attr('target', '_blank');
