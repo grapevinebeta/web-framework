@@ -2,6 +2,7 @@
 <div id="right-panel-holder">
     <?php if (!isset($urls[Kohana_Request::detect_uri()])): ?>
         <?php echo view::factory('_partials/box/ogsi_mini'); ?>
+        <?php echo view::factory('_partials/box/alerts'); ?>
     <?php else: ?>
         <?php echo view::factory('_partials/box/alerts'); ?>
     <?php endif; ?>
