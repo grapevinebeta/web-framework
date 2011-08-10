@@ -1552,6 +1552,12 @@ var BC_StatusUpdate = BoxController.extend({
         
         var self = this;
         
+        this.getContentDom().find(".status-updater textarea").charCount({
+            allowed: 120,		
+            warning: 20,
+            submitEnable: this.getContentDom().find('.buttons button')
+        });
+        
         this.getContentDom().delegate('form#wallPoster', 'submit', function(e) {
             
             e.preventDefault();
@@ -1610,12 +1616,6 @@ var BC_StatusUpdate = BoxController.extend({
         else
             this.getContentDom().find('.twitter_checkbox').remove();
         
-        
-        this.getContentDom().find(".status-updater textarea").charCount({
-            allowed: 120,		
-            warning: 20,
-            submitEnable: this.getContentDom().find('.buttons button')
-        });
         
     },
     construct: function() {
