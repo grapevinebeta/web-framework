@@ -294,6 +294,12 @@ var BoxController = Class.extend({
                         }
                         
                     }
+                    else {
+                        
+                        boxController.processData();
+                        boxController.afterLoadData();
+                        
+                    }
                     
                 }
     
