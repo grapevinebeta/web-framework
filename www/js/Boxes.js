@@ -255,6 +255,13 @@ var BoxController = Class.extend({
                     current: 1
                 };
                 
+                var ignore = {
+                    
+                    filters: 1,
+                    pagination: 1
+                    
+                }
+                
                 for(var field in data) {
                     
                     if(field in store) {
@@ -285,8 +292,9 @@ var BoxController = Class.extend({
                         
                                 boxController.getContentDom().children('.data-grid-holder').html(boxController.template);
                                 
-                                boxController.empty = false;
                             }
+                            
+                            boxController.empty = false;
                     
                             boxController.processData();
                             boxController.afterLoadData();
@@ -296,8 +304,10 @@ var BoxController = Class.extend({
                     }
                     else {
                         
-                        boxController.processData();
-                        boxController.afterLoadData();
+                        if(!(field in ignore)) {
+                            boxController.processData();
+                            boxController.afterLoadData();
+                        }
                         
                     }
                     
