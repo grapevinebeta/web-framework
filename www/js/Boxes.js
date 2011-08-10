@@ -1075,6 +1075,9 @@ var BC_Inbox = BoxController.extend({
         return this;
     },
     
+    /**
+     * init modal box functionality with validation
+     */
     initEmailExport: function() {
           
         var email = $("#email-export .from"),
@@ -1188,13 +1191,13 @@ var BC_Inbox = BoxController.extend({
         data.context.customPopulateFields(text, data);
         
         
+        // we define export action for each inbox
         tr.find('.action-email').bind('click', function(e) {
 
             e.preventDefault();
 
-
-            if(text.reviews)
-                $("#email-export").data('post', text.reviews);
+            if(text.review)
+                $("#email-export").data('post', text.review);
             else
                 $("#email-export").data('post', text.social);
 
