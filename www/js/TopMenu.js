@@ -49,13 +49,12 @@ jQuery(function(){
             });
         
         
-            this.periodSelector.selectbox().bind('change', function() {
+            $('#period-selector').selectbox().bind('change', function() {
          
                 self.selectValue = $(this).val();
                 self.period = determineMonthDiff(self.selectValue);
                 
                 var parsed;
-                
                 
                 // we parse maxDate that can be 1m 3m 6m 1y custom in format 1/1/2004
                 if(parsed = Date.parse(self.selectValue)) {
@@ -293,7 +292,59 @@ jQuery(function(){
                             self.periodSelector.parents('.jquery-selectbox').unselectbox();
                         
                             self.periodSelector.find("option:contains('custom')").prop("selected", "selected");
-                            self.periodSelector.selectbox();
+                            self.periodSelector.selectbox().bind('change', function() {
+
+                                self.selectValue = $(this).val();
+                                self.period = determineMonthDiff(self.selectValue);
+                
+                                var parsed;
+                
+                                // we parse maxDate that can be 1m 3m 6m 1y custom in format 1/1/2004
+                                if(parsed = Date.parse(self.selectValue)) {
+                
+                                    self.maxDate = new Date(parsed);
+                                    self.picker.DatePickerSetDate([self.minDate, self.maxDate], true);
+                                    self.form.trigger('submit');
+                                    return;
+                                }
+                                else {                
+                                    switch(self.selectValue) {
+                    
+                                        case 'ytd':
+                                            self.minDate.setMonth(0, 1);
+                                            self.minDate.setFullYear(self.maxDate.getFullYear());
+                                            break;
+                                        case 'all':
+                                            self.minDate = new Date(0);
+                                            break;
+                                        default:
+                                            self.minDate = new Date();
+                                            self.minDate.setMonth(self.minDate.getMonth() - self.period, self.minDate.getDate() - 1);
+                                            self.maxDate = new Date();
+                                            self.maxDate.setDate(self.maxDate.getDate() - 1);
+                                            break;
+                    
+                                    }
+   
+                        
+                                    var d = self.minDate.getMonth()+1 + '/' + self.minDate.getDate() + '/' + self.minDate.getFullYear();
+                    
+                                    self.dateSelector.val(d);
+
+                                    var formated = [];
+            
+                                    formated[0] = self.minDate.getDate() + " " + self.minDate.getMonthName(true) + ", " + self.minDate.getFullYear();
+                                    formated[1] = self.maxDate.getDate() + " " + self.maxDate.getMonthName(true) + ", " + self.maxDate.getFullYear();
+
+                                    $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
+                    
+                    
+                                    self.picker.DatePickerSetDate([self.minDate, self.maxDate], false);
+                                }
+                
+                                self.form.trigger('submit');
+            
+                            });
                         
                         }
                         else {
@@ -306,6 +357,8 @@ jQuery(function(){
                     
                     
                         TopMenu.form.trigger('submit');
+                        
+                        $('#widgetCalendar').DatePickerHide();
                      
                     }
                 },
