@@ -12,6 +12,11 @@ Class.__asMethod__ = function(func, superClass) {
     };
 };
 
+/**
+ * this object helps to extend default behaviour of each objects
+ *
+ */
+
 Class.extend = function(def) {
     var classDef = function() {
         if (arguments[0] !== Class && this.construct) {
@@ -38,6 +43,11 @@ Class.extend = function(def) {
     return classDef;
 };
 
+
+/**
+ * this varaible stores all boxes that should be handled by application logic
+ *
+ */
 var boxCollection = new Array();
 
 /**
@@ -94,11 +104,17 @@ var BoxController = Class.extend({
     
     
     /**
-     * @var Boolean if there is no data this variable return true
+     * @var When no data is return by endpoints this variable should be set to true
+     * and the afterLoadData method should handle this state
      */
     
     empty: false,
     
+    
+    /**
+     * when this variable is set to true it will use custom endpoints instead of shorthand one
+     *
+     */
     noApiUrl: false,
     
     /**
@@ -205,6 +221,10 @@ var BoxController = Class.extend({
         return this;
     },
     
+    
+    /**
+     * if you want to make special actions when data is loaded you should reimplement this function
+     */
     afterLoadDataCustom: function() {
         
     },
@@ -241,9 +261,14 @@ var BoxController = Class.extend({
             
             boxController.loadCallback = function (data, textStatus, jqXHR) {
         
-        
+                /*
+                 * we need to take some precautionary measures to unsure that 
+                 * we correctly handle all empty endpoints
+                 *
+                 */
                 boxController.data = data;
                 
+                // list of all variables that store data from endpoints
                 var store = {
                     sites: 1,
                     tags: 1,
@@ -317,7 +342,8 @@ var BoxController = Class.extend({
                 if(!data) {
                     boxController.data = false;
                     boxController.empty = true;
-                    boxController.emptyMessage = "You need to activate Your facebook or twitter account in Account Settings";
+                    boxController.emptyMessage = 
+                        "You need to activate Your facebook or twitter account in Account Settings";
                     boxController.afterLoadData();
                 }
     
@@ -365,7 +391,8 @@ var BoxController = Class.extend({
         div, wrapper, span;
 
         message = message ? message : 
-            'Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.';
+            'Nothing heard through the Grapevine for the date range you selected. \n\
+             Expand your date range to see more data.';
             
         // big 100% width no data icon
         if(holder.width() > 291) {
@@ -390,7 +417,8 @@ var BoxController = Class.extend({
                         
             });
                 
-            span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">' + message +  '</span>';
+            span = '<span style="background: #fff; position: absolute; font-size: 10px;\n\
+ font-weight: bold; left: 8px; bottom: -9px;">' + message +  '</span>';
             
         }
         else
@@ -406,7 +434,8 @@ var BoxController = Class.extend({
                
             div = $('<div/>');
                 
-            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">' + message +  '</span>';
+            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">' 
+                + message +  '</span>';
                 
         }
             
@@ -638,21 +667,21 @@ var BC_GraphBoxController = BoxController.extend({
      */
     computeDateInterval: function() {
 
-        var period = this.range['period'];
+        var period = this.range['period'], d;
 
         switch(period) {
             
             case '1m':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
                 break;
             case '3m':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 3.2;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 3.2;
                 break;
             case '6m':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 6.2;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 6.2;
                 break;
             case '1y':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 13;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 13;
                 break;
             
         }
@@ -763,9 +792,7 @@ var BC_GraphBoxController = BoxController.extend({
     },
     
     afterLoadGraphData: function () {
-        
-        
-        
+
         this.getGraphHolder().children().remove();
         this.getHeaderDom()
         .find('.box-header-right-buttons a.box-header-button-show-graph')
@@ -778,7 +805,8 @@ var BC_GraphBoxController = BoxController.extend({
         if(!this.graphData[key]) {
             
             this.getContentDom().find('.graph-holder')
-            .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>')
+            .html('<p style="margin:5%;">Nothing heard through the Grapevine \n\
+for the date range you selected. Expand your date range to see more data.</p>')
             .show();
         }
         else
@@ -2399,45 +2427,42 @@ var BC_ReviewInbox = BC_Inbox.extend({
     
     renderAlerts: function() {
       
-      var alerts = $('#alerts .light-box-content');
+        var alerts = $('#alerts .light-box-content');
       
-      if(!alerts.length)
-          return;
+        if(!alerts.length)
+            return;
       
       
-      var self = this;
+        var self = this;
       
-      $.ajaxSetup({async:false});
-      
-      $.post('/api/dataProvider/reviews/alerts', {status: 'alert'}, function(data) {
-          
-        self.alerts['alert'] = data.alerts;
-        $.ajaxSetup({async:true});
-          
-      });
-      
-      $.post('/api/dataProvider/reviews/alerts', {status: 'todo'}, function(data) {
-          
-        self.alerts['todo'] = data.alerts;  
-        
-        if(self.alerts['alert'] !== null) {
-            
-            for(var key in self.alerts) {
+        $.post('/api/dataProvider/reviews/alerts', {
+            status: 'alert'
+        }, function(data) {
 
-                alerts.find('.desc .' + key).text(self.alerts[key]);
+            self.alerts['alert'] = data.alerts;
 
-            }
+            $.post('/api/dataProvider/reviews/alerts', {
+                status: 'todo'
+            }, function(data) {
 
-            alerts.parent().removeClass('hide');
-            
-        }
-        
-          
-      });
-      
-      
-     
-      
+                self.alerts['todo'] = data.alerts;  
+
+                if(self.alerts['alert'] !== null) {
+
+                    for(var key in self.alerts) {
+
+                        alerts.find('.desc .' + key).text(self.alerts[key]);
+
+                    }
+
+                    alerts.parent().removeClass('hide');
+
+                }
+
+            });
+
+        });
+
     },
     
     initBoxEvents: function() {
