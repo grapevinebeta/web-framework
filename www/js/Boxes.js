@@ -3343,7 +3343,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             title = message.title;
         }
         
-        tr.find('.details-title').append(title);
+        tr.find('.details-title').html(title);
         tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
