@@ -3351,7 +3351,20 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         
         var tr = $(data.trContext);
         
-        tr.find('.details-title').text(message.title);
+        var title;
+        if(message.link) {
+            
+            title = $('<a/>', {
+                href: message.link,
+                text: message.title
+            });
+            
+        }
+        else {
+            title = message.title;
+        }
+        
+        tr.find('.details-title').append(title);
         tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
