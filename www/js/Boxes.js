@@ -222,7 +222,7 @@ var BoxController = Class.extend({
      
         if(this.empty) {
             
-            this.showNoData('.data-grid-holder');
+            this.showNoData('.data-grid-holder', this.emptyMessage);
             this.afterLoadDataCustom();
         }
 
@@ -240,6 +240,7 @@ var BoxController = Class.extend({
         if(!boxController.hasOwnProperty('loadCallback')) {
             
             boxController.loadCallback = function (data, textStatus, jqXHR) {
+        
         
                 boxController.data = data;
                 
@@ -312,8 +313,16 @@ var BoxController = Class.extend({
                     }
                     
                 }
+                
+                if(!data) {
+                    boxController.data = false;
+                    boxController.empty = true;
+                    boxController.emptyMessage = "You need to activate Your facebook or twitter account in Account Settings";
+                    boxController.afterLoadData();
+                }
     
             };
+            
             
         }
         
@@ -349,12 +358,14 @@ var BoxController = Class.extend({
     },
     
     
-    showNoData: function(id) {
+    showNoData: function(id, message) {
       
       
         var holder = this.getContentDom().find(id).html(''),
         div, wrapper, span;
-            
+
+        message = message ? message : 
+            'Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.';
             
         // big 100% width no data icon
         if(holder.width() > 291) {
@@ -379,7 +390,7 @@ var BoxController = Class.extend({
                         
             });
                 
-            span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">' + message +  '</span>';
             
         }
         else
@@ -395,7 +406,7 @@ var BoxController = Class.extend({
                
             div = $('<div/>');
                 
-            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">' + message +  '</span>';
                 
         }
             
@@ -523,14 +534,6 @@ var BC_RecentActivity = BoxController.extend({
     ignore: true,
 
     processData: function() {
-        
-        if(!this.data) {
-            
-            this.getContentDom().find('.data-grid-holder')
-            .html('Please connect Your account with Facebook or Twitter');
-            
-        }
-        
         var messages = this.data.messages;
 
         var content = this.getContentDom().find('.data-grid-holder'),
@@ -1620,6 +1623,12 @@ var BC_StatusUpdate = BoxController.extend({
     },
     
     processData: function() {
+        
+        if(!this.data.facebook_page_name && !this.data.twitter_account) {
+            
+            this.getContentDom().find('.status-updater').html('<p class="message">You need to activate Your facebook or twitter account in Account Settings</p>');
+            
+        }
         
         if(this.data.facebook_page_name) {
             
