@@ -12,6 +12,22 @@ jQuery(function(){
             
             tips: $( ".validateTips" ),
             
+            formatDate: function(date) {
+
+                var tmpDate = new Date(date * 1000);
+                
+                return tmpDate.getMonth() 
+                    + '/' 
+                    + tmpDate.getDate() 
+                    + '/' 
+                    + tmpDate.getFullYear() 
+                    + ' ' 
+                    + (tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours())
+                    + ':' 
+                    + (tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes());
+              
+            },
+            
             updateTips: function(t) {
                 this.tips
                 .text( t )

@@ -533,43 +533,57 @@ var BC_RecentActivity = BoxController.extend({
     
     ignore: true,
 
-    processData: function() {
-        var messages = this.data.messages;
+    processRow: function(row, template, timestamp) {
+        
+        var link1, link2;
+        
+        template.children('.date').text(helpers.formatDate(timestamp));
+        
+        link2 = $('<a/>', {
+            href: row.link,
+            target: '_blank',
+            text: row.message.substr(0, 50) + '...'
+        });
+        
+        template.children('.title').html(link2);
+        
+        link1 = $('<a href="#"><span></span></a>')
+        .attr('class', row.network);
+        
+        template.children('.network').html(link1);
+        template.children('.reply').attr(
+        {
+            href: row.link,
+            target: '_blank'
+        });
+        
+        return template;
+        
+    },
 
-        var content = this.getContentDom().find('.data-grid-holder'),
+    processData: function() {
+        var messages = this.data.messages,
+        content = this.getContentDom().find('.data-grid-holder'),
         template = content.find('.row:first');
         content.find('.row').remove();
         
-        for(var message in messages) {
+        for(var timestamp in messages) {
             
-            var data = messages[message];
+            var row = messages[timestamp];
             
-            template = template.clone();
-            var tmpDate = new Date(message * 1000);
-            
-            var h = tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours()
-            var m = tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes()
-            
-            var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
-            '/' + tmpDate.getFullYear() + " " + h + ":" + m ;
-            
-            template.find('.date').text(formatted);
-            
-            var titleLink2 = $('<a></a>')
-            .attr('href', data.link).attr('target', '_blank')
-            .text(data.message.substr(0, 50) + '...');
-            
-            template.find('.title').html(titleLink2);
-            
-            titleLink = $('<a href="#"><span></span></a>');
-            titleLink.attr('class', data.network);
-        
-            template.find('.network').html(titleLink);
-            template.find('.reply').attr('href', data.link).attr('target', '_blank');
-            
-            
-            
-            template.appendTo(content);
+            if(row instanceof Array) {
+                
+                for(var subrow in row) {
+                    
+                    this.processRow(row[subrow], template.clone(), timestamp)
+                        .appendTo(content);
+                    
+                }
+                
+            }
+            else 
+                this.processRow(row, template.clone(), timestamp)
+                        .appendTo(content);
         }
         
     },
@@ -582,7 +596,7 @@ var BC_RecentActivity = BoxController.extend({
            
             self.refresh();
         
-        }, 16000);
+        }, 30000);
         
     },
     
