@@ -173,15 +173,19 @@ class Model_User extends Model_Auth_User {
      * Get the access level by checking levels for location and for associated
      * company.
      * @param Model_Location $location location to be checked
+     * @param bool $ignore_company_level Should the level of access to the
+     *      company be ignored?
      * @return int Access level determined
      */
-    protected function getAccessLevelForLocation(Model_Location $location) {
+    public function getAccessLevelForLocation(Model_Location $location, $ignore_company_level = false) {
         $access_levels = array();
 
-        $company_level = $this->getAccessLevelForCompany($location->getCompany());
-        if ($company_level !== null) {
-            // has access to company, thus take it into account
-            $access_levels[] = (int)$company_level;
+        if (!$ignore_company_level) {
+            $company_level = $this->getAccessLevelForCompany($location->getCompany());
+            if ($company_level !== null) {
+                // has access to company, thus take it into account
+                $access_levels[] = (int)$company_level;
+            }
         }
 
         $location_level = DB::select(array(DB::expr('MIN(`level`)'),'level'))

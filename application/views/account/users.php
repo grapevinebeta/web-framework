@@ -7,6 +7,7 @@
         <div id="account-users-list-holder">
             <?php echo View::factory('account/users/list', array(
                 'users' => $users,
+                'location' => $location,
             )); ?>
         </div>
     </div>
