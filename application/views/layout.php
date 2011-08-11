@@ -11,14 +11,6 @@
             }
         }
         
-        foreach ($scripts as $script) {
-            if (is_string($script)) {
-                echo html::script($script);
-            } elseif (is_array()) {
-                echo html::script(current($style), next($style));
-            }
-        }
-        
     ?>
     <title><?php echo isset($title)?$title:'Grapevine'; ?></title>
 </head>
@@ -54,5 +46,16 @@
                     )) ?>
         </div>
     </div>
+    <?php 
+    
+    foreach ($scripts as $script) {
+            if (is_string($script)) {
+                echo html::script($script);
+            } elseif (is_array()) {
+                echo html::script(current($style), next($style));
+            }
+        }
+    
+    ?>
 </body>
 </html> 
