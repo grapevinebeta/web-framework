@@ -314,6 +314,10 @@ jQuery(function(){
                 }, function(data){
                     log('Answer to the request:');
                     log(data);
+                    if (typeof data.result.users_html != 'undefined'){
+                        self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
+                        log('Users list has been updated');
+                    }
                 });
             });
             

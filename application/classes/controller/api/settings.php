@@ -574,6 +574,7 @@ class Controller_Api_Settings extends Controller_Api {
                 'message' => __('User data has been successfully saved'),
                 'user' => $user->as_array(),
                 'users_html' => View::factory('account/users/list', array(
+                    'location' => $location,
                     'users' => $location->getUsers(true), // only manageable users
                 ))->render(),
             );
@@ -643,6 +644,7 @@ class Controller_Api_Settings extends Controller_Api {
                 $this->apiResponse['result'] = array(
                     'message' => __('User has been successfully deleted'),
                     'users_html' => View::factory('account/users/list', array(
+                        'location' => $location,
                         'users' => $location->getUsers(true), // only manageable users
                     ))->render(),
                 );
@@ -934,7 +936,13 @@ class Controller_Api_Settings extends Controller_Api {
         // find user for given location only if he can be managed
         $user = ORM::factory('user')->findUserForLocation($user_id, $this->_location->id, true);
 
-        $this->apiResponse['result'] = $user->setAccessLevelForLocation($this->_location, $level);
+        $this->apiResponse['result'] = array(
+            'success' => $user->setAccessLevelForLocation($this->_location, $level),
+            'users_html' => View::factory('account/users/list', array(
+                'location' => $this->_location,
+                'users' => $this->_location->getUsers(true), // only manageable users
+            ))->render(),
+        );
 
     }
 
