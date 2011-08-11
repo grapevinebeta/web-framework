@@ -575,15 +575,13 @@ var BC_RecentActivity = BoxController.extend({
                 
                 for(var subrow in row) {
                     
-                    this.processRow(row[subrow], template.clone(), timestamp)
-                        .appendTo(content);
+                    content.append(this.processRow(row[subrow], template.clone(), timestamp));
                     
                 }
                 
             }
-            else 
-                this.processRow(row, template.clone(), timestamp)
-                        .appendTo(content);
+            else
+                content.append(this.processRow(row, template.clone(), timestamp));
         }
         
     },
