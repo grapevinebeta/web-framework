@@ -78,11 +78,15 @@ class Model_Location extends ORM {
 
         if ($only_managable) {
             // filter to only users that can be managed
+            $managable_levels = self::getAccessLevels(array(
+                'admin',
+                'readonly',
+            ));
+            if (empty($managable_levels)) {
+                $managable_levels = array(-1); // value not matching any level
+            }
             $users = $users
-                    ->and_where('level', 'IN', self::getAccessLevels(array(
-                        'admin',
-                        'readonly',
-                    )));
+                    ->and_where('level', 'IN', $managable_levels);
         }
 
         $users = $users
@@ -137,7 +141,6 @@ class Model_Location extends ORM {
             return self::$_access_levels;
         }
 
-        $result = array(-1); // default: ID not matching any of the roles
         foreach ($levels as $level) {
             $result[] = Arr::get(array_flip(self::$_access_levels), strtolower($level));
         }
