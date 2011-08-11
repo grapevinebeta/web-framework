@@ -10,64 +10,66 @@ Function.prototype.clone = function() {
 jQuery(function(){
     helpers = {
             
-            tips: $( ".validateTips" ),
+        tips: $( ".validateTips" ),
             
-            standardDate: function(date) {
+        standardDate: function(date) {
                 
-                return date.getMonth()+1 + '/' + date.getDate() + '/' + date.getFullYear();
+            return date.getMonth()+1 + '/' + date.getDate() + '/' + date.getFullYear();
                 
-            },
+        },
             
-            formatDate: function(date) {
+        formatDate: function(date) {
 
-                var tmpDate = new Date(date * 1000);
+            var tmpDate = new Date(date * 1000);
                 
-                return tmpDate.getMonth() 
-                    + '/' 
-                    + tmpDate.getDate() 
-                    + '/' 
-                    + tmpDate.getFullYear() 
-                    + ' ' 
-                    + (tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours())
-                    + ':' 
-                    + (tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes());
+            return tmpDate.getMonth() 
+            + '/' 
+            + tmpDate.getDate() 
+            + '/' 
+            + tmpDate.getFullYear() 
+            + ' ' 
+            + (tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours())
+            + ':' 
+            + (tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes());
               
-            },
+        },
             
-            updateTips: function(t) {
-                this.tips
-                .text( t )
-                .addClass( "ui-state-highlight" );
+        updateTips: function(t) {
+            this.tips
+            .text( t )
+            .addClass( "ui-state-highlight" );
                 
-                var that = this;
+            var that = this;
                 
-                setTimeout(function() {
-                    that.tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            },
+            setTimeout(function() {
+                that.tips.removeClass( "ui-state-highlight", 1500 );
+            }, 500 );
+        },
     
-            checkLength: function( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    this.updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            },
-    
-            checkRegexp: function(o, value, regexp, n ) {
-                if ( !( regexp.test( value ) ) ) {
-                    o.addClass( "ui-state-error" );
-                    this.updateTips( n );
-                    return false;
-                } else {
-                    return true;
-                }
+        checkLength: function( o, n, min, max ) {
+            if ( o.val().length > max || o.val().length < min ) {
+                o.addClass( "ui-state-error" );
+                this.updateTips( "Length of " + n + " must be between " +
+                    min + " and " + max + "." );
+                return false;
+            } else {
+                return true;
             }
+        },
+    
+        checkRegexp: function(o, value, regexp, n ) {
+            if ( !( regexp.test( value ) ) ) {
+                o.addClass( "ui-state-error" );
+                this.updateTips( n );
+                return false;
+            } else {
+                return true;
+            }
+        }
             
-        };
+    };
+        
+    $('.tooltip').tipTip();
 });
 
 
@@ -111,6 +113,17 @@ function getPeriodInDays(period) {
     
 })();
 
-$(document).ready(function () {
-    $('.tooltip').tipTip();
-});
+var monthNames = [
+'Jan',
+'Feb',
+'March',
+'April',
+'May',
+'June',
+'July',
+'Aug',
+'Sept',
+'Oct',
+'Nov',
+'Dec'
+];

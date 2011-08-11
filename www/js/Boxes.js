@@ -2501,52 +2501,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
     
 });
 
-var BC_SocialActivityBox = BC_GraphBoxController.extend({
-    
-    /**
-     * @var String DOM id of the container div 
-     */
-    boxId: 'box-social-activity-box',
-    
-    /**
-     * @var String Name of the requested resource, used in Ajax URL
-     */
-    endpoint: '/api/box/social',
-    
-    processData: function() {
-        
-        var messages = this.data.messages;
-        var box = this.getContentDom().find('.messages');
-        var source = box.children('.post');
-        var template = source.clone();
-        source.remove();
-        
-        for(var message in messages) {
-            
-            template = template.clone();
-            var tmpDate = new Date(message * 1000);
-            
-            var h = tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours()
-            var m = tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes()
-            
-            var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
-            '/' + tmpDate.getFullYear() + " " + h + ":" + m ;
-            
-            template.find('.date').text(formatted);
-            template.find('.author').text(messages[message].from);
-            template.find('.message').text(messages[message].message);
-            template.find('.network').addClass(messages[message].network);
-            template.appendTo(box);
-        }
-        
-    },
-    
-    construct: function() {
-        this.noApiUrl = true;
-    }
-});
-
-
 var BC_SocialActivity = BC_GraphBoxController.extend({
 
     /**
@@ -3928,32 +3882,15 @@ $(document).ready(function () {
     .add(new BC_CompetitionDistribution())
     .add(new BC_CompetitionComparision())
     .add(new BC_CompetitionReviewInbox())
-    .add(new BC_RecentActivity())
     .add(new BC_CompetitionScore())
-    .add(new BC_Photos())
-    .add(new BC_Videos())
+//    .add(new BC_Photos())
+//    .add(new BC_Videos())
     .add(new BC_StatusUpdate())
-    .add(new BC_SocialActivityBox())
+    .add(new BC_RecentActivity())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter);
     // the initialization of boxManager is in TopMenu.js
 });
-
-
-var monthNames = [
-'Jan',
-'Feb',
-'March',
-'April',
-'May',
-'June',
-'July',
-'Aug',
-'Sept',
-'Oct',
-'Nov',
-'Dec'
-];
 
 
 var Exporter = {
