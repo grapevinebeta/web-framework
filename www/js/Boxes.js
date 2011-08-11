@@ -524,6 +524,13 @@ var BC_RecentActivity = BoxController.extend({
 
     processData: function() {
         
+        if(!this.data) {
+            
+            this.getContentDom().find('.data-grid-holder')
+            .html('Please connect Your account with Facebook or Twitter');
+            
+        }
+        
         var messages = this.data.messages;
 
         var content = this.getContentDom().find('.data-grid-holder'),
