@@ -12,6 +12,7 @@
         }
         
     ?>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <title><?php echo isset($title)?$title:'Grapevine'; ?></title>
 </head>
 <body>

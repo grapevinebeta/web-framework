@@ -99,11 +99,10 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'styles/datepicker.css',
         );
         $this->template->scripts = array(
-            'js/jquery-1.6.min.js',
             'js/common.js', // adds some common functions
             'js/highcharts/highcharts.src.js',
             'js/flowplayer/flowplayer-3.2.6.min.js',
-            'js/jquery-ui-1.8.13.custom.min.js',
+            'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',
             'js/jquery.tipTip.min.js',
             'js/colorbox/jquery.colorbox-min.js',
             'js/jquery.selectbox.js',
