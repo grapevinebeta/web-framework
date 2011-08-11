@@ -303,7 +303,18 @@ jQuery(function(){
             this.userManagementSettings.delegate(':radio[data-action="change-role"]', 'change', function(event){
                 // changing access level
                 var element = jQuery(this);
-                log('Role for user with ID="' + element.attr('data-user-id') + '" is about to be changed to "' + element.attr('data-role') + '"');
+                var level = element.attr('data-role');
+                var user_id = element.attr('data-user-id');
+                log('Location level for user with ID="' + user_id + '" is about to be changed to "' + level + '"');
+                jQuery.post('/api/settings/changelocationlevel', {
+                    'params' : {
+                        'level': level,
+                        'user_id': user_id
+                    }
+                }, function(data){
+                    log('Answer to the request:');
+                    log(data);
+                });
             });
             
             this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){

@@ -182,6 +182,12 @@ Route::set('api_account_settings_addemail', 'api/settings/addemail')
 		'controller' => 'settings',
 		'action' => 'addemail',
 	));
+Route::set('api_account_settings_changelocationlevel', 'api/settings/changelocationlevel')
+	->defaults(array(
+		'directory' => 'api',
+		'controller' => 'settings',
+		'action' => 'changelocationlevel',
+	));
 Route::set('api_account_settings_deleteemail', 'api/settings/deleteemail')
 	->defaults(array(
 		'directory' => 'api',

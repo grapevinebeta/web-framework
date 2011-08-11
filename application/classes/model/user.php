@@ -18,7 +18,7 @@ class Model_User extends Model_Auth_User {
      */
     public function findUserForLocation($user_id, $location_id, $only_managable = false) {
         
-        $exists = (bool) DB::select(array(DB::expr('COUNT(`user_id`)'), 'total'))
+        $exists = DB::select(array(DB::expr('COUNT(`user_id`)'), 'total'))
                 ->from('locations_users')
                 ->where('locations_users.location_id', '=', (int)$location_id)
                 ->and_where('locations_users.user_id', '=', (int)$user_id);
@@ -35,7 +35,7 @@ class Model_User extends Model_Auth_User {
                     ->and_where('locations_users.level', 'IN', $managable_levels);
         }
 
-        $exists = (int)$exists
+        $exists = (bool)$exists
                 ->execute()
                 ->get('total');
         
@@ -233,6 +233,36 @@ class Model_User extends Model_Auth_User {
         } else {
             return in_array($level, array(0,1)); // @todo make it clearer
         }
+    }
+
+    /**
+     * Change access level for the current user to given location
+     * @param Model_Location $location Location to be set access to
+     * @param mixed $level numeric representation of level or string
+     * @return mixed
+     * @todo Change returned value to boolean representing success or failure
+     */
+    public function setAccessLevelForLocation(Model_Location $location, $level) {
+        $given_level = $level;
+        if (!is_numeric($level)) {
+            // transform level to numeric representation (assuming codename)
+            $level = Arr::get(Model_Location::getAccessLevels(array($level)), 0);
+            if ($level === null) {
+                // we can not allow for passing this further
+                throw new Kohana_Exception('Given level (":level") is not supported for setting access for location.', array(
+                    ':level' => $given_level,
+                ));
+            }
+        }
+
+        $result = DB::update('locations_users')
+                ->value('level', (int)$level)
+                ->where('location_id', '=', (int)$location->id)
+                ->and_where('user_id', '=', (int)$this->id)
+                ->execute();
+
+        return $result; // @todo pass only success / failure information
+
     }
 
 }

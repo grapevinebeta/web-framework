@@ -922,4 +922,20 @@ class Controller_Api_Settings extends Controller_Api {
         
     }
 
+    /**
+     * Change location's access level
+     * @todo Add standard AJAX try-catch blocks
+     */
+    public function action_changelocationlevel() {
+
+        $user_id = Arr::path($this->request->post(), 'params.user_id');
+        $level = Arr::path($this->request->post(), 'params.level');
+
+        // find user for given location only if he can be managed
+        $user = ORM::factory('user')->findUserForLocation($user_id, $this->_location->id, true);
+
+        $this->apiResponse['result'] = $user->setAccessLevelForLocation($this->_location, $level);
+
+    }
+
 }
