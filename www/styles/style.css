@@ -410,7 +410,6 @@ input[type=submit] {
 
 #footer-holder {
     margin: 5px;
-    border-top: 1px solid gray;
     padding: 5px;
     text-align: center;
 }
@@ -623,6 +622,10 @@ input[type=submit] {
 
 #box-ogsi { background: url(/images/scoreboard-bg.png) bottom left repeat-x;}
 
+.ogsi-score {
+    padding-top: 9px;
+}
+
     .ogsi-score-bg-right {
         background-image: url(../images/ogsi-bg.png);
         background-position: right bottom;
@@ -639,7 +642,7 @@ input[type=submit] {
     }
     
     .ogsi-score-ogsi {
-        padding: 5px 0px 0px;
+        padding: 5px 0px 0px 10px;
         font-size: 20px;
         text-align: center;
     }
@@ -1341,16 +1344,16 @@ input[type=submit] {
     }
     
     .window-close {
-        padding: 6px 12px;
+        background: none repeat scroll 0 0 #FFFFFF;
         border: 1px solid gray;
-        position: absolute;
-        top:0;
-        right:0;
-        z-index: 10;
-        background: #fff;
+        bottom: 0;
         font-weight: bold;
+        left: 50%;
+        margin-left: -23px;
+        padding: 6px 12px;
+        position: absolute;
         text-decoration: none;
-        
+        z-index: 10;
     }
     
     .status-icon {

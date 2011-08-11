@@ -2419,7 +2419,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
       $('a.alert-show, a.todo-show').bind('click', function(e) {
         
         e.preventDefault();
-        var strWindowFeatures = "width=800,height=540, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+        var strWindowFeatures = "width=800,height=570, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
         windowObjectReference = window.open(this.href, "alerts-widow", strWindowFeatures);
           
       });
