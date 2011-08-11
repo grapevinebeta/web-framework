@@ -12,10 +12,7 @@ jQuery(function(){
         form: null,
         
         openEmailExport: function() {
-            
             $( "#dialog-export" ).dialog("open");
-            
-            
         },
 
         openSupport: function() {
@@ -138,8 +135,6 @@ jQuery(function(){
             var email = $( "#from" ),
             reply = $( "#reply" ),
             allFields = $( [] ).add( email, reply );
-            
-            var self = this;
           
             $( "#dialog-export" ).dialog({
                 autoOpen: false,
@@ -263,6 +258,71 @@ jQuery(function(){
             
         },
    
+        periodHandler: function(e, data) {
+
+            var self = data.context;            
+            
+            self.selectValue = $(e.target).val();
+            self.period = determineMonthDiff(self.selectValue);
+
+            var parsed;
+                
+            // we parse maxDate that can be 1m 3m 6m 1y custom in format 1/1/2004
+            if(parsed = Date.parse(self.selectValue)) {
+                
+                self.maxDate = new Date(parsed);
+                self.picker.DatePickerSetDate([self.minDate, self.maxDate], true);
+                self.form.trigger('submit');
+                return;
+            }
+            else {                
+                
+                switch(self.selectValue) {
+                    
+                    case 'ytd':
+                        self.minDate.setMonth(0, 1);
+                        self.minDate.setFullYear(self.maxDate.getFullYear());
+                        break;
+                    case 'all':
+                        self.minDate = new Date(0);
+                        break;
+                    default:
+                        self.minDate = new Date();
+                        self.minDate.setMonth(self.minDate.getMonth() - self.period, self.minDate.getDate() - 1);
+                        self.maxDate = new Date();
+                        self.maxDate.setDate(self.maxDate.getDate() - 1);
+                        break;
+                    
+                }
+                        
+                var d = self.minDate.getMonth()+1 + '/' + self.minDate.getDate() + '/' + self.minDate.getFullYear();
+                    
+                self.dateSelector.val(d);
+
+                var formated = [];
+            
+                formated[0] = self.minDate.getDate() + " " + self.minDate.getMonthName(true) + ", " + self.minDate.getFullYear();
+                formated[1] = self.maxDate.getDate() + " " + self.maxDate.getMonthName(true) + ", " + self.maxDate.getFullYear();
+
+                $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
+                    
+                    
+                self.picker.DatePickerSetDate([self.minDate, self.maxDate], false);
+            }
+            
+            self.form.trigger('submit');
+            
+        },
+        
+        wrapper: function(callback, data) {
+            
+            return function(e) {
+                
+                callback(e, data);
+                
+            }
+            
+        },
    
         initRangeSelect: function() {
 
@@ -277,91 +337,47 @@ jQuery(function(){
                 starts: 1,
                 onChange: function(formated, date) {
                    
-                    if(date[1].getDate() != date[0].getDate()) {
+                    // we need to check if date range is at least 1 day
+                   
+                    var diff = Math.floor((date[1].getTime() - date[0].getTime()) / (1000 * 3600 * 24));
+                   
+                    if(diff) {
                      
                         self.minDate = date[0];
                         self.maxDate = date[1];
                         
                         
-                        var d = date[0].getMonth()+1 + '/' + date[0].getDate() + '/' + date[0].getFullYear();
-                        var d2 = date[1].getMonth()+1 + '/' + date[1].getDate() + '/' + date[1].getFullYear();
+                        var d = helpers.standardDate(date[0]);
+                        var d2 = helpers.standardDate(date[1]);
                     
                         self.dateSelector.val(d);
-                                        
+
+                        // if we use custom range we add extra option custom to range selector
                         if(!self.periodSelector.has("option:contains('custom')").length) {
                         
                             self.periodSelector.append($(document.createElement("option")).
                                 attr("value", d2).text("custom"))
-                    
-                            self.periodSelector.parents('.jquery-selectbox').unselectbox();
-                        
-                            self.periodSelector.find("option:contains('custom')").prop("selected", "selected");
-                            self.periodSelector.selectbox().bind('change', function() {
-
-                                self.selectValue = $(this).val();
-                                self.period = determineMonthDiff(self.selectValue);
-                
-                                var parsed;
-                
-                                // we parse maxDate that can be 1m 3m 6m 1y custom in format 1/1/2004
-                                if(parsed = Date.parse(self.selectValue)) {
-                
-                                    self.maxDate = new Date(parsed);
-                                    self.picker.DatePickerSetDate([self.minDate, self.maxDate], true);
-                                    self.form.trigger('submit');
-                                    return;
-                                }
-                                else {                
-                                    switch(self.selectValue) {
-                    
-                                        case 'ytd':
-                                            self.minDate.setMonth(0, 1);
-                                            self.minDate.setFullYear(self.maxDate.getFullYear());
-                                            break;
-                                        case 'all':
-                                            self.minDate = new Date(0);
-                                            break;
-                                        default:
-                                            self.minDate = new Date();
-                                            self.minDate.setMonth(self.minDate.getMonth() - self.period, self.minDate.getDate() - 1);
-                                            self.maxDate = new Date();
-                                            self.maxDate.setDate(self.maxDate.getDate() - 1);
-                                            break;
-                    
-                                    }
-   
-                        
-                                    var d = self.minDate.getMonth()+1 + '/' + self.minDate.getDate() + '/' + self.minDate.getFullYear();
-                    
-                                    self.dateSelector.val(d);
-
-                                    var formated = [];
-            
-                                    formated[0] = self.minDate.getDate() + " " + self.minDate.getMonthName(true) + ", " + self.minDate.getFullYear();
-                                    formated[1] = self.maxDate.getDate() + " " + self.maxDate.getMonthName(true) + ", " + self.maxDate.getFullYear();
-
-                                    $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
-                    
-                    
-                                    self.picker.DatePickerSetDate([self.minDate, self.maxDate], false);
-                                }
-                
-                                self.form.trigger('submit');
-            
-                            });
                         
                         }
-                        else {
                         
-                            self.periodSelector.find("option:contains('custom')").attr('value',d2);
                         
-                        }
+                        // we need to recreate the select box
+                        self.periodSelector.parents('.jquery-selectbox').unselectbox();
+                        
+                        self.periodSelector.find("option:contains('custom')")
+                        .prop("selected", "selected");
+                        self.periodSelector.selectbox().bind('change', self.wrapper(self.periodHandler, 
+                        {
+                            context: self
+                        }));
+                        
                     
+                        // we update date displayer
                         $('#widgetField span').get(0).innerHTML = formated.join(' &divide; ');
                     
-                    
-                        TopMenu.form.trigger('submit');
+                        self.form.trigger('submit');
                         
+                        // we can now slide up data picker
                         $('#widgetCalendar')
                         .stop()
                         .animate({

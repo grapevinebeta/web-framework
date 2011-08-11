@@ -12,6 +12,12 @@ jQuery(function(){
             
             tips: $( ".validateTips" ),
             
+            standardDate: function(date) {
+                
+                return date.getMonth()+1 + '/' + date.getDate() + '/' + date.getFullYear();
+                
+            },
+            
             formatDate: function(date) {
 
                 var tmpDate = new Date(date * 1000);

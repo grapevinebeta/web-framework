@@ -1719,7 +1719,7 @@ var BC_ScoreboardCurrent = BoxController.extend({
                 var ytd = new Date();
                 
                 ytd.setMonth(0, 1);
-                days = Math.ceil((now.getTime() - ytd.getTime()) / (1000 * 3600 * 31));
+                days = Math.ceil((now.getTime() - ytd.getTime()) / (1000 * 3600 * 24));
                 
             }
             else if(months) {
@@ -1734,7 +1734,7 @@ var BC_ScoreboardCurrent = BoxController.extend({
                     var start = Date.parse(this.range['date']);
                     var end = Date.parse(this.range['period']);
                     
-                    var timestamp = Math.ceil((end - start) / (1000 * 3600 * 30));
+                    var timestamp = Math.ceil((end - start) / (1000 * 3600 * 24));
                     
                     days = timestamp;
                     
