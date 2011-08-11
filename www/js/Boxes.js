@@ -615,18 +615,6 @@ var BC_RecentActivity = BoxController.extend({
         
     },
     
-    attachBoxEvents: function() {
-        
-        var self = this;
-        
-        setInterval(function() {
-           
-            self.refresh();
-        
-        }, 30000);
-        
-    },
-    
     construct: function () {
         
         this.noApiUrl = true;
