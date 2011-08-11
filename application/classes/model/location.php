@@ -135,9 +135,11 @@ class Model_Location extends ORM {
      * Get the list of access levels available
      * @param array $levels list of access levels to be returned IDs for
      * @return array
+     * @uses Model_Location::$_access_levels for determining list of access
+     *      levels
      */
-    public static function getAccessLevels($levels) {
-        if ($levels !== null) {
+    public static function getAccessLevels($levels = null) {
+        if ($levels === null) {
             return self::$_access_levels;
         }
 
