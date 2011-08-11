@@ -3817,6 +3817,11 @@ boxManager = {
                 content = box.getContentDom()
                 .find('.data-grid-holder table:visible:first')
                 .clone();
+                
+                if(!content.length && this.id == 'box-ogsi') {
+                    content = box.getBoxDom().clone();
+                    content.find('.box-header').remove();
+                }
             
                 content.find('tr.expanded').remove();
 

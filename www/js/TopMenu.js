@@ -29,8 +29,9 @@ jQuery(function(){
             
             var self = this;
           
-            $('.export').bind('click', function() {
+            $('.export').bind('click', function(e) {
             
+                e.preventDefault();
                 boxManager.exportBoxes();
             
             });
