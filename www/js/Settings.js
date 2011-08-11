@@ -299,18 +299,17 @@ jQuery(function(){
                     }, 'json');
                 }
             });
+
+            this.userManagementSettings.delegate(':radio[data-action="change-role"]', 'change', function(event){
+                // changing access level
+                var element = jQuery(this);
+                log('Role for user with ID="' + element.attr('data-user-id') + '" is about to be changed to "' + element.attr('data-role') + '"');
+            });
             
             this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
                 event.preventDefault();
                 self.clearValidationErrors(editForm);
                 self.clearForm(editForm);
-            });
-
-            // this is for saving data, as there is no other way to submit a form
-            this.userManagementSettings.delegate('form input[type="text"], form input[type="password"]', 'keydown', function(event){
-                if (event.keyCode == 13){
-                    jQuery(this).parents('form').submit(); // submit form
-                }
             });
 
             log('User management initialized');

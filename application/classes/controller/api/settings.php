@@ -574,7 +574,7 @@ class Controller_Api_Settings extends Controller_Api {
                 'message' => __('User data has been successfully saved'),
                 'user' => $user->as_array(),
                 'users_html' => View::factory('account/users/list', array(
-                    'users' => $location->getUsers(),
+                    'users' => $location->getUsers(true), // only manageable users
                 ))->render(),
             );
         } catch (ORM_Validation_Exception $e) {
@@ -643,7 +643,7 @@ class Controller_Api_Settings extends Controller_Api {
                 $this->apiResponse['result'] = array(
                     'message' => __('User has been successfully deleted'),
                     'users_html' => View::factory('account/users/list', array(
-                        'users' => $location->getUsers(),
+                        'users' => $location->getUsers(true), // only manageable users
                     ))->render(),
                 );
             }

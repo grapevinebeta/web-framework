@@ -46,7 +46,7 @@ class Controller_Account extends Controller_Template {
 
         $this->_contentView = View::factory('account/users');
 
-        $users = $location->getUsers();
+        $users = $location->getUsers(true); // only manageable users
         
         $this->_contentView->users = $users;
     }

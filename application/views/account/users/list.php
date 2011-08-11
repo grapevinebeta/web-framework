@@ -27,10 +27,18 @@
                         )); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo form::radio($_inputPrefix . '[role]', 'admin', false); ?>
+                        <?php echo form::radio($_inputPrefix . '[role]', 'admin', false, array(
+                            'data-action' => 'change-role',
+                            'data-role' => 'admin',
+                            'data-user-id' => $user->id,
+                        )); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo form::radio($_inputPrefix . '[role]', 'user', true); ?>
+                        <?php echo form::radio($_inputPrefix . '[role]', 'user', true, array(
+                            'data-action' => 'change-role',
+                            'data-role' => 'readonly',
+                            'data-user-id' => $user->id,
+                        )); ?>
                     </td>
                     <td class="a-center">
                         <?php
