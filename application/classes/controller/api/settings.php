@@ -537,7 +537,7 @@ class Controller_Api_Settings extends Controller_Api {
         try {
             if (!empty ($user_data['id'])) {
                 // find user given by parameter
-                $user = ORM::factory('user')->findUserForLocation((int)$user_data['id'], (int)$location_id);
+                $user = ORM::factory('user')->findUserForLocation((int)$user_data['id'], (int)$location_id, true);
             } else {
                 // assume new user
                 $user = ORM::factory('user');

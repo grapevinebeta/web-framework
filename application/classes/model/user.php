@@ -13,13 +13,29 @@ class Model_User extends Model_Auth_User {
      * Find user associated to the specific location or give empty ORM object
      * @param int $user_id user's ID
      * @param int $location_id location's ID
+     * @param bool $only_managable should this method return user only if he is
+     *      managable by administrator?
      */
-    public function findUserForLocation($user_id, $location_id) {
+    public function findUserForLocation($user_id, $location_id, $only_managable = false) {
         
         $exists = (bool) DB::select(array(DB::expr('COUNT(`user_id`)'), 'total'))
                 ->from('locations_users')
                 ->where('locations_users.location_id', '=', (int)$location_id)
-                ->and_where('locations_users.user_id', '=', (int)$user_id)
+                ->and_where('locations_users.user_id', '=', (int)$user_id);
+
+        if ($only_managable) {
+            $managable_levels = Model_Location::getAccessLevels(array(
+                'admin',
+                'readonly',
+            ));
+            if (empty($managable_levels)) {
+                $managable_levels = array(-1); // just to avoid errors
+            }
+            $exists = $exists
+                    ->and_where('locations_users.level', 'IN', $managable_levels);
+        }
+
+        $exists = (int)$exists
                 ->execute()
                 ->get('total');
         
