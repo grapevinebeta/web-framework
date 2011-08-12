@@ -102,13 +102,13 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/DataProvider.js',
             'js/Boxes.min.js', // minified verion of Boxes.js
             'js/TopMenu.js',
-            'js/highcharts/highcharts.src.js',
+            'js/highcharts/highcharts.js',
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',
             'js/jquery.tipTip.min.js',
 //            'js/colorbox/jquery.colorbox-min.js',
             'js/jquery.selectbox.js',
             'js/highcharts/modules/exporting.js',
-            'js/datepicker.js',
+            'js/datepicker.min.js',
         );
         
         $this->template->body = 'test';
