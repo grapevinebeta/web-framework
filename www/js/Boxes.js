@@ -127,6 +127,11 @@ var BoxController = Class.extend({
     construct: function () {},
     
     init: function () {
+        
+        $.ajaxSetup({
+            timeout: 10000
+        });
+        
         if (this.boxId && this.getContentDom().length) {
             this.refresh();
             this.attachBoxEvents();
