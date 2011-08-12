@@ -22,7 +22,7 @@ select {
     border-style: solid;
 }
 
-input {
+input[type=text] {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     color: #593B7C;
     border-width: 1px;
