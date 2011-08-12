@@ -11,29 +11,23 @@ body {
 textarea {
     margin: 0px;
     padding: 0px;
-    border-width: 1px;
-    border-style: solid;
     resize: none; /* chrome resizing disable */
-    border-color: #EAEAEA;
+    border: 1px solid #EAEAEA;
 }
 
 select {
-    background: white;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #EAEAEA;
+    background: #fff;
+    border: 1px solid #EAEAEA;
 }
 
 input[type=text] {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     color: #593B7C;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #EAEAEA;
+    border: 1px solid #EAEAEA;
 }
 
 img {
-    border-width: 0px;
+    border: none;
 }
 
 img.icon {
