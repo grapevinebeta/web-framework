@@ -14,12 +14,14 @@ textarea {
     border-width: 1px;
     border-style: solid;
     resize: none; /* chrome resizing disable */
+    border-color: #EAEAEA;
 }
 
 select {
     background: white;
     border-width: 1px;
     border-style: solid;
+    border-color: #EAEAEA;
 }
 
 input[type=text] {
@@ -27,6 +29,7 @@ input[type=text] {
     color: #593B7C;
     border-width: 1px;
     border-style: solid;
+    border-color: #EAEAEA;
 }
 
 img {
@@ -1141,7 +1144,7 @@ input[type=submit] {
         
     }
     
-    tr.expanded td { padding: 0; }
+    tr.expanded td { padding: 0; border:none; }
     
     tr .details {
         border-bottom: 1px solid #8974A0;
@@ -1157,8 +1160,7 @@ input[type=submit] {
     
     tr.border {
     
-        border: 1px solid #000;
-        border-style: solid none solid none;
+        border-bottom: 1px solid #000;
         
     }
     
