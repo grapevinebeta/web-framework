@@ -537,7 +537,7 @@ class Controller_Api_Settings extends Controller_Api {
         try {
             if (!empty ($user_data['id'])) {
                 // find user given by parameter
-                $user = ORM::factory('user')->findUserForLocation((int)$user_data['id'], (int)$location_id);
+                $user = ORM::factory('user')->findUserForLocation((int)$user_data['id'], (int)$location_id, true);
             } else {
                 // assume new user
                 $user = ORM::factory('user');
@@ -574,7 +574,8 @@ class Controller_Api_Settings extends Controller_Api {
                 'message' => __('User data has been successfully saved'),
                 'user' => $user->as_array(),
                 'users_html' => View::factory('account/users/list', array(
-                    'users' => $location->getUsers(),
+                    'location' => $location,
+                    'users' => $location->getUsers(true), // only manageable users
                 ))->render(),
             );
         } catch (ORM_Validation_Exception $e) {
@@ -643,7 +644,8 @@ class Controller_Api_Settings extends Controller_Api {
                 $this->apiResponse['result'] = array(
                     'message' => __('User has been successfully deleted'),
                     'users_html' => View::factory('account/users/list', array(
-                        'users' => $location->getUsers(),
+                        'location' => $location,
+                        'users' => $location->getUsers(true), // only manageable users
                     ))->render(),
                 );
             }
@@ -920,6 +922,28 @@ class Controller_Api_Settings extends Controller_Api {
             );
         }
         
+    }
+
+    /**
+     * Change location's access level
+     * @todo Add standard AJAX try-catch blocks
+     */
+    public function action_changelocationlevel() {
+
+        $user_id = Arr::path($this->request->post(), 'params.user_id');
+        $level = Arr::path($this->request->post(), 'params.level');
+
+        // find user for given location only if he can be managed
+        $user = ORM::factory('user')->findUserForLocation($user_id, $this->_location->id, true);
+
+        $this->apiResponse['result'] = array(
+            'success' => $user->setAccessLevelForLocation($this->_location, $level),
+            'users_html' => View::factory('account/users/list', array(
+                'location' => $this->_location,
+                'users' => $this->_location->getUsers(true), // only manageable users
+            ))->render(),
+        );
+
     }
 
 }

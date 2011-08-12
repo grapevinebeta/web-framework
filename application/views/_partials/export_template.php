@@ -128,6 +128,170 @@ prince-image-resolution: 96dpi;        /* 1 image pixel maps to 1px unit */
     
 }
 
+#box-ogsi-current {
+    border-top: 1px solid #000;
+    background: #E7E4EF;
+}
+
+#box-ogsi td:nth-child(4n) { width: 35%;}
+#box-ogsi {
+    border: 1px solid #000;
+}
+
+#box-ogsi table th, #box-ogsi table td {
+    border: none;
+    vertical-align: middle;
+}
+
+    
+    .ogsi-score-ogsi {
+        padding: 5px 0px 0px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .ogsi-rating-rating {
+        padding: 5px 0px 0px;
+        font-size: 20px;
+        text-align: center;
+    }
+    .ogsi-reviews-reviews {
+        padding: 5px 0px 0px;
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .ogsi-score-value {
+        padding: 0px;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 100%;
+    }
+    
+    .ogsi-rating-value {
+        padding: 0px;
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 100%;
+    }
+
+    .ogsi-reviews {
+        height: 101px;
+    }
+    
+    .ogsi-reviews-value {
+        padding: 0px;
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 100%;
+    }
+    
+    .change-arrow {
+        display: inline-block;
+        width: 15px;
+        height: 14px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+    }
+    
+    .change-arrow.positive {
+        background-image: url(http://staging.pickgrapevine.com/images/icons/arrow-up.png);
+    }
+
+    .change-arrow.negative {
+        background-image: url(http://staging.pickgrapevine.com/images/icons/arrow-down.png);
+    }
+    
+    .ogsi-rating .ogsi-rating-stars-off {
+        display:none;
+    }
+    .ogsi-rating .ogsi-rating-stars-on {
+        display:none;
+    }
+    
+    .change-value {
+        font-size: 14px;
+    }
+    
+    .box-ogsi-review-distribution .title {
+        text-align: center;
+        padding: 5px;
+        background-color: #D1CDDD;
+        color: white;
+        font-weight: normal;
+        font-size: 18px;
+    }
+    
+    .box-ogsi-review-distribution .bar-holder {
+        padding: 20px 50px;
+    }
+    
+    .bar-value {
+        font-size: 13px;
+        color: white;
+        font-weight: bold;
+        display: inline-block;
+        padding-top: 4px;
+    }
+    
+    .bar-negative {
+        height: 22px;
+        background-image: url(http://staging.pickgrapevine.com/images/box/ogsi/bar-negative-bg.jpg);
+        border: 1px solid #BC2B2C;
+        border-radius: 8px;
+        text-align: center;
+    }
+    
+    .bar-neutral {
+        height: 22px;
+        margin-top: -1px;
+        margin-left: -1px;
+        float: left;
+        background-image: url(http://staging.pickgrapevine.com/images/box/ogsi/bar-neutral-bg.jpg);
+        border: 1px solid #D1BC30;
+        border-radius: 8px;
+        overflow: visible;
+    }
+
+    .bar-neutral .bar-value {
+        color: black;
+    }
+
+    .bar-positive {
+        overflow: visible;
+        height: 22px;
+        margin-top: -1px;
+        margin-left: -1px;
+        float: left;
+        background-image: url(http://staging.pickgrapevine.com/images/box/ogsi/bar-positive-bg.jpg);
+        border: 1px solid #18693C;
+        border-radius: 8px;
+    }
+
+    .bar-positive .bar-value {
+        color: white;
+    }
+    
+    .headline-arrow {
+        background: url(http://staging.pickgrapevine.com/images/ogsi_headline.png) top left;
+        height:54px;
+        width:127px;
+    }
+    
+    .current {
+        background-position: left bottom;
+        background-repeat: no-repeat;
+        font-family: Verdana,Arial,Tahoma,sans-serif;
+        font-size: 30px;
+        font-weight: normal;
+        padding-bottom: 6px;
+        padding-left: -2px;
+        text-align: left;
+        letter-spacing: -2.1px;
+    }
+
     </style>
   </head>
   <body>
@@ -339,10 +503,10 @@ uDz5I5OjRrkCpWD3JOAo/XjRo0akCpX/2Q==" alt="Grapevine Manage Your Reviews" />
         <div style="float:right;">
             
             <h2>
-                jacek.kromski@polcode.com
+                <?php echo $_current_user->email; ?>
             </h2>
-            Graph for <?php $d = Session::instance()->get('viewingRange');  ?>
-            <?php echo $d['date']; ?> with  <?php echo $d['period']; ?> range.
+            Graph from
+            <strong><?php echo $range[0]; ?></strong> to <strong><?php echo $range[1]; ?>.</strong>
             
             
         </div>

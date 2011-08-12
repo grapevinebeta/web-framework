@@ -12,6 +12,11 @@ Class.__asMethod__ = function(func, superClass) {
     };
 };
 
+/**
+ * this object helps to extend default behaviour of each objects
+ *
+ */
+
 Class.extend = function(def) {
     var classDef = function() {
         if (arguments[0] !== Class && this.construct) {
@@ -38,6 +43,11 @@ Class.extend = function(def) {
     return classDef;
 };
 
+
+/**
+ * this varaible stores all boxes that should be handled by application logic
+ *
+ */
 var boxCollection = new Array();
 
 /**
@@ -94,11 +104,17 @@ var BoxController = Class.extend({
     
     
     /**
-     * @var Boolean if there is no data this variable return true
+     * @var When no data is return by endpoints this variable should be set to true
+     * and the afterLoadData method should handle this state
      */
     
     empty: false,
     
+    
+    /**
+     * when this variable is set to true it will use custom endpoints instead of shorthand one
+     *
+     */
     noApiUrl: false,
     
     /**
@@ -111,6 +127,11 @@ var BoxController = Class.extend({
     construct: function () {},
     
     init: function () {
+        
+        $.ajaxSetup({
+            timeout: 10000
+        });
+        
         if (this.boxId && this.getContentDom().length) {
             this.refresh();
             this.attachBoxEvents();
@@ -205,6 +226,10 @@ var BoxController = Class.extend({
         return this;
     },
     
+    
+    /**
+     * if you want to make special actions when data is loaded you should reimplement this function
+     */
     afterLoadDataCustom: function() {
         
     },
@@ -222,7 +247,7 @@ var BoxController = Class.extend({
      
         if(this.empty) {
             
-            this.showNoData('.data-grid-holder');
+            this.showNoData('.data-grid-holder', this.emptyMessage);
             this.afterLoadDataCustom();
         }
 
@@ -241,8 +266,14 @@ var BoxController = Class.extend({
             
             boxController.loadCallback = function (data, textStatus, jqXHR) {
         
+                /*
+                 * we need to take some precautionary measures to unsure that 
+                 * we correctly handle all empty endpoints
+                 *
+                 */
                 boxController.data = data;
                 
+                // list of all variables that store data from endpoints
                 var store = {
                     sites: 1,
                     tags: 1,
@@ -312,8 +343,17 @@ var BoxController = Class.extend({
                     }
                     
                 }
+                
+                if(!data) {
+                    boxController.data = false;
+                    boxController.empty = true;
+                    boxController.emptyMessage = 
+                        "You need to activate Your facebook or twitter account in Account Settings";
+                    boxController.afterLoadData();
+                }
     
             };
+            
             
         }
         
@@ -349,12 +389,15 @@ var BoxController = Class.extend({
     },
     
     
-    showNoData: function(id) {
+    showNoData: function(id, message) {
       
       
         var holder = this.getContentDom().find(id).html(''),
         div, wrapper, span;
-            
+
+        message = message ? message : 
+            'Nothing heard through the Grapevine for the date range you selected. \n\
+             Expand your date range to see more data.';
             
         // big 100% width no data icon
         if(holder.width() > 291) {
@@ -379,7 +422,8 @@ var BoxController = Class.extend({
                         
             });
                 
-            span = '<span style="background: #fff; position: absolute; font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            span = '<span style="background: #fff; position: absolute; font-size: 10px;\n\
+ font-weight: bold; left: 8px; bottom: -9px;">' + message +  '</span>';
             
         }
         else
@@ -395,7 +439,8 @@ var BoxController = Class.extend({
                
             div = $('<div/>');
                 
-            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</span>';
+            span = '<span style="font-size: 10px; font-weight: bold; left: 8px; bottom: -9px;">' 
+                + message +  '</span>';
                 
         }
             
@@ -522,42 +567,55 @@ var BC_RecentActivity = BoxController.extend({
     
     ignore: true,
 
-    processData: function() {
+    processRow: function(row, template, timestamp) {
         
-        var messages = this.data.messages;
+        var link1, link2;
+        
+        template.children('.date').text(helpers.formatDate(timestamp));
+        
+        link2 = $('<a/>', {
+            href: row.link,
+            target: '_blank',
+            text: row.message.substr(0, 50) + '...'
+        });
+        
+        template.children('.title').html(link2);
+        
+        link1 = $('<a href="#"><span></span></a>')
+        .attr('class', row.network);
+        
+        template.children('.network').html(link1);
+        template.children('.reply').attr(
+        {
+            href: row.link,
+            target: '_blank'
+        });
+        
+        return template;
+        
+    },
 
-        var content = this.getContentDom().find('.data-grid-holder'),
+    processData: function() {
+        var messages = this.data.messages,
+        content = this.getContentDom().find('.data-grid-holder'),
         template = content.find('.row:first');
         content.find('.row').remove();
         
-        for(var message in messages) {
+        for(var timestamp in messages) {
             
-            var data = messages[message];
+            var row = messages[timestamp];
             
-            template = template.clone();
-            var tmpDate = new Date(message * 1000);
-            
-            var h = tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours()
-            var m = tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes()
-            
-            var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
-            '/' + tmpDate.getFullYear() + " " + h + ":" + m ;
-            
-            template.find('.date').text(formatted);
-            
-            var titleLink2 = $('<a></a>')
-            .attr('href', data.link)
-            .text(data.message.substr(0, 50) + '...');
-            
-            template.find('.title').html(titleLink2);
-            
-            titleLink = $('<a href="#"><span></span></a>');
-            titleLink.attr('class', data.network);
-        
-            template.find('.network').html(titleLink);
-            
-            
-            template.appendTo(content);
+            if(row instanceof Array) {
+                
+                for(var subrow in row) {
+                    
+                    content.append(this.processRow(row[subrow], template.clone(), timestamp));
+                    
+                }
+                
+            }
+            else
+                content.append(this.processRow(row, template.clone(), timestamp));
         }
         
     },
@@ -565,6 +623,7 @@ var BC_RecentActivity = BoxController.extend({
     construct: function () {
         
         this.noApiUrl = true;
+        
         
     }
 
@@ -601,21 +660,54 @@ var BC_GraphBoxController = BoxController.extend({
      */
     computeDateInterval: function() {
 
-        var period = this.range['period'];
+        var period = this.range['period'], d;
 
         switch(period) {
             
             case '1m':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 1;
                 break;
             case '3m':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 3.2;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 3.2;
                 break;
             case '6m':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 6.2;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 6.2;
                 break;
             case '1y':
-                var d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 13;
+                d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 13;
+                break;
+            case 'all':
+                
+                var t = new Date();
+                var tn = new Date();
+                
+                tn.setFullYear(1970, 0, 1);
+                
+                var diff = (t.getTime() - tn.getTime()) / (1000 * 3600 * 24)
+                
+                d = Math.floor(diff  / 6) + (diff/30);
+                
+                break;
+            case 'ytd':
+                
+                var t = new Date();
+                var tn = new Date();
+                
+                tn.setMonth(0, 1);
+                
+                var diff = (t.getTime() - tn.getTime()) / (1000 * 3600 * 24)
+                
+                d = Math.floor(diff  / 6) + (diff/31);
+                break;
+            default:
+                
+                var t = new Date(this.range['date']);
+                var tn = new Date(this.range['period']);
+                
+                var diff = (tn.getTime() - t.getTime()) / (1000 * 3600 * 24);
+                
+                d = Math.floor(diff  / 6) + (diff/31);
+                
                 break;
             
         }
@@ -726,9 +818,7 @@ var BC_GraphBoxController = BoxController.extend({
     },
     
     afterLoadGraphData: function () {
-        
-        
-        
+
         this.getGraphHolder().children().remove();
         this.getHeaderDom()
         .find('.box-header-right-buttons a.box-header-button-show-graph')
@@ -741,7 +831,8 @@ var BC_GraphBoxController = BoxController.extend({
         if(!this.graphData[key]) {
             
             this.getContentDom().find('.graph-holder')
-            .html('<p style="margin:5%;">Nothing heard through the Grapevine for the date range you selected. Expand your date range to see more data.</p>')
+            .html('<p style="margin:5%;">Nothing heard through the Grapevine \n\
+for the date range you selected. Expand your date range to see more data.</p>')
             .show();
         }
         else
@@ -908,7 +999,6 @@ var BC_LinearGraphBoxController = BC_GraphBoxController.extend({
         }
         
         
-        console.log(options);
         this.graph = new Highcharts.Chart(options);
        
     },
@@ -1551,6 +1641,12 @@ var BC_StatusUpdate = BoxController.extend({
         
         var self = this;
         
+        this.getContentDom().find(".status-updater textarea").charCount({
+            allowed: 120,		
+            warning: 20,
+            submitEnable: this.getContentDom().find('.buttons button')
+        });
+        
         this.getContentDom().delegate('form#wallPoster', 'submit', function(e) {
             
             e.preventDefault();
@@ -1594,6 +1690,12 @@ var BC_StatusUpdate = BoxController.extend({
     
     processData: function() {
         
+        if(!this.data.facebook_page_name && !this.data.twitter_account) {
+            
+            this.getContentDom().find('.status-updater').html('<p class="message">You need to activate Your facebook or twitter account in Account Settings</p>');
+            
+        }
+        
         if(this.data.facebook_page_name) {
             
             this.getContentDom().find('.page_name').text(this.data.facebook_page_name);
@@ -1609,12 +1711,6 @@ var BC_StatusUpdate = BoxController.extend({
         else
             this.getContentDom().find('.twitter_checkbox').remove();
         
-        
-        this.getContentDom().find(".status-updater textarea").charCount({
-            allowed: 120,		
-            warning: 20,
-            submitEnable: this.getContentDom().find('.buttons button')
-        });
         
     },
     construct: function() {
@@ -1677,14 +1773,26 @@ var BC_ScoreboardCurrent = BoxController.extend({
                 var ytd = new Date();
                 
                 ytd.setMonth(0, 1);
-                days = Math.ceil((now.getTime() - ytd.getTime()) / (1000 * 3600 * 31));
+                days = Math.ceil((now.getTime() - ytd.getTime()) / (1000 * 3600 * 24));
                 
             }
             else if(months) {
                 days = months;
             }
             else {
-                days = 'All';
+                
+                if(this.range['period'] == 'all')
+                    days = 'All';
+                else {
+                    
+                    var start = Date.parse(this.range['date']);
+                    var end = Date.parse(this.range['period']);
+                    
+                    var timestamp = Math.ceil((end - start) / (1000 * 3600 * 24));
+                    
+                    days = timestamp;
+                    
+                }
             }
             
             
@@ -2345,56 +2453,53 @@ var BC_ReviewInbox = BC_Inbox.extend({
     
     renderAlerts: function() {
       
-      var alerts = $('#alerts .light-box-content');
+        var alerts = $('#alerts .light-box-content');
       
-      if(!alerts.length)
-          return;
+        if(!alerts.length)
+            return;
       
       
-      var self = this;
+        var self = this;
       
-      $.ajaxSetup({async:false});
-      
-      $.post('/api/dataProvider/reviews/alerts', {status: 'alert'}, function(data) {
-          
-        self.alerts['alert'] = data.alerts;
-        $.ajaxSetup({async:true});
-          
-      });
-      
-      $.post('/api/dataProvider/reviews/alerts', {status: 'todo'}, function(data) {
-          
-        self.alerts['todo'] = data.alerts;  
-        
-        if(self.alerts['alert'] !== null) {
-            
-            for(var key in self.alerts) {
+        $.post('/api/dataProvider/reviews/alerts', {
+            status: 'alert'
+        }, function(data) {
 
-                alerts.find('.desc .' + key).text(self.alerts[key]);
+            self.alerts['alert'] = data.alerts;
 
-            }
+            $.post('/api/dataProvider/reviews/alerts', {
+                status: 'todo'
+            }, function(data) {
 
-            alerts.parent().removeClass('hide');
-            
-        }
-        
-          
-      });
-      
-      
-     
-      
+                self.alerts['todo'] = data.alerts;  
+
+                if(self.alerts['alert'] !== null) {
+
+                    for(var key in self.alerts) {
+
+                        alerts.find('.desc .' + key).text(self.alerts[key]);
+
+                    }
+
+                    alerts.parent().removeClass('hide');
+
+                }
+
+            });
+
+        });
+
     },
     
     initBoxEvents: function() {
       
       this.renderAlerts();
       
-      $('a.alert-show, a.todo-show').bind('click', function(e) {
+      $('#alerts a.alert-show, #alerts a.todo-show').bind('click', function(e) {
         
         e.preventDefault();
-        var strWindowFeatures = "width=800,height=540, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
-        windowObjectReference = window.open(this.href, "alerts-widow", strWindowFeatures);
+        var strWindowFeatures = "width=800,height=570,menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+        window.open(this.href, "alerts", strWindowFeatures);
           
       });
       
@@ -2403,7 +2508,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     construct: function () {
         this.noApiUrl = true;
         
-        
+        // when we open reviews in special mode in separate window
         if(this.filter = this.getBoxDom().attr('filter')) {
             
             this.addFilter('status' , this.filter);
@@ -2421,52 +2526,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
     }
     
 });
-
-var BC_SocialActivityBox = BC_GraphBoxController.extend({
-    
-    /**
-     * @var String DOM id of the container div 
-     */
-    boxId: 'box-social-activity-box',
-    
-    /**
-     * @var String Name of the requested resource, used in Ajax URL
-     */
-    endpoint: '/api/box/social',
-    
-    processData: function() {
-        
-        var messages = this.data.messages;
-        var box = this.getContentDom().find('.messages');
-        var source = box.children('.post');
-        var template = source.clone();
-        source.remove();
-        
-        for(var message in messages) {
-            
-            template = template.clone();
-            var tmpDate = new Date(message * 1000);
-            
-            var h = tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours()
-            var m = tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes()
-            
-            var formatted = tmpDate.getMonth() + "/" + tmpDate.getDate() +
-            '/' + tmpDate.getFullYear() + " " + h + ":" + m ;
-            
-            template.find('.date').text(formatted);
-            template.find('.author').text(messages[message].from);
-            template.find('.message').text(messages[message].message);
-            template.find('.network').addClass(messages[message].network);
-            template.appendTo(box);
-        }
-        
-    },
-    
-    construct: function() {
-        this.noApiUrl = true;
-    }
-});
-
 
 var BC_SocialActivity = BC_GraphBoxController.extend({
 
@@ -3031,6 +3090,9 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
             case '1y':
                 dateFormat = '%b %Y';
                 break;
+            default:
+                dateFormat = '%a %e';
+                break;
         }
                         
         return Highcharts.dateFormat(dateFormat, this.value);                  
@@ -3309,7 +3371,20 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
         
         var tr = $(data.trContext);
         
-        tr.find('.details-title').text(message.title);
+        var title;
+        if(message.link) {
+            
+            title = $('<a/>', {
+                href: message.link,
+                text: message.title
+            });
+            
+        }
+        else {
+            title = message.title;
+        }
+        
+        tr.find('.details-title').html(title);
         tr.find('.details-content').text(message.content);
         tr.find('.details-network').addClass(message.network.toLowerCase());
         
@@ -3775,7 +3850,7 @@ boxManager = {
             }
             
             // we show only the selected view of box
-            if(box.hasOwnProperty('graph') && box.getHeaderDom().find('.box-header-button-show-graph.active').length) {
+            if(box.hasOwnProperty('graph') && (box.getHeaderDom().find('.box-header-button-show-graph.active').length || box.getContentDom().children().length == 1)) {
                 
                 var block2 = block.clone();
                 var content2 = box.graph.getSVG();
@@ -3791,6 +3866,11 @@ boxManager = {
                 content = box.getContentDom()
                 .find('.data-grid-holder table:visible:first')
                 .clone();
+                
+                if(!content.length && this.id == 'box-ogsi') {
+                    content = box.getBoxDom().clone();
+                    content.find('.box-header').remove();
+                }
             
                 content.find('tr.expanded').remove();
 
@@ -3831,32 +3911,15 @@ $(document).ready(function () {
     .add(new BC_CompetitionDistribution())
     .add(new BC_CompetitionComparision())
     .add(new BC_CompetitionReviewInbox())
-    .add(new BC_RecentActivity())
     .add(new BC_CompetitionScore())
-    .add(new BC_Photos())
-    .add(new BC_Videos())
+//    .add(new BC_Photos())
+//    .add(new BC_Videos())
     .add(new BC_StatusUpdate())
-    .add(new BC_SocialActivityBox())
+    .add(new BC_RecentActivity())
     .setDataProvider(new DataProvider())
     .setExporter(Exporter);
     // the initialization of boxManager is in TopMenu.js
 });
-
-
-var monthNames = [
-'Jan',
-'Feb',
-'March',
-'April',
-'May',
-'June',
-'July',
-'Aug',
-'Sept',
-'Oct',
-'Nov',
-'Dec'
-];
 
 
 var Exporter = {

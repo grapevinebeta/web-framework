@@ -193,6 +193,7 @@ td.datepickerSpecial.datepickerSelected a {
 #widget {
 	position: relative;
         display: inline-block;
+        width:290px;
 }
 #widgetField {
 	width: 290px;

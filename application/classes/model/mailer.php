@@ -64,7 +64,7 @@ class Model_Mailer extends Model {
                 
                 
         if($attachment) {
-            $a = Swift_Attachment::newInstance($attachment, "export.pdf", "application/pdf");
+            $a = Swift_Attachment::newInstance(current($attachment), key($attachment), "application/pdf");
             $message->attach($a);
         }
         

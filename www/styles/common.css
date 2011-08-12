@@ -99,10 +99,6 @@
     margin-bottom: 10px !important;
 }
 
-.border {
-    border: 1px solid gray;
-}
-
 .no-border {
     border: none !important
 }
@@ -162,7 +158,8 @@ table.data-grid tr.even td {
 }
 
 table.no-outer-border {
-    border-width: 0px;
+    border: none;
+    border-spacing: 0;
 }
 
 table.no-outer-border tr:first-child td {
@@ -175,7 +172,6 @@ table.no-outer-border tr:last-child td {
 
 tr.collapsed {
         cursor: pointer;
-        overflow: hidden;
 }
 
 tr.expanded{

@@ -11,26 +11,23 @@ body {
 textarea {
     margin: 0px;
     padding: 0px;
-    border-width: 1px;
-    border-style: solid;
     resize: none; /* chrome resizing disable */
+    border: 1px solid #EAEAEA;
 }
 
 select {
-    background: white;
-    border-width: 1px;
-    border-style: solid;
+    background: #fff;
+    border: 1px solid #EAEAEA;
 }
 
-input {
+input[type=text] {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     color: #593B7C;
-    border-width: 1px;
-    border-style: solid;
+    border: 1px solid #EAEAEA;
 }
 
 img {
-    border-width: 0px;
+    border: none;
 }
 
 img.icon {
@@ -410,7 +407,6 @@ input[type=submit] {
 
 #footer-holder {
     margin: 5px;
-    border-top: 1px solid gray;
     padding: 5px;
     text-align: center;
 }
@@ -623,6 +619,10 @@ input[type=submit] {
 
 #box-ogsi { background: url(/images/scoreboard-bg.png) bottom left repeat-x;}
 
+.ogsi-score {
+    padding-top: 9px;
+}
+
     .ogsi-score-bg-right {
         background-image: url(../images/ogsi-bg.png);
         background-position: right bottom;
@@ -639,7 +639,7 @@ input[type=submit] {
     }
     
     .ogsi-score-ogsi {
-        padding: 5px 0px 0px;
+        padding: 5px 0px 0px 10px;
         font-size: 20px;
         text-align: center;
     }
@@ -1138,7 +1138,7 @@ input[type=submit] {
         
     }
     
-    tr.expanded td { padding: 0; }
+    tr.expanded td { padding: 0; border:none; }
     
     tr .details {
         border-bottom: 1px solid #8974A0;
@@ -1154,8 +1154,7 @@ input[type=submit] {
     
     tr.border {
     
-        border: 1px solid #000;
-        border-style: solid none solid none;
+        border-bottom: 1px solid #000;
         
     }
     
@@ -1341,16 +1340,16 @@ input[type=submit] {
     }
     
     .window-close {
-        padding: 6px 12px;
+        background: none repeat scroll 0 0 #FFFFFF;
         border: 1px solid gray;
-        position: absolute;
-        top:0;
-        right:0;
-        z-index: 10;
-        background: #fff;
+        bottom: 0;
         font-weight: bold;
+        left: 50%;
+        margin-left: -23px;
+        padding: 6px 12px;
+        position: absolute;
         text-decoration: none;
-        
+        z-index: 10;
     }
     
     .status-icon {
@@ -1363,7 +1362,7 @@ input[type=submit] {
     
     .row .desc {
         
-        display: block;
+        display: inline-block;
         font-size: 15px;
         margin-left: 42px;
         padding-bottom: 14px;
@@ -1393,6 +1392,7 @@ input[type=submit] {
     .row .title {
         float: right;
         margin: 0 0 10px 0;
+        display: inline-block;
         width: 113px;
         font-weight: normal;
         font-size: 11px;
@@ -1409,6 +1409,7 @@ input[type=submit] {
     .row .network {
         float:left;
         margin-bottom: 5px;
+        display:block;
     }
     
     .row .date {

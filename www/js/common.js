@@ -10,42 +10,82 @@ Function.prototype.clone = function() {
 jQuery(function(){
     helpers = {
             
-            tips: $( ".validateTips" ),
+        tips: $( ".validateTips" ),
             
-            updateTips: function(t) {
-                this.tips
-                .text( t )
-                .addClass( "ui-state-highlight" );
+        standardDate: function(date) {
                 
-                var that = this;
+            return date.getMonth()+1 + '/' + date.getDate() + '/' + date.getFullYear();
                 
-                setTimeout(function() {
-                    that.tips.removeClass( "ui-state-highlight", 1500 );
-                }, 500 );
-            },
+        },
+        
+        getMonthName: function(date, fullName) {
+            var months= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return months[date.getMonth()];
+        },
+            
+        formatDate: function(date) {
+
+            var tmpDate = new Date(date * 1000);
+                
+            return tmpDate.getMonth() 
+            + '/' 
+            + tmpDate.getDate() 
+            + '/' 
+            + tmpDate.getFullYear() 
+            + ' ' 
+            + (tmpDate.getHours() < 10 ? '0' + tmpDate.getHours() : tmpDate.getHours())
+            + ':' 
+            + (tmpDate.getMinutes() < 10 ? '0' + tmpDate.getMinutes() : tmpDate.getMinutes());
+              
+        },
+            
+        updateTips: function(t) {
+            this.tips
+            .text( t )
+            .addClass( "ui-state-highlight" );
+                
+            var that = this;
+                
+            setTimeout(function() {
+                that.tips.removeClass( "ui-state-highlight", 1500 );
+            }, 500 );
+        },
     
-            checkLength: function( o, n, min, max ) {
-                if ( o.val().length > max || o.val().length < min ) {
-                    o.addClass( "ui-state-error" );
-                    this.updateTips( "Length of " + n + " must be between " +
-                        min + " and " + max + "." );
-                    return false;
-                } else {
-                    return true;
-                }
-            },
-    
-            checkRegexp: function(o, value, regexp, n ) {
-                if ( !( regexp.test( value ) ) ) {
-                    o.addClass( "ui-state-error" );
-                    this.updateTips( n );
-                    return false;
-                } else {
-                    return true;
-                }
+        checkLength: function( o, n, min, max ) {
+            if ( o.val().length > max || o.val().length < min ) {
+                o.addClass( "ui-state-error" );
+                this.updateTips( "Length of " + n + " must be between " +
+                    min + " and " + max + "." );
+                return false;
+            } else {
+                return true;
             }
+        },
+    
+        checkRegexp: function(o, value, regexp, n ) {
+            if ( !( regexp.test( value ) ) ) {
+                o.addClass( "ui-state-error" );
+                this.updateTips( n );
+                return false;
+            } else {
+                return true;
+            }
+        }
             
-        };
+    };
+        
+    $('.tooltip').tipTip();
+    
+    // user vote for uservoice.com
+    var uvOptions = {};
+    (function() {
+        var uv = document.createElement('script');
+        uv.type = 'text/javascript';
+        uv.async = true;
+        uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/53rkXOUWwEroMaMlYULXrw.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(uv, s);
+    })();
 });
 
 
@@ -89,6 +129,17 @@ function getPeriodInDays(period) {
     
 })();
 
-$(document).ready(function () {
-    $('.tooltip').tipTip();
-});
+var monthNames = [
+'Jan',
+'Feb',
+'March',
+'April',
+'May',
+'June',
+'July',
+'Aug',
+'Sept',
+'Oct',
+'Nov',
+'Dec'
+];
