@@ -11,14 +11,8 @@
             }
         }
 
-        foreach ($scripts as $script) {
-            if (is_string($script)) {
-                echo html::script($script);
-            } elseif (is_array()) {
-                echo html::script(current($style), next($style));
-            }
-        }
         ?>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <title><?php echo isset($title) ? $title : 'Grapevine'; ?></title>
     </head>
     <body>
@@ -36,5 +30,14 @@
                 ?>
             </div>
         </div>
+        <?php
+            foreach ($scripts as $script) {
+                if (is_string($script)) {
+                    echo html::script($script);
+                } elseif (is_array()) {
+                    echo html::script(current($style), next($style));
+                }
+            }
+        ?>
     </body>
 </html> 
