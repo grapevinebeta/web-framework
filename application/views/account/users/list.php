@@ -15,7 +15,12 @@
             </th>
         </tr>
         <?php if (!empty($users)): ?>
-            <?php foreach ($users as $k => $user): ?>
+            <?php
+
+            foreach ($users as $k => $user):
+                $access_level = $user->getAccessLevelForLocation($location, true);
+
+            ?>
                 <?php $_inputPrefix = 'users['. $user->id .']'; ?>
                 <tr class="<?php echo ($k % 2?'even':'odd'); ?>">
                     <td>
@@ -27,10 +32,18 @@
                         )); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo form::radio($_inputPrefix . '[role]', 'admin', false); ?>
+                        <?php echo form::radio($_inputPrefix . '[role]', 'admin', $access_level === 1, array(
+                            'data-action' => 'change-role',
+                            'data-role' => 'admin',
+                            'data-user-id' => $user->id,
+                        )); ?>
                     </td>
                     <td class="a-center">
-                        <?php echo form::radio($_inputPrefix . '[role]', 'user', true); ?>
+                        <?php echo form::radio($_inputPrefix . '[role]', 'user', $access_level === 2, array(
+                            'data-action' => 'change-role',
+                            'data-role' => 'readonly',
+                            'data-user-id' => $user->id,
+                        )); ?>
                     </td>
                     <td class="a-center">
                         <?php

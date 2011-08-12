@@ -7,6 +7,17 @@ class Model_Location extends ORM {
 
     protected $_belongs_to=array('company'=>array());
     protected $_has_many=array('users'=>array('through'=>'locations_users'));
+
+    /**
+     * Possible access levels stored in locations_users connector table
+     * @var array array with representations as keys and codenames as values
+     */
+    protected static $_access_levels = array(
+        0 => 'owner',
+        1 => 'admin',
+        2 => 'readonly',
+    );
+
     public function rules() {
         return array(
             'location_name' => array(
@@ -54,14 +65,31 @@ class Model_Location extends ORM {
 
     /**
      * Get users associated with the specific location.
+     * @param bool $only_managable should this method return only users that can
+     *      be managed by location's administrators?
      * @return Database_Result the collection of users, if any
      */
-    public function getUsers() {
+    public function getUsers($only_managable = false) {
 
-        // get ID of users as an array
+        // prepare query
         $users = DB::select('user_id')
                 ->from('locations_users')
-                ->where('location_id','=',DB::expr((int)$this->id))
+                ->where('location_id','=',DB::expr((int)$this->id));
+
+        if ($only_managable) {
+            // filter to only users that can be managed
+            $managable_levels = self::getAccessLevels(array(
+                'admin',
+                'readonly',
+            ));
+            if (empty($managable_levels)) {
+                $managable_levels = array(-1); // value not matching any level
+            }
+            $users = $users
+                    ->and_where('level', 'IN', $managable_levels);
+        }
+
+        $users = $users
                 ->execute();
         
         $users_ids = array();
@@ -101,6 +129,24 @@ class Model_Location extends ORM {
         return ORM::factory('company')
                 ->where('id', '=', $this->company_id)
                 ->find();
+    }
+
+    /**
+     * Get the list of access levels available
+     * @param array $levels list of access levels to be returned IDs for
+     * @return array
+     * @uses Model_Location::$_access_levels for determining list of access
+     *      levels
+     */
+    public static function getAccessLevels($levels = null) {
+        if ($levels === null) {
+            return self::$_access_levels;
+        }
+
+        foreach ($levels as $level) {
+            $result[] = Arr::get(array_flip(self::$_access_levels), strtolower($level));
+        }
+        return $result;
     }
     
 }

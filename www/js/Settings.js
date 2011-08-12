@@ -299,18 +299,32 @@ jQuery(function(){
                     }, 'json');
                 }
             });
+
+            this.userManagementSettings.delegate(':radio[data-action="change-role"]', 'change', function(event){
+                // changing access level
+                var element = jQuery(this);
+                var level = element.attr('data-role');
+                var user_id = element.attr('data-user-id');
+                log('Location level for user with ID="' + user_id + '" is about to be changed to "' + level + '"');
+                jQuery.post('/api/settings/changelocationlevel', {
+                    'params' : {
+                        'level': level,
+                        'user_id': user_id
+                    }
+                }, function(data){
+                    log('Answer to the request:');
+                    log(data);
+                    if (typeof data.result.users_html != 'undefined'){
+                        self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
+                        log('Users list has been updated');
+                    }
+                });
+            });
             
             this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
                 event.preventDefault();
                 self.clearValidationErrors(editForm);
                 self.clearForm(editForm);
-            });
-
-            // this is for saving data, as there is no other way to submit a form
-            this.userManagementSettings.delegate('form input[type="text"], form input[type="password"]', 'keydown', function(event){
-                if (event.keyCode == 13){
-                    jQuery(this).parents('form').submit(); // submit form
-                }
             });
 
             log('User management initialized');

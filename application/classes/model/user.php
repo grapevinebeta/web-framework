@@ -13,13 +13,29 @@ class Model_User extends Model_Auth_User {
      * Find user associated to the specific location or give empty ORM object
      * @param int $user_id user's ID
      * @param int $location_id location's ID
+     * @param bool $only_managable should this method return user only if he is
+     *      managable by administrator?
      */
-    public function findUserForLocation($user_id, $location_id) {
+    public function findUserForLocation($user_id, $location_id, $only_managable = false) {
         
-        $exists = (bool) DB::select(array(DB::expr('COUNT(`user_id`)'), 'total'))
+        $exists = DB::select(array(DB::expr('COUNT(`user_id`)'), 'total'))
                 ->from('locations_users')
                 ->where('locations_users.location_id', '=', (int)$location_id)
-                ->and_where('locations_users.user_id', '=', (int)$user_id)
+                ->and_where('locations_users.user_id', '=', (int)$user_id);
+
+        if ($only_managable) {
+            $managable_levels = Model_Location::getAccessLevels(array(
+                'admin',
+                'readonly',
+            ));
+            if (empty($managable_levels)) {
+                $managable_levels = array(-1); // just to avoid errors
+            }
+            $exists = $exists
+                    ->and_where('locations_users.level', 'IN', $managable_levels);
+        }
+
+        $exists = (bool)$exists
                 ->execute()
                 ->get('total');
         
@@ -157,15 +173,19 @@ class Model_User extends Model_Auth_User {
      * Get the access level by checking levels for location and for associated
      * company.
      * @param Model_Location $location location to be checked
+     * @param bool $ignore_company_level Should the level of access to the
+     *      company be ignored?
      * @return int Access level determined
      */
-    protected function getAccessLevelForLocation(Model_Location $location) {
+    public function getAccessLevelForLocation(Model_Location $location, $ignore_company_level = false) {
         $access_levels = array();
 
-        $company_level = $this->getAccessLevelForCompany($location->getCompany());
-        if ($company_level !== null) {
-            // has access to company, thus take it into account
-            $access_levels[] = (int)$company_level;
+        if (!$ignore_company_level) {
+            $company_level = $this->getAccessLevelForCompany($location->getCompany());
+            if ($company_level !== null) {
+                // has access to company, thus take it into account
+                $access_levels[] = (int)$company_level;
+            }
         }
 
         $location_level = DB::select(array(DB::expr('MIN(`level`)'),'level'))
@@ -217,6 +237,36 @@ class Model_User extends Model_Auth_User {
         } else {
             return in_array($level, array(0,1)); // @todo make it clearer
         }
+    }
+
+    /**
+     * Change access level for the current user to given location
+     * @param Model_Location $location Location to be set access to
+     * @param mixed $level numeric representation of level or string
+     * @return mixed
+     * @todo Change returned value to boolean representing success or failure
+     */
+    public function setAccessLevelForLocation(Model_Location $location, $level) {
+        $given_level = $level;
+        if (!is_numeric($level)) {
+            // transform level to numeric representation (assuming codename)
+            $level = Arr::get(Model_Location::getAccessLevels(array($level)), 0);
+            if ($level === null) {
+                // we can not allow for passing this further
+                throw new Kohana_Exception('Given level (":level") is not supported for setting access for location.', array(
+                    ':level' => $given_level,
+                ));
+            }
+        }
+
+        $result = DB::update('locations_users')
+                ->value('level', (int)$level)
+                ->where('location_id', '=', (int)$location->id)
+                ->and_where('user_id', '=', (int)$this->id)
+                ->execute();
+
+        return $result; // @todo pass only success / failure information
+
     }
 
 }

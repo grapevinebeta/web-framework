@@ -44,11 +44,10 @@ class Controller_Account extends Controller_Template {
     {
         $location = $this->_location;
 
-        $this->_contentView = View::factory('account/users');
-
-        $users = $location->getUsers();
-        
-        $this->_contentView->users = $users;
+        $this->_contentView = View::factory('account/users', array(
+            'users' => $location->getUsers(true), // only manageable users
+            'location' => $location,
+        ));
     }
     
     public function action_alerts()
