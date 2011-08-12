@@ -1362,7 +1362,7 @@ input[type=submit] {
     
     .row .desc {
         
-        display: block;
+        display: inline-block;
         font-size: 15px;
         margin-left: 42px;
         padding-bottom: 14px;
@@ -1392,6 +1392,7 @@ input[type=submit] {
     .row .title {
         float: right;
         margin: 0 0 10px 0;
+        display: inline-block;
         width: 113px;
         font-weight: normal;
         font-size: 11px;
@@ -1408,6 +1409,7 @@ input[type=submit] {
     .row .network {
         float:left;
         margin-bottom: 5px;
+        display:block;
     }
     
     .row .date {
