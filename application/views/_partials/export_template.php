@@ -503,10 +503,10 @@ uDz5I5OjRrkCpWD3JOAo/XjRo0akCpX/2Q==" alt="Grapevine Manage Your Reviews" />
         <div style="float:right;">
             
             <h2>
-                jacek.kromski@polcode.com
+                <?php echo $_current_user->email; ?>
             </h2>
-            Graph for <?php $d = Session::instance()->get('viewingRange');  ?>
-            <?php echo $d['date']; ?> with  <?php echo $d['period']; ?> range.
+            Graph from
+            <strong><?php echo $range[0]; ?></strong> to <strong><?php echo $range[1]; ?>.</strong>
             
             
         </div>
