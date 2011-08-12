@@ -2462,11 +2462,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
       
       this.renderAlerts();
       
-      $('a.alert-show, a.todo-show').bind('click', function(e) {
+      $('#alerts a.alert-show, #alerts a.todo-show').bind('click', function(e) {
         
         e.preventDefault();
-        var strWindowFeatures = "width=800,height=570, menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
-        windowObjectReference = window.open(this.href, "alerts-widow", strWindowFeatures);
+        var strWindowFeatures = "width=800,height=570,menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+        window.open(this.href, "alerts", strWindowFeatures);
           
       });
       
@@ -2475,7 +2475,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
     construct: function () {
         this.noApiUrl = true;
         
-        
+        // when we open reviews in special mode in separate window
         if(this.filter = this.getBoxDom().attr('filter')) {
             
             this.addFilter('status' , this.filter);

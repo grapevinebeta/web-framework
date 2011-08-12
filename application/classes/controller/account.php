@@ -8,6 +8,7 @@ class Controller_Account extends Controller_Template {
 
     public function before() {
         parent::before();
+        $this->template->scripts[] = 'js/Settings.js';
         $this->template->body = View::factory('account/body');
         $this->_menuView = View::factory('account/menu');
 

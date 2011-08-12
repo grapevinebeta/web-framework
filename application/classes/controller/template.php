@@ -94,26 +94,21 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'styles/jqueryui/jquery-ui-1.8.13.custom.css',
             'styles/jquery.selectbox.css',
             'styles/tipTip.css',
-            'styles/colorbox/colorbox.css',
-            'styles/mask/jquery.loadmask.css',
+//            'styles/colorbox/colorbox.css',
             'styles/datepicker.css',
         );
         $this->template->scripts = array(
             'js/common.js', // adds some common functions
+            'js/DataProvider.js',
+            'js/Boxes.min.js', // minified verion of Boxes.js
+            'js/TopMenu.js',
             'js/highcharts/highcharts.src.js',
-            'js/flowplayer/flowplayer-3.2.6.min.js',
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',
             'js/jquery.tipTip.min.js',
-            'js/colorbox/jquery.colorbox-min.js',
+//            'js/colorbox/jquery.colorbox-min.js',
             'js/jquery.selectbox.js',
-            'js/DataProvider.js',
             'js/highcharts/modules/exporting.js',
-            'js/jquery.loadmask.min.js',
-            'js/jquery.livequery.js',
             'js/datepicker.js',
-            'js/Boxes.js',
-            'js/TopMenu.js',
-            'js/Settings.js',
         );
         
         $this->template->body = 'test';
