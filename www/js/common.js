@@ -7,6 +7,11 @@ Function.prototype.clone = function() {
     return temp;
 };
 
+Date.prototype.getMonthName = function(fullName) {
+    var months= ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return months[this.getMonth()];
+};
+
 jQuery(function(){
     helpers = {
             
