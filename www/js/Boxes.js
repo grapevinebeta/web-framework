@@ -676,6 +676,39 @@ var BC_GraphBoxController = BoxController.extend({
             case '1y':
                 d = Math.floor((getPeriodInDays(this.range['period']) )  / 6) + 13;
                 break;
+            case 'all':
+                
+                var t = new Date();
+                var tn = new Date();
+                
+                tn.setFullYear(1970, 0, 1);
+                
+                var diff = (t.getTime() - tn.getTime()) / (1000 * 3600 * 24)
+                
+                d = Math.floor(diff  / 6) + (diff/30);
+                
+                break;
+            case 'ytd':
+                
+                var t = new Date();
+                var tn = new Date();
+                
+                tn.setMonth(0, 1);
+                
+                var diff = (t.getTime() - tn.getTime()) / (1000 * 3600 * 24)
+                
+                d = Math.floor(diff  / 6) + (diff/31);
+                break;
+            default:
+                
+                var t = new Date(this.range['date']);
+                var tn = new Date(this.range['period']);
+                
+                var diff = (tn.getTime() - t.getTime()) / (1000 * 3600 * 24);
+                
+                d = Math.floor(diff  / 6) + (diff/31);
+                
+                break;
             
         }
             
@@ -3056,6 +3089,9 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
                 break;
             case '1y':
                 dateFormat = '%b %Y';
+                break;
+            default:
+                dateFormat = '%a %e';
                 break;
         }
                         
