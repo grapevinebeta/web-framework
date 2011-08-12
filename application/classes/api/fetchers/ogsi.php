@@ -118,8 +118,6 @@ class Api_Fetchers_Ogsi extends Api_Fetchers_Base
 
         $final = array();
 
-        $location_score = 0;
-        $competition_set_average = 0;
         $for = $this->_all ? $locations : array($this->_location);
         foreach (
             $for as $location
@@ -131,16 +129,6 @@ class Api_Fetchers_Ogsi extends Api_Fetchers_Base
             $final[$location] = $score;
         }
         return $final;
-
-
-        /*
-echo "Total score: $competition_set_average \n";
-
-$competition_set_average = $competition_set_average / count($results);
-echo "competition_set_average : $competition_set_average\n";
-echo "location $this->location score : " . $score = $results[$this->location]['score'] . "\n";
-echo 'ogsi : ' . $ogsi = ($score / $competition_set_average) . "\n";
-echo 'Percentage : ' . ($ogsi * 100) . "\n";*/
 
 
     }
@@ -158,14 +146,14 @@ echo 'Percentage : ' . ($ogsi * 100) . "\n";*/
             $competition_set_average += $doc['value']['score'];
             $locations++;
         }
-        if (!$locations) {
+        if (!$locations || !$competition_set_average) {
             return 0;
         }
         /* echo "Total score: $competition_set_average \n";
-echo "Total locations : " . count($locations) . "\n";*/
+        echo "Total locations : " . count($locations) . "\n";*/
         $competition_set_average = $competition_set_average / $locations;
         /*  echo "competition_set_average : $competition_set_average\n";
-echo "location $this->_location score : " . $location_score. "\n";*/
+        echo "location $this->_location score : " . $location_score. "\n";*/
         return ($location_score / $competition_set_average) * 100;
 
     }
