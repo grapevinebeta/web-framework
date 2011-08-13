@@ -80,14 +80,16 @@ if (isset($_SERVER['KOHANA_ENV']))
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => '/',
+	'base_url'   => '/grapevine',
 	'index_file' => '',
 ));
 
 /**
  * Attach the file write to logging. Multiple writers are supported.
  */
-Kohana::$log->attach(new Log_File(APPPATH.'logs'));
+// Log_Mongo will handle Log::Alert and Log::EMERGENCY
+Kohana::$log->attach(new Log_File(APPPATH.'logs'),array(),Log::CRITICAL);
+Kohana::$log->attach(new Log_Mongo(),array(Log::ALERT,Log::EMERGENCY));
 
 /**
  * Attach a file reader to config. Multiple readers are supported.
@@ -296,8 +298,11 @@ Route::set('api_rest', '<directory>(/<controller>(/<action>/<field>(/<id>)))', a
     Route::set('admin', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(admin)'
 	));
-Route::set('default', '(<controller>(/<action>(/<id>)))')
+//Route::set('default_dir', '<directory>(<controller>(/<action>(/<id>)))');
+
+Route::set('default', '(<directory>/)(<controller>(/<action>(/<id>)))')
 	->defaults(array(
+        'directory'=>'',
 		'controller' => 'dashboard',
 		'action'     => 'index',
 	));
