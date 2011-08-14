@@ -40,7 +40,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
 
         // salt the cookie (it is required for usage of Cookie::set())
         Cookie::$salt = Kohana::config('cookie.salt');
-
+        
         /**
          * Check permissions to access specific controller while logged out
          * @todo Move it outside and apply also on API controllers for security

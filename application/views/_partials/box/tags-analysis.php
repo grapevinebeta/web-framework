@@ -2,7 +2,7 @@
     <?php echo View::factory(
         '_partials/box/header', 
         array(
-            'caption' => __('analysis of keywords'),
+            'caption' => __('analysis of categories'),
             'buttons' => array('show-graph', 'show-data', 'dashboard-pin', 'move'),
             )
         ); 
@@ -12,7 +12,7 @@
             <table class="wide data-grid">
                 <thead>
                     <tr>
-                        <th class="a-left"><?php echo __('Keywords'); ?></th>
+                        <th class="a-left"><?php echo __('Categories'); ?></th>
                         <th><?php echo __('Times Used'); ?></th>
                         <th><?php echo __('Avg star rating'); ?></th>
                         <th><?php echo __('% of Total'); ?></th>
@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="col-keyword"></td>
+                        <td class="col-category"></td>
                         <td class="col-used a-center"></td>
                         <td class="col-rating a-center"></td>
                         <td class="col-percent a-center"></td>

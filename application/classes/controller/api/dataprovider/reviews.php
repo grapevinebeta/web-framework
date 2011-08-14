@@ -64,7 +64,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
         $categories = array();
         $total = $cursor->count();
-        echo $total;
+        
         foreach (
             $cursor as $doc
         ) {
@@ -74,7 +74,8 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
                 $categories[$category] = array(
                     'used' => 0,
                     'rating' => 0,
-                    'percent' => 0
+                    'percent' => 0,
+                    'category'=>$category
 
                 );
 
@@ -110,7 +111,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
             )
         );*/
 
-        $this->apiResponse['category'] = $categories;
+        $this->apiResponse['categories'] = array_values($categories);
 
 
     }

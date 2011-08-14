@@ -31,7 +31,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
     public function action_index()
     {
         set_time_limit(0);
-        $db = $this->mongo->selectDB('auto');
+        $db = $this->mongo->selectDB('automotive');
         $db->drop();
         $this->fixtures_reviews($db);
         $this->fixtures_socials($db);
