@@ -69,6 +69,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
             'yelp.com'
         );
 
+        $categories = array('General', 'Sales', 'Service', 'Parts', 'Finance');
         $metric_entries = array('scoreboard' => array(), 'reviews' => array());
         $review_entries = array();
 
@@ -122,7 +123,7 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
                             'content' => $content,
                             'title' => substr($content, 0, 40) . '...',
                             'identity' => 'Guest' . mt_rand(600, 1000),
-                            'category' => '',
+                            'category' => $categories[mt_rand(1, count($categories)) - 1],
                             'status' => $score <= 3 ? 'alert' : 'opened',
                             'loc' => $location_id
 

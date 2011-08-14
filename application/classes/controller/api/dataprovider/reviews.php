@@ -43,7 +43,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
     public function action_alerts()
     {
-        $status = $_REQUEST['status'];//$this->request->post('status');
+        $status = $_REQUEST['status']; //$this->request->post('status');
 
         $this->apiResponse['alerts'] = $this->find(
             'reviews', array(
@@ -54,9 +54,70 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
     }
 
 
+    public function action_category_breakdown()
+    {
+
+
+        $query = $this->defaultQuery();
+        $fields = array('category', 'score');
+        $cursor = $this->find($this->collection, $query, $fields);
+
+        $categories = array();
+        $total = $cursor->count();
+        echo $total;
+        foreach (
+            $cursor as $doc
+        ) {
+            //print_r($doc);
+            $category = $doc['category'];
+            if (!isset($categories[$category])) {
+                $categories[$category] = array(
+                    'used' => 0,
+                    'rating' => 0,
+                    'percent' => 0
+
+                );
+
+            }
+            $categories[$category]['used']++;
+            $categories[$category]['rating'] += $doc['score'];
+
+        }
+
+
+        $sorter = new Sorter('used', -1);
+        $categories = $sorter->sort($categories);
+        foreach (
+            $categories as &$category
+        ) {
+
+
+            $category['rating'] = number_format($category['rating'] / $category['used'], 2);
+            $category['percent'] = number_format(($category['used'] / $total) * 100, 2);
+
+        }
+        // category , #of instance, avg rating which category( score),
+
+
+        /*
+        $return = array(
+            array(
+                'category' => '',
+                'used' => 0,
+                'rating' => '',
+                'percent'
+                        =>
+            )
+        );*/
+
+        $this->apiResponse['category'] = $categories;
+
+
+    }
+
     public function action_categories()
     {
-        
+
         $rs = DB::select('industry')
                 ->from('locations')
                 ->where('id', '=', $this->location)
@@ -65,11 +126,12 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
                 ->execute()
                 ->current();
 
-        if(!$rs)
+        if (!$rs) {
             return;
-        
-        $key = current($rs);    
-         
+        }
+
+        $key = current($rs);
+
         $automotive = array(
             '' => 'Select',
             'General', 'Sales', 'Service', 'Parts', 'Finance'
@@ -80,7 +142,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
             'General', 'Food', 'Service'
         );
 
-        
+
         if (!$key) {
 
             $result = array(
@@ -91,8 +153,8 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
         else {
             $result = ${$key};
         }
-           
-        
+
+
         $this->apiResponse['categories'] = $result;
 
     }
@@ -192,7 +254,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
     public function action_status()
     {
-        $status =strtolower( $this->request->post('status'));
+        $status = strtolower($this->request->post('status'));
         if (in_array($status, array('opened', 'closed', 'todo', 'alert'))) {
             $error = $this->update(array('$set' => array('status' => $status)));
         } else {

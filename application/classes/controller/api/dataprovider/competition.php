@@ -337,36 +337,4 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
 }
 
-class Sorter
-{
-    protected $column;
 
-    private $direction = 1;
-
-    function __construct($column, $direction = 1)
-    {
-        $this->column = $column;
-        $this->direction = $direction;
-    }
-
-    function sort($table)
-    {
-        uasort($table, array($this, 'compare'));
-        return $table;
-
-    }
-
-    function compare($a, $b)
-    {
-        if ($a[$this->column] == $b[$this->column]) {
-            return 0;
-        }
-        $value = ($a[$this->column] < $b[$this->column]);
-        if ($this->direction == 1) {
-            return $value ? -1 : 1;
-        }
-        return $value ? 1 : -1;
-
-
-    }
-}

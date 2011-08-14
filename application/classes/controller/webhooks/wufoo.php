@@ -5,8 +5,8 @@
  * Date: 8/12/11
  * Time: 3:08 PM
  */
-define('WUFOO_HANDSHAKE', 'pickgrape');
-class Controller_Webhook extends Controller
+define('WUFOO_HANDSHAKE', 'hello');
+class Controller_Webhooks_WuFoo extends Controller
 {
 
 
@@ -38,7 +38,7 @@ class Controller_Webhook extends Controller
 
                 if ($is_competitor) {
                     // get number
-                    $competitor_number = intval(preg_replace('/[^\d]+/ig', '', $field->Title));
+                    $competitor_number = intval(preg_replace('/[^\d]+/i', '', $field->Title));
                 }
                 foreach (
                     $field->SubFields as $sub
@@ -93,6 +93,15 @@ class Controller_Webhook extends Controller
     public function action_index()
     {
 
+        $post = json_decode(file_get_contents(dirname(__FILE__) . '/wufoo.test'), true);
+        $this->request->post($post);
+        $this->remap_post();
+//        return;
+        /*Log::instance()->add(
+            Log::DEBUG, "Wufoo :post", array(
+                "post" => json_encode($this->request->post())
+            )
+        );*/
         $key = $this->request->post('HandshakeKey');
         if ($key != WUFOO_HANDSHAKE) {
             return;
@@ -102,7 +111,7 @@ class Controller_Webhook extends Controller
             'username' => 'Account User Name',
             'password' => 'Password',
             'email' => 'Email',
-            'firstname' => 'Name',
+            'firstname' => 'First',
             'lastname' => 'Last'
         );
 
@@ -245,7 +254,7 @@ class Controller_Webhook extends Controller
         }
 
         for (
-            $i = 1; $i <= 5; $i++
+            $i = 1; $i <= 6; $i++
         ) {
             if (!$this->has_competitor($i)) {
                 continue;
