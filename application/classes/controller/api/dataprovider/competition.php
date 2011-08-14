@@ -17,7 +17,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
     = array('loc' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
 
-    protected function findContent($fields, $limit)
+    protected function findContent($fields, $limit=-1)
     {
         $this->query['loc'] = array('$in' => array(2, 3, 4));
         $cursor = parent::findContent($fields, $limit);
