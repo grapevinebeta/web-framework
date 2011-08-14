@@ -6,30 +6,21 @@
  * Time: 10:53 PM
  */
 
-class Controller_Webhooks_Alerts extends Controller
+class Controller_Webhooks_Emails extends Controller
 {
 
 
-    public function action_send()
+    public function action_alerts()
     {
-        $template = $this->request->post('template');
-        try {
-            $template = (string)View::factory("emails/$template");
-        } catch (Kohana_View_Exception $e) {
-            Log::instance()->add(
-                Log::ALERT, array(
-                    'type' => 'webhooks/alerts',
-                    'error' => 'unable to find template',
-                    'post' => $this->request->post()
-                )
-            );
-            return;
-        }
+
+
+        $template = (string)View::factory("emails/review_alert");
+
         $document = $this->request->post('document');
         if (empty($document)) {
             Log::instance()->add(
                 Log::ALERT, array(
-                    'type' => 'webhooks/alerts',
+                    'type' => 'webhooks/emails/alerts',
                     'error' => 'no document',
                     'post' => $this->request->post()
                 )
@@ -40,6 +31,33 @@ class Controller_Webhooks_Alerts extends Controller
         $expander = new Shortcode_Expander();
         $body = $expander->expand($template, $document);
 
+
+    }
+
+    public function action_monthly()
+    {
+        $location_ids = $this->request->post('locations');
+        if (empty($location_ids)) {
+            return;
+        }
+        set_time_limit(0);
+        if (!is_array($location_ids)) {
+            $location_ids = array($location_ids);
+        }
+        $template = (string)View::factory('emails/monthly_report');
+        $expander = new Shortcode_Expander();
+        foreach (
+            $location_ids as $location_id
+        ) {
+            $body = $expander->expand($template, $location_id);
+            $this->send($location_id, $body);
+        }
+
+
+    }
+
+    protected function send($location_id, $body)
+    {
         /**
          * @var $request Request
          */
@@ -65,7 +83,7 @@ class Controller_Webhooks_Alerts extends Controller
         if (!$sent) {
             Log::instance()->add(
                 Log::ALERT, array(
-                    'type' => 'webhooks/alerts',
+                    'type' => 'webhooks/emails/alerts',
                     'error' => 'unable to send email',
                     'post' => $this->request->post()
                 )

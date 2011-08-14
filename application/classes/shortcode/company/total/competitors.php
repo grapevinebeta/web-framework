@@ -6,7 +6,7 @@
  * Time: 11:44 PM
  */
 
-class Shortcode_Company_TotalCompetitors extends Shortcode_Company_Base
+class Shortcode_Company_Total_Competitors extends Shortcode_Company_Base
 {
 
 

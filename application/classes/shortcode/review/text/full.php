@@ -11,7 +11,7 @@ class Shortcode_Review_Text_Full extends Shortcode_Base
 
     public function execute($document = null)
     {
-        if (is_array($document) && $content = Arr::get($document, 'content')) {
+        if ($content = Arr::get((array)$document, 'content')) {
             return $content;
         }
         return 'no_content';
