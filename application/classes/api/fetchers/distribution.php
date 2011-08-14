@@ -12,11 +12,14 @@ class Api_Fetchers_Distribution extends Api_Fetchers_Base
 
     private $_locations;
 
-    function __construct($mongo, array $locations)
+    protected $_db;
+
+    function __construct($mongo, array $locations, $db = 'automotive')
     {
         parent::__construct($mongo);
         $this->_locations = $locations;
-        return $this;
+        $this->_db = $db;
+
 
     }
 
@@ -52,7 +55,7 @@ class Api_Fetchers_Distribution extends Api_Fetchers_Base
                     results.score = (results.points/results.count).toFixed(3);
                     return results;
             }';
-        $db = $this->_mongo->selectDB('auto');
+        $db = $this->_mongo->selectDB($this->_db);
         $command = array(
             'mapreduce' => 'metrics',
             'query'

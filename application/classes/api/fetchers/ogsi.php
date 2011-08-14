@@ -13,13 +13,14 @@ class Api_Fetchers_Ogsi extends Api_Fetchers_Base
     private $_location;
     private $_locations;
     private $_all = false;
-    private $_db = 'auto';
+    private $_db = 'automotive';
 
 
-    function __construct(Mongo $mongo, $location)
+    function __construct(Mongo $mongo, $location, $db = 'automotive')
     {
         parent::__construct($mongo);
         $this->_location = $location;
+        $this->_db = $db;
     }
 
 

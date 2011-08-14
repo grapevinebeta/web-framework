@@ -50,17 +50,22 @@ class Model_Mailer extends Model {
      * @return The return value is the number of recipients who were accepted for
    * delivery.
      */
-    public function send($to, $subject, $body, $attachment, $from = null) {
+    public function send($to, $subject, $body, $attachment, $from = null,$reply=null) {
         
         
         $from = $from ? $from : Kohana::config('globals.from_email');
         
-
+        /**
+         * @var $message Swift_Message
+         */
         $message = Swift_Message::newInstance()
                 ->setSubject($subject)
                 ->setFrom($from)
                 ->setTo($to)
                 ->setBody($body, 'text/html');
+        if($reply){
+            $message->setReplyTo($reply);
+        }
                 
                 
         if($attachment) {

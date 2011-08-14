@@ -13,7 +13,7 @@
         private $_type;
         
         private $_location;
-        private $db = 'auto';
+        private $db = 'automotive';
        
         private $_single = false;
         /**
@@ -21,7 +21,7 @@
          */
         private $_cursor;
 
-        function __construct(Mongo $mongo, $db = 'auto')
+        function __construct(Mongo $mongo, $db = 'automotive')
         {
             parent::__construct($mongo);
             $this->db = $db;

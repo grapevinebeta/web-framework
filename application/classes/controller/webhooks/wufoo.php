@@ -155,7 +155,7 @@ class Controller_Webhook extends Controller
             'owner_phone' => 'Phone Number',
 
             'industry' => 'Industry',
-            'location_name' => 'Company Name',
+            'name' => 'Company Name',
             'address1' => 'Company Address',
             'address2' => 'Address Line 2',
             'city' => 'City',
@@ -252,14 +252,14 @@ class Controller_Webhook extends Controller
             }
             try {
                 $competitor_values = $this->competitor_mapping($i, $industry);
-                $location = ORM::factory('location', array('location_name' => $competitor_values['location_name']));
+                $location = ORM::factory('location', array('name' => $competitor_values['name']));
                 $db->begin();
                 if (!$location->loaded) {
 
                     // create a new company
                     $company = ORM::factory('company');
 
-                    $company->name = $competitor_values['location_name'];
+                    $company->name = $competitor_values['name'];
                     $company->save();
                     // add to companies_users
                     $company->add('users', $user);

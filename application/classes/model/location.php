@@ -31,7 +31,7 @@ class Model_Location extends ORM
     public function rules()
     {
         return array(
-            'location_name'
+            'name'
             => array(
                 array('max_length', array(':value', 50)),
             ),
