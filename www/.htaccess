@@ -78,7 +78,7 @@ FileETag None
 RewriteEngine On
 
 # Installation directory
-RewriteBase /grapevine
+RewriteBase /
 
 # Protect hidden files from being viewed
 <Files .*>
