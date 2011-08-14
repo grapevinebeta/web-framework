@@ -111,6 +111,7 @@ Kohana::modules(array(
 	 'swiftmailer' => MODPATH . 'swiftmailer',
 	 'facebook' => MODPATH . 'facebook',
 	 'twitter' => MODPATH . 'twitter',
+        'freshbooks' => MODPATH . 'freshbooks',
 	));
 
 /**

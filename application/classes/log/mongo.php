@@ -17,6 +17,12 @@ class Log_Mongo extends Log_Writer
             $internal_db = $mongo->selectDB('internal');
             $logs = $internal_db->selectCollection('logs');
             $logs->batchInsert($messages);
+            $mailer = new Model_Mailer();
+            $mailer->send(
+                'alerts@grapevinebeta.com', 'New Alert',
+                print_r($messages, true),
+                null, 'app@pickgrapevine.com'
+            );
         }
 
         // TODO : Send out email for logs to alerts@grapevinebeta.com

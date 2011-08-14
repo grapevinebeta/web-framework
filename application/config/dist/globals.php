@@ -15,6 +15,8 @@ return array(
     'sendgrid_password' => 'grapevine2011',
     'sendgrid_host' => 'smtp.sendgrid.net',
     'sendgrid_port' => 25,
-    'from_email' => array('grapevine@grapevine.org' => 'Grapevine Service')
+    'from_email' => array('grapevine@grapevine.org' => 'Grapevine Service'),
+    'freshbooks_url'=>'https://conceptualideas.freshbooks.com/api/2.1/xml-in',
+    'freshbooks_token'=>'3b76656df8228d9b46f898a61733bffe'
     
 );

@@ -27,7 +27,8 @@ class Controller_Webhooks_Queue extends Controller
     {
         $location = $this->request->post('location');
         $location = intval($location);
-        $industry = $this->request->post('$industry');
+        $industry = $this->request->post('industry');
+		
         if (!Industry::is_valid($industry)) {
             return;
         }
@@ -43,8 +44,17 @@ class Controller_Webhooks_Queue extends Controller
         $errors = array();
         foreach (
             $entries as $site
-            => $url
+            => $value
         ) {
+			if(is_string($value)){
+				$url=$value;
+				$extra=array();
+			}else{
+				$url=$value['url'];
+				$extra=$value['extra'];
+				
+			}
+			
             try {
                 $queue->insert(
                     array(
@@ -53,7 +63,8 @@ class Controller_Webhooks_Queue extends Controller
                         'status' => 'waiting', // waiting,processing,finished
                         'url' => $url,
                         'started_at' => null,
-                        'finished_at' => null
+                        'finished_at' => null,
+						'extra'=>$extra
                     ), array('safe' => TRUE)
                 );
             } catch (MongoCursorException $e) {

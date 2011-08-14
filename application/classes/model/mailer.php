@@ -16,7 +16,7 @@ class Model_Mailer extends Model {
     private $transport;
     private $mailer;
 
-    private function __construct()
+    public function __construct()
     {
         $username = Kohana::config('globals.sendgrid_username');
         $password = Kohana::config('globals.sendgrid_password');
