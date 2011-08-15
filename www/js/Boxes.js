@@ -1947,7 +1947,7 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
         for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
                 this.graphData[i].category,
-                this.graphData[i].percent
+                parseFloat(this.graphData[i].percent)
                 ));
         }
         
