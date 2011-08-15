@@ -12,7 +12,7 @@
         Route::url('social'), 
         '<span class="top-menu-item-label">' . __('Social') . '</span>', 
         array('class' => 'top-menu-item' . ($currentController == 'social'?' active':''))); ?>
-    <?php if ($_current_location->package == 'pro'): ?>
+    <?php if ($_current_location->package != 'starter'): ?>
         <?php echo html::anchor(
             Route::url('competition'),
             '<span class="top-menu-item-label">' . __('Competition') . '</span>',
