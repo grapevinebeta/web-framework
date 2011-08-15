@@ -63,9 +63,5 @@
             </p>
         </form>
     </div>
-    <h2 class="content-section-title"><?php echo __('Other Social Sites'); ?>:</h2>
-    <div id="account-socials-other-section" class="padding-5">
-        Description ...
-    </div>
 </div>
 <?php echo HTML::script('js/social.js'); ?>
