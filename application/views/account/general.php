@@ -52,7 +52,7 @@
                 <?php echo __('Location Name'); ?>:
             </td>
             <td>
-                <?php echo $location->location_name; ?>
+                <?php echo $location->name; ?>
             </td>
         </tr>
         <tr>

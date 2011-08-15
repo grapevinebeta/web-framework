@@ -1154,7 +1154,7 @@ var BC_Inbox = BoxController.extend({
         filterHolder.html('');
         
         for(var filter in filters) {
-            
+
             var filterLink = $('<a href="#" data-filter-status="' + 
                 filters[filter].value + '"></a>');
             if (filters[filter].total) {
@@ -1294,11 +1294,11 @@ var BC_Inbox = BoxController.extend({
                             function() {
                                 email.removeAttr('disabled');
                                 reply.removeAttr('disabled');
-                                helpers.tips.html('<strong>Email was sent correctly . This message will close in 2 seconds.</strong>');
+                                helpers.tips.html('<strong>Email was sent correctly . This message will close in 2 seconds.</strong>');
                                 
                                 setTimeout(function() {
                                     allFields.attr('value', '')
-                                    helpers.tips.html('Please provide email addresses you would like to send this report to‭ (‬use commas to send to multiple‭) .');
+                                    helpers.tips.html('Please provide email addresses you would like to send this report to‭ (‬use commas to send to multiple‭).');
                                     d.dialog("close");
                                 }, 3000);
                                 
@@ -1884,7 +1884,7 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
     /**
      * @var String Name of the requested resource, used in Ajax URL
      */
-    endpoint: 'tags',
+    endpoint: '/api/dataProvider/reviews/category_breakdown',
     
     
     prepareGraph: function () {
@@ -1940,13 +1940,13 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             },
             series: [{
                 type: 'pie',
-                name: 'Tags use',
+                name: 'Categories',
                 data: []
             }]
         };
         for (var i = 0; i < this.graphData.length; i++) {
             options.series[0].data.push(new Array(
-                this.graphData[i].keyword,
+                this.graphData[i].category,
                 this.graphData[i].percent
                 ));
         }
@@ -1956,17 +1956,17 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
     
     processData: function() {
         
-        var tags = this.data.tags;
-        this.graphData = tags;
+        var categories = this.data.categories;
+        this.graphData = categories;
         
         var table = this.getContentDom().find('.data-grid-holder > table');
         var trTemplate = table.find('tbody tr:first').clone();
         var tr = null;
         table.find('tbody tr').remove();
-        for (var i = 0; i < tags.length; i++) {
+        for (var i = 0; i < categories.length; i++) {
             tr = trTemplate.clone();
-            for (n in tags[i]) {
-                var value = tags[i][n];
+            for (n in categories[i]) {
+                var value = categories[i][n];
                 if (n == 'percent') {
                     value = value + '%';
                 } 
@@ -1978,6 +1978,7 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
     },
     
     construct: function () {
+        this.noApiUrl = true;
     }
     
 });
@@ -2252,7 +2253,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     tr.find('.actions-reply').attr('href', url);    
                 else {
              
-                    tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site </span>');
+                    tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site</span>');
                     tr.find('.actions-reply').remove()
              
                 }

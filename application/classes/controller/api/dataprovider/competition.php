@@ -17,7 +17,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
     = array('loc' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
 
-    protected function findContent($fields, $limit)
+    protected function findContent($fields, $limit=-1)
     {
         $this->query['loc'] = array('$in' => array(2, 3, 4));
         $cursor = parent::findContent($fields, $limit);
@@ -57,6 +57,10 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         $fetcher = new Api_Fetchers_Ogsi($this->mongo, $this->location);
 
         // TODO keyston : fetch location names
+        $settings = new Model_Location_Settings($this->location);
+        $competitors = $settings->getSetting('competitor');
+
+
         $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
         $competition = $location_names;
         unset($competition[$this->location]);
@@ -64,9 +68,15 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         $competition = array_keys($competition);
 
         $total_locations = count($location_names);
-        $ogsis = $fetcher->competition($competition)
-                ->range($this->startDate, $this->endDate)->all(true)->fetch(
-        );
+        $ogsis = $fetcher->competition($competition);
+        $alltime = $this->request->post('alltime');
+        if (!empty($alltime)) {
+            $fetcher->range($this->epoch());
+        } else {
+            $fetcher->range($this->startDate, $this->endDate);
+        }
+
+        $ogsis = $fetcher->all(true)->fetch();
 
 
         $fetcher
@@ -87,6 +97,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
             $results[$location_name]['ogsi'] = array(
                 'value' => number_format($score, 2),
                 'competition' => $location_name,
+                'loc' => $location,
                 'rank'
                 => array(
                     'out' => $total_locations,
@@ -326,36 +337,4 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
 }
 
-class Sorter
-{
-    protected $column;
 
-    private $direction = 1;
-
-    function __construct($column, $direction = 1)
-    {
-        $this->column = $column;
-        $this->direction = $direction;
-    }
-
-    function sort($table)
-    {
-        uasort($table, array($this, 'compare'));
-        return $table;
-
-    }
-
-    function compare($a, $b)
-    {
-        if ($a[$this->column] == $b[$this->column]) {
-            return 0;
-        }
-        $value = ($a[$this->column] < $b[$this->column]);
-        if ($this->direction == 1) {
-            return $value ? -1 : 1;
-        }
-        return $value ? 1 : -1;
-
-
-    }
-}

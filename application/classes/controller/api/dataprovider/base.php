@@ -101,32 +101,36 @@ class Controller_Api_DataProvider_Base extends Controller
 
         $include_date = $this->request->post('include_date');
         if (!empty($include_date)) {
-            $this->include_date = $include_date=='false'?false:true;
+            $this->include_date = $include_date == 'false' ? false : true;
         }
-        
-        
+
+
         /**
          *  i change the code and assumed that $range['date'] always return start date
          * and $range['offset'] return positive offset that need to be add to start date.
-         * 
-         * 
+         *
+         *
          */
-        
+
         $start = strtotime($range['date']);
-        
-        if($period) {
-            if(in_array($range['period'], array('all', 'ytd'))) {
+
+        if ($period) {
+            if (in_array($range['period'], array('all', 'ytd'))) {
                 $end = strtotime($period);
             }
             else
+            {
                 $end = strtotime($period, $start);
+            }
         }
         else
-            $end = strtotime($range['period']); // this is the case when period has date value
-        
-//        
-//        echo date('Y m d', $start), " ", date('Y m d', $end); exit;
-        
+        {
+            $end = strtotime($range['period']);
+        } // this is the case when period has date value
+
+        //
+        //        echo date('Y m d', $start), " ", date('Y m d', $end); exit;
+
         $this->startDate = new MongoDate($start);
         $this->endDate = new MongoDate($end);
 
@@ -165,6 +169,14 @@ class Controller_Api_DataProvider_Base extends Controller
         $this->db = $this->mongo->auto;
 
 
+    }
+
+    /**
+     * @return MongoDate
+     */
+    protected function epoch()
+    {
+        return new MongoDate(mktime(0, 0, 0, 1, 1, 1970));
     }
 
     protected function defaultQuery()

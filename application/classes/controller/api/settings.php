@@ -241,7 +241,7 @@ class Controller_Api_Settings extends Controller_Api {
             'owner_email',
             'owner_phone',
             'owner_ext',
-            'location_name',
+            'name',
             'address1',
             'address2',
             'city',

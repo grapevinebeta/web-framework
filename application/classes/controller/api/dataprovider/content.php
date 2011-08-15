@@ -83,7 +83,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
     }
 
-    protected function findContent($fields, $limit)
+    protected function findContent($fields, $limit=-1)
     {
         $results = array();
 
