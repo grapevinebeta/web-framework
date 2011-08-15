@@ -25,7 +25,10 @@
                 <tr class="<?php echo ($k % 2?'even':'odd'); ?>">
                     <td>
                         <?php echo form::hidden($_inputPrefix . '[id]', $user->id); ?>
-                        <?php echo $user->firstname.' '.$user->lastname, ' ', html::anchor('#', '', array(
+                        <?php echo $user->firstname.' '.$user->lastname, ' ', html::anchor('#', HTML::image('images/icons/delete_12px.png', array(
+                            'height' => 12,
+                            'width' => 12,
+                        )), array(
                             'class' => 'action-edit',
                             'data-action' => 'edit',
                             'data-user-id' => $user->id,
@@ -47,7 +50,10 @@
                     </td>
                     <td class="a-center">
                         <?php
-                        echo html::anchor('#', '', array(
+                        echo html::anchor('#', HTML::image('images/icons/edit_12px.png', array(
+                            'height' => 12,
+                            'width' => 12,
+                        )), array(
                             'class' => 'confirm-required action-delete',
                             'data-action' => 'delete',
                             'data-user-id' => (int)$user->id,

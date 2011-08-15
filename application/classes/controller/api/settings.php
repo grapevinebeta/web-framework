@@ -561,18 +561,21 @@ class Controller_Api_Settings extends Controller_Api {
                     ->columns(array(
                         'user_id',
                         'location_id',
+                        'level',
                     ))
                     ->values(array(
                         (int)$user->id,
                         (int)$location_id,
+                        (int)Model_Location::getAccessLevel('readonly'),
                     ))
                     ->execute();
+                $user->addRole('login');
             }
 
             $this->apiResponse['result'] = array(
                 'success' => true,
                 'message' => __('User data has been successfully saved'),
-                'user' => $user->as_array(),
+                'user' => $user->as_array(), // @todo remove password showing
                 'users_html' => View::factory('account/users/list', array(
                     'location' => $location,
                     'users' => $location->getUsers(true), // only manageable users

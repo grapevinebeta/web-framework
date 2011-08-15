@@ -181,5 +181,16 @@ class Model_Location extends ORM
         }
         return $result;
     }
+    
+    /**
+     * Get the numeric representation of level, corresponding to the given name.
+     * This is a shorthand for getting array and passing only the first element.
+     * @param string $level name of the level
+     * @return int numeric representation of level or NULL if none
+     * @uses getAccessLevels() for accessing list of possible levels
+     */
+    public static function getAccessLevel($level) {
+        return Arr::get(self::getAccessLevels(array($level)),0);
+    }
 
 }
