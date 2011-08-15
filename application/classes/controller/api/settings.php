@@ -543,6 +543,28 @@ class Controller_Api_Settings extends Controller_Api {
                 $user = ORM::factory('user');
             }
             
+            if ((!empty($user_data['password'])) || (!empty($user_data['password_confirm']))) {
+                // password given, check for password matching
+                if (Arr::get($user_data, 'password') !== Arr::get($user_data, 'password_confirm')) {
+                    // passwords do not match
+                    $this->apiResponse['error'] = array(
+                        'message' => __('User data has not been saved'), // @todo add more details
+                        'error_data' => array(
+                            'code' => '(custom error)',
+                            'message' => __('Error validating password'),
+                        ),
+                        'validation_errors' => array(
+                            'password' => __('Password and password confirmation do not match'),
+                        ),
+                    );
+                    return; // do not allow further execution, error occured
+                }
+            } else {
+                // no password given, delete both values from the data
+                unset($user_data['password']);
+                unset($user_data['password_confirm']);
+            }
+            
             // filter off the data that is not editable by user
             $user_data = array_intersect_key($user_data, array_flip($editable));
             
