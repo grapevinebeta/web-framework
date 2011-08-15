@@ -101,7 +101,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         $this->template->scripts = array(
             'js/common.js', // adds some common functions
             'js/DataProvider.js',
-            'js/Boxes.js', // minified verion of Boxes.js
+            'js/Boxes.min.js', // minified verion of Boxes.js
             'js/TopMenu.min.js',
             'js/highcharts/highcharts.js',
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',

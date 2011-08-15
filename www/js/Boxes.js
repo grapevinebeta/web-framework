@@ -1938,18 +1938,26 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             legend: {
                 borderRadius: 0
             },
-            series: [{
-                type: 'pie',
-                name: 'Categories',
-                data: []
-            }]
+            series: []
         };
+        
+        
+        var s = {
+            type: 'pie',
+            name: 'Categories',
+            data: []
+        };
+
         for (var i = 0; i < this.graphData.length; i++) {
-            options.series.data.push(new Array(
+            s.data.push([
                 this.graphData[i].category,
                 parseFloat(this.graphData[i].percent)
-                ));
+                ]);
         }
+        
+        options.series.push(s);
+        
+        
         
         this.graph = new Highcharts.Chart(options);
     },
