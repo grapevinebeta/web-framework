@@ -38,6 +38,7 @@ class Controller_Account extends Controller_Template {
     {
         $this->_contentView = View::factory('account/general', array(
             'location' => $this->_location,
+            'user' => $this->_current_user,
         ));
     }
     
@@ -119,8 +120,11 @@ class Controller_Account extends Controller_Template {
 
     public function action_socials()
     {
+        $twitter_search_settings = $this->_location->getSettings()->getSetting('twitter_search');
+        $twitter_search = Arr::get($twitter_search_settings, 0);
         $this->_contentView = View::factory('account/socials', array(
-            'location_id' => (int)$this->_location_id,
+            'location_id' => (int)$this->_location->id,
+            'twitter_search' => $twitter_search,
         ));
     }
     

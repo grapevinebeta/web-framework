@@ -7,8 +7,8 @@ class Model_Location extends ORM
 {
 
     const AUTOMOTIVE = 'automotive';
-    const HOSPITALITY = "hospitality";
-    const RESTAURANT = "restaurant";
+    const HOSPITALITY = 'hospitality';
+    const RESTAURANT = 'restaurant';
     const STATUS_ACTIVE='active';
     const STATUS_SUSPENDED='suspended';
     const STATUS_TRIAL='trial';

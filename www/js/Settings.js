@@ -206,7 +206,19 @@ jQuery(function(){
 
             this.socialMediaSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
-                alert('Not yet ready');
+                var form = jQuery(this);
+                var twitter_search = form.find('input[name="twitter_search"]').val();
+                jQuery.post('/api/settings/updatetwittersearch', {
+                    'params': {
+                        'twitter_search': twitter_search
+                    }
+                }, function(data){
+                    if (data.result){
+                        log('Request to change Twitter search setting successful');
+                    } else {
+                        log('Request to change Twitter search setting was NOT successful');
+                    }
+                });
             });
 
             this.socialMediaSettings.delegate('.social-disconnect[data-action="disconnect"]', 'click', function(event){

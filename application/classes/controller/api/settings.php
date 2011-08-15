@@ -945,5 +945,47 @@ class Controller_Api_Settings extends Controller_Api {
         );
 
     }
+    
+    /**
+     * AJAX action to update Twitter search setting or create new, if does not
+     * exist.
+     */
+    public function action_updatetwittersearch() {
+        
+        try {
+            $data = $this->request->post();
+            $twitter_search = Arr::path($data, 'params.twitter_search');
+
+            $setting = ORM::factory('location_setting')
+                    ->where('type', '=', 'twitter_search')
+                    ->and_where('location_id', '=', $this->_location->id)
+                    ->find();
+
+            if (empty($setting->id)) {
+                // creating new setting for current location
+                $setting = ORM::factory('location_setting')
+                        ->values(array(
+                            'location_id' => $this->_location->id,
+                            'type' => 'twitter_search',
+                            'value' => (string)$twitter_search,
+                        ))
+                        ->create();
+            } else {
+                // modifying old setting
+                $setting->value = (string)$twitter_search;
+                $setting->update();
+            }
+
+            // return updated setting
+            $this->apiResponse['result'] = array(
+                'twitter_search' => $setting->as_array(),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'validation_errors' => $e->errors(), // @todo add directory with messages
+            );
+        }
+        
+    }
 
 }
