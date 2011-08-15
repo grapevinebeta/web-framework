@@ -3672,6 +3672,10 @@ boxManager = {
             }
         });
       
+      /**
+       * this is logic for setting boxes in right position
+       * it firstly do some ajax request that return json positions mapping
+       */
         if($("#boxes-holder").length) {
          
             this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {

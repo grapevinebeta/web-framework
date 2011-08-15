@@ -97,6 +97,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
 //            'styles/colorbox/colorbox.css',
             'styles/datepicker.css',
         );
+        // notice that we use minified versions of all scripts, for dev remove .min
         $this->template->scripts = array(
             'js/common.js', // adds some common functions
             'js/DataProvider.js',
@@ -110,8 +111,6 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/highcharts/modules/exporting.js',
             'js/datepicker.min.js',
         );
-        
-        $this->template->body = 'test';
 
         if (Auth::instance()->logged_in()) {
             $this->template->set('header', View::factory('layout/header'));
