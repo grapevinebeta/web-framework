@@ -1,19 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Alerts extends Controller_Template {
+class Controller_Alerts extends Controller_Min {
     
-    public $template = 'custom';
-    
-    public function before() {
-        parent::before();
-        
-        $this->template->topOptions = null;
-        $this->template->rightPanel = null;
-    }
-    
-    public function after() {
-        parent::after();
-    }
     
     public function action_index() {
         

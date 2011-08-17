@@ -2520,7 +2520,13 @@ var BC_ReviewInbox = BC_Inbox.extend({
         // when we open reviews in special mode in separate window
         if(this.filter = this.getBoxDom().attr('filter')) {
             
+            var d = new Date();
+            
             this.addFilter('status' , this.filter);
+            this.setRange({
+                period: this.getBoxDom().attr('period'),
+                date: this.getBoxDom().attr('date')
+            });
             this.extraParams = {
                 include_date: false
             }

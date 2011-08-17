@@ -101,6 +101,11 @@ class Controller_Api_DataProvider_Base extends Controller
 
         $include_date = $this->request->post('include_date');
         if (!empty($include_date)) {
+            
+            Session::instance()->set(
+                'viewingRange', $range
+            );
+            
             $this->include_date = $include_date == 'false' ? false : true;
         }
 
