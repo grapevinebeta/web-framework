@@ -15,7 +15,7 @@ class Model_User extends Model_Auth_User {
 				array('not_empty'),
 				array('min_length', array(':value', 4)),
 				array('max_length', array(':value', 32)),
-				array('regex', array(':value', '/^[a-zA-Z0-9_\.]++$/D')),
+				/*array('regex', array(':value', '/^[a-zA-Z0-9_\.]++$/D')),*/
 				array(array($this, 'username_available'), array(':validation', ':field')),
 			),
 			'password' => array(
