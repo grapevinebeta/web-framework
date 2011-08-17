@@ -28,8 +28,8 @@ class Controller_Webhooks_Queue extends Controller
         $location = $this->request->post('location');
         $location = intval($location);
         $industry = $this->request->post('industry');
-		
-        if (!Industry::is_valid($industry)) {
+
+        if (!Model_Location::validIndustry($industry)) {
             return;
         }
         $mongo = new Mongo();
@@ -39,33 +39,40 @@ class Controller_Webhooks_Queue extends Controller
         $mongo_db = $mongo->selectDB($industry);
 
         $queue = $mongo_db->selectCollection('queue');
-        $queue->ensureIndex(array('loc' => 1, 'site' => 1, 'status' => 1), array('background' => TRUE));
+        $queue->ensureIndex(array('loc' => 1, 'site' => 1), array('background' => TRUE, 'unique' => TRUE));
+        $queue->ensureIndex(array('status' => 1), array('background' => TRUE));
+
 
         $errors = array();
         foreach (
             $entries as $site
             => $value
         ) {
-			if(is_string($value)){
-				$url=$value;
-				$extra=array();
-			}else{
-				$url=$value['url'];
-				$extra=$value['extra'];
-				
-			}
-			
+            if (is_string($value)) {
+                $url = $value;
+                $extra = array();
+            } else {
+                $url = $value['url'];
+                $extra = $value['extra'];
+
+            }
+
             try {
-                $queue->insert(
+                $queue->update(
                     array(
                         'loc' => $location,
-                        'site' => $site,
+                        'site' => $site
+                    ),
+                    array(
                         'status' => 'waiting', // waiting,processing,finished
                         'url' => $url,
                         'started_at' => null,
                         'finished_at' => null,
-						'extra'=>$extra
-                    ), array('safe' => TRUE)
+                        'extra' => $extra,
+                        'loc' => $location,
+                        'site' => $site
+                    )
+                    , array('upsert' => TRUE, 'safe' => TRUE)
                 );
             } catch (MongoCursorException $e) {
                 $errors[$site] = $url;

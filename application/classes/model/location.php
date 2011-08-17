@@ -86,6 +86,10 @@ class Model_Location extends ORM
         );
     }
 
+    public static function validIndustry($industry){
+        return (in_array($industry,array(self::AUTOMOTIVE,self::HOSPITALITY,self::RESTAURANT)));
+          
+    }
     /**
      * Get users associated with the specific location.
      * @param bool $only_managable should this method return only users that can

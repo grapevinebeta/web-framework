@@ -19,7 +19,9 @@ class Controller_Webhooks_WuFoo extends Controller
             $mapping as $key
             => $map
         ) {
-            $values[$key] = $this->post[$map];
+            if (isset($this->post[$map])) {
+                $values[$key] = $this->post[$map];
+            }
         }
         return $values;
     }
@@ -48,12 +50,12 @@ class Controller_Webhooks_WuFoo extends Controller
                     if ($is_competitor) {
                         $label = "Competitor #$competitor_number $label";
                     }
-                    $post[$label] = $this->request->post($sub->ID);
+                    $post[$label] = trim($this->request->post($sub->ID));
 
                 }
             } else {
                 $title = $is_competitor ? $field->Title . ' Name' : $field->Title;
-                $post[$title] = $this->request->post($field->ID);
+                $post[$title] = trim($this->request->post($field->ID));
             }
             if ($field->Title == 'Company Address') {
                 $post['Company Address'] = $post['Address'];
@@ -96,7 +98,7 @@ class Controller_Webhooks_WuFoo extends Controller
         $post = json_decode(file_get_contents(dirname(__FILE__) . '/wufoo.test'), true);
         $this->request->post($post);
         $this->remap_post();
-//        return;
+        //        return;
         /*Log::instance()->add(
             Log::DEBUG, "Wufoo :post", array(
                 "post" => json_encode($this->request->post())
@@ -183,7 +185,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $values = $this->values($location_mapping);
             $values['industry'] = strtolower($values['industry']);
 
-            $location_mapping['owner_name'] = $this->post['firstname'] . ' ' . $this->post['lastname'];
+            $location_mapping['owner_name'] = $this->post['First'] . ' ' . $this->post['Last'];
 
 
             $industry = $values['industry'];
@@ -198,7 +200,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $company->add('locations', $location);
             $company->save();
 
-            $db->commit();
+
         } catch (Exception $e) {
 
             $this->failed('location_creation', $e);
@@ -223,26 +225,15 @@ class Controller_Webhooks_WuFoo extends Controller
 
 
         $url_values = $this->values($url_mapping);
-        $queue_post = array(
-            'industry' => $industry,
-            'location' => $location_id, 'queue'
-            => array(
-                $url_values
-            )
-        );
 
-        $queue_response = Request::factory('webhooks/queue/add')->post(Request::POST)
-                ->post($queue_post)->execute()->response;
-
-        if (count($queue_response['errors'])) {
-            $this->failed('insert_into_queue', $queue_response['errors']);
-        }
+        $this->add_to_queue($industry, $location_id, $url_values);
+        $db->commit();
 
 
         // $this->failed('location_creation', $post);
 
         $dummy_user = ORM::factory('user', array('username' => 'grapevine'));
-        if (!$dummy_user->loaded) {
+        if (!$dummy_user->loaded()) {
             // create dummy user
             $dummy_user->username = 'grapevine';
             $dummy_user->password = 'pickgrapevine2011';
@@ -253,6 +244,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
         }
 
+
         for (
             $i = 1; $i <= 6; $i++
         ) {
@@ -261,9 +253,9 @@ class Controller_Webhooks_WuFoo extends Controller
             }
             try {
                 $competitor_values = $this->competitor_mapping($i, $industry);
-                $location = ORM::factory('location', array('name' => $competitor_values['name']));
+                $competitor_location = ORM::factory('location', array('name' => $competitor_values['name']));
                 $db->begin();
-                if (!$location->loaded) {
+                if (!$competitor_location->loaded()) {
 
                     // create a new company
                     $company = ORM::factory('company');
@@ -274,22 +266,30 @@ class Controller_Webhooks_WuFoo extends Controller
                     $company->add('users', $user);
 
                     // create location
-                    $location = ORM::factory('location');
+                    $competitor_location = ORM::factory('location');
 
 
-                    $location->values($this->values($competitor_values));
-                    $location->save();
+                    $competitor_location->values($this->values($competitor_values));
+                    $competitor_location->save();
                     // add to locations_users with level = 0
-                    $location->add('users', $dummy_user);
+                    $competitor_location->add('users', $dummy_user);
 
                     // add to companies_locations
-                    $company->add('locations', $location);
+                    $company->add('locations', $competitor_location);
                     $company->save();
 
                 } else {
                     // TODO : make sure that the industry types are the same
                     //  $location->industry
                 }
+                $competitor = ORM::factory('location_setting')
+                        ->values(
+                    array(
+                        'type' => 'competitor',
+                        'value' => $competitor_location->id,
+                        'location_id' => (int)$location_id
+                    )
+                )->create();
                 $db->commit();
             } catch (Exception $e) {
                 $this->failed("competitor #$i", $e);
@@ -306,13 +306,37 @@ class Controller_Webhooks_WuFoo extends Controller
         echo "found";
     }
 
+    private function add_to_queue($industry, $location_id, $queue)
+    {
+        $queue_post = array(
+            'industry' => $industry,
+            'location' => $location_id, 'queue'
+            => $queue
+
+        );
+
+        /**
+         * @var $queue_response Response
+         */
+        $queue_response = Request::factory('webhooks/queue/add')
+                ->post($queue_post)->execute();
+        $queue_response = json_decode($queue_response->body(), true);
+
+        if (count($queue_response['errors'])) {
+            $this->failed('insert_into_queue', $queue_response['errors']);
+            return false;
+        }
+        return true;
+    }
+
     private function has_competitor($number)
     {
 
         $values = $this->values($this->get_competitor_mapping($number));
 
         $values = array_filter(array_map('trim', $values), 'strlen');
-        return count($values) == 7;
+        $values = count($values);
+        return $values >= 5;
 
 
     }
@@ -334,13 +358,13 @@ class Controller_Webhooks_WuFoo extends Controller
     private function get_competitor_mapping($number)
     {
         return array(
-            'location_name' => "Competitor #$number Name",
+            'name' => "Competitor #$number Name",
             'address1' => "Competitor #$number Address",
             'address2' => "Competitor #$number Address Line 2",
             'city' => "Competitor #$number City",
             'state' => "Competitor #$number State",
-            'zip' => "Competitor #$number Zip",
-            'country' => "Competitor #$number Country"
+            'zip' => "Competitor #$number Zip"
+
 
         );
     }
