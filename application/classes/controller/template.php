@@ -67,6 +67,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             // bind current location to every view
             View::bind_global('_current_location', $this->_location);
             $this->_location_id = (int)$this->_location->id;
+            Session::instance()->set('location_id',$this->_location_id);
         } else {
             /**
              * @todo User went through the security checks, but is still logged

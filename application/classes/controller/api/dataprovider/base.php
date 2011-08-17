@@ -101,11 +101,11 @@ class Controller_Api_DataProvider_Base extends Controller
 
         $include_date = $this->request->post('include_date');
         if (!empty($include_date)) {
-            
+
             Session::instance()->set(
                 'viewingRange', $range
             );
-            
+
             $this->include_date = $include_date == 'false' ? false : true;
         }
 
@@ -161,8 +161,10 @@ class Controller_Api_DataProvider_Base extends Controller
 
         //TODO Keyston : have location fetch fallbck to session
 
+
         $this->location = (int)$this->request->post('loc');
-        $this->location = $this->location ? $this->location : 1;
+        $this->location = $this->location ? $this->location :
+                Session::instance()->get('location_id', 1);
 
         $this->query = array(
             'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
