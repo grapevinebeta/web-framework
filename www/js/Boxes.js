@@ -1938,18 +1938,26 @@ var BC_TagsAnalysis = BC_GraphBoxController.extend({
             legend: {
                 borderRadius: 0
             },
-            series: [{
-                type: 'pie',
-                name: 'Categories',
-                data: []
-            }]
+            series: []
         };
+        
+        
+        var s = {
+            type: 'pie',
+            name: 'Categories',
+            data: []
+        };
+
         for (var i = 0; i < this.graphData.length; i++) {
-            options.series[0].data.push(new Array(
+            s.data.push([
                 this.graphData[i].category,
-                this.graphData[i].percent
-                ));
+                parseFloat(this.graphData[i].percent)
+                ]);
         }
+        
+        options.series.push(s);
+        
+        
         
         this.graph = new Highcharts.Chart(options);
     },
@@ -3673,6 +3681,10 @@ boxManager = {
             }
         });
       
+      /**
+       * this is logic for setting boxes in right position
+       * it firstly do some ajax request that return json positions mapping
+       */
         if($("#boxes-holder").length) {
          
             this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {

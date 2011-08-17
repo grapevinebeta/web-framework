@@ -170,6 +170,12 @@ Route::set('social', 'social')
 		'controller' => 'social',
 		'action'     => 'index',
 	));
+// Account settings
+Route::set('account', 'account/<action>')
+	->defaults(array(
+		'controller' => 'account',
+		'action'     => 'general',
+	));
 
 
 // API routes

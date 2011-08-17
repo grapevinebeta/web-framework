@@ -7,8 +7,8 @@ class Model_Location extends ORM
 {
 
     const AUTOMOTIVE = 'automotive';
-    const HOSPITALITY = "hospitality";
-    const RESTAURANT = "restaurant";
+    const HOSPITALITY = 'hospitality';
+    const RESTAURANT = 'restaurant';
     const STATUS_ACTIVE='active';
     const STATUS_SUSPENDED='suspended';
     const STATUS_TRIAL='trial';
@@ -180,6 +180,17 @@ class Model_Location extends ORM
             $result[] = Arr::get(array_flip(self::$_access_levels), strtolower($level));
         }
         return $result;
+    }
+    
+    /**
+     * Get the numeric representation of level, corresponding to the given name.
+     * This is a shorthand for getting array and passing only the first element.
+     * @param string $level name of the level
+     * @return int numeric representation of level or NULL if none
+     * @uses getAccessLevels() for accessing list of possible levels
+     */
+    public static function getAccessLevel($level) {
+        return Arr::get(self::getAccessLevels(array($level)),0);
     }
 
 }

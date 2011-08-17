@@ -543,6 +543,28 @@ class Controller_Api_Settings extends Controller_Api {
                 $user = ORM::factory('user');
             }
             
+            if ((!empty($user_data['password'])) || (!empty($user_data['password_confirm']))) {
+                // password given, check for password matching
+                if (Arr::get($user_data, 'password') !== Arr::get($user_data, 'password_confirm')) {
+                    // passwords do not match
+                    $this->apiResponse['error'] = array(
+                        'message' => __('User data has not been saved'), // @todo add more details
+                        'error_data' => array(
+                            'code' => '(custom error)',
+                            'message' => __('Error validating password'),
+                        ),
+                        'validation_errors' => array(
+                            'password' => __('Password and password confirmation do not match'),
+                        ),
+                    );
+                    return; // do not allow further execution, error occured
+                }
+            } else {
+                // no password given, delete both values from the data
+                unset($user_data['password']);
+                unset($user_data['password_confirm']);
+            }
+            
             // filter off the data that is not editable by user
             $user_data = array_intersect_key($user_data, array_flip($editable));
             
@@ -561,18 +583,21 @@ class Controller_Api_Settings extends Controller_Api {
                     ->columns(array(
                         'user_id',
                         'location_id',
+                        'level',
                     ))
                     ->values(array(
                         (int)$user->id,
                         (int)$location_id,
+                        (int)Model_Location::getAccessLevel('readonly'),
                     ))
                     ->execute();
+                $user->addRole('login');
             }
 
             $this->apiResponse['result'] = array(
                 'success' => true,
                 'message' => __('User data has been successfully saved'),
-                'user' => $user->as_array(),
+                'user' => $user->as_array(), // @todo remove password showing
                 'users_html' => View::factory('account/users/list', array(
                     'location' => $location,
                     'users' => $location->getUsers(true), // only manageable users
@@ -944,6 +969,48 @@ class Controller_Api_Settings extends Controller_Api {
             ))->render(),
         );
 
+    }
+    
+    /**
+     * AJAX action to update Twitter search setting or create new, if does not
+     * exist.
+     */
+    public function action_updatetwittersearch() {
+        
+        try {
+            $data = $this->request->post();
+            $twitter_search = Arr::path($data, 'params.twitter_search');
+
+            $setting = ORM::factory('location_setting')
+                    ->where('type', '=', 'twitter_search')
+                    ->and_where('location_id', '=', $this->_location->id)
+                    ->find();
+
+            if (empty($setting->id)) {
+                // creating new setting for current location
+                $setting = ORM::factory('location_setting')
+                        ->values(array(
+                            'location_id' => $this->_location->id,
+                            'type' => 'twitter_search',
+                            'value' => (string)$twitter_search,
+                        ))
+                        ->create();
+            } else {
+                // modifying old setting
+                $setting->value = (string)$twitter_search;
+                $setting->update();
+            }
+
+            // return updated setting
+            $this->apiResponse['result'] = array(
+                'twitter_search' => $setting->as_array(),
+            );
+        } catch (ORM_Validation_Exception $e) {
+            $this->apiResponse['error'] = array(
+                'validation_errors' => $e->errors(), // @todo add directory with messages
+            );
+        }
+        
     }
 
 }

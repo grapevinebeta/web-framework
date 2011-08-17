@@ -55,21 +55,13 @@
             <table>
                 <tr>
                     <td class="a-right"><?php echo __('Twitter Search'); ?>:</td>
-                    <td><?php echo form::input('twitter[search]', ''); ?></td>
-                </tr>
-                <tr>
-                    <td class="a-right"><?php echo __('Twitter Account Name'); ?>:</td>
-                    <td><?php echo form::input('twitter[account]', ''); ?></td>
+                    <td><?php echo form::input('twitter_search', (empty($twitter_search) ? '' : $twitter_search)); ?></td>
                 </tr>
             </table>
             <p class="a-right">
                 <?php echo form::submit('', __('Save')); ?>
             </p>
         </form>
-    </div>
-    <h2 class="content-section-title"><?php echo __('Other Social Sites'); ?>:</h2>
-    <div id="account-socials-other-section" class="padding-5">
-        Description ...
     </div>
 </div>
 <?php echo HTML::script('js/social.js'); ?>

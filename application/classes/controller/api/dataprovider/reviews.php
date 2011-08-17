@@ -133,30 +133,11 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
         $key = current($rs);
 
-        $automotive = array(
-            '' => 'Select',
-            'General', 'Sales', 'Service', 'Parts', 'Finance'
-        );
+        $categories = Kohana::config('globals.reviews_categories');
 
-        $restaurants = array(
-            '' => 'Select',
-            'General', 'Food', 'Service'
-        );
+        $key = $key ? $key : '';
 
-
-        if (!$key) {
-
-            $result = array(
-                '' => 'Select',
-                'General'
-            );
-        }
-        else {
-            $result = ${$key};
-        }
-
-
-        $this->apiResponse['categories'] = $result;
+        $this->apiResponse['categories'] = $categories[$key];
 
     }
 

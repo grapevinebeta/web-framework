@@ -290,5 +290,23 @@ class Model_User extends Model_Auth_User {
         return $result; // @todo pass only success / failure information
 
     }
+    
+    /**
+     * Check if the role is assigned to the current user.
+     * @param string $role_name name of the role
+     * @return bool TRUE if role is assigned, FALSE otherwise
+     */
+    public function hasRole($role_name) {
+        return $this->has('roles', ORM::factory('role', array('name' => $role_name)));
+    }
+    
+    /**
+     * Add specific role to the user
+     * @param string $role_name name of the role
+     * @return 
+     */
+    public function addRole($role_name) {
+        return $this->add('roles', ORM::factory('role', array('name' => $role_name)));
+    }
 
 }
