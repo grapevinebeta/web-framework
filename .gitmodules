@@ -1,6 +1,3 @@
 [submodule "modules/oauth"]
 	path = modules/oauth
 	url = https://github.com/kohana/oauth.git
-[submodule "modules/minion"]
-	path = modules/minion
-	url = git://github.com/kohana-minion/core.git
