@@ -137,7 +137,9 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
         $key = $key ? $key : '';
 
-        $this->apiResponse['categories'] = $categories[$key];
+        $c = array_combine($categories[$key], $categories[$key]);
+        
+        $this->apiResponse['categories'] = $c;
 
     }
 

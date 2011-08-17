@@ -1,6 +1,7 @@
 <a href="#" class="window-close">Close</a>
 <div id="boxes-holder">
-    <div id="box-recent-reviews" class="box" filter="<?php echo $alert; ?>">
+    <?php $viewingRange = Session::instance()->get('viewingRange'); ?>
+    <div id="box-recent-reviews" class="box" filter="<?php echo $alert; ?>" date="<?php echo $viewingRange['date'] ?>" period="<?php echo $viewingRange['period'] ?>">
         <?php
         echo View::factory(
                 '_partials/box/header', array(
@@ -41,3 +42,14 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+
+$(document).ready(function() {
+    
+    
+    boxManager.init();
+    
+    
+});
+
+</script>
