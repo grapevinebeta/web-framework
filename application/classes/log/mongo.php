@@ -14,15 +14,18 @@ class Log_Mongo extends Log_Writer
         if (count($messages)) {
             $mongo = new Mongo();
             $log = Log::instance();
-            $internal_db = $mongo->selectDB('internal');
-            $logs = $internal_db->selectCollection('logs');
+            $internal_db = $mongo->selectDB('logs');
+            $logs = $internal_db->selectCollection('dashboard');
             $logs->batchInsert($messages);
-            $mailer = new Model_Mailer();
-            $mailer->send(
-                'alerts@grapevinebeta.com', 'New Alert',
-                print_r($messages, true),
-                null, 'app@pickgrapevine.com'
-            );
+            if (Kohana::config("global.send_alerts")) {
+                $mailer = new Model_Mailer();
+                $sent = $mailer->send(
+                    'alerts@pickgrapevine.com', 'New Alert',
+                        '<div>' . print_r($messages, true) . '</div>',
+                    null, 'app@pickgrapevine.com'
+                );
+            }
+           
         }
 
         // TODO : Send out email for logs to alerts@grapevinebeta.com

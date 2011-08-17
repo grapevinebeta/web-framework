@@ -26,6 +26,13 @@ class Controller_Webhooks_WuFoo extends Controller
         return $values;
     }
 
+    public function before()
+    {
+        set_time_limit(0);
+        Log::$write_on_add = true;
+        parent::before();
+    }
+
     private function remap_post()
     {
         $structure = $this->request->post('FieldStructure');
@@ -79,7 +86,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
             }
         } elseif (is_array($error)) {
-            $errors = $errors;
+            $errors = $error;
         }
 
         $log = Log::instance();
@@ -245,6 +252,10 @@ class Controller_Webhooks_WuFoo extends Controller
         }
 
 
+        $finder = new SiteFinder_Finder();
+        $query = new SiteFinder_Query();
+        $query->industry = $industry;
+
         for (
             $i = 1; $i <= 6; $i++
         ) {
@@ -256,6 +267,11 @@ class Controller_Webhooks_WuFoo extends Controller
                 $competitor_location = ORM::factory('location', array('name' => $competitor_values['name']));
                 $db->begin();
                 if (!$competitor_location->loaded()) {
+                    $query->zip = $competitor_values['zip'];
+                    $query->state = $competitor_values['state'];
+                    $query->city = $competitor_values['city'];
+                    $query->address = $competitor_values['address1'];
+                    $query->name = $competitor_values['name'];
 
                     // create a new company
                     $company = ORM::factory('company');
@@ -271,12 +287,31 @@ class Controller_Webhooks_WuFoo extends Controller
 
                     $competitor_location->values($this->values($competitor_values));
                     $competitor_location->save();
+                    $sites = $finder->find($query);
+
+                    if (count($sites['missing'])) {
+
+                        $this->failed(
+                            'finding_competitor_sites',
+                            array(
+                                'location_id' => $competitor_location->id,
+                                'missing_sites' => $sites['missing'],
+                                'query' => (string)$query
+                            )
+                        );
+                    }
+                    unset($sites['missing']);
+                    if (count($sites)) {
+                        $sites = array_map(create_function('$a', 'return $a["url"];'), $sites);
+                        $this->add_to_queue($industry, $competitor_location->id, $sites);
+                    }
                     // add to locations_users with level = 0
                     $competitor_location->add('users', $dummy_user);
 
                     // add to companies_locations
                     $company->add('locations', $competitor_location);
                     $company->save();
+
 
                 } else {
                     // TODO : make sure that the industry types are the same
@@ -298,7 +333,6 @@ class Controller_Webhooks_WuFoo extends Controller
             }
 
         }
-
         $db->commit();
 
 
