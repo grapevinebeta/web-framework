@@ -242,9 +242,13 @@ jQuery(function(){
             var self = this;
             var editForm = this.userManagementSettings.find('form.userEditForm');
 
+            var notice = editForm.children('.notice');
+
             this.userManagementSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
                 log('User submitted a form to add/update some user');
+                
+                notice.text('Updating...');
                 
                 self.clearValidationErrors(editForm);
                 
@@ -266,9 +270,20 @@ jQuery(function(){
                         if (typeof data.result.users_html != 'undefined'){
                             self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
                         }
+                        
+                        notice
+                           .text('User Updated (This box will close in 3s.)');
+                        
+                        setTimeout(function() {
+                           notice.fadeOut(1000); 
+                        }, 4000);
+                        editForm.find('#save').hide();
+                        editForm.find('table.hide').hide();
+                        
                     }else if(data.error && typeof data.error.validation_errors != 'undefined'){
                         // validation failure
                         self.displayValidationErrors(data.error.validation_errors, editForm);
+                        notice.text('Please correct errors in form');
                     }
                 }, 'json');
             });
@@ -286,7 +301,13 @@ jQuery(function(){
                 }, function(data){
                     log('Propagating user data received from server');
                     self.propagateFormData(data.result.user, editForm);
-                }, 'json');
+                }, 'json').complete(function() {
+                        
+                        notice.text('Please fill the following form to edit existing user').fadeIn();
+                        editForm.find('#save').show();
+                        editForm.find('table.hide').show();
+                        
+                    });
             });
 
             this.userManagementSettings.delegate('a[data-action="delete"][data-user-id]', 'click', function(event){
@@ -315,6 +336,7 @@ jQuery(function(){
             this.userManagementSettings.delegate(':radio[data-action="change-role"]', 'change', function(event){
                 // changing access level
                 var element = jQuery(this);
+                var notice = self.userManagementSettings.find('#account-users-list-section .notice');
                 var level = element.attr('data-role');
                 var user_id = element.attr('data-user-id');
                 log('Location level for user with ID="' + user_id + '" is about to be changed to "' + level + '"');
@@ -329,12 +351,24 @@ jQuery(function(){
                     if (typeof data.result.users_html != 'undefined'){
                         self.userManagementSettings.find('.usersSettingsList').replaceWith(data.result.users_html);
                         log('Users list has been updated');
+                        notice.text('Privilages for user was changed').fadeIn();
+                        
+                        setTimeout(function() {
+                            
+                            notice.fadeOut();
+                            
+                        }, 2000);
+                        
                     }
                 });
             });
             
-            this.userManagementSettings.delegate('a[data-action="new"]', 'click', function(event){
+            this.userManagementSettings.delegate('button[data-action="new"]', 'click', function(event){
                 event.preventDefault();
+                
+                notice.text('Please fill the following form to create a new user').fadeIn();
+                editForm.find('#save').show();
+                editForm.find('table.hide').show();
                 self.clearValidationErrors(editForm);
                 self.clearForm(editForm);
             });

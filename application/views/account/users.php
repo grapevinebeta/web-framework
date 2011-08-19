@@ -4,6 +4,7 @@
 <div id="userManagementSettings">
     <h2 class="content-section-title"><?php echo __('User Accounts'); ?>:</h2>
     <div id="account-users-list-section" class="padding-5">
+        <div class="notice"></div>
         <div id="account-users-list-holder">
             <?php echo View::factory('account/users/list', array(
                 'users' => $users,
@@ -14,10 +15,10 @@
     <h2 class="content-section-title"><?php echo __('Add / Edit User'); ?></h2>
     <div id="account-users-edit-section" class="padding-5">
         <div id="account-users-edit-holder">
-            <a href="#" title="" data-action="new"><?php echo __('New user'); ?></a>
             <form action="" method="post" class="userEditForm">
                 <input type="hidden" value="" name="id" />
-                <table>
+                <div class="notice"></div>
+                <table class="hide">
                     <tr>
                         <td class="a-right">
                             <?php echo __('First Name'); ?>:
@@ -86,10 +87,11 @@
                             <!-- empty cell -->
                         </td>
                         <td>
-                            <?php echo form::submit('', __('Save')); ?>
                         </td>
                     </tr>
                 </table>
+                <?php echo form::submit('', __('Save'), array('id' => 'save','class' => 'button-g hide')); ?>
+                            <button data-action="new" class="create button-g"><?php echo __('Create new user'); ?></button>
             </form>
         </div>
     </div>

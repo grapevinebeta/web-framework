@@ -28,6 +28,15 @@ class Model_User extends Model_Auth_User {
 				array('email'),
 				array(array($this, 'email_available'), array(':validation', ':field')),
 			),
+                        'firstname' => array(
+                                array('not_empty'),
+                        ),
+                        'lastname' => array(
+                                array('not_empty'),
+                        ),
+                        'phone' => array(
+                                array('not_empty'),
+                        ),
 		);
 	}
     
