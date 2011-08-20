@@ -190,7 +190,7 @@ class Controller_Api_DataProvider_Base extends Controller
     {
         if ($this->include_date) {
             return array(
-                'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
+                'loc' => $this->location, 'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate)
             );
         }
 

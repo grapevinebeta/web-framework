@@ -33,6 +33,14 @@ class SiteFinder_Finder
         )
     );
 
+    /**
+     * Finds all the sites for a giving location
+     * @param SiteFinder_Query $query
+     * The array will be returned with a special key named "missing" holding
+     * an array of sites that were not found
+     * @return array
+     */
+
     public function find(SiteFinder_Query $query)
     {
 
@@ -48,7 +56,7 @@ class SiteFinder_Finder
                 $results['missing'][] = 'judybooks.com';
             }
         }
-      //  $results['missing'][$query->industry] = $results['missing'];
+        //  $results['missing'][$query->industry] = $results['missing'];
 
 
         return $results;

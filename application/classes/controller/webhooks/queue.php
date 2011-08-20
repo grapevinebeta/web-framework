@@ -36,11 +36,11 @@ class Controller_Webhooks_Queue extends Controller
 
         $entries = $this->request->post('queue');
         //automotive,hospitality,restaurant
-        $mongo_db = $mongo->selectDB($industry);
+        $mongo_db = $mongo->selectDB("dashboard");
 
-        $queue = $mongo_db->selectCollection('queue');
+        $queue = $mongo_db->selectCollection('queues');
         $queue->ensureIndex(array('loc' => 1, 'site' => 1), array('background' => TRUE, 'unique' => TRUE));
-        $queue->ensureIndex(array('status' => 1), array('background' => TRUE));
+        $queue->ensureIndex(array('status' => 1, "site" => 1), array('background' => TRUE));
 
 
         $errors = array();
@@ -52,9 +52,12 @@ class Controller_Webhooks_Queue extends Controller
                 $url = $value;
                 $extra = array();
             } else {
-                $url = $value['url'];
-                $extra = $value['extra'];
+                $url = Arr::get($value, 'url');
+                $extra = Arr::get($value, 'extra', array());
 
+            }
+            if (!$url) {
+                continue;
             }
 
             try {
@@ -64,13 +67,16 @@ class Controller_Webhooks_Queue extends Controller
                         'site' => $site
                     ),
                     array(
-                        'status' => 'waiting', // waiting,processing,finished
-                        'url' => $url,
-                        'started_at' => null,
-                        'finished_at' => null,
-                        'extra' => $extra,
-                        'loc' => $location,
-                        'site' => $site
+                        '$set'
+                        => array(
+                            'status' => 'waiting', // waiting,processing,finished
+                            'url' => $url,
+                            'started_at' => null,
+                            'finished_at' => null,
+                            'extra' => $extra,
+                            'loc' => $location,
+                            'site' => $site
+                        )
                     )
                     , array('upsert' => TRUE, 'safe' => TRUE)
                 );
