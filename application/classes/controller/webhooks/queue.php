@@ -75,7 +75,8 @@ class Controller_Webhooks_Queue extends Controller
                             'finished_at' => null,
                             'extra' => $extra,
                             'loc' => $location,
-                            'site' => $site
+                            'site' => $site,
+                            'industry'=>$industry
                         )
                     )
                     , array('upsert' => TRUE, 'safe' => TRUE)
