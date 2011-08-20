@@ -40,7 +40,7 @@ class Controller_Webhooks_Queue extends Controller
 
         $queue = $mongo_db->selectCollection('queues');
         $queue->ensureIndex(array('loc' => 1, 'site' => 1), array('background' => TRUE, 'unique' => TRUE));
-        $queue->ensureIndex(array('status' => 1, "site" => 1), array('background' => TRUE));
+        $queue->ensureIndex(array("site" => 1, 'status' => 1, 'priority' => 1), array('background' => TRUE));
 
 
         $errors = array();
@@ -76,7 +76,8 @@ class Controller_Webhooks_Queue extends Controller
                             'extra' => $extra,
                             'loc' => $location,
                             'site' => $site,
-                            'industry'=>$industry
+                            'priority' => 1,
+                            'industry' => $industry
                         )
                     )
                     , array('upsert' => TRUE, 'safe' => TRUE)

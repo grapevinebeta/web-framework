@@ -69,13 +69,13 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
 
 
         $reviews = new MongoCollection($db, 'reviews');
-        $reviews->ensureIndex(
-            array('date' => 1, 'loc' => 1, 'status' => 1, 'rating' => 1, 'site' => 1), array('background' => TRUE)
-        );
+        //$reviews->ensureIndex(
+          //  array('date' => 1, 'loc' => 1, 'status' => 1, 'rating' => 1, 'site' => 1), array('background' => TRUE)
+       // );
 
 
         $metrics = new MongoCollection($db, 'metrics');
-        $metrics->ensureIndex(array('date' => 1, 'type' => 1, 'period' => 1), array('background' => TRUE));
+        //$metrics->ensureIndex(array('date' => 1, 'type' => 1, 'period' => 1), array('background' => TRUE));
         $sites = array(
 
             'dealerrater.com',
