@@ -312,7 +312,8 @@ class Controller_Api_DataProvider_Base extends Controller
 
     protected function findOne($name, $query, $fields = array())
     {
-        $collection = new MongoCollection($this->mongo->selectDB($this->industry()), $name);
+        $db = $this->mongo->selectDB($this->industry());
+        $collection = new MongoCollection($db, $name);
 
         /* @var $collection MongoCollection */
         return $collection->findOne($query, $fields);

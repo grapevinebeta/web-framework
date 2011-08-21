@@ -60,9 +60,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
             $fields = array_merge(
                 $fields, $this->expanded_fields
             );
-            $this->query = array("_id" => new  MongoId($this->id));
+            $query = array("_id" => new  MongoId($this->id));
 
-            $doc = $this->findOne($this->collection, $this->query, $fields);
+            $doc = $this->findOne($this->collection, $query, $fields);
             $doc['date'] = $doc['date']->sec;
             $doc['id'] = $doc['_id']->{'$id'};
             unset($doc['_id']);

@@ -240,6 +240,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
             $dates[] = strtotime('+ ' . ($seconds_step * $i) . ' seconds', $start_time);
         }
 
+        //TODO move this out into a js view
 
         $js_locations = '[' . join(',', array_keys($location_names)) . ']';
         $js_dates = '[' . join(',', $dates) . ']';
