@@ -16,8 +16,8 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 
     protected function getFilters()
     {
-        //TODO keyston : Trigger sources by industry type
-        $auto_sources = array(
+        
+        $sources = array(
             'Facebook' => 'facebook.com', 'Twitter' => 'twitter.com', 'Foursquare' => 'fouresquare.com'
         );
         $actions = array(
@@ -41,7 +41,7 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
         return array(
             'actions'
             => $actions,
-            'source' => $auto_sources
+            'source' => $sources
 
         );
     }
@@ -87,7 +87,7 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 
     protected function fetch_metric($type, $period = 'day')
     {
-        $fetcher = new Api_Fetchers_Metrics($this->mongo);
+        $fetcher = new Api_Fetchers_Metrics($this->mongo,$this->industry());
         $fetcher->type("social.$type")->location($this->location)
                 ->range($this->startDate, $this->endDate)
                 ->period($period);

@@ -16,6 +16,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
     protected $content = array();
 
+
     protected function getFilters()
     {
 
@@ -90,6 +91,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         $results = array();
 
         $query = $this->defaultQuery();
+        
 
         $filters = Arr::get($_REQUEST, 'filters'); //$this->request->post('filters');
         $status = Arr::get($filters, 'status', array());

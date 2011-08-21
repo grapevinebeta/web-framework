@@ -173,6 +173,28 @@ class Controller_Api_DataProvider_Base extends Controller
 
     }
 
+    protected function getCompetition()
+    {
+        // $session = Session::instance();
+        // $key = "competitor.{$this->location}";
+        //  $competitors = $session->get($key);
+
+        $settings = new Model_Location_Settings($this->location);
+        $competitors = $settings->getSetting('competitor');
+
+        // cached every 60 seconds
+        $query = DB::select('id', 'name')
+                ->from('locations')
+                ->where('id', 'IN', array_values($competitors));
+        $query->cached(5 * 60); // twenty mins
+
+        $result = $query->execute();
+        $competitors = $result->as_array('id', 'name');
+        return $competitors;
+
+
+    }
+
     /**
      * @return MongoDate
      */

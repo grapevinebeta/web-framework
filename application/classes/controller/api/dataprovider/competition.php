@@ -17,12 +17,20 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
     = array('loc' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
 
+    protected function defaultQuery()
+    {
+        $query = parent::defaultQuery();
+        $query['loc'] = array('$in' => array_keys($this->getCompetition()));
+        return $query;
+
+    }
+
     protected function findContent($fields, $limit = -1)
     {
 
-        $this->query['loc'] = array('$in' => array_keys($this->getCompetators()));
+
         $cursor = parent::findContent($fields, $limit);
-        
+
         $location_names = $this->getLocationNames();
         foreach (
             $this->content as &$doc
@@ -53,43 +61,24 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         );
     }
 
-    protected function getCompetators()
-    {
-        // $session = Session::instance();
-        // $key = "competitor.{$this->location}";
-        //  $competitors = $session->get($key);
-
-        $settings = new Model_Location_Settings($this->location);
-        $competitors = $settings->getSetting('competitor');
-
-        // cached every 60 seconds
-        $query = DB::select('id', 'name')
-                ->from('locations')
-                ->where('id', 'IN', array_values($competitors));
-        $query->cached(5 * 60); // twenty mins
-
-        $result = $query->execute();
-        $competitors = $result->as_array('id', 'name');
-        return $competitors;
-
-
-    }
 
     public function action_ogsi()
     {
-        $fetcher = new Api_Fetchers_Ogsi($this->mongo, $this->location);
+        $fetcher = new Api_Fetchers_Ogsi($this->mongo, $this->location, $this->industry());
 
 
         $location_names = $this->getLocationNames();
-        $competition = $this->getCompetators();
+        $competition = $this->getCompetition();
 
 
         $competition = array_keys($competition);
 
         $total_locations = count($location_names);
-        $ogsis = $fetcher->competition($competition);
-        $alltime = $this->request->post('alltime');
-        if (!empty($alltime)) {
+
+        $fetcher->competition($competition);
+
+        $all_time = $this->request->post('alltime');
+        if (!empty($all_time)) {
             $fetcher->range($this->epoch());
         } else {
             $fetcher->range($this->startDate, $this->endDate);
@@ -99,7 +88,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
 
         $fetcher
-                = new Api_Fetchers_Distribution($this->mongo, array_keys($location_names));
+                = new Api_Fetchers_Distribution($this->mongo, array_keys($location_names), $this->industry());
         $fetcher->range($this->startDate, $this->endDate);
         $distributions = $fetcher->fetch();
 
@@ -179,7 +168,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
     protected function getLocationNames()
     {
-        $competition = $this->getCompetators();
+        $competition = $this->getCompetition();
         $location_names = $competition;
         $location_names[$this->location] = ORM::factory('location', $this->location)->name;
 
@@ -191,12 +180,12 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
 
         $location_names = $this->getLocationNames();
-        $competition = $this->getCompetators();
+        $competition = $this->getCompetition();
 
 
         $total_locations = count($location_names);
         $fetcher
-                = new Api_Fetchers_Distribution($this->mongo, array_keys($location_names));
+                = new Api_Fetchers_Distribution($this->mongo, array_keys($location_names), $this->industry());
         $fetcher->range($this->startDate, $this->endDate);
         $distributions = $fetcher->fetch();
 
@@ -329,10 +318,9 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                 $location_names as $location_id
                 => $name
             ) {
-                $value = 0;
-                if (isset($results[$date]) && isset($results[$date][$location_id])) {
-                    $value = $results[$date][$location_id];
-                }
+                $value = Arr::path($results, $date . '.' . $location_id, 0);
+
+
                 $final[$date][] = array(
                     'competition' => $name,
                     'value' => number_format($value, 2)

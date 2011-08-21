@@ -64,7 +64,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
         $categories = array();
         $total = $cursor->count();
-        
+
         foreach (
             $cursor as $doc
         ) {
@@ -75,7 +75,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
                     'used' => 0,
                     'rating' => 0,
                     'percent' => 0,
-                    'category'=>$category
+                    'category' => $category
 
                 );
 
@@ -138,22 +138,22 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
         $key = $key ? $key : '';
 
         $c = array_combine($categories[$key], $categories[$key]);
-        
+
         $this->apiResponse['categories'] = $c;
 
     }
 
     public function action_ogsi()
     {
-        $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location);
-        $this->apiResponse = $ogsi->competition(array(2, 3, 4))
-                ->range(new MongoDate(mktime(0, 0, 0, 1, 1, 1970)), $this->endDate)->fetch();
+        $ogsi = new Api_Fetchers_Ogsi($this->mongo, $this->location, $this->industry());
+        $this->apiResponse = $ogsi->competition(array_keys($this->getCompetition()))
+                ->range($this->epoch(), $this->endDate)->fetch();
     }
 
     public function action_sites()
     {
-        $metrics = $this->db->selectCollection('metrics');
-        $fetcher = new Api_Fetchers_Metrics($this->mongo);
+
+        $fetcher = new Api_Fetchers_Metrics($this->mongo, $this->industry());
         $fetcher->type('reviews')
                 ->range($this->startDate, $this->endDate)
                 ->location($this->location);
