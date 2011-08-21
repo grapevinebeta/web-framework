@@ -1,5 +1,5 @@
 $$$company_name$$$ - Online Guest Service Monthly Report
-As of: $$$todays_date$$$ CST
+As of: $$$todays_date$$$
 
 Grapevine: Manage Your Reviews
 Dive deep into your reviews at <a href="http://www.pickgrapevine.com">http://www.pickgrapevine.com</a>

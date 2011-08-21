@@ -6,11 +6,11 @@
  * Time: 10:56 PM
  */
 
-class Shortcode_TodayDate extends Shortcode_Base
+class Shortcode_Todays_Date extends Shortcode_Base
 {
 
     public function execute($document = null)
     {
-        return date('hh:i A T');
+        return date('M d,Y h:i A T');
     }
 }

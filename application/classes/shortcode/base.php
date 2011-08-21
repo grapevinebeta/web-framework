@@ -9,6 +9,8 @@
 abstract class Shortcode_Base
 {
 
+    public $bold = true;
+
     public function execute($document = null)
     {
     }

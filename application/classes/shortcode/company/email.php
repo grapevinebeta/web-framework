@@ -6,7 +6,7 @@
  * Time: 11:00 PM
  */
 
-class Shortcode_Company_Email extends Shortcode_CompanyBase
+class Shortcode_Company_Email extends Shortcode_Company_Base
 {
 
     public function execute($document = null)
@@ -14,7 +14,10 @@ class Shortcode_Company_Email extends Shortcode_CompanyBase
 
         $location = $this->location($document);
         if ($location) {
-            return $location->owner_email;
+            $email = $location->owner_email;
+            if ($email == 'dummy@grapevinebeta.com') {
+                return null;
+            }
         }
         return null;
 

@@ -285,7 +285,7 @@ class Controller_Webhooks_WuFoo extends Controller
                     $competitor_location = ORM::factory('location');
 
 
-                    $competitor_location->values($this->values($competitor_values));
+                    $competitor_location->values($competitor_values);
                     $competitor_location->save();
                     $sites = $finder->find($query);
 

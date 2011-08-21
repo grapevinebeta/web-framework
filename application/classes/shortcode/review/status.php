@@ -12,7 +12,7 @@ class Shortcode_Review_Status extends Shortcode_Base
     public function execute($document = null)
     {
 
-        if (is_array($document) && $status = Arr::get($document, 'status')) {
+        if ($status = Arr::get((array)$document, 'status')) {
             return ucfirst($status);
         }
         return "unknown_status";

@@ -16,11 +16,18 @@ class Shortcode_Review_Keywords_All extends Shortcode_Company_Base
             $alert = ORM::factory('alert')
                     ->where('location_id', '=', (int)$id)
                     ->find();
-            if ($alert->loaded) {
+
+            $words = null;
+            if ($alert->loaded()) {
+                $words = $alert->criteria;
+            } else {
+                $words = Model_Alert::$default_tags;
+            }
+            if (!empty($words)) {
                 return array_filter(
                     array_map(
                         'trim',
-                        explode(',', $alert->criteria)
+                        is_array($words) ? $words : explode(',', $words)
                     ), 'strlen'
                 );
             }

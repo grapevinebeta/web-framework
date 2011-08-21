@@ -11,10 +11,10 @@ class Shortcode_Review_Date_Posted extends Shortcode_Base
 
     public function execute($document = null)
     {
-        if (is_array($document) && $date = Arr::get($document, 'date')) {
-            return date('hh:i A', strtotime($date));
+        if ($date = Arr::get((array)$document, 'date')) {
+            return date('M d,Y h:i A T', strtotime($date));
         }
-        return date('hh:i A');
+        return date('M d,Y h:i A T');
 
     }
 }

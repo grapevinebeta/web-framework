@@ -42,10 +42,12 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
     public function action_db()
     {
         $dbs = array(Model_Location::AUTOMOTIVE, Model_Location::RESTAURANT, Model_Location::HOSPITALITY);
+        $this->mongo->selectDB('dashboard')->drop();
         foreach (
             $dbs as $namespace
         ) {
             $db = $this->mongo->selectDB($namespace);
+            $db->drop();
             $reviews = new MongoCollection($db, 'reviews');
             $reviews->ensureIndex(
                 array('loc' => 1, 'date' => 1, 'status' => 1, 'rating' => 1, 'site' => 1), array('background' => TRUE)
@@ -70,8 +72,8 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
 
         $reviews = new MongoCollection($db, 'reviews');
         //$reviews->ensureIndex(
-          //  array('date' => 1, 'loc' => 1, 'status' => 1, 'rating' => 1, 'site' => 1), array('background' => TRUE)
-       // );
+        //  array('date' => 1, 'loc' => 1, 'status' => 1, 'rating' => 1, 'site' => 1), array('background' => TRUE)
+        // );
 
 
         $metrics = new MongoCollection($db, 'metrics');

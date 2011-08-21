@@ -34,7 +34,7 @@ class Shortcode_Company_Base extends Shortcode_Base
         $id = $this->location_id($document);
         if ($id && is_int($id)) {
             $location = ORM::factory('location', $id);
-            if ($location->loaded) {
+            if ($location->loaded()) {
                 return $location;
             }
         }

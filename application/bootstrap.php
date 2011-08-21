@@ -88,7 +88,7 @@ Kohana::init(array(
  * Attach the file write to logging. Multiple writers are supported.
  */
 // Log_Mongo will handle Log::Alert and Log::EMERGENCY
-Kohana::$log->attach(new Log_File(APPPATH.'logs'),array(),Log::CRITICAL);
+Kohana::$log->attach(new Log_File(APPPATH.'logs'),Log::DEBUG,Log::CRITICAL);
 Kohana::$log->attach(new Log_Mongo(),array(Log::ALERT,Log::EMERGENCY));
 
 /**

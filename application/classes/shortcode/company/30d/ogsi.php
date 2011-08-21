@@ -23,10 +23,11 @@ class Shortcode_Company_30d_Ogsi extends Shortcode_Company_Base
              * @var Kohana_Request
              */
             $request = Request::factory('/api/dataProvider/competition/ogsi');
-            $response = $request->post(
-                array_merge(array('loc' => $id), $this->post)
+            $response = (string)$request->post(
+                array_merge(array('loc' => $id), $this->post())
 
-            )->execute()->response;
+            )->method(Request::POST)->execute();
+            $respons = json_decode($response, true);
             foreach (
                 $response['ogsi'] as $location_name
                 => $sections
@@ -46,7 +47,7 @@ class Shortcode_Company_30d_Ogsi extends Shortcode_Company_Base
 
     protected function post()
     {
-        
+
         return array('range' => array('date' => '-1 month -1 day', 'period' => '-1 day'));
     }
 

@@ -12,12 +12,11 @@ class Shortcode_Company_Name extends Shortcode_Company_Base
     public function execute($document = null)
     {
 
-        $id = $this->location_id($document);
-        if ($id) {
-            $location = ORM::factory('location', $id);
-            if ($location->loaded) {
-                return $location->name;
-            }
+        $location = $this->location($document);
+        if ($location) {
+
+            return $location->name;
+
         }
         return null;
 

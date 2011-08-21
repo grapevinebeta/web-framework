@@ -17,7 +17,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
     = array('loc' => 1, 'content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
 
-    protected function findContent($fields, $limit=-1)
+    protected function findContent($fields, $limit = -1)
     {
         $this->query['loc'] = array('$in' => array(2, 3, 4));
         $cursor = parent::findContent($fields, $limit);
@@ -52,18 +52,36 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         );
     }
 
+    protected function getCompetators()
+    {
+        // $session = Session::instance();
+        // $key = "competitor.{$this->location}";
+        //  $competitors = $session->get($key);
+
+        $settings = new Model_Location_Settings($this->location);
+        $competitors = $settings->getSetting('competitor');
+
+        // cached every 60 seconds
+        $query = DB::select('id', 'name')
+                ->from('locations')
+                ->where('id', 'IN', array_values($competitors));
+        $query->cached(5 * 60); // twenty mins
+
+        $result = $query->execute();
+        $competitors = $result->as_array('id', 'name');
+        return $competitors;
+
+
+    }
+
     public function action_ogsi()
     {
         $fetcher = new Api_Fetchers_Ogsi($this->mongo, $this->location);
 
-        // TODO keyston : fetch location names
-        $settings = new Model_Location_Settings($this->location);
-        $competitors = $settings->getSetting('competitor');
 
+        $location_names = $this->getLocationNames();
+        $competition = $this->getCompetators();
 
-        $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
-        $competition = $location_names;
-        unset($competition[$this->location]);
 
         $competition = array_keys($competition);
 
@@ -108,29 +126,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         }
         $rank = 1;
 
-        /*
-        $sort = new Sorter('score', -1);
-        $distributions = $sort->sort($distributions);
 
-        foreach (
-            $distributions as $location
-            => $doc
-        ) {
-            $location_name = $location_names[$location];
-            $results[$location_name]['distribution'] = array(
-                'positive' => $doc['positive'],
-                'negative' => $doc['negative'],
-                'neutral' => $doc['neutral'],
-                'total' => $doc['count'],
-                'average' => $doc['score'],
-                'rank'
-                => array(
-                    'out' => $total_locations,
-                    'value' => $rank++
-                )
-            );
-
-        }*/
         //reviews
         $sort = new Sorter('count', -1);
         $distributions = $sort->sort($distributions);
@@ -179,11 +175,22 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
     }
 
+
+    protected function getLocationNames()
+    {
+        $competition = $this->getCompetators();
+        $location_names = $competition;
+        $location_names[$this->location] = ORM::factory('location', $this->location)->name;
+
+        return $location_names;
+    }
+
     public function action_distribution()
     {
-        $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
-        $competition = $location_names;
-        unset($competition[$this->location]);
+
+
+        $location_names = $this->getLocationNames();
+        $competition = $this->getCompetators();
 
 
         $total_locations = count($location_names);
@@ -223,7 +230,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
     public function action_comparsion()
     {
-        $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
+        $location_names = $this->getLocationNames();
 
 
         $dateInterval = $this->request->post('dateInterval');
@@ -284,7 +291,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                     results.score = (results.points/results.count).toFixed(3);
                     return results;
             }';
-        $db = $this->mongo->selectDB('auto');
+        $db = $this->mongo->selectDB($this->industry());
         $command = array(
             'mapreduce' => 'metrics',
             'query'

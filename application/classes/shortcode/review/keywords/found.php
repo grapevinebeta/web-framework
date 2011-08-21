@@ -6,7 +6,7 @@
  * Time: 1:32 AM
  */
 
-class Shortcode_Review_Keywords_Found extends Shortcode_Company_All
+class Shortcode_Review_Keywords_Found extends Shortcode_Review_Keywords_All
 {
 
     public function execute($document = null)

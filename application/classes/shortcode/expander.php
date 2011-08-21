@@ -15,21 +15,26 @@ class Shortcode_Expander
         $this->_document = $document;
 
 
-        return preg_replace_callback('/(\$\$\$\w+\$\$\$)/g/', array($this, '_process'), $template);
+        return preg_replace_callback('/\$\$\$(\w+)\$\$\$/', array($this, '_process'), $template);
     }
 
     function _process($matches)
     {
 
-        $ShortcodeClass = 'Shortcode_' . join('_', array_map('ucfirst', explode('_', $matches[0])));
+        $ShortcodeClass = 'Shortcode_' . join('_', array_map('ucfirst', explode('_', $matches[1])));
         if (class_exists($ShortcodeClass)) {
 
             /**
              * @var $shortcode Shortcode_Base
              */
             $shortcode = new $ShortcodeClass();
+            $content = $shortcode->execute($this->_document);
+            if ($shortcode->bold) {
+                return '<strong>' . $content . '</strong>';
+            }
+            return $content;
 
-            return $shortcode->execute($this->_document);
+
         }
         return $matches[0];
     }
