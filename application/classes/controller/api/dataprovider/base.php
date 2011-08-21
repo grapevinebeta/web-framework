@@ -157,11 +157,6 @@ class Controller_Api_DataProvider_Base extends Controller
         $this->filterEnabled = count($this->activeFilters) ? true : false;
 
 
-        //
-
-        //TODO Keyston : have location fetch fallbck to session
-
-
         $this->location = (int)$this->request->post('loc');
         $this->location = $this->location ? $this->location :
                 Session::instance()->get('location_id', 1);
@@ -173,7 +168,7 @@ class Controller_Api_DataProvider_Base extends Controller
         //            $this->mongo = new Mongo("mongodb://192.168.1.72:27017");
         $this->mongo = new Mongo();
 
-        $this->db = $this->mongo->auto;
+        $this->db = $this->mongo->selectDB($this->industry());
 
 
     }
@@ -279,7 +274,7 @@ class Controller_Api_DataProvider_Base extends Controller
      */
     protected function find($name, $query, array  $fields = array(), $limit = -1)
     {
-        $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
+        $collection = new MongoCollection($this->mongo->selectDB($this->industry()), $name);
         $cursor = $collection->find($query, $fields);
         if ($limit > -1) {
             $skip = $this->request->post('page');
@@ -295,10 +290,24 @@ class Controller_Api_DataProvider_Base extends Controller
 
     protected function findOne($name, $query, $fields = array())
     {
-        $collection = new MongoCollection($this->mongo->selectDB('auto'), $name);
+        $collection = new MongoCollection($this->mongo->selectDB($this->industry()), $name);
 
         /* @var $collection MongoCollection */
         return $collection->findOne($query, $fields);
+    }
+
+    /**
+     * @return Returns the industry for the location
+     */
+    private $_industry;
+
+    protected function industry()
+    {
+        if (!empty($this->_industry)) {
+            return $this->_industry;
+        }
+        $this->_industry = ORM::factory('location', $this->location)->industry;
+        return $this->_industry;
     }
 
 }

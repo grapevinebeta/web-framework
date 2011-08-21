@@ -18,12 +18,14 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
     protected function getFilters()
     {
-        //TODO keyston : Trigger sources by industry type
-        $auto_sources = array(
-            'CitySearch' => 'citysearch.com', 'Dealerrater' => 'dealerrater.com', 'Edmunds' => 'edmunds.com',
-            'InsiderPages' => 'insiderpages.com', 'Judysbook' => 'judysbook.com',
-            'MyDealReport' => 'mydealreport.com', 'Yelp' => 'yelp.com'
+
+        $sources = Kohana::config('globals.review_sources');
+
+        $sources = array_merge(
+            Arr::get($sources, 'common'),
+            Arr::get($sources, $this->industry())
         );
+
         return array(
             'status'
             => array(
@@ -34,7 +36,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 'Flagged' => 'todo',
                 'Completed' => 'closed'
             ),
-            'source' => $auto_sources
+            'source' => $sources
 
         );
     }
@@ -83,7 +85,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
     }
 
-    protected function findContent($fields, $limit=-1)
+    protected function findContent($fields, $limit = -1)
     {
         $results = array();
 
@@ -243,7 +245,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
 
         if (count($return['results'])) {
-            $results = $return['results'][0]['value'];
+            $results = Arr::path($return, 'results.0.value');
         } else {
             $results = array();
         }
@@ -258,7 +260,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 $filters as $name
                 => $value
             ) {
-                $total = isset($results[$kind]) && isset($results[$kind][$value]) ? $results[$kind][$value] : 0;
+                $path = $kind . '.' . $value;
+
+                $total = Arr::path($results, $path, 0);
                 $response[$kind][$name] = array(
                     'total' => $total,
                     'value' => $value,
@@ -271,23 +275,18 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         $this->filterResponse = $response;
     }
 
-    public
-    function action_expand()
+    public function action_expand()
     {
         $this->action_index();
 
     }
 
-    protected
-    function setFilters()
+    protected function setFilters()
     {
 
     }
 
-    protected
-    function update(
-        $newobj
-    )
+    protected function update($newobj)
     {
 
         return !$this->db->selectCollection($this->collection)->update(

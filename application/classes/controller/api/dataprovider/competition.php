@@ -19,10 +19,11 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
     protected function findContent($fields, $limit = -1)
     {
-        $this->query['loc'] = array('$in' => array(2, 3, 4));
+
+        $this->query['loc'] = array('$in' => array_keys($this->getCompetators()));
         $cursor = parent::findContent($fields, $limit);
-        // TODO keyston : fetch location names
-        $location_names = array(1 => 'Location 1', 2 => 'Location 2', 3 => 'Location 3', 4 => 'Location 4');
+        
+        $location_names = $this->getLocationNames();
         foreach (
             $this->content as &$doc
         ) {
