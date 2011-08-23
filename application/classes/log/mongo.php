@@ -14,8 +14,8 @@ class Log_Mongo extends Log_Writer
         if (count($messages)) {
             $mongo = new Mongo();
             $log = Log::instance();
-            $internal_db = $mongo->selectDB('logs');
-            $logs = $internal_db->selectCollection('dashboard');
+            $internal_db = $mongo->selectDB('dashboard');
+            $logs = $internal_db->selectCollection('logs');
             $logs->batchInsert($messages);
             if (Kohana::config("global.send_alerts")) {
                 $mailer = new Model_Mailer();
@@ -25,9 +25,9 @@ class Log_Mongo extends Log_Writer
                     null, 'app@pickgrapevine.com'
                 );
             }
-           
+
         }
 
-        // TODO : Send out email for logs to alerts@grapevinebeta.com
+
     }
 }

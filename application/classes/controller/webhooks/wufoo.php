@@ -217,7 +217,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
         $url_mapping = array(
             'yelp.com' => 'Yelp',
-            'places.google.com' => 'Google Places',
+            'places.google.com' => 'Google Places (or Maps)',
             'citysearch.com' => 'CitySearch',
             'insiderpages.com' => 'InsiderPages',
             'local.yahoo.com' => 'Local.Yahoo.com (Yahoo! Local)',
@@ -226,7 +226,6 @@ class Controller_Webhooks_WuFoo extends Controller
             'yp.com' => 'YP.com (Yellow Pages)',
             'edmunds.com' => 'Edmunds Link',
             'dealerrater.com' => 'Dealer Rater Link'
-
 
         );
 
