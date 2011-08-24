@@ -290,19 +290,21 @@ class Controller_Webhooks_WuFoo extends Controller
                     $competitor_location->values($competitor_values);
                     $competitor_location->save();
                     $sites = $finder->find($query);
-
-                    if (count($sites['missing'])) {
+                    $missing = Arr::get($sites, 'missing');
+                    if ($missing) {
 
                         $this->failed(
                             'finding_competitor_sites',
                             array(
                                 'location_id' => $competitor_location->id,
-                                'missing_sites' => $sites['missing'],
+                                'missing_sites' => $missing,
                                 'query' => (string)$query
                             )
                         );
                     }
-                    unset($sites['missing']);
+                    if ($missing) {
+                        unset($sites['missing']);
+                    }
                     $sites['places.google.com'] = array(
                         'url' => $this->get_google_places($company->name)
                     );
