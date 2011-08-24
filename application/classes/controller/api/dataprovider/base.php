@@ -166,9 +166,10 @@ class Controller_Api_DataProvider_Base extends Controller
         );
 
         //            $this->mongo = new Mongo("mongodb://192.168.1.72:27017");
-        $this->mongo = new Mongo();
+        $this->mongo = new Mongo("mongodb://50.57.109.174:27017");
 
-        $this->db = $this->mongo->selectDB($this->industry());
+        $industry=$this->industry();
+        $this->db = $this->mongo->selectDB($industry);
 
 
     }

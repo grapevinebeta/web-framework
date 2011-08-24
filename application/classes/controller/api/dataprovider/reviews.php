@@ -70,6 +70,9 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
         ) {
             //print_r($doc);
             $category = $doc['category'];
+            if (empty($category)) {
+                continue;
+            }
             if (!isset($categories[$category])) {
                 $categories[$category] = array(
                     'used' => 0,
@@ -86,16 +89,18 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
         }
 
 
-        $sorter = new Sorter('used', -1);
-        $categories = $sorter->sort($categories);
-        foreach (
-            $categories as &$category
-        ) {
+        if (!empty($categories)) {
+            $sorter = new Sorter('used', -1);
+            $categories = $sorter->sort($categories);
+            foreach (
+                $categories as &$category
+            ) {
 
 
-            $category['rating'] = number_format($category['rating'] / $category['used'], 2);
-            $category['percent'] = number_format(($category['used'] / $total) * 100, 2);
+                $category['rating'] = number_format($category['rating'] / $category['used'], 2);
+                $category['percent'] = number_format(($category['used'] / $total) * 100, 2);
 
+            }
         }
         // category , #of instance, avg rating which category( score),
 

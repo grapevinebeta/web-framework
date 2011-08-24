@@ -91,7 +91,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
         $results = array();
 
         $query = $this->defaultQuery();
-        
+
 
         $filters = Arr::get($_REQUEST, 'filters'); //$this->request->post('filters');
         $status = Arr::get($filters, 'status', array());
@@ -188,25 +188,40 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
     protected function getFilteredCountsMap()
     {
         return 'function(){
-                     emit({},{status:this.status,site:this.site,rating:this.rating});
+                    var status={};
+                    status[this.status]=1;
+                    status[this.rating]=1;
+
+                    emit("status",status);
+                    
+                   var source={};
+                   source[this.site]=1;
+                    emit("source",source);
+
 
             }';
     }
 
     protected function getFilteredCountsReduce()
     {
-        return
-                'function(key,values){
-            var results={source:{},status:{}};
+
+        return 'function(key,values){
+            var results={};
+
+            var val;
 
             values.forEach(function(value){
-               results.source[value.site]=(results.source[value.site]||0)+1;
-               results.status[value.status]=(results.status[value.status]||0)+1;
-               results.status[value.rating]=(results.status[value.rating]||0)+1;
+               for(var kind in value){
+                val=results[kind] || 0;
+                results[kind]=++val;
+               }
+
+
             });
 
             return results;
-        }';
+        };';
+
     }
 
     protected function getFilterKinds()
@@ -224,7 +239,8 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
             'mapreduce' => $this->collection,
             'map' => $map,
             'reduce' => $reduce,
-            'query' => $query, 'out' => array('inline' => 1)
+            'query' => $query,
+            'out' => array('inline' => TRUE)
 
         );
 
@@ -245,12 +261,17 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
         $return = $this->db->command($command);
 
+        $results = Arr::get($return, 'results', array());
 
-        if (count($return['results'])) {
-            $results = Arr::path($return, 'results.0.value');
-        } else {
-            $results = array();
+        $cleaned = array('status' => array(), 'source' => array());
+
+        foreach (
+            $results as $result
+        ) {
+            $kind = $result['_id'];
+            $cleaned[$kind] = $result['value'];
         }
+        $results = $cleaned;
 
 
         $kinds = $this->getFilters();
@@ -262,9 +283,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 $filters as $name
                 => $value
             ) {
-                $path = $kind . '.' . $value;
 
-                $total = Arr::path($results, $path, 0);
+
+                $total = Arr::get($results[$kind], $value, 0);
                 $response[$kind][$name] = array(
                     'total' => $total,
                     'value' => $value,

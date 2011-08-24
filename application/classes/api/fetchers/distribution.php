@@ -74,6 +74,7 @@ class Api_Fetchers_Distribution extends Api_Fetchers_Base
 
         $results = $db->command($command);
 
+
         $defaults = array('negative', 'positive', 'neutral', 'points', 'count', 'score');
         $single = count($this->_locations) == 1;
         $return = array_fill_keys($this->_locations, array_fill_keys($defaults, 0));
