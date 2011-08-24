@@ -20,7 +20,7 @@ select {
     border: 1px solid #EAEAEA;
 }
 
-input[type=text] {
+input[type=text], input[type=password] {
     font-family: Arial, Verdana, Helvetica, sans-serif;
     color: #593B7C;
     border: 1px solid #EAEAEA;
@@ -1694,4 +1694,28 @@ input[type=submit] {
         padding: 0px;
     }
     
-    
+    .button-g {
+
+        background: -webkit-gradient(linear, left top, left bottom, from(#D1CDDC), to( #573975));
+        background: -moz-linear-gradient(top, #D1CDDC, #573975);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#D1CDDC, endColorstr=#573975);
+        -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#D1CDDC, endColorstr=#573975)";
+
+        border: 1px solid #573975;
+        border-radius: 4px 4px 4px 4px;
+        color: #FFFFFF;
+        padding: 2px 3px;
+
+    }
+
+    .notice {
+        border: 1px solid #dfdfdf;
+        margin: 10px 0px;
+        padding:10px;
+
+        color: #444;
+        background-color: #f4f4f4;
+        width:300px;
+        text-align: center;
+        display:none;
+    }

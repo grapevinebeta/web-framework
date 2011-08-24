@@ -167,7 +167,9 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
                 $doc as $site
                 => $site_info
             ) {
-                $site = str_replace('.com', '', $site);
+                // sites "dots" are replaced with _, this is a requirement
+                // to store keys in mongodb
+                $site = str_replace(array('_', '.com'), array('.', ''), $site);
                 $site = ucfirst($site);
 
                 if (!isset($sites[$site])) {

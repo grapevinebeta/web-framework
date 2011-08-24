@@ -26,8 +26,8 @@ class SiteFinder_Finder
             /*'yellowpages.com' => '/-[0-9]+/',*/
             'insiderpages.com' => '/b\/[0-9]+\//',
             'citysearch.com' => '/profile\/[0-9]+\/[^\.]+\.html/',
-            'local.yahoo.com' => '/info-\d+-/',
-            'places.google.com' => '/maps\/places'
+            'local.yahoo.com' => '/info-\d+-/'
+           /* 'places.google.com' => '/maps\/places'*/
 
 
         )

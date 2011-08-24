@@ -121,7 +121,8 @@ class Controller_Webhooks_WuFoo extends Controller
             'password' => 'Password',
             'email' => 'Email',
             'firstname' => 'First',
-            'lastname' => 'Last'
+            'lastname' => 'Last',
+            'phone' => 'Phone Number'
         );
 
         $db = Database::instance();
@@ -246,6 +247,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $dummy_user->email = 'dummy@grapevinebeta.com';
             $dummy_user->firstname = 'dummy';
             $dummy_user->lastname = 'user';
+            $dummy_user->phone = '1111111111';
             $dummy_user->save();
 
         }
@@ -254,6 +256,7 @@ class Controller_Webhooks_WuFoo extends Controller
         $finder = new SiteFinder_Finder();
         $query = new SiteFinder_Query();
         $query->industry = $industry;
+
 
         for (
             $i = 1; $i <= 6; $i++
@@ -300,6 +303,9 @@ class Controller_Webhooks_WuFoo extends Controller
                         );
                     }
                     unset($sites['missing']);
+                    $sites['places.google.com'] = array(
+                        'url' => $this->get_google_places($company->name)
+                    );
                     if (count($sites)) {
                         $sites = array_map(create_function('$a', 'return $a["url"];'), $sites);
                         $this->add_to_queue($industry, $competitor_location->id, $sites);
@@ -337,6 +343,20 @@ class Controller_Webhooks_WuFoo extends Controller
 
         // $log->add(Log::DEBUG, 'wufoo hook :post', array(':post' => print_r($post, true)));
         echo "found";
+    }
+
+    private $_google_places
+    = array(
+        'Banner Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
+        'Bryan Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
+        'Levis Chevrolet Cadillac' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
+        'Hood Northlake Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
+        'Rainbow Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697'
+    );
+
+    private function get_google_places($name)
+    {
+        return Arr::get($this->_google_places, $name);
     }
 
     private function add_to_queue($industry, $location_id, $queue)

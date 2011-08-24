@@ -37,11 +37,12 @@ class Controller_Api extends Controller
 
             $this->_current_user = Auth::instance()->get_user(); // cache currently logged in user
 
+            
             // bind current user to every view
             View::bind_global('_current_user', $this->_current_user);
 
             // load first available location
-            $this->_location = $this->_current_user->getLocations()->current();
+            $this->_location = $this->_current_user->getLocations(false)->current();
         } else {
             $location_id = $this->request->post('loc');
             if (!empty($location_id)) {
