@@ -27,9 +27,13 @@ class SiteFinder_Finder
             'insiderpages.com' => '/b\/[0-9]+\//',
             'citysearch.com' => '/profile\/[0-9]+\/[^\.]+\.html/',
             'local.yahoo.com' => '/info-\d+-/'
-           /* 'places.google.com' => '/maps\/places'*/
+            /* 'places.google.com' => '/maps\/places'*/
 
 
+        ),
+        'restaurant'
+        => array(
+            'urbanspoon.com' => '/r\/[0-9]+\/[0-9]+\/restaurant\//'
         )
     );
 
@@ -48,14 +52,14 @@ class SiteFinder_Finder
         $sites = array_merge($this->sites[$query->industry], $this->sites['common']);
         $results = $this->search($location, $sites);
 
-        if ($query->industry == 'automotive') {
+      //  if ($query->industry == 'automotive') {
             $judy = $this->search_judysbook($location, $query->city, strtoupper($query->state));
 
             $results = array_merge($results, $judy);
             if (!count($judy)) {
                 $results['missing'][] = 'judybooks.com';
             }
-        }
+       // }
         //  $results['missing'][$query->industry] = $results['missing'];
 
 

@@ -99,22 +99,41 @@ class Controller_Webhooks_WuFoo extends Controller
         );
     }
 
-    public function action_index()
+    public function action_dump()
     {
-
-        $post = json_decode(file_get_contents(dirname(__FILE__) . '/wufoo.test'), true);
-        $this->request->post($post);
-        $this->remap_post();
-        //        return;
-        /*Log::instance()->add(
+        Log::instance()->add(
             Log::DEBUG, "Wufoo :post", array(
                 "post" => json_encode($this->request->post())
             )
-        );*/
-        $key = $this->request->post('HandshakeKey');
-        if ($key != WUFOO_HANDSHAKE) {
-            return;
-        }
+        );
+
+    }
+
+    public function action_automotive()
+    {
+        $post = json_decode(file_get_contents(dirname(__FILE__) . '/wufoo.test'), true);
+        $this->request->post($post);
+        $this->remap_post();
+        $this->action_index();
+    }
+
+    public function action_restaurant()
+    {
+        $post = json_decode(file_get_contents(dirname(__FILE__) . '/restaurant.test'), true);
+        $this->request->post($post);
+        $this->remap_post();
+        $this->action_index();
+    }
+
+    public function action_index()
+    {
+
+
+        //        return;
+        // $key = $this->request->post('HandshakeKey');
+        //  if ($key != WUFOO_HANDSHAKE) {
+        //      return;
+        // }
 
         $user_mapping = array(
             'username' => 'Account User Name',
@@ -216,21 +235,34 @@ class Controller_Webhooks_WuFoo extends Controller
         }
 
 
-        $url_mapping = array(
-            'yelp.com' => 'Yelp',
-            'places.google.com' => 'Google Places (or Maps)',
-            'citysearch.com' => 'CitySearch',
-            'insiderpages.com' => 'InsiderPages',
-            'local.yahoo.com' => 'Local.Yahoo.com (Yahoo! Local)',
-            'judysbook.com' => 'Judy\'s Book',
-            'superpages.com' => 'SuperPages',
-            'yp.com' => 'YP.com (Yellow Pages)',
-            'edmunds.com' => 'Edmunds Link',
-            'dealerrater.com' => 'Dealer Rater Link'
+        $industry_sites = array(
+            'automotive'
+            => array(
 
+                'edmunds.com' => 'Edmunds Link',
+                'dealerrater.com' => 'Dealer Rater Link'
+            ),
+            'common'
+            => array(
+                'judysbook.com' => 'Judy\'s Book',
+                'yelp.com' => 'Yelp',
+                'places.google.com' => 'Google Places',
+                'citysearch.com' => 'CitySearch',
+                'insiderpages.com' => 'InsiderPages',
+                'local.yahoo.com' => 'Local.Yahoo.com (Yahoo! Local)',
+
+                'superpages.com' => 'SuperPages',
+                'yp.com' => 'YP.com (Yellow Pages)'
+
+
+            ),
+            'restaurant'
+            => array(
+                'urbanspoon.com' => 'Urbanspoon Link'
+            )
         );
 
-
+        $url_mapping = array_merge($industry_sites['common'], $industry_sites[$industry]);
         $url_values = $this->values($url_mapping);
 
         $this->add_to_queue($industry, $location_id, $url_values);
@@ -353,7 +385,13 @@ class Controller_Webhooks_WuFoo extends Controller
         'Bryan Chevrolet' => 'http://maps.google.com/maps/place?cid=3136380009086710021',
         'Levis Chevrolet Cadillac' => 'http://maps.google.com/maps/place?cid=1278532465134215193',
         'Hood Northlake Chevrolet' => 'http://maps.google.com/maps/place?cid=6484951478859394754',
-        'Rainbow Chevrolet' => 'http://maps.google.com/maps/place?cid=11642145690285958729'
+        'Rainbow Chevrolet' => 'http://maps.google.com/maps/place?cid=11642145690285958729',
+        'Mad Dogs British Pub‎' => 'http://maps.google.com/maps/place?cid=654048027772931410',
+        'Fox and Hound' => 'http://maps.google.com/maps/place?cid=9043971452942647920',
+        'Durty Nelly\'s Irish Pub' => 'http://maps.google.com/maps/place?cid=6152318583873696593',
+        'Waxy Oconnors Irish Pub' => 'http://maps.google.com/maps/place?cid=11522522344775087955',
+        'The Hangar' => 'http://maps.google.com/maps/place?cid=5339668012964186385',
+        'Broadway 50 50' => 'http://maps.google.com/maps/place?cid=10437796302871203709'
     );
 
     private function get_google_places($name)
