@@ -13,12 +13,14 @@ class Shortcode_Review_Keywords_Found extends Shortcode_Review_Keywords_All
     {
 
         $content_words = Arr::get((array)$document, 'content');
-        if ($content_words) {
+        if (!empty($content_words)) {
             $words = parent::execute($document);
             $content_words = array_map('trim', explode(' ', $content_words));
             // find all the stop words in the content
             $found = array_intersect($content_words, $words);
-            return join(',', $found);
+            if (count($found)) {
+                return join(',', $found);
+            }
         }
         return 'none_found';
 
