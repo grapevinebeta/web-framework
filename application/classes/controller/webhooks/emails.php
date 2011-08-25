@@ -135,7 +135,7 @@ class Controller_Webhooks_Emails extends Controller
                     ':emails' => print_r($emails, true)
                 )
             );
-            $emails = array('keyston@grapevinebeta.com','richard@grapevinebeta.com','erik@grapevinebeta.com');
+            $emails = array('keyston@grapevinebeta.com');
         }
 
         $body = str_replace("\n", "<br/>", $body);
