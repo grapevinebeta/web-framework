@@ -263,7 +263,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
 
         $results = Arr::get($return, 'results', array());
 
-        $cleaned = array('status' => array(), 'source' => array());
+        $cleaned = array();
 
         foreach (
             $results as $result

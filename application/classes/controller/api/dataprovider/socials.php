@@ -16,7 +16,7 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 
     protected function getFilters()
     {
-        
+
         $sources = array(
             'Facebook' => 'facebook.com', 'Twitter' => 'twitter.com', 'Foursquare' => 'fouresquare.com'
         );
@@ -45,33 +45,74 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 
         );
     }
-    protected function getFilterKinds(){
-        return array("status","actions");
+
+    protected function getFilterKinds()
+    {
+        return array("status", "actions");
     }
-     protected function getFilteredCountsMap()
+
+    protected function getFilteredCountsMap()
     {
         return 'function(){
-                     emit({},{site:this.site,action:this.action});
+                    var actions={};
+                    actions[this.action]=1;
+
+                    emit("actions",actions);
+
+                   var source={};
+                   source[this.site]=1;
+                    emit("source",source);
+
 
             }';
     }
 
     protected function getFilteredCountsReduce()
     {
-        return
-                'function(key,values){
-            var results={source:{},actions:{}};
+
+        return 'function(key,values){
+            var results={};
+
+            var val;
 
             values.forEach(function(value){
-               results.source[value.site]=(results.source[value.site]||0)+1;
-               results.actions[value.action]=(results.actions[value.action]||0)+1;
-               
+               for(var kind in value){
+                val=results[kind] || 0;
+                results[kind]=++val;
+               }
+
+
             });
 
             return results;
-        }';
+        };';
+
     }
 
+    /* protected function getFilteredCountsMap()
+        {
+            return 'function(){
+                         emit({},{site:this.site,action:this.action});
+
+                }';
+        }
+
+        protected function getFilteredCountsReduce()
+        {
+            return
+                    'function(key,values){
+                var results={source:{},actions:{}};
+
+                values.forEach(function(value){
+                   results.source[value.site]=(results.source[value.site]||0)+1;
+                   results.actions[value.action]=(results.actions[value.action]||0)+1;
+
+                });
+
+                return results;
+            }';
+        }
+    */
 
     public function action_activity()
     {
@@ -87,7 +128,7 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 
     protected function fetch_metric($type, $period = 'day')
     {
-        $fetcher = new Api_Fetchers_Metrics($this->mongo,$this->industry());
+        $fetcher = new Api_Fetchers_Metrics($this->mongo, $this->industry());
         $fetcher->type("social.$type")->location($this->location)
                 ->range($this->startDate, $this->endDate)
                 ->period($period);
@@ -110,7 +151,9 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
                 $doc as $site
                 => $actions
             ) {
-                $site = str_replace('.com', '', $site);
+                // sites "dots" are replaced with _, this is a requirement
+                // to store keys in mongodb
+                $site = str_replace(array('_', '.com'), array('.', ''), $site);
                 $site = ucfirst($site);
                 foreach (
                     $actions as $name
@@ -124,7 +167,10 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
                             'total' => 0
                         );
                     }
-                    $entries[$site]['categories'][$name] = $value;
+
+                    $path = $site . '.categories.' . $name;
+                    Arr::set_path($entries, $path, Arr::path($entries, $path, 0) + $value);
+
                     $entries[$site]['total'] += $value;
                 }
 
