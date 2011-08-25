@@ -781,7 +781,7 @@ class Controller_Api_Settings extends Controller_Api
             $keys as $key
         ) {
 
-            $queue_extra[$key] = $this->request->post($key);
+            $queue_extra[str_replace('facebook_', '', $key)] = $this->request->post($key);
             $query->values(
                 array(
 
@@ -900,7 +900,7 @@ class Controller_Api_Settings extends Controller_Api
              * token to the account of the specific user.
              */
             if ($location_id) {
-                $queue_extras=array();
+                $queue_extras = array();
                 // add access token to the given location
                 // @todo Or should it replace access token even if there already
                 //      exists at least one for given location?
@@ -924,8 +924,8 @@ class Controller_Api_Settings extends Controller_Api
                 )
                         ->create();
                 // store for insert into queue
-                $queue_extras['oauth_token_secret']=(string)$access_token_secret;
-                
+                $queue_extras['oauth_token_secret'] = (string)$access_token_secret;
+
                 // find older tokens...
                 $old_twitter_oauth_tokens = ORM::factory('location_setting')
                         ->where_open()
@@ -953,8 +953,8 @@ class Controller_Api_Settings extends Controller_Api
                 )
                         ->create();
 
-                 // store for insert into queue
-                $queue_extras['oauth_token']=(string)$access_token;
+                // store for insert into queue
+                $queue_extras['oauth_token'] = (string)$access_token;
 
                 // find older tokens...
                 $old_twitter_oauth_tokens = ORM::factory('location_setting')
@@ -985,8 +985,8 @@ class Controller_Api_Settings extends Controller_Api
                     )
                 )
                         ->create();
-                 // store for insert into queue
-                $queue_extras['account']=(string)$twitter_screen_name;
+                // store for insert into queue
+                $queue_extras['account'] = (string)$twitter_screen_name;
                 // find old account names...
                 $old_twitter_account_names = ORM::factory('location_setting')
                         ->where_open()

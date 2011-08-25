@@ -227,10 +227,10 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         if (empty($dateInterval)) {
             $dateInterval = 6;
         }
-        $start_time = $this->startDate->sec;
+        $start_time = strtotime('midnight', $this->startDate->sec);
 
 
-        $end_time = $this->endDate->sec;
+        $end_time = strtotime('midnight', $this->endDate->sec);
 
         $seconds_step = floor(($end_time - $start_time) / $dateInterval);
         $dates = array();
@@ -250,7 +250,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                 var dates=$js_dates;
                 var date;
                 var len=dates.length;
-                var time =this.date.getTime()/ 1000;
+                var time =this.date.getTime()/1000;
 
                 for(var i=0;i<len;i++){
                     date =dates[i];
@@ -334,6 +334,9 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
             $location_dates = Arr::get($results, $date, $no_date_default);
 
 
+            if ($i == 5) {
+                $a = 1;
+            }
             foreach (
                 $location_ids as $location_id
             ) {
@@ -356,7 +359,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
             }
         }
 
-        $results=$cleaned;
+        $results = $cleaned;
 
         $final = array();
         foreach (
