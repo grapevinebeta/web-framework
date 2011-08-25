@@ -350,10 +350,10 @@ class Controller_Webhooks_WuFoo extends Controller
     private $_google_places
     = array(
         'Banner Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
-        'Bryan Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
-        'Levis Chevrolet Cadillac' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
-        'Hood Northlake Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697',
-        'Rainbow Chevrolet' => 'http://maps.google.com/maps/place?cid=7164700620406135697'
+        'Bryan Chevrolet' => 'http://maps.google.com/maps/place?cid=3136380009086710021',
+        'Levis Chevrolet Cadillac' => 'http://maps.google.com/maps/place?cid=1278532465134215193',
+        'Hood Northlake Chevrolet' => 'http://maps.google.com/maps/place?cid=6484951478859394754',
+        'Rainbow Chevrolet' => 'http://maps.google.com/maps/place?cid=11642145690285958729'
     );
 
     private function get_google_places($name)

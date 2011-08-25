@@ -283,12 +283,12 @@ class Controller_Api_DataProvider_Fixtures extends Controller_Api_DataProvider_B
                 'activity'
                 => array(
                     'tweet',
-                    'mention',
-                    'hashtag'
+                    'mention'
+                    //'hashtag'
                 ),
                 'subscriber'
                 => array(
-                    'follower'
+                    'follorwer'
                 )
 
             ),
