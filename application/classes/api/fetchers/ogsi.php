@@ -138,6 +138,7 @@ class Api_Fetchers_Ogsi extends Api_Fetchers_Base
     {
         $competition_set_average = 0;
         $locations = 0;
+        $location_score = 0;
         foreach (
             $docs as $doc
         ) {
