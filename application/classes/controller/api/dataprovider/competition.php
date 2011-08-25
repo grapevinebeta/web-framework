@@ -321,6 +321,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         $no_date_default = array_fill_keys(array_keys($location_names), array('points' => 0, 'count' => 0));
 
 
+        $cleaned = array_fill_keys($dates, array());
         for (
             $i = 0; $i < $len; $i++
         ) {
@@ -351,10 +352,11 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                     $j--;
 
                 }
-                $results[$date][$location_id] = $count ? $points / $count : 0;
+                $cleaned[$date][$location_id] = $count ? $points / $count : 0;
             }
         }
 
+        $results=$cleaned;
 
         $final = array();
         foreach (
