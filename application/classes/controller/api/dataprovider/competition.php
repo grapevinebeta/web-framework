@@ -242,7 +242,8 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
         //TODO move this out into a js view
 
-        $js_locations = '[' . join(',', array_keys($location_names)) . ']';
+        $location_ids = array_keys($location_names);
+        $js_locations = '[' . join(',', $location_ids) . ']';
         $js_dates = '[' . join(',', $dates) . ']';
         $map
                 = "function(){
@@ -258,9 +259,9 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                 var agg=this.aggregates;
                   var locs = $js_locations;
                     locs.forEach(function(location){
-                        if(agg[location]){
-                            emit({date:date,location:location},agg[location]);
-                         }
+                        //if(agg[location]){
+                            emit({date:date,location:location},agg[location] ||{});
+                        // }
 
                     });
 
@@ -301,16 +302,60 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
         $return = $db->command($command);
         $results = array();
+
         foreach (
             $return['results'] as $doc
         ) {
             $id = $doc['_id'];
 
 
-            $results[$id['date']][$id['location']] = $doc['value']['score'];
+            $results[$id['date']][$id['location']] = $doc['value'];
 
 
         }
+        // ensure that dates are in lowest to highest
+        ksort($results);
+        //$dates = array_values($results);
+        $len = count($dates);
+
+        $no_date_default = array_fill_keys(array_keys($location_names), array('points' => 0, 'count' => 0));
+
+
+        for (
+            $i = 0; $i < $len; $i++
+        ) {
+
+            // get current date index
+            $date = $dates[$i];
+
+
+            // get all the locations for this date
+            $location_dates = Arr::get($results, $date, $no_date_default);
+
+
+            foreach (
+                $location_ids as $location_id
+            ) {
+
+                // start counter from curren date
+                $j = $i;
+                $points = 0;
+                $count = 0;
+
+                while ($j != -1) {
+                    $past_date = $dates[$j]; // get past date, in case of j=0 its the curren date
+                    $path = $past_date . '.' . $location_id;
+                    $past_location_values = Arr::path($results, $path, array('points' => 0, 'count' => 0));
+                    $points += Arr::get($past_location_values, 'points', 0);
+                    $count += Arr::get($past_location_values, 'count', 0);
+                    $j--;
+
+                }
+                $results[$date][$location_id] = $count ? $points / $count : 0;
+            }
+        }
+
+
         $final = array();
         foreach (
             $dates as $date
