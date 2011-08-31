@@ -1161,7 +1161,7 @@ var BC_Inbox = BoxController.extend({
                 filterLink.text(filters[filter].total +' ');
             }
             
-            if(filters[filter].active == 1 && filters[filter].total) {
+            if(filters[filter].active == 1 && filters[filter].total > 0) {
                 
                 filterLink.addClass('active');
                 activeCount++;
