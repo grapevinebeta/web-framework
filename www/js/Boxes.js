@@ -563,8 +563,6 @@ var BC_RecentActivity = BoxController.extend({
      */
     endpoint: '/api/box/social',
     
-    limit: 4,
-    
     ignore: true,
 
     processRow: function(row, template, timestamp) {
@@ -596,12 +594,27 @@ var BC_RecentActivity = BoxController.extend({
     },
 
     processData: function() {
-        var messages = this.data.messages,
+        var messages = this.data.messages, timestamp
         content = this.getContentDom().find('.data-grid-holder'),
         template = content.find('.row:first');
         content.find('.row').remove();
         
-        for(var timestamp in messages) {
+        var timestamps = [];
+        
+        for(timestamp in messages) {
+        
+            timestamps.push(timestamp);
+        }
+        
+        timestamps.sort(function(a,b) {
+            
+           return a == b ? 0 : (a > b) ? -1 : 1;
+            
+        });
+        
+        for(var t in timestamps) {
+            
+            timestamp = timestamps[t];
             
             var row = messages[timestamp];
             
