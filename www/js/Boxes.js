@@ -1110,11 +1110,13 @@ var BC_Inbox = BoxController.extend({
         self.getBoxDom().delegate("tr.collapsed","mouseenter mouseleave", function(event) {
             if (event.type == 'mouseenter') { 
                 
-                $(event.target).find('.expand').addClass('show');
+                self.getBoxDom().find('tr.collapsed .in > a.expand').removeClass('show');
+                
+                $(event.target).find('a.expand').addClass('show');
                 
             }
             else {
-                $(event.target).find('.expand').removeClass('show');
+                $(event.target).find('a.expand').removeClass('show');
             }
             
         });
