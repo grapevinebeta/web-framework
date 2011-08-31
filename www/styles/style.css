@@ -549,7 +549,7 @@ input[type=submit] {
             background-position: -553px -160px;
         }
 
-        #box-recent-reviews .reviewStatus-opened {
+        #box-recent-reviews .reviewStatus-new {
             background-position: -553px -14px;
         }
 
@@ -1316,7 +1316,7 @@ input[type=submit] {
         background-image: url(../images/icons/icons.png);
     }
     
-    #box-recent-reviews .recent-review-status-icon.opened {
+    #box-recent-reviews .recent-review-status-icon.new {
         background-position: -454px -12px;
     }
 
