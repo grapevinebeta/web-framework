@@ -2216,7 +2216,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     break;
                 case 'title':
                     titleLink = this.titleLink.clone();
-                    titleLink.text(value);
+                    titleLink.text(value ? value : 'No Title Available ');
                     col.find('div.in')
                     .html(titleLink)
                     .prepend(this.expandButton.clone());
@@ -2260,7 +2260,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
         .removeClass('open closed todo')
         .addClass(status);
         
-        tr.find('.review-details-title').text(message.title);
+        tr.find('.review-details-title').text(message.title ? message.title : 'No Title Available ');
         tr.find('.review-details-content').text(message.content);
         
         if(message.identity) {
@@ -2983,7 +2983,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                     break;
                 case 'title':
                     titleLink = $('<a href="#" class="title"></a>');
-                    titleLink.text(value);
+                    titleLink.text(value ? value : 'No Title Available ');
                     
                     col = col.find('div.in');
                     
@@ -3018,7 +3018,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         
         var tr = $(data.trContext);
         
-        tr.find('.details-title').text(message.title);
+        tr.find('.details-title').text(message.title ? message.title : 'No Title Available ');
         tr.find('.details-content').text(message.content);
         
         if(message.link !== undefined)
@@ -3372,7 +3372,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
                     break;
                 case 'title':
                     titleLink = $('<a href="#" class="title"></a>');
-                    titleLink.text(value);
+                    titleLink.text(value ? value : 'No Title Available ');
                     
                     col = col.find('div.in');
                     
@@ -3413,12 +3413,12 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
             
             title = $('<a/>', {
                 href: message.link,
-                text: message.title
+                text: message.title ? message.title : 'No Title Available '
             });
             
         }
         else {
-            title = message.title;
+            title = message.title ? message.title : 'No Title Available ';
         }
         
         tr.find('.details-title').html(title);
