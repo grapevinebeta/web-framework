@@ -2257,12 +2257,14 @@ var BC_ReviewInbox = BC_Inbox.extend({
         
                 var url = Site.check(message.site);
             
-                if(url)
+                if(url) {
                     tr.find('.actions-reply').attr('href', url);    
+                    tr.find('.actions-reply').show();
+                }
                 else {
-             
+                    tr.find('.recentReviewDetailsButtons span.man-disabled').remove();
                     tr.find('.recentReviewDetailsButtons').prepend('<span class="man-disabled">Management Responses Not Available for this Review Site</span>');
-                    tr.find('.actions-reply').remove()
+                    tr.find('.actions-reply').hide();
              
                 }
          
