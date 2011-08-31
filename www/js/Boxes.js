@@ -1106,12 +1106,16 @@ var BC_Inbox = BoxController.extend({
             
             
         });
-
-        // show expand button on hover
-        self.getBoxDom().delegate('tr.collapsed', 'hover', function(e) {
-            
-            $(this).find('.expand').toggleClass('show');
-            
+        
+        self.getBoxDom().delegate("tr.collapsed","mouseenter mouseleave", function(event) {
+            if (event.type == 'mouseenter') { 
+                
+                $(event.target).find('.expand').addClass('show');
+                
+            }
+            else {
+                $(event.target).find('.expand').removeClass('show');
+            }
             
         });
 
@@ -1374,7 +1378,7 @@ var BC_Inbox = BoxController.extend({
 
         });
         
-        data.trContext.prev().find('.expand-preloader').removeClass('expand-preloader').addClass('expand');
+        data.trContext.prev().find('.expand-preloader').attr('class', 'expand');
         tr.removeClass('hidden-row');
         
     },
@@ -1391,7 +1395,8 @@ var BC_Inbox = BoxController.extend({
         
         data.trContext = $(e.target);
         
-        data.trContext.prev().find('.expand').removeClass('expand').addClass('expand-preloader');
+        data.trContext.prev().find('.expand').attr('class', 'expand-preloader');
+
         data.context.expandedPopulateCallback(data);
         
         
