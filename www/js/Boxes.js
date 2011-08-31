@@ -3018,7 +3018,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
         
         var tr = $(data.trContext);
         
-        tr.find('.details-title').text(message.title ? message.title : 'No Title Available ');
+        tr.find('.details-title').text(message.title ? message.title : 'No Title Available');
         tr.find('.details-content').text(message.content);
         
         if(message.link !== undefined)
