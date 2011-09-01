@@ -114,7 +114,19 @@ class Controller_Account extends Controller_Template {
         
         $competitors = $settings->getSetting('competitor');
         
-        $this->_contentView->competitors = $competitors;
+        
+        $companies = DB::select_array(array('id', 'name'))
+                ->from('companies')
+                ->where('id', 'IN', $competitors)
+                ->execute();
+        
+        /* @var $companies Database_Result_Cached|Kohana_Database */
+        
+        $companies = $companies->as_array('id', 'name');
+        
+        
+        
+        $this->_contentView->competitors = $companies;
         
     }
 
