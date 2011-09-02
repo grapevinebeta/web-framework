@@ -3218,7 +3218,8 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                type: 'bar'
+                type: 'bar',
+                height: 500
             },
             title: '',
             xAxis: {
