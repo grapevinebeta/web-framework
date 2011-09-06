@@ -121,11 +121,11 @@ class Controller_Webhooks_WuFoo extends Controller
     public function action_zinc()
     {
         $post = json_decode(file_get_contents(dirname(__FILE__) . '/zinc.test'), true);
-        /*        $request = Request::factory('http://staging.pickgrapevine.com/webhooks/wufoo');
-        $response = $request->post($post)->execute();
-        print_r($response);*/
+        // $request = Request::factory('http://staging.pickgrapevine.com/webhooks/wufoo');
+        //$response = $request->post($post)->execute();
+        //print_r($response);
         $this->request->post($post);
-        
+
         $this->action_index();
     }
 
