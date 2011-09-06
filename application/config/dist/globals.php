@@ -32,7 +32,7 @@ return array(
             'Select One ->', 'Sales Dept', 'Service Dept', 'Parts Dept', 'Finance Dept.',
             'General / Multiple Dept.'
         ),
-        'restaurants'
+        'restaurant'
         => array(
             'Select One ->', 'Valet /Parking', 'Drinks / Bar', 'Food / Kitchen', 'Service / Greeters',
             'Service / Waitstaff', 'Service / Managers', 'General / Multiple Dept.'
@@ -64,6 +64,9 @@ return array(
         => array(
             'Edmunds' => 'edmunds.com',
             'Dealer Rater' => 'dealerrater.com'
+        ),
+        'restaurant'=>array(
+            'Urbanspoon'=>'urbanspoon.com'
         )
 
     )

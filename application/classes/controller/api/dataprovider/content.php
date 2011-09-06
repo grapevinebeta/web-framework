@@ -284,8 +284,8 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 => $value
             ) {
 
-
-                $total = Arr::get($results[$kind], $value, 0);
+                $path = $kind . '.' . $value;
+                $total = Arr::path($results, $path, 0);
                 $response[$kind][$name] = array(
                     'total' => $total,
                     'value' => $value,
