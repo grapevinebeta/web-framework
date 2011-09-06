@@ -61,7 +61,8 @@ class Controller_Webhooks_WuFoo extends Controller
 
                 }
             } else {
-                $title = $is_competitor ? $field->Title . ' Name' : $field->Title;
+                /*$is_competitor ? $field->Title . ' Name' :*/
+                $title = $field->Title;
                 $post[$title] = trim($this->request->post($field->ID));
             }
             if ($field->Title == 'Company Address') {
@@ -128,6 +129,7 @@ class Controller_Webhooks_WuFoo extends Controller
     public function action_index()
     {
 
+        $this->action_dump();
 
         //        return;
         // $key = $this->request->post('HandshakeKey');
@@ -319,6 +321,10 @@ class Controller_Webhooks_WuFoo extends Controller
                     $competitor_location = ORM::factory('location');
 
 
+                    $competitor_places = Arr::get($competitor_values, 'places');
+                    if (!empty($competitor_places)) {
+                        unset($competitor_values['places']);
+                    }
                     $competitor_location->values($competitor_values);
                     $competitor_location->save();
                     $sites = $finder->find($query);
@@ -337,9 +343,11 @@ class Controller_Webhooks_WuFoo extends Controller
                     if ($missing) {
                         unset($sites['missing']);
                     }
-                    $sites['places.google.com'] = array(
-                        'url' => $this->get_google_places($company->name)
-                    );
+                    if (!empty($competitor_places)) {
+                        $sites['places.google.com'] = array(
+                            'url' => $competitor_places
+                        );
+                    }
                     if (count($sites)) {
                         $sites = array_map(create_function('$a', 'return $a["url"];'), $sites);
                         $this->add_to_queue($industry, $competitor_location->id, $sites);
@@ -391,7 +399,8 @@ class Controller_Webhooks_WuFoo extends Controller
         'Durty Nelly\'s Irish Pub' => 'http://maps.google.com/maps/place?cid=6152318583873696593',
         'Waxy Oconnors Irish Pub' => 'http://maps.google.com/maps/place?cid=11522522344775087955',
         'The Hangar' => 'http://maps.google.com/maps/place?cid=5339668012964186385',
-        'Broadway 50 50' => 'http://maps.google.com/maps/place?cid=10437796302871203709'
+        'Broadway 50 50' => 'http://maps.google.com/maps/place?cid=10437796302871203709',
+
     );
 
     private function get_google_places($name)
@@ -456,7 +465,8 @@ class Controller_Webhooks_WuFoo extends Controller
             'address2' => "Competitor #$number Address Line 2",
             'city' => "Competitor #$number City",
             'state' => "Competitor #$number State",
-            'zip' => "Competitor #$number Zip"
+            'zip' => "Competitor #$number Zip",
+            'places' => "Competitor #$number Google Places"
 
 
         );
