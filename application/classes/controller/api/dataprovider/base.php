@@ -73,7 +73,13 @@ class Controller_Api_DataProvider_Base extends Controller
                 'viewingRange', $range
             );
         } else {
-            $range = array('date' => '-1 month -1 day', 'period' => '-1 day');
+            $range = Session::instance()->get("viewingRange");
+            if (empty($range)) {
+                $range = array('date' => '-1 month -1 day', 'period' => '-1 day');
+                Session::instance()->set(
+                    'viewingRange', $range
+                );
+            }
         }
         $period = $range['period'];
         switch ($period) {
@@ -88,8 +94,10 @@ class Controller_Api_DataProvider_Base extends Controller
             break;
         case '1y':
             $period = "+1 year";
+            break;
         case 'ytd':
             $period = "-1 day";
+            break;
         case 'all':
             $period = "-1 day";
             break;
@@ -133,6 +141,7 @@ class Controller_Api_DataProvider_Base extends Controller
             $end = strtotime($range['period']);
         } // this is the case when period has date value
 
+        $_start_date = date('Y m d', $start) . " " . date('Y m d', $end);
         //
         //        echo date('Y m d', $start), " ", date('Y m d', $end); exit;
 
@@ -165,8 +174,8 @@ class Controller_Api_DataProvider_Base extends Controller
             'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
         );
 
-        $this->mongo = new Mongo();
-       // $this->mongo = new Mongo("mongodb://50.57.109.174:27017");
+        //$this->mongo = new Mongo();
+        $this->mongo = new Mongo("mongodb://50.57.109.174:27017");
 
         $industry = $this->industry();
         $this->db = $this->mongo->selectDB($industry);
@@ -299,6 +308,7 @@ class Controller_Api_DataProvider_Base extends Controller
     {
         $collection = new MongoCollection($this->mongo->selectDB($this->industry()), $name);
         $cursor = $collection->find($query, $fields);
+        $size = $cursor->count(true);
         if ($limit > -1) {
             $skip = $this->request->post('page');
             if (empty($skip)) {
