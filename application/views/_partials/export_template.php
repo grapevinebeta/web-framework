@@ -31,7 +31,7 @@
       .clear { clear:both; }
 
       /* layout */
-      #container { font-family: Arial; font-size: 11pt; color: #000; position: relative; }
+      #container { font-family: Arial; font-size: 12pt; color: #000; position: relative; }
 
       /* footer shenanigans! */
       #footer { text-align: center; display: block; }
@@ -40,6 +40,8 @@
       #footer #contain { display: inline-block; width: 700px; height: 60px; }
       /* end hack */
 
+      
+      
 
 
 table thead tr th, table tfoot tr th {
@@ -292,6 +294,31 @@ prince-image-resolution: 96dpi;        /* 1 image pixel maps to 1px unit */
         letter-spacing: -2.1px;
     }
 
+    
+    .data .score {
+        font-weight: bold;
+        font-size: 110%;
+    }
+    
+    .data .rank {
+        display:block;
+    }
+    
+    .data th {
+        text-align: right;
+    }
+    
+    .data td {
+        
+    }
+    
+    .inner h2 {
+        
+        font-size: 120%;
+        font-weight: bold;
+        
+    }
+    
     </style>
   </head>
   <body>

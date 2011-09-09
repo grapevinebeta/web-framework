@@ -2220,6 +2220,17 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     break;
                 case 'title':
                     titleLink = this.titleLink.clone();
+                    
+                    
+                    var url = Site.check(message.site);
+                    
+                    if(url)
+                        titleLink.prop({
+                            'href': url,
+                            'target': '_blank'
+                                
+                        });
+                    
                     titleLink.text(value ? value : 'No Title Available');
                     col.find('div.in')
                     .html(titleLink)
@@ -3008,6 +3019,15 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                     titleLink = $('<a href="#" class="title"></a>');
                     titleLink.text(value ? value : 'No Title Available');
                     
+                    var url = Site.check(message.site);
+                    
+                    if(url)
+                        titleLink.prop({
+                            'href': url,
+                            'target': '_blank'
+                                
+                        });
+                    
                     col = col.find('div.in');
                     
                     col.html(titleLink);
@@ -3392,6 +3412,7 @@ var BC_SocialMediaInbox = BC_Inbox.extend({
                 case 'title':
                     titleLink = $('<a href="#" class="title"></a>');
                     titleLink.text(value ? value : 'No Title Available');
+                    
                     
                     col = col.find('div.in');
                     

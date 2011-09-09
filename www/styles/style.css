@@ -171,8 +171,12 @@ input[type=submit] {
     -moz-box-shadow: 2px 2px 2px #888;
     -webkit-box-shadow: 2px 2px 2px #888;
     box-shadow: 2px 2px 2px #888;
+    
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
+    
 }
 
 .menu-title {
@@ -749,7 +753,10 @@ input[type=submit] {
         height: 22px;
         background-image: url(../images/box/ogsi/bar-negative-bg.jpg);
         border: 1px solid #BC2B2C;
-        border-radius: 8px;
+        -webkit-border-radius: 8px;
+	-khtml-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
         text-align: center;
     }
     
@@ -760,7 +767,10 @@ input[type=submit] {
         float: left;
         background-image: url(../images/box/ogsi/bar-neutral-bg.jpg);
         border: 1px solid #D1BC30;
-        border-radius: 8px;
+        -webkit-border-radius: 8px;
+	-khtml-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
         overflow: visible;
     }
 
@@ -776,7 +786,10 @@ input[type=submit] {
         float: left;
         background-image: url(../images/box/ogsi/bar-positive-bg.jpg);
         border: 1px solid #18693C;
-        border-radius: 8px;
+        -webkit-border-radius: 8px;
+	-khtml-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
     }
 
     .bar-positive .bar-value {
@@ -956,7 +969,12 @@ input[type=submit] {
         -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#D1CDDC, endColorstr=#573975)";
 
         border: 1px solid #573975;
-        border-radius: 4px 4px 4px 4px;
+        
+        -webkit-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+        
         color: #FFFFFF;
         padding: 2px 3px;
 
@@ -1702,7 +1720,12 @@ input[type=submit] {
         -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#D1CDDC, endColorstr=#573975)";
 
         border: 1px solid #573975;
-        border-radius: 4px 4px 4px 4px;
+        
+        -webkit-border-radius: 4px;
+        -khtml-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        
         color: #FFFFFF;
         padding: 2px 3px;
 
