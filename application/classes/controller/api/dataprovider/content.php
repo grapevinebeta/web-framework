@@ -284,8 +284,9 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 => $value
             ) {
 
-                $path = $kind . '.' . $value;
-                $total = Arr::path($results, $path, 0);
+                // change demlimiter since 'site' has dots
+                $path = $kind . '+' . $value;
+                $total = Arr::path($results, $path, 0, '+');
                 $response[$kind][$name] = array(
                     'total' => $total,
                     'value' => $value,
