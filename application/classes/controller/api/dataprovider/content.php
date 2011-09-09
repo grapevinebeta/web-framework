@@ -287,11 +287,13 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
                 // change demlimiter since 'site' has dots
                 $path = $kind . '+' . $value;
                 $total = Arr::path($results, $path, 0, '+');
-                $response[$kind][$name] = array(
-                    'total' => $total,
-                    'value' => $value,
-                    'active' => in_array($value, $this->activeFilters)
-                );
+                if ($total) {
+                    $response[$kind][$name] = array(
+                        'total' => $total,
+                        'value' => $value,
+                        'active' => in_array($value, $this->activeFilters)
+                    );
+                }
             }
         }
 
