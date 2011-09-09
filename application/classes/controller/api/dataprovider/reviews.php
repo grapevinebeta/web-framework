@@ -12,7 +12,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
 
     protected $collection = "reviews";
     protected $default_fields
-    = array('rating' => 1, 'status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1);
+    = array('rating' => 1, 'status' => 1, 'score' => 1, 'date' => -1, 'site' => 1, 'title' => 1, '_id' => 1,"link"=>1);
     protected $expanded_fields = array('content' => 1, 'notes' => 1, 'tags' => 1, 'category' => 1, 'identity' => 1);
 
     public function before()

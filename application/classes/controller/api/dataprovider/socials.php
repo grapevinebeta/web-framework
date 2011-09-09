@@ -10,7 +10,8 @@ class Controller_Api_DataProvider_Socials extends Controller_Api_DataProvider_Co
 {
 
     protected $collection = "socials";
-    protected $default_fields = array('status' => 1, 'date' => -1, 'site' => 1, 'network' => 1, 'title' => 1);
+    protected $default_fields
+    = array('status' => 1, 'date' => -1, 'site' => 1, 'network' => 1, 'title' => 1, "link" => 1);
     protected $expanded_fields = array('content' => 1, 'notes' => 1, 'identity' => 1);
 
 
