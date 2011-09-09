@@ -12,7 +12,7 @@
                         <div class="ogsi-score-bg-right">
                             <div class="ogsi-score-bg-left">
                                 <div class="ogsi-score">
-                                    <div class="ogsi-score-ogsi">OGSI</div>
+                                    <div class="ogsi-score-ogsi">OCSI</div>
                                     <div class="ogsi-score-value"></div>
                                 </div>
                             </div>

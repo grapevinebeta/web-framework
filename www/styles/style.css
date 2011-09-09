@@ -798,7 +798,7 @@ input[type=submit] {
         padding-bottom: 6px;
         padding-left: -2px;
         text-align: left;
-        letter-spacing: -2.1px;
+        letter-spacing: -0.12em;
     }
 
 #range-form .ui-datepicker-trigger {
@@ -820,6 +820,7 @@ input[type=submit] {
 .box .box-filter {
     float:left;
     width: 600px;
+    line-height: 22px;
 }
 
 .box .box-filter a {
@@ -1342,7 +1343,6 @@ input[type=submit] {
     .window-close {
         background: none repeat scroll 0 0 #FFFFFF;
         border: 1px solid gray;
-        bottom: 0;
         font-weight: bold;
         left: 50%;
         margin-left: -23px;

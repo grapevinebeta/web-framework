@@ -14,9 +14,10 @@
         <?php echo view::factory('_partials/box/reviews-inbox'); ?>
     </div>
 
-    <div class="box-container active box-container-left">
-        <?php echo view::factory('_partials/box/review-sites'); ?>
+    <div class="box-container active">
+        <?php echo view::factory('_partials/box/competition-score'); ?>
     </div>
+    
     <?php /*
     <div class="box-container active box-container-right">
         <?php echo view::factory('_partials/box/social-activity'); ?>

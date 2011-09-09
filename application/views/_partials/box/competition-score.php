@@ -11,7 +11,7 @@
         <div class="box-filters-inner">
 
             <div class="box-filter box-filter-activity">
-                <a filter="ogsi" href="#" class="active">OGSI Score</a>
+                <a filter="ogsi" href="#" class="active">OCSI Score</a>
                 <span class="separator">|</span> 
                 <a filter="avg-star" href="#" class="active">Ave. Star Rating</a>
                 <span class="separator">|</span> 
@@ -35,7 +35,7 @@
                 <tbody>
                     <tr class="data ogsi">  
                         <th>
-                            <span class="score">OGSI Score</span>
+                            <span class="score">OCSI Score</span>
                             <span class="rank">Rank</span>
 
                         </th>

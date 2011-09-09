@@ -479,6 +479,7 @@ var BoxController = Class.extend({
             if(this.filters[name] === undefined)
                 this.filters[name] = [];
             
+            this.filters[name] = [];
             this.filters[name].push(value);
         }
         
@@ -1173,6 +1174,9 @@ var BC_Inbox = BoxController.extend({
         filterHolder.html('');
         
         for(var filter in filters) {
+
+            if(!filters[filter].total)
+                continue;
 
             var filterLink = $('<a href="#" data-filter-status="' + 
                 filters[filter].value + '"></a>');
@@ -2480,6 +2484,13 @@ var BC_ReviewInbox = BC_Inbox.extend({
         this.getContentDom().find('.ajax-loader').remove();
         this.getContentDom().find('.data-grid-holder').show();
         
+        
+        if(this.filter = this.getBoxDom().attr('filter')) {
+            
+            this.loaded = true;
+            
+        }
+        
     },
     
     renderAlerts: function() {
@@ -2529,7 +2540,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
       $('#alerts a.alert-show, #alerts a.todo-show').bind('click', function(e) {
         
         e.preventDefault();
-        var strWindowFeatures = "width=800,height=570,menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
+        var strWindowFeatures = "width=800,height=600,menubar=no,location=no,resizable=no,scrollbars=yes,status=no";
         window.open(this.href, "alerts", strWindowFeatures);
           
       });
@@ -2552,6 +2563,18 @@ var BC_ReviewInbox = BC_Inbox.extend({
             this.extraParams = {
                 include_date: false
             }
+            
+            var self = this;
+            
+            this.getBoxDom().resize(function(e) {
+                
+                
+                if(self.loaded) {
+                    $('.window-close').css('top', self.getBoxDom().height() + 35);
+                }
+                
+               
+            });
             
             $('.window-close').bind('click', function() {
                 window.close(); 
@@ -3218,8 +3241,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
         var options = {
             chart: {
                 renderTo: graphHolderId,
-                type: 'bar',
-                height: 500
+                defaultSeriesType: 'bar'
             },
             title: '',
             xAxis: {
@@ -3234,7 +3256,14 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
             },
             plotOptions: {
                 series: {
-                    stacking: 'normal'
+                    stacking: 'normal',
+                    events: {
+                        legendItemClick: function(event) {
+                           
+                            return false;
+                           
+                        }
+                    }
                 }
             },
             legend: {
@@ -3263,18 +3292,7 @@ var BC_CompetitionDistribution = BC_GraphBoxController.extend({
                 data: [],
                 color: '#218D48',
                 shadow: false
-            }],
-            plotOptions: {
-                series: {
-                    events: {
-                        legendItemClick: function(event) {
-                           
-                            return false;
-                           
-                        }
-                    }
-                }
-            }
+            }]
         }
         
         for (var i in this.graphData) {
