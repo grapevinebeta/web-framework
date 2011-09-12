@@ -70,7 +70,10 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
             $cursor as $doc
         ) {
             //print_r($doc);
-            $category = Arr::get($doc, 'category', 'Uncategorized');
+            $category = Arr::get($doc, 'category');
+            if (empty($category)) {
+                $category = 'Uncategorized';
+            }
 
             if (!isset($categories[$category])) {
                 $categories[$category] = array(
