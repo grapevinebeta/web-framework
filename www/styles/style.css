@@ -834,6 +834,7 @@ input[type=submit] {
     float:left;
     width: 600px;
     line-height: 22px;
+    margin-top: -5px;
 }
 
 .box .box-filter a {
@@ -1180,19 +1181,18 @@ input[type=submit] {
     .collapsed .col-title {
         font-weight: bold;
         font-style: italic; 
-        vertical-align: text-top;
+        vertical-align: middle;
 
     }
     
     .collapsed .expand {
         background: url("../images/icons/expand-icon.png") no-repeat scroll 0 0 transparent;
-        bottom: -6px;
-        display: block;
+        display: none;
         height: 15px;
         position: absolute;
-        right: 0px;
+        right: 0;
+        top: 10px;
         width: 55px;
-        display: none;
     }
     .show { display:block !important;}
     
@@ -1200,7 +1200,6 @@ input[type=submit] {
     
     .collapsed .col-title div.wrapper {
         position: relative;
-        height: 28px;
     }
     
     
@@ -1213,6 +1212,7 @@ input[type=submit] {
     .collapsed .col-title div.wrapper .in .title {
         margin-right:28px;
         display:block;
+        margin-top: -7px;
     }
     
     .box .col-2 h2 {

@@ -1175,7 +1175,7 @@ var BC_Inbox = BoxController.extend({
         
         for(var filter in filters) {
 
-            if(!filters[filter].total)
+            if(!filters[filter].total && filter != 'Total') 
                 continue;
 
             var filterLink = $('<a href="#" data-filter-status="' + 
