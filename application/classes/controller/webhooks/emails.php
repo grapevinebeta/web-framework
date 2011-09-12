@@ -117,8 +117,8 @@ class Controller_Webhooks_Emails extends Controller
 
     public function action_monthly()
     {
-        $location_ids = range(1, 7);
-        //$this->request->post('locations');
+        //$location_ids = range(1, 7);
+        $location_ids = $this->request->post('locations');
         if (empty($location_ids)) {
             return;
         }
@@ -132,7 +132,7 @@ class Controller_Webhooks_Emails extends Controller
             $location_ids as $location_id
         ) {
             $body = $expander->expand($template, $location_id);
-            //    $this->send($location_id, $body);
+            $this->send($location_id, $body);
         }
 
 
@@ -170,7 +170,7 @@ class Controller_Webhooks_Emails extends Controller
         $body = str_replace("\n", "<br/>", $body);
         $mailer = new Model_Mailer();
         $reply = array('no-reply@grapevinebeta.com' => 'No-Reply');
-        $from = 'reports@grapevinebeta.com';
+        $from = 'notifications@pickgrapevine.com';
         $sent = $mailer->send($emails, 'A Message From PickGrapevine.com', $body, null, $from, $reply);
         if (!$sent) {
             Log::instance()->add(
