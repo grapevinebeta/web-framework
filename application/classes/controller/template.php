@@ -91,7 +91,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         
         $this->template->styles = array(
             'styles/common.css',
-            'styles/style.css',
+            'styles/style.min.css',
             'styles/jqueryui/jquery-ui-1.8.13.custom.css',
             'styles/jquery.selectbox.css',
             'styles/tipTip.css',
@@ -102,7 +102,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         $this->template->scripts = array(
             'js/common.js', // adds some common functions
             'js/DataProvider.js',
-            'js/Boxes.js', // minified version of Boxes.js
+            'js/Boxes.min.js', // minified version of Boxes.js
             'js/TopMenu.min.js',
             'js/highcharts/highcharts.js',
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',
