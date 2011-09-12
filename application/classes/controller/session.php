@@ -50,7 +50,7 @@ class Controller_Session extends Controller_Template {
     public function action_destroy() {
 
         Auth::instance()->logout();
-        $this->template->body = __('You have been logged out. :signin_link again.', array(
+        $this->template->body = __('You have been logged out. <strong>:signin_link again.</strong>', array(
             ':signin_link' => HTML::anchor(Route::url('login'), __('Sign In')),
         ));
 
