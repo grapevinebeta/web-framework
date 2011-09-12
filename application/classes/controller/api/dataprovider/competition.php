@@ -272,7 +272,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                         var results={negative:0,positive:0,neutral:0,points:0,count:0};
                         values.forEach(function(value){
                                 for(var type in value){
-                                 results[type]+=value[type];
+                                  results[type]+=value[type]||0;
                                 }
                           });
 
@@ -280,7 +280,11 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                     }';
         $finalize
                 = 'function(key,results){
-                    results.score = (results.points/results.count).toFixed(3);
+                    if(results.count){
+                        results.score = (results.points/results.count).toFixed(3);
+                    }else{
+                        results.score=0;
+                    }
                     return results;
             }';
         $db = $this->mongo->selectDB($this->industry());
