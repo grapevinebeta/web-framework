@@ -30,5 +30,5 @@ This message was sent from: reports@grapevinebeta.com
 
 Current Sender Address:
 Grapevine
-1214 Crooked Arrow
-San Antonio, Texas 78258
+3463 Magic Drive, Suite T7
+San Antonio, Texas 78220
