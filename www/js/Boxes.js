@@ -2244,7 +2244,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     
                     value = value.toLowerCase();
                     var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
-                    col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>'));
+                    col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span> ' + icon + ' </span></div>'));
                     break;
                 default:
                     col.text(value);
@@ -3951,6 +3951,17 @@ boxManager = {
                 if(!content.length && this.id == 'box-ogsi') {
                     content = box.getBoxDom().clone();
                     content.find('.box-header').remove();
+                }
+            
+                switch(this.id) {
+                    
+                    case 'box-competition-review-inbox':
+                        var code = '<thead><tr><th>Rating</th><th>Date</th><th>Review Title</th><th>Source</th><th>Competitor</th></tr></thead>'
+                        content.prepend(code);
+                        $('<h2/>').text('Competition Review Inbox').insertBefore(content);
+                        break;
+                    
+                    
                 }
             
                 content.find('tr.expanded').remove();
