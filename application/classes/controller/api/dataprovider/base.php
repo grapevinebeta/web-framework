@@ -268,7 +268,7 @@ class Controller_Api_DataProvider_Base extends Controller
                     'Total'
                     => array(
                         'total' => &$this->total_doc,
-                        'value' => null,
+                        'value' => 'Show all',
                         'active' => false
                     )
                 );

@@ -91,7 +91,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         
         $this->template->styles = array(
             'styles/common.css',
-            'styles/style.css',
+            'styles/style.min.css',
             'styles/jqueryui/jquery-ui-1.8.13.custom.css',
             'styles/jquery.selectbox.css',
             'styles/tipTip.css',

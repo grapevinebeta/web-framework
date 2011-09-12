@@ -11,6 +11,8 @@
         <div class="box-filters-inner">
 
             <div class="box-filter box-filter-activity">
+                <span class="filter"><strong>Filter</strong></span>
+                <span class="separator">|</span> 
                 <a filter="ogsi" href="#" class="active">OCSI Score</a>
                 <span class="separator">|</span> 
                 <a filter="avg-star" href="#" class="active">Ave. Star Rating</a>

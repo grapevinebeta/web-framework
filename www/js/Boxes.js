@@ -1175,7 +1175,7 @@ var BC_Inbox = BoxController.extend({
         
         for(var filter in filters) {
 
-            if(!filters[filter].total)
+            if(!filters[filter].total && filter != 'Total') 
                 continue;
 
             var filterLink = $('<a href="#" data-filter-status="' + 
@@ -2244,7 +2244,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     
                     value = value.toLowerCase();
                     var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
-                    col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>'));
+                    col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span> ' + icon + ' </span></div>'));
                     break;
                 default:
                     col.text(value);
@@ -3951,6 +3951,32 @@ boxManager = {
                 if(!content.length && this.id == 'box-ogsi') {
                     content = box.getBoxDom().clone();
                     content.find('.box-header').remove();
+                }
+            
+                switch(this.id) {
+                    
+                    case 'box-competition-review-inbox':
+                        var code = '<thead><tr><th>Rating</th><th>Date</th><th>Review Title</th><th>Source</th><th>Competitor</th></tr></thead>';
+                        content.prepend(code);
+                        break;
+                    case 'box-recent-reviews':
+                        var code = '<thead><tr><th>Status</th><th>Rating</th><th>Date</th><th>Title</th><th>Source</th></tr></thead>';
+                        content.prepend(code);
+                        break;
+                    case 'box-social-media-inbox':
+                        var code = '<thead><tr><th>Network</th><th>Date</th><th>Title</th><th>Site</th></tr></thead>';
+                        content.prepend(code);
+                        var links = content.find('a.title');
+                        
+                        links.replaceWith(links.html());
+                        
+                        links = content.find('.col-network a');
+                        
+                        links.replaceWith(links.html());
+                        
+                        break;
+                    
+                    
                 }
             
                 content.find('tr.expanded').remove();

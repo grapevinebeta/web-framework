@@ -256,7 +256,7 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
             $response[$kind] = array(
                 'Total'
                 => array(
-                    'value' => null,
+                    'value' => 'Show All',
                     'active' => true,
                     'total' => 0
                 )

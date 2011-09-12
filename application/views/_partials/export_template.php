@@ -319,6 +319,17 @@ prince-image-resolution: 96dpi;        /* 1 image pixel maps to 1px unit */
         
     }
     
+    .wrapper {
+        
+        word-wrap: break-word;
+        width: 350px;
+        
+    }
+    
+    .no-outer-border .even {
+        background:none;
+    }
+    
     </style>
   </head>
   <body>
