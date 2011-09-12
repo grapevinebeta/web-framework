@@ -3956,9 +3956,24 @@ boxManager = {
                 switch(this.id) {
                     
                     case 'box-competition-review-inbox':
-                        var code = '<thead><tr><th>Rating</th><th>Date</th><th>Review Title</th><th>Source</th><th>Competitor</th></tr></thead>'
+                        var code = '<thead><tr><th>Rating</th><th>Date</th><th>Review Title</th><th>Source</th><th>Competitor</th></tr></thead>';
                         content.prepend(code);
-                        $('<h2/>').text('Competition Review Inbox').insertBefore(content);
+                        break;
+                    case 'box-recent-reviews':
+                        var code = '<thead><tr><th>Status</th><th>Rating</th><th>Date</th><th>Title</th><th>Source</th></tr></thead>';
+                        content.prepend(code);
+                        break;
+                    case 'box-social-media-inbox':
+                        var code = '<thead><tr><th>Network</th><th>Date</th><th>Title</th><th>Site</th></tr></thead>';
+                        content.prepend(code);
+                        var links = content.find('a.title');
+                        
+                        links.replaceWith(links.html());
+                        
+                        links = content.find('.col-network a');
+                        
+                        links.replaceWith(links.html());
+                        
                         break;
                     
                     
