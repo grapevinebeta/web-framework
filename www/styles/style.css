@@ -1681,7 +1681,7 @@ input[type=submit] {
         display: inline-block;
         font-size: 10px;
         font-weight: bold;
-        height: 24px;
+        height: auto;
         padding: 4px;
         text-align: left;
         vertical-align: middle;
