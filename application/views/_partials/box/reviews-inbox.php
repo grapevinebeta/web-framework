@@ -36,5 +36,25 @@
                 </tbody>
             </table>
         </div>
+        <div class="legend hide">
+            <table style="width:350px; margin-left:10px;">
+                <thead>
+                    <tr>
+                        <th colspan="2">Status Legend:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>!</td><td>Needs Your Attention</td>
+                    </tr>
+                    <tr>
+                        <td>X</td><td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>Blank</td><td>No Action Needed, positive review</td>
+                    </tr>
+                </tbody>
+            </table>                
+        </div>
     </div>
 </div>
