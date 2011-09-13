@@ -1,4 +1,4 @@
-<div class="light-box box" id="box-ogsi-current">
+<div class="light-box box" id="box-ogsi">
     <div class="light-box-header">
         <?php echo __('all time score'); ?>
         <?php
