@@ -1604,7 +1604,7 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.negative / maxValue) * 100;
 
-                    if(ratio > 5)
+                    if(ratio > 6)
                         bar.children('.bar-value').text(rating.negative);
                 }
                 bar = barHolder.find('.bar-neutral');
@@ -1613,7 +1613,7 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.neutral / maxValue) * 100;
 
-                    if(ratio > 5)
+                    if(ratio > 6)
                         bar.children('.bar-value').text(rating.neutral);
 
                     bar.css('width', ((rating.neutral + rating.positive)/total)*100+'%');
@@ -1630,7 +1630,7 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.positive / maxValue) * 100;
 
-                    if(ratio > 5)
+                    if(ratio > 6)
                         bar.children('.bar-value').text(rating.positive);
 
                     bar.css('width', (rating.positive/(rating.neutral + rating.positive))*100+'%');
