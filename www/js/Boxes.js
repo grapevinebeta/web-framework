@@ -3188,7 +3188,7 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
         
         for(timestamp in this.graphData.comparision) {
         
-            timestamps.push(timestamp);
+            timestamps.push(parseInt(timestamp));
         }
         
         timestamps.sort(function(a,b) {
@@ -3196,6 +3196,7 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
            return a == b ? 0 : (a > b) ? -1 : 1;
             
         });
+        
         
         
         for (var tKey in timestamps) {
@@ -3233,7 +3234,6 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
                 .data.unshift(val);
 
             }
-
 
             if(!seriesMappingInited) {
                 seriesMappingInited = true;
