@@ -10,7 +10,7 @@ class Controller_Webhooks_Emails extends Controller
 {
 
 
-    private $debug = true;
+    private $debug = false;
 
     public function before()
     {
@@ -20,7 +20,7 @@ class Controller_Webhooks_Emails extends Controller
         $log = Log::instance();
 
         $json = file_get_contents('php://input');
-       // $json = file_get_contents(__DIR__ . '/alert.test');
+        // $json = file_get_contents(__DIR__ . '/alert.test');
         if (!empty($json)) {
             //        $log->add(LOG::DEBUG, $json);
             //$log->add(LOG::DEBUG, 'hello');
@@ -57,13 +57,37 @@ class Controller_Webhooks_Emails extends Controller
         $keywords = new Shortcode_Review_Keywords_Found();
         $email = new Shortcode_Company_Email();
 
+        $do_send_email = array();
         $emails = array();
+        $send_alerts = null;
         foreach (
             $documents as $document
         ) {
             $body = '';
             // document is in the same scheme as Comment
             $location_id = Arr::get($document, 'loc');
+
+            // check if we should send out alerts
+            if (!isset($do_send_email[$location_id])) {
+                $location = ORM::factory('location', $location_id);
+                if ($location->loaded()) {
+                    $send_alerts = $location->send_out_alerts;
+                    // if we dont send, update so next pass we will send
+                    // this is for newly added locations
+                    if (!$send_alerts) {
+                        $location->send_out_alerts = 1;
+                        $location->save();
+                    }
+                    $do_send_email[$location_id] = $send_alerts;
+
+
+                }
+            }
+            if (isset($do_send_email[$location_id])) {
+                $send_alerts = $do_send_email[$location_id];
+            } else {
+                $send_alerts = true;
+            }
             if (!isset($emails[$location_id])) {
                 $emails[$location_id] = is_null($email->execute($document)) ? 'none' : true;
             }
@@ -71,13 +95,18 @@ class Controller_Webhooks_Emails extends Controller
                 // skip all signups that were created as competatiors
                 //   continue;
             }
-            if (Arr::get($document, 'status') == 'alert') {
-                $body = $expander->expand($alert_template, $document);
-                $this->send($location_id, $body);
-            }
-            if ($keywords->execute($document) != 'none_found') {
-                $body = $expander->expand($keywords_template, $document);
-                $this->send($location_id, $body);
+            if ($send_alerts) {
+                if (Arr::get($document, 'status') == 'alert') {
+                    $body = $expander->expand($alert_template, $document);
+
+                    $this->send($location_id, $body);
+
+                }
+                if ($keywords->execute($document) != 'none_found') {
+                    $body = $expander->expand($keywords_template, $document);
+
+                    $this->send($location_id, $body);
+                }
             }
 
 
@@ -88,8 +117,8 @@ class Controller_Webhooks_Emails extends Controller
 
     public function action_monthly()
     {
-        $location_ids =range(1,7);
-        //$this->request->post('locations');
+        //$location_ids = range(1, 7);
+        $location_ids = $this->request->post('locations');
         if (empty($location_ids)) {
             return;
         }
@@ -103,7 +132,7 @@ class Controller_Webhooks_Emails extends Controller
             $location_ids as $location_id
         ) {
             $body = $expander->expand($template, $location_id);
-        //    $this->send($location_id, $body);
+            $this->send($location_id, $body);
         }
 
 
@@ -141,7 +170,7 @@ class Controller_Webhooks_Emails extends Controller
         $body = str_replace("\n", "<br/>", $body);
         $mailer = new Model_Mailer();
         $reply = array('no-reply@grapevinebeta.com' => 'No-Reply');
-        $from = 'reports@grapevinebeta.com';
+        $from = 'notifications@pickgrapevine.com';
         $sent = $mailer->send($emails, 'A Message From PickGrapevine.com', $body, null, $from, $reply);
         if (!$sent) {
             Log::instance()->add(

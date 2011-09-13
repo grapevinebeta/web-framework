@@ -396,7 +396,16 @@ class Controller_Webhooks_WuFoo extends Controller
         $db->commit();
 
 
-        // $log->add(Log::DEBUG, 'wufoo hook :post', array(':post' => print_r($post, true)));
+        $log = Log::instance();
+        $log->add(
+            Log::ALERT, array(
+                'type' => 'wufoo',
+                'phase' => 'finished',
+                'message' => 'New Signup'
+
+            )
+        );
+
         echo "found";
     }
 

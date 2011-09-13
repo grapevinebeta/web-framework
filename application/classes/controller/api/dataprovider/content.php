@@ -174,6 +174,10 @@ class Controller_Api_DataProvider_Content extends Controller_Api_DataProvider_Ba
             $doc['date'] = $doc['date']->sec;
             $doc['id'] = $doc['_id']->{'$id'};
             unset($doc['_id']);
+            if ($this->collection != 'reviews' && !Arr::get($doc, 'score')) {
+                // TODO store on server on insert
+                $doc['status'] = 'blank';
+            }
             $results[] = $doc;
 
 
