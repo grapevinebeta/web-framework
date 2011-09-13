@@ -1613,7 +1613,7 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.neutral / maxValue) * 100;
 
-                    if(ratio > 20)
+                    if(ratio > 15)
                         bar.children('.bar-value').text(rating.neutral);
 
                     bar.css('width', ((rating.neutral + rating.positive)/total)*100+'%');
