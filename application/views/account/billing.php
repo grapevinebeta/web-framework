@@ -12,8 +12,8 @@
          */
         ?>
         <?php
-        echo __('Have questions on a recent billing statement or want to change your current billing method‭? <strong>:contact_link</strong>', array(
-            ':contact_link' => HTML::mailto('support@pickgrapevine.com', __('Please contact us.?')),
+        echo __('Have questions on a recent billing statement or want to change your current billing method‭?<br /> <strong>:contact_link</strong>', array(
+            ':contact_link' => HTML::mailto('support@pickgrapevine.com', __('Please contact us?')),
         ));
         ?>
     </div>
