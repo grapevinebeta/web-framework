@@ -2244,7 +2244,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     break;
                 case 'status':
                     value = value.toLowerCase();
-                    var icon = value == 'opened' ? 'Blank' : (value == 'closed' ? ' x ' : '!');
+                    var icon = value == 'new' ? 'Blank' : (value == 'closed' ? ' x ' : '!');
                     col.html($('<div class="reviewStatus reviewStatus-' + value + '" style="text-align:center;"><span> ' + icon + ' </span></div>'));
                     break;
                 default:
