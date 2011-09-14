@@ -1471,7 +1471,6 @@ input[type=submit] {
     }
     
     .light-box-content .bar-value {
-        color: white;
         display: inline-block;
         font-size: 10px;
         font-weight: bold;

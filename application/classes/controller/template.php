@@ -77,6 +77,11 @@ abstract class Controller_Template extends Kohana_Controller_Template
         }
         
         
+        $loc = $this->request->query('loc');
+        
+        if($loc)
+            $js = 'api/box/location_js?loc=' . $loc;
+        
         $viewingRange = Session::instance()->get('viewingRange');
         
         if (empty($viewingRange)) {
@@ -88,6 +93,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             
             Session::instance()->set('viewingRange', $viewingRange);
         }
+        
         
         $this->template->styles = array(
             'styles/common.css',
@@ -112,6 +118,9 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/highcharts/modules/exporting.js',
             'js/datepicker.min.js',
         );
+        
+        if($loc)
+            array_unshift($this->template->scripts, $js);
 
         if (Auth::instance()->logged_in()) {
             $this->template->set('header', View::factory('layout/header'));
