@@ -20,7 +20,7 @@ class Log_Mongo extends Log_Writer
             if (Kohana::config("global.send_alerts")) {
                 $mailer = new Model_Mailer();
                 $sent = $mailer->send(
-                    'alerts@pickgrapevine.com', 'New Alert',
+                    'errors@pickgrapevine.com', 'New Alert',
                         '<div>' . print_r($messages, true) . '</div>',
                     null, 'app@pickgrapevine.com'
                 );
