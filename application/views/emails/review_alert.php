@@ -26,9 +26,10 @@ Grapevine Team
 
 -----------
 This message was sent to: $$$company_email$$$
-This message was sent from: reports@grapevinebeta.com
+This message was sent from: notifications@pickgrapevine.com
 
 Current Sender Address:
 Grapevine
 3463 Magic Drive, Suite T7
 San Antonio, Texas 78220
+<a href="mailto:support@pickgrapevine.com">Contact Support</a>

@@ -138,6 +138,7 @@ class Controller_Webhooks_WuFoo extends Controller
         $this->action_index();
     }
 
+    
     public function action_index()
     {
 
