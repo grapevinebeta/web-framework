@@ -138,8 +138,64 @@ class Controller_Webhooks_WuFoo extends Controller
         $this->action_index();
     }
 
-    
-    public function action_index()
+    public function action_company()
+    {
+
+        $this->remap_post();
+
+        $user_mapping = array(
+            'username' => 'Account User Name',
+            'password' => 'Password',
+            'email' => 'Email',
+            'firstname' => 'First Name',
+            'lastname' => 'Last Name',
+            'phone' => 'Phone Number'
+        );
+        $db = Database::instance();
+        $db->begin();
+
+        try {
+
+            // create company user
+            $user = ORM::factory('user');
+            $values = $this->values($user_mapping);
+
+            $user->values($values);
+
+            $user->save();
+            // add login  role
+            $user->add('roles', ORM::factory('role', array('name' => 'login')));
+            $user->add('roles', ORM::factory('role', array('name' => 'company_owner')));
+        } catch (Exception $e) {
+
+            $this->failed('company.user_creation', $e);
+            $db->rollback();
+            return;
+        }
+
+        $company_mapping = array('name' => 'Company Name', 'email' => 'Email');
+
+        try {
+
+            // create company
+            $company = ORM::factory('company');
+
+            $company->values($this->values($company_mapping));
+            $company->save();
+            // add to companies_users
+            $company->add('users', $user);
+        } catch (Exception $e) {
+
+            $this->failed('company_creation', $e);
+            $db->rollback();
+        }
+        /* $company_mapping=array(
+            'username'
+        )*/
+    }
+
+
+    public function action_location()
     {
 
         $this->remap_post();
@@ -174,6 +230,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $user->save();
             // add login  role
             $user->add('roles', ORM::factory('role', array('name' => 'login')));
+            $user->add('roles', ORM::factory('role', array('name' => 'location_owner')));
         } catch (Exception $e) {
 
             $this->failed('user_creation', $e);
@@ -181,9 +238,14 @@ class Controller_Webhooks_WuFoo extends Controller
             return;
         }
 
-        $company_mapping = array('name' => 'Company Name');
 
-        try {
+        $company_values = $this->values(array('email' => 'Company Email'));
+
+
+        $company = ORM::factory('company', array('email' => $company_values['email']));
+        $company->add('users', $user);
+
+        /*   try {
 
             // create company
             $company = ORM::factory('company');
@@ -196,7 +258,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
             $this->failed('company_creation', $e);
             $db->rollback();
-        }
+        }*/
         $location_mapping = array(
 
             'billing_method' => 'Confirm Payment Method?',
@@ -204,19 +266,20 @@ class Controller_Webhooks_WuFoo extends Controller
             'billing_type' => 'Confirm Billing Type',
 
             'owner_name' => '',
-            'owner_email' => 'Email',
+            'owner_email' => 'Location Email',
 
             'owner_phone' => 'Phone Number',
 
             'industry' => 'Industry',
-            'name' => 'Company Name',
-            'address1' => 'Company Address',
+            'name' => 'Location Name',
+            'address1' => 'Location Address',
             'address2' => 'Address Line 2',
             'city' => 'City',
             'state' => 'State',
             'zip' => 'Zip',
             'country' => 'Country',
-            'phone' => 'Company Phone Number'
+            'phone' => 'Location Phone Number',
+            'billable_email' => 'Billable Email'
         );
         $industry = '';
         $location_id = 0;
@@ -231,7 +294,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $location_mapping['owner_name'] = $this->post['First'] . ' ' . $this->post['Last'];
 
 
-            $industry = $values['industry'];
+            $industry = strtolower($values['industry']);
             $location->values($values);
 
             $location->save();
@@ -248,6 +311,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
             $this->failed('location_creation', $e);
             $db->rollback();
+            return;
         }
 
 
