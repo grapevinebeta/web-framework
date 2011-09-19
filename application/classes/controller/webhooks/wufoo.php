@@ -141,10 +141,10 @@ class Controller_Webhooks_WuFoo extends Controller
     public function action_company()
     {
 
-        $post=json_decode(file_get_contents(dirname(__FILE__) . '/file'), true);
-        $this->request->post($post);
+        //  $post=json_decode(file_get_contents(dirname(__FILE__) . '/file'), true);
+        //$this->request->post($post);
         $this->remap_post();
-        
+
 
         $user_mapping = array(
             'username' => 'Account User Name',
@@ -192,6 +192,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $this->failed('company_creation', $e);
             $db->rollback();
         }
+        $db->commit();
         /* $company_mapping=array(
             'username'
         )*/
