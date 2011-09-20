@@ -3237,6 +3237,9 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
 
             }
 
+            
+            console.log(this.series);
+
             if(!seriesMappingInited) {
                 seriesMappingInited = true;
             }
