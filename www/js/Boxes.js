@@ -2338,10 +2338,10 @@ var BC_ReviewInbox = BC_Inbox.extend({
 
 
                     tr.find('.recent-review-status-icon')
-                    .removeClass('open closed todo')
+                    .removeClass('new closed todo')
                     .addClass(value);
 
-                    var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
+                    var icon = value == 'new' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
 
                     tr.prev().find('.col-status').html(reviewStatus);
@@ -2353,16 +2353,16 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'OPENED'
+                    status: 'NEW'
                 }, function() {
 
                     tr.find('.recent-review-status-icon')
-                    .removeClass('open closed todo')
-                    .addClass('opened');
+                    .removeClass('new closed todo')
+                    .addClass('new');
 
-                    status = 'opened';
+                    status = 'new';
 
-                    var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-new"><span>[  ]</span></div>');
                     tr.prev().find('.col-status').html(reviewStatus);
                     checkboxes.removeAttr('disabled');
                 })
