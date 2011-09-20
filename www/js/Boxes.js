@@ -3195,7 +3195,7 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
         
         timestamps.sort(function(a,b) {
             
-           return a == b ? 0 : (a > b) ? 1 : -1;
+           return a == b ? 0 : (a < b) ? -1 : 1;
             
         });
         
