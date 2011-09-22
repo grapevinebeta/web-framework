@@ -64,26 +64,7 @@
                 });
                 
                 
-                boxManager
-                    .add(new BC_TagsAnalysis())
-                    .add(new BC_Scoreboard())
-                    .add(new BC_ScoreboardCurrent())
-                    .add(new BC_ReviewSites())
-                    .add(new BC_ReviewInbox())
-                    .add(new BC_SocialActivity())
-                    .add(new BC_SocialSubscribers())
-                    .add(new BC_SocialMediaInbox())
-                    .add(new BC_CompetitionDistribution())
-                    .add(new BC_CompetitionComparision())
-                    .add(new BC_CompetitionReviewInbox())
-                    .add(new BC_CompetitionScore())
-                    //    .add(new BC_Photos())
-                    //    .add(new BC_Videos())
-                    .add(new BC_StatusUpdate())
-                    .add(new BC_RecentActivity())
-                    .setDataProvider(new DataProvider())
-                    .setExporter(Exporter)
-                    .init();
+                
                 
                 $('body').append('<select name="loc" id="loc">' + opt + '</select>');
                 
