@@ -48,7 +48,7 @@
         </div>
     </div>
     
-    <?php if(isset($_location_switch)): ?>
+    <?php if(0 && isset($_location_switch)): ?>
     <script type="text/javascript">
     
         var LOCATION;
