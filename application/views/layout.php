@@ -47,6 +47,60 @@
                     )) ?>
         </div>
     </div>
+    
+    <?php if(isset($_location_switch)): ?>
+    <script type="text/javascript">
+    
+        var LOCATION;
+    
+        $(document).ready(function() {
+            
+            $.getJSON('/api/box/location_js?loc=' + <?php echo $_location_id; ?>, function(rs) {
+                LOCATION = rs;
+                
+                var opt = '';
+                $.map(LOCATION.locations, function(value, key) {
+                    opt += '<option value="' + key + '">' + value + '</option>';
+                });
+                
+                
+                boxManager
+                    .add(new BC_TagsAnalysis())
+                    .add(new BC_Scoreboard())
+                    .add(new BC_ScoreboardCurrent())
+                    .add(new BC_ReviewSites())
+                    .add(new BC_ReviewInbox())
+                    .add(new BC_SocialActivity())
+                    .add(new BC_SocialSubscribers())
+                    .add(new BC_SocialMediaInbox())
+                    .add(new BC_CompetitionDistribution())
+                    .add(new BC_CompetitionComparision())
+                    .add(new BC_CompetitionReviewInbox())
+                    .add(new BC_CompetitionScore())
+                    //    .add(new BC_Photos())
+                    //    .add(new BC_Videos())
+                    .add(new BC_StatusUpdate())
+                    .add(new BC_RecentActivity())
+                    .setDataProvider(new DataProvider())
+                    .setExporter(Exporter)
+                    .init();
+                
+                $('body').append('<select name="loc" id="loc">' + opt + '</select>');
+                
+                $('#loc').bind('change', function() {
+                    
+                    LOCATION.current_location_id =  parseInt($('option:selected',this).val());
+                    
+                    boxManager.refresh();
+                    
+                });
+                
+            });
+            
+        });
+    
+    </script>
+    <?php endif; ?>
     <?php 
     
     foreach ($scripts as $script) {

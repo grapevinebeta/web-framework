@@ -3564,6 +3564,8 @@ boxManager = {
 
     positions: null, //positions of boxes from db
 
+    location: null,
+
     exporter: null, // exporter class for dynamic exporting
 
     add: function (box) {
@@ -3660,6 +3662,8 @@ boxManager = {
             }
         }
     },
+
+    
     initDragAndDrop: function() {
 
         var self = this;
@@ -4022,30 +4026,6 @@ boxManager = {
 
     }
 };
-
-
-$(document).ready(function () {
-    boxManager
-    .add(new BC_TagsAnalysis())
-    .add(new BC_Scoreboard())
-    .add(new BC_ScoreboardCurrent())
-    .add(new BC_ReviewSites())
-    .add(new BC_ReviewInbox())
-    .add(new BC_SocialActivity())
-    .add(new BC_SocialSubscribers())
-    .add(new BC_SocialMediaInbox())
-    .add(new BC_CompetitionDistribution())
-    .add(new BC_CompetitionComparision())
-    .add(new BC_CompetitionReviewInbox())
-    .add(new BC_CompetitionScore())
-//    .add(new BC_Photos())
-//    .add(new BC_Videos())
-    .add(new BC_StatusUpdate())
-    .add(new BC_RecentActivity())
-    .setDataProvider(new DataProvider())
-    .setExporter(Exporter);
-    // the initialization of boxManager is in TopMenu.js
-});
 
 
 var Exporter = {
