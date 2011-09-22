@@ -396,8 +396,5 @@ jQuery(function(){
 
     TopMenu = new TopMenu();
     TopMenu.init();
-    
-    // !!!! Warning this is strong dependency of boxManager and need to be called!
-    boxManager.init(); // we need to init all boxes only when we init top menu
 
 });

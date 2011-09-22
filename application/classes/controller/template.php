@@ -63,10 +63,16 @@ abstract class Controller_Template extends Kohana_Controller_Template
              *      location found in the database and accessible to user
              */
             $this->_location = $this->_current_user->getLocations(false)->current();
-
+            
             // bind current location to every view
             View::bind_global('_current_location', $this->_location);
+            
+            $manyLocations = (bool) ($this->_current_user->getLocations(false)->count() > 1);
+            
+            View::bind_global('_location_switch', $manyLocations);
             $this->_location_id = (int)$this->_location->id;
+            View::bind_global('_location_id', $this->_location_id);
+            
             Session::instance()->set('location_id',$this->_location_id);
         } else {
             /**
@@ -77,10 +83,6 @@ abstract class Controller_Template extends Kohana_Controller_Template
         }
         
         
-        $loc = $this->request->query('loc');
-        
-        if($loc)
-            $js = 'api/box/location_js?loc=' . $loc;
         
         $viewingRange = Session::instance()->get('viewingRange');
         
@@ -108,7 +110,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
         $this->template->scripts = array(
             'js/common.js', // adds some common functions
             'js/DataProvider.js',
-            'js/Boxes.min.js', // minified version of Boxes.js
+            'js/Boxes.js', // minified version of Boxes.js
             'js/TopMenu.min.js',
             'js/highcharts/highcharts.js',
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',
@@ -118,9 +120,6 @@ abstract class Controller_Template extends Kohana_Controller_Template
             'js/highcharts/modules/exporting.js',
             'js/datepicker.min.js',
         );
-        
-        if($loc)
-            array_unshift($this->template->scripts, $js);
 
         if (Auth::instance()->logged_in()) {
             $this->template->set('header', View::factory('layout/header'));

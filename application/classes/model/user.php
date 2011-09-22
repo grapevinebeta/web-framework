@@ -81,6 +81,47 @@ class Model_User extends Model_Auth_User {
         return $result;
         
     }
+    
+        
+    public function getLocationsList() {
+
+        // get companies' ids
+        $available_companies = DB::select('company_id')
+                ->from('companies_users')
+                ->where('user_id', '=', (int) $this->id);
+
+        
+        $available_companies = $available_companies
+                ->execute()
+                ->as_array(null, 'company_id');
+        if (empty($available_companies)) {
+            $available_companies = array(-1); // placeholder to avoid query builder's errors
+        }
+
+        // get locations' ids
+        $available_locations = DB::select('location_id')
+                ->from('locations_users')
+                ->where('user_id', '=', (int) $this->id);
+
+        
+        $available_locations = $available_locations
+                ->execute()
+                ->as_array(null, 'location_id');
+        if (empty($available_locations)) {
+            $available_locations = array(-1); // placeholder to avoid query builder's errors
+        }
+
+
+        return DB::select()
+                ->from('companies_locations')
+                ->join('locations')
+                ->on('companies_locations.location_id', '=', 'locations.id')
+                ->where('companies_locations.location_id', 'IN', $available_locations)
+                ->or_where('companies_locations.company_id', 'IN', $available_companies)
+                ->as_assoc()
+                ->execute()
+                ->as_array('location_id', 'name');
+    }
 
     /**
      * Get locations user has access to. Optionally limit them to the locations
