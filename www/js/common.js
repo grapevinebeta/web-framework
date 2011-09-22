@@ -33,9 +33,6 @@ var APP = {
                 boxManager.refresh();
 
             });
-
-            TopMenu = new TopMenu();
-            TopMenu.init();
             
             boxManager
             .add(new BC_TagsAnalysis())
@@ -57,6 +54,10 @@ var APP = {
             .setDataProvider(new DataProvider())
             .setExporter(Exporter)
             .init(); // we need to init all boxes only when we init top menu
+        
+            
+            TopMenu = new TopMenu();
+            TopMenu.init();
         
         });
     }
