@@ -209,7 +209,7 @@ class Controller_Api_DataProvider_Reviews extends Controller_Api_DataProvider_Co
             $sites as $site
             => &$data
         ) {
-            $data['average'] = number_format($data['average'] / $data['total'], 1);
+            $data['average'] = $data['total'] ? number_format($data['average'] / $data['total'], 1) : 0;
 
         }
 
