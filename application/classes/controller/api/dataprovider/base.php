@@ -126,6 +126,7 @@ class Controller_Api_DataProvider_Base extends Controller
          */
 
         $start = strtotime($range['date']);
+        
 
         if ($period) {
             if (in_array($range['period'], array('all', 'ytd'))) {
@@ -174,8 +175,8 @@ class Controller_Api_DataProvider_Base extends Controller
             'date' => array('$gte' => $this->startDate, '$lte' => $this->endDate), 'loc' => $this->location
         );
 
-        $this->mongo = new Mongo();
-        //$this->mongo = new Mongo("mongodb://50.57.109.174:27017");
+        //$this->mongo = new Mongo();
+        $this->mongo = new Mongo("mongodb://50.57.109.174:27017");
 
         $industry = $this->industry();
         $this->db = $this->mongo->selectDB($industry);
