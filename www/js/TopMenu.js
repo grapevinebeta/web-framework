@@ -396,5 +396,6 @@ jQuery(function(){
 
     TopMenu = new TopMenu();
     TopMenu.init();
+    boxManager.init();
 
 });
