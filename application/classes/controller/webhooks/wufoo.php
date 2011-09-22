@@ -397,7 +397,7 @@ class Controller_Webhooks_WuFoo extends Controller
                     $company->name = $competitor_values['name'];
                     $company->save();
                     // add to companies_users
-                    $company->add('users', $user);
+                   // $company->add('users', $user);
 
                     // create location
                     $competitor_location = ORM::factory('location');
