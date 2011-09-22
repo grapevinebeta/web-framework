@@ -51,32 +51,9 @@
     <?php if(isset($_location_switch)): ?>
     <script type="text/javascript">
     
-        var LOCATION;
-    
         $(document).ready(function() {
             
-            $.getJSON('/api/box/location_js?loc=' + <?php echo $_location_id; ?>, function(rs) {
-                LOCATION = rs;
-                
-                var opt = '';
-                $.map(LOCATION.locations, function(value, key) {
-                    opt += '<option value="' + key + '">' + value + '</option>';
-                });
-                
-                
-                $('body').append('<div id="loc">Select location: <select name="loc">' + opt + '</select></div>');
-                $('#loc').bind('change', function() {
-                    
-                    LOCATION.current_location_id =  parseInt($('option:selected',this).val());
-                    
-                    boxManager.refresh();
-                    
-                });
-                
-                boxManager.init(); // we need to init all boxes only when we init top menu
-
-                
-            });
+            APP.init(<?php echo $_location_id; ?>);
             
         });
     
