@@ -7,8 +7,6 @@
  * 
  */
 
-jQuery(function(){
-
     var TopMenu = Class.extend({
         
         picker: null,
@@ -393,10 +391,3 @@ jQuery(function(){
         }
    
     });
-
-    TopMenu = new TopMenu();
-    TopMenu.init();
-
-    // !!!! Warning this is strong dependency of boxManager and need to be called!
-
-});

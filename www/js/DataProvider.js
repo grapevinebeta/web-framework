@@ -108,7 +108,10 @@ var DataProvider = function() {
                 params.limit = limit;
             }
        
-            params.loc = LOCATION.current_location_id;
+            if(APP !== undefined) {
+                
+                params.loc = APP.location.current_location_id;
+            }
             
             
             
