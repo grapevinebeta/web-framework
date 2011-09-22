@@ -35,6 +35,8 @@ var DataProvider = function() {
     
     var limit;
     
+    var location;
+    
     var extraParams;
 
     return {
@@ -105,6 +107,13 @@ var DataProvider = function() {
             if (limit) {
                 params.limit = limit;
             }
+       
+            if(APP !== undefined) {
+                
+                params.loc = APP.location.current_location_id;
+            }
+            
+            
             
             var url = this.noApiUrl ? endpoint : ApiUrl + endpoint;
             

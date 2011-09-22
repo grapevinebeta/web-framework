@@ -1348,7 +1348,7 @@ input[type=submit] {
     }
     
     #box-recent-reviews .recent-review-status-icon.alert {
-    background-position: -454px -418px;
+    background-position: -454px -175px;
 }
 
     .window-close:hover {
@@ -1471,7 +1471,6 @@ input[type=submit] {
     }
     
     .light-box-content .bar-value {
-        color: white;
         display: inline-block;
         font-size: 10px;
         font-weight: bold;

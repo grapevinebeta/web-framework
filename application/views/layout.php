@@ -47,6 +47,18 @@
                     )) ?>
         </div>
     </div>
+    
+    <?php if(isset($_location_switch)): ?>
+    <script type="text/javascript">
+    
+        $(document).ready(function() {
+            
+            APP.init(<?php echo $_location_id; ?>);
+            
+        });
+    
+    </script>
+    <?php endif; ?>
     <?php 
     
     foreach ($scripts as $script) {

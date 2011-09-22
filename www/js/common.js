@@ -7,7 +7,77 @@ Function.prototype.clone = function() {
     return temp;
 };
 
+
+var APP = {
+    
+    location : null,
+    
+    init: function(location_id) {
+        
+        var self = this;
+        
+        $.getJSON('/api/box/location_js?loc=' + location_id, function(rs) {
+            
+            self.location = rs;
+
+            var opt = '';
+            $.map(rs.locations, function(value, key) {
+                opt += '<option value="' + key + '">' + value + '</option>';
+            });
+
+            $('body').append('<div id="loc">Select location: <select name="loc">' + opt + '</select></div>');
+            $('#loc').bind('change', function() {
+
+                self.location.current_location_id =  parseInt($('option:selected',this).val());
+
+                boxManager.refresh();
+
+            });
+            
+            boxManager
+            .add(new BC_TagsAnalysis())
+            .add(new BC_Scoreboard())
+            .add(new BC_ScoreboardCurrent())
+            .add(new BC_ReviewSites())
+            .add(new BC_ReviewInbox())
+            .add(new BC_SocialActivity())
+            .add(new BC_SocialSubscribers())
+            .add(new BC_SocialMediaInbox())
+            .add(new BC_CompetitionDistribution())
+            .add(new BC_CompetitionComparision())
+            .add(new BC_CompetitionReviewInbox())
+            .add(new BC_CompetitionScore())
+            //    .add(new BC_Photos())
+            //    .add(new BC_Videos())
+            .add(new BC_StatusUpdate())
+            .add(new BC_RecentActivity())
+            .setDataProvider(new DataProvider())
+            .setExporter(Exporter)
+            .init(); // we need to init all boxes only when we init top menu
+        
+            
+            TopMenu = new TopMenu();
+            TopMenu.init();
+        
+        });
+    }
+    
+};
+
 jQuery(function(){
+
+    // logging function
+    var log = function(log_message){
+        try {
+            console.log(log_message);
+        } catch(e) {
+            // do nothing, if can not be written to console
+        }
+    }
+
+    // pass globals
+    window['log'] = log;
+
     helpers = {
             
         tips: $( ".validateTips" ),
@@ -86,8 +156,8 @@ jQuery(function(){
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(uv, s);
     })();
+    
 });
-
 
 function determineMonthDiff(period)
 {
@@ -111,23 +181,6 @@ function getPeriodInDays(period) {
       
       
 }
-
-
-(function(){
-
-    // logging function
-    var log = function(log_message){
-        try {
-            console.log(log_message);
-        } catch(e) {
-            // do nothing, if can not be written to console
-        }
-    }
-
-    // pass globals
-    window['log'] = log;
-    
-})();
 
 var monthNames = [
 'Jan',

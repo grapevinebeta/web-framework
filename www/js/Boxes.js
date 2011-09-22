@@ -1194,8 +1194,8 @@ var BC_Inbox = BoxController.extend({
             if(filter == 'Total' || filter == 'All') {
                 filterLink.addClass('show-all');
             }
-
-            filterLink.text(filterLink.text() + filter);
+            
+            filterLink.text(filterLink.text() + filters[filter].value);
             filterHolder.append('<span class="separator">|</span> ');
             filterHolder.append(filterLink);
 
@@ -1604,7 +1604,7 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.negative / maxValue) * 100;
 
-                    if(ratio > 5)
+                    if(ratio > 10)
                         bar.children('.bar-value').text(rating.negative);
                 }
                 bar = barHolder.find('.bar-neutral');
@@ -1613,10 +1613,12 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.neutral / maxValue) * 100;
 
-                    if(ratio > 5)
-                        bar.children('.bar-value').text(rating.neutral);
-
                     bar.css('width', ((rating.neutral + rating.positive)/total)*100+'%');
+                   
+                    if(ratio > 10)
+                        bar.children('.bar-value').text(rating.neutral);
+                    
+                    
                     bar.show();
                 } else if (rating.positive > 0) {
                     bar.css('width', ((rating.positive)/total)*100+'%');
@@ -1630,7 +1632,7 @@ var BC_Scoreboard = BoxController.extend({
 
                     ratio = (rating.positive / maxValue) * 100;
 
-                    if(ratio > 5)
+                    if(ratio > 10)
                         bar.children('.bar-value').text(rating.positive);
 
                     bar.css('width', (rating.positive/(rating.neutral + rating.positive))*100+'%');
@@ -2238,14 +2240,12 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     .prepend(this.expandButton.clone());
                     break;
                 case 'score':
-                    col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>'));
+                    col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span style="text-align:center;">' + (value ? value + ' stars' : 'No rating') + '</span></div></div>'));
                     break;
                 case 'status':
-
-
                     value = value.toLowerCase();
-                    var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
-                    col.html($('<div class="reviewStatus reviewStatus-' + value + '"><span> ' + icon + ' </span></div>'));
+                    var icon = value == 'new' ? ' ' : (value == 'closed' ? ' x ' : '!');
+                    col.html($('<div class="reviewStatus reviewStatus-' + value + '" style="text-align:center;"><span> ' + icon + ' </span></div>'));
                     break;
                 default:
                     col.text(value);
@@ -2338,10 +2338,10 @@ var BC_ReviewInbox = BC_Inbox.extend({
 
 
                     tr.find('.recent-review-status-icon')
-                    .removeClass('open closed todo')
+                    .removeClass('new closed todo')
                     .addClass(value);
 
-                    var icon = value == 'opened' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
+                    var icon = value == 'new' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
 
                     tr.prev().find('.col-status').html(reviewStatus);
@@ -2353,16 +2353,16 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'OPENED'
+                    status: 'NEW'
                 }, function() {
 
                     tr.find('.recent-review-status-icon')
-                    .removeClass('open closed todo')
-                    .addClass('opened');
+                    .removeClass('new closed todo')
+                    .addClass('new');
 
-                    status = 'opened';
+                    status = 'new';
 
-                    var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-new"><span>[  ]</span></div>');
                     tr.prev().find('.col-status').html(reviewStatus);
                     checkboxes.removeAttr('disabled');
                 })
@@ -3035,8 +3035,7 @@ var BC_CompetitionReviewInbox = BC_Inbox.extend({
                     col.prepend('<a href="#" class="expand"></a>');
                     break;
                 case 'score':
-                    var ratingStars = $('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span>' + value + ' stars</span></div></div>');
-                    col.html(ratingStars);
+                    col.html($('<div class="reviewRating"><div class="stars-' + value + '-of-5-front"><span style="text-align:center;">' + (value ? value + ' stars' : 'No rating') + '</span></div></div>'));
                     break;
                 default:
                     col.text(value);
@@ -3186,10 +3185,26 @@ var BC_CompetitionComparision = BC_LinearGraphBoxController.extend({
         var seriesMappingInited = false;
         this.series = [];
         var val;
-        for (var tKey in this.graphData.comparision) {
-
-            var timeObject = this.graphData.comparision[tKey];
-
+        
+        var timestamps = [];
+        
+        for(timestamp in this.graphData.comparision) {
+        
+            timestamps.push(parseInt(timestamp));
+        }
+        
+        timestamps.sort(function(a,b) {
+            
+           return a == b ? 0 : ((a < b) ? 1 : -1);
+            
+        });
+        
+        
+        
+        for (var tKey in timestamps) {
+            
+            var timeObject = this.graphData.comparision[timestamps[tKey]];
+            
             for (var cKey in timeObject) {
 
                 var comparisionObject = timeObject[cKey];
@@ -3963,6 +3978,9 @@ boxManager = {
                     case 'box-recent-reviews':
                         var code = '<thead><tr><th>Status</th><th>Rating</th><th>Date</th><th>Title</th><th>Source</th></tr></thead>';
                         content.prepend(code);
+                        
+                        block.prepend(box.getContentDom().find('.legend table').clone());
+                        
                         break;
                     case 'box-social-media-inbox':
                         var code = '<thead><tr><th>Network</th><th>Date</th><th>Title</th><th>Site</th></tr></thead>';
@@ -4004,30 +4022,6 @@ boxManager = {
 
     }
 };
-
-
-$(document).ready(function () {
-    boxManager
-    .add(new BC_TagsAnalysis())
-    .add(new BC_Scoreboard())
-    .add(new BC_ScoreboardCurrent())
-    .add(new BC_ReviewSites())
-    .add(new BC_ReviewInbox())
-    .add(new BC_SocialActivity())
-    .add(new BC_SocialSubscribers())
-    .add(new BC_SocialMediaInbox())
-    .add(new BC_CompetitionDistribution())
-    .add(new BC_CompetitionComparision())
-    .add(new BC_CompetitionReviewInbox())
-    .add(new BC_CompetitionScore())
-//    .add(new BC_Photos())
-//    .add(new BC_Videos())
-    .add(new BC_StatusUpdate())
-    .add(new BC_RecentActivity())
-    .setDataProvider(new DataProvider())
-    .setExporter(Exporter);
-    // the initialization of boxManager is in TopMenu.js
-});
 
 
 var Exporter = {

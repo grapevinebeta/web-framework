@@ -216,3 +216,9 @@ html[xmlns] .clearfix {
 .validation-message {
     color: #f00;
 }
+
+#loc {
+    position:absolute;
+    top:0;
+    right:0;
+}
