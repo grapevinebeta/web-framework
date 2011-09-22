@@ -48,7 +48,7 @@
         </div>
     </div>
     
-    <?php if(0 && isset($_location_switch)): ?>
+    <?php if(isset($_location_switch)): ?>
     <script type="text/javascript">
     
         var LOCATION;
@@ -64,10 +64,7 @@
                 });
                 
                 
-                
-                
-                $('body').append('<select name="loc" id="loc">' + opt + '</select>');
-                
+                $('body').append('<div id="loc">Select location: <select name="loc">' + opt + '</select></div>');
                 $('#loc').bind('change', function() {
                     
                     LOCATION.current_location_id =  parseInt($('option:selected',this).val());
@@ -75,6 +72,9 @@
                     boxManager.refresh();
                     
                 });
+                
+                boxManager.init(); // we need to init all boxes only when we init top menu
+
                 
             });
             

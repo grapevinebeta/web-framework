@@ -108,7 +108,7 @@ var DataProvider = function() {
                 params.limit = limit;
             }
        
-//            params.loc = LOCATION.current_location_id;
+            params.loc = LOCATION.current_location_id;
             
             
             
