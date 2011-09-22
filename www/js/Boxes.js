@@ -3564,8 +3564,6 @@ boxManager = {
 
     positions: null, //positions of boxes from db
 
-    location: null,
-
     exporter: null, // exporter class for dynamic exporting
 
     add: function (box) {
@@ -3662,8 +3660,6 @@ boxManager = {
             }
         }
     },
-
-    
     initDragAndDrop: function() {
 
         var self = this;
