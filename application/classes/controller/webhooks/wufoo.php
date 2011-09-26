@@ -205,7 +205,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
         //ini_set('mongo.default_host', '50.57.109.174');
         $this->remap_post();
-        //  $this->action_dump();
+        $this->action_dump();
 
         //        return;
         // $key = $this->request->post('HandshakeKey');
