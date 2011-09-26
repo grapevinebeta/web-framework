@@ -71,14 +71,14 @@ class Controller_Webhooks_Emails extends Controller
             if (!isset($do_send_email[$location_id])) {
                 $location = ORM::factory('location', $location_id);
                 if ($location->loaded()) {
-                    $send_alerts = $location->send_out_alerts;
+                    /* $send_alerts = ;
                     // if we dont send, update so next pass we will send
                     // this is for newly added locations
                     if (!$send_alerts) {
                         $location->send_out_alerts = 1;
                         $location->save();
-                    }
-                    $do_send_email[$location_id] = $send_alerts;
+                    }*/
+                    $do_send_email[$location_id] = $location->send_out_alerts;
 
 
                 }
@@ -86,7 +86,10 @@ class Controller_Webhooks_Emails extends Controller
             if (isset($do_send_email[$location_id])) {
                 $send_alerts = $do_send_email[$location_id];
             } else {
-                $send_alerts = true;
+                $send_alerts = false;
+            }
+            if (!$send_alerts) {
+                continue;
             }
             if (!isset($emails[$location_id])) {
                 $emails[$location_id] = is_null($email->execute($document)) ? 'none' : true;
@@ -95,18 +98,17 @@ class Controller_Webhooks_Emails extends Controller
                 // skip all signups that were created as competatiors
                 //   continue;
             }
-            if ($send_alerts) {
-                if (Arr::get($document, 'status') == 'alert') {
-                    $body = $expander->expand($alert_template, $document);
 
-                    $this->send($location_id, $body);
+            if (Arr::get($document, 'status') == 'alert') {
+                $body = $expander->expand($alert_template, $document);
 
-                }
-                if ($keywords->execute($document) != 'none_found') {
-                    $body = $expander->expand($keywords_template, $document);
+                $this->send($location_id, $body);
 
-                    $this->send($location_id, $body);
-                }
+            }
+            if ($keywords->execute($document) != 'none_found') {
+                $body = $expander->expand($keywords_template, $document);
+
+                $this->send($location_id, $body);
             }
 
 

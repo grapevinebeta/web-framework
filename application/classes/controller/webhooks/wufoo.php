@@ -131,7 +131,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
     public function action_restaurant()
     {
-        $post = json_decode(file_get_contents(dirname(__FILE__) . '/file'), true);
+        $post = json_decode(file_get_contents(dirname(__FILE__) . '/zinc.test'), true);
 
         $this->request->post($post);
         //       $this->remap_post();
