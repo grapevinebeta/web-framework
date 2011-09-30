@@ -593,6 +593,17 @@ var BC_RecentActivity = BoxController.extend({
         return template;
 
     },
+    
+    
+    /**
+     * if you want to make special actions when data is loaded you should reimplement this function
+     */
+    afterLoadDataCustom: function() {
+
+        if(!this.data)
+            this.getBoxDom().hide();
+
+    },
 
     processData: function() {
         var messages = this.data.messages, timestamp
@@ -1469,7 +1480,7 @@ var BC_CompetitionScore = BoxController.extend({
         avgStarRow.find('.rank').text(ogsi.rating.rank.value + " of " + ogsi.rating.rank.out);
 
 
-        reviewsRow.find('.score').text(ogsi.reviews.value.toFixed(2));
+        reviewsRow.find('.score').text(parseInt(ogsi.reviews.value));
         reviewsRow.find('.rank').text(ogsi.reviews.rank.value + " of " + ogsi.reviews.rank.out);
 
         var data = [ogsiRow, avgStarRow, reviewsRow];
