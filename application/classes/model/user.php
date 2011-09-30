@@ -5,7 +5,8 @@
  */
 class Model_User extends Model_Auth_User {
 
-    protected $_belongs_to = array('company'=>array(),'location'=>array());
+    protected $_belongs_to = array('location'=>array());
+    
 
     protected $_roles = null;
     public function rules()

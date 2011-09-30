@@ -131,11 +131,11 @@ class Controller_Webhooks_WuFoo extends Controller
 
     public function action_restaurant()
     {
-        $post = json_decode(file_get_contents(dirname(__FILE__) . '/restaurant.test'), true);
+        $post = json_decode(file_get_contents(dirname(__FILE__) . '/zinc.test'), true);
 
         $this->request->post($post);
-        $this->remap_post();
-        $this->action_index();
+        //       $this->remap_post();
+        $this->action_location();
     }
 
     public function action_company()
@@ -187,6 +187,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $company->save();
             // add to companies_users
             $company->add('users', $user);
+
         } catch (Exception $e) {
 
             $this->failed('company_creation', $e);
@@ -202,6 +203,7 @@ class Controller_Webhooks_WuFoo extends Controller
     public function action_location()
     {
 
+        //ini_set('mongo.default_host', '50.57.109.174');
         $this->remap_post();
         $this->action_dump();
 
@@ -214,7 +216,7 @@ class Controller_Webhooks_WuFoo extends Controller
         $user_mapping = array(
             'username' => 'Account User Name',
             'password' => 'Password',
-            'email' => 'Email',
+            'email' => 'Location Email',
             'firstname' => 'First',
             'lastname' => 'Last',
             'phone' => 'Phone Number'
@@ -249,6 +251,7 @@ class Controller_Webhooks_WuFoo extends Controller
         $company = ORM::factory('company', array('email' => $company_values['email']));
         $company->add('users', $user);
 
+
         /*   try {
 
             // create company
@@ -282,7 +285,7 @@ class Controller_Webhooks_WuFoo extends Controller
             'state' => 'State',
             'zip' => 'Zip',
             'country' => 'Country',
-            'phone' => 'Location Phone Number',
+            'phone' => 'Phone Number',
             'billable_email' => 'Billable Email'
         );
         $industry = '';
@@ -301,6 +304,7 @@ class Controller_Webhooks_WuFoo extends Controller
             $industry = strtolower($values['industry']);
             $location->values($values);
 
+            $location->company_id = $company->id;
             $location->save();
             $location_id = $location->id;
             // add to locations_users with level = 0
@@ -308,6 +312,7 @@ class Controller_Webhooks_WuFoo extends Controller
 
             // add to companies_locations
             $company->add('locations', $location);
+
             $company->save();
 
 
@@ -334,9 +339,8 @@ class Controller_Webhooks_WuFoo extends Controller
                 'citysearch.com' => 'CitySearch',
                 'insiderpages.com' => 'InsiderPages',
                 'local.yahoo.com' => 'Local.Yahoo.com (Yahoo! Local)',
-
                 'superpages.com' => 'SuperPages',
-                'yp.com' => 'YP.com (Yellow Pages)'
+                'yellopages.com' => 'YP.com (Yellow Pages)'
 
 
             ),
@@ -373,6 +377,12 @@ class Controller_Webhooks_WuFoo extends Controller
         $query = new SiteFinder_Query();
         $query->industry = $industry;
 
+        $company = ORM::factory('company', array('name' => 'Unknown Company'));
+        if ($company->loaded()) {
+            $company->name = 'Unknown Company';
+            $company->save();
+        }
+
 
         for (
             $i = 1; $i <= 6; $i++
@@ -392,12 +402,9 @@ class Controller_Webhooks_WuFoo extends Controller
                     $query->name = $competitor_values['name'];
 
                     // create a new company
-                    $company = ORM::factory('company');
 
-                    $company->name = $competitor_values['name'];
-                    $company->save();
                     // add to companies_users
-                    $company->add('users', $user);
+                    // $company->add('users', $user);
 
                     // create location
                     $competitor_location = ORM::factory('location');
@@ -435,11 +442,11 @@ class Controller_Webhooks_WuFoo extends Controller
                         $this->add_to_queue($industry, $competitor_location->id, $sites);
                     }
                     // add to locations_users with level = 0
-                    $competitor_location->add('users', $dummy_user);
+                    // $competitor_location->add('users', $dummy_user);
 
                     // add to companies_locations
-                    $company->add('locations', $competitor_location);
-                    $company->save();
+                    //$company->add('locations', $competitor_location);
+                    //$company->save();
 
 
                 } else {
