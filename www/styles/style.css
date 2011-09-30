@@ -556,6 +556,10 @@ input[type=submit] {
         #box-recent-reviews .reviewStatus-new {
             background-position: -553px -14px;
         }
+        
+        #box-recent-reviews .reviewStatus-blank {
+            background-position: -553px -14px;
+        }
 
         #box-recent-reviews .reviewStatus-todo {
             background-position: -553px -193px;
@@ -1336,6 +1340,18 @@ input[type=submit] {
     }
     
     #box-recent-reviews .recent-review-status-icon.new {
+        background-position: -454px -12px;
+    }
+    
+    #box-recent-reviews .recent-review-status-icon.blank {
+        background-position: -454px -12px;
+    }
+
+    #box-recent-reviews .recent-review-status-icon.no-status {
+        background-position: -454px -12px;
+    }
+    
+    #box-recent-reviews .recent-review-status-icon.no-status {
         background-position: -454px -12px;
     }
 
