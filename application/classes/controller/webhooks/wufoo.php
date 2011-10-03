@@ -518,6 +518,7 @@ class Controller_Webhooks_WuFoo extends Controller
         /**
          * @var $queue_response Response
          */
+        
         $queue_response = Request::factory('webhooks/queue/add')
                 ->post($queue_post)->execute();
         $queue_response = json_decode($queue_response->body(), true);
