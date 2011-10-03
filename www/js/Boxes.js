@@ -593,6 +593,17 @@ var BC_RecentActivity = BoxController.extend({
         return template;
 
     },
+    
+    
+    /**
+     * if you want to make special actions when data is loaded you should reimplement this function
+     */
+    afterLoadDataCustom: function() {
+
+        if(!this.data)
+            this.getBoxDom().hide();
+
+    },
 
     processData: function() {
         var messages = this.data.messages, timestamp
@@ -1469,7 +1480,7 @@ var BC_CompetitionScore = BoxController.extend({
         avgStarRow.find('.rank').text(ogsi.rating.rank.value + " of " + ogsi.rating.rank.out);
 
 
-        reviewsRow.find('.score').text(ogsi.reviews.value);
+        reviewsRow.find('.score').text(parseInt(ogsi.reviews.value));
         reviewsRow.find('.rank').text(ogsi.reviews.rank.value + " of " + ogsi.reviews.rank.out);
 
         var data = [ogsiRow, avgStarRow, reviewsRow];
@@ -2244,8 +2255,8 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     break;
                 case 'status':
                     value = value.toLowerCase();
-                    var icon = value == 'new' ? ' ' : (value == 'closed' ? ' x ' : '!');
-                    col.html($('<div class="reviewStatus reviewStatus-' + value + '" style="text-align:center;"><span> ' + icon + ' </span></div>'));
+                    var icon = value in {'new': 1, 'blank': 1, 'no status': 1} ? ' ' : (value == 'closed' ? ' x ' : '!');
+                    col.html($('<div class="reviewStatus reviewStatus-' + value.replace(' ', '-') + '" style="text-align:center;"><span> ' + icon + ' </span></div>'));
                     break;
                 default:
                     col.text(value);
