@@ -2235,12 +2235,11 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 case 'title':
                     titleLink = this.titleLink.clone();
 
+                    var link = message.link ? message.link : Site.check(message.site);
 
-                    var url = Site.check(message.site);
-
-                    if(url)
+                    if(link)
                         titleLink.prop({
-                            'href': url,
+                            'href': link,
                             'target': '_blank'
 
                         });
