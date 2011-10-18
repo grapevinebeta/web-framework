@@ -218,7 +218,8 @@ html[xmlns] .clearfix {
 }
 
 #loc {
-    position:absolute;
-    top:0;
-    right:0;
+    position: absolute;
+    right: 10px;
+    text-align: left;
+    top: 12px;
 }

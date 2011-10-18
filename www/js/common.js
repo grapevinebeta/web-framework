@@ -25,7 +25,7 @@ var APP = {
                 opt += '<option value="' + key + '">' + value + '</option>';
             });
 
-            $('body').append('<div id="loc">Select location: <select name="loc">' + opt + '</select></div>');
+            $('body').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>');
             $('#loc').bind('change', function() {
 
                 self.location.current_location_id =  parseInt($('option:selected',this).val());
