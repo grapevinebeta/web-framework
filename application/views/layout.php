@@ -48,17 +48,19 @@
         </div>
     </div>
     
-    <?php if(isset($_location_switch)): ?>
     <script type="text/javascript">
     
+    var GLOBALS = {};
+    GLOBALS.location_id = <?php echo $_location_id; ?>;
+    <?php if(isset($_location_switch)): ?>
+    
         $(document).ready(function() {
-            
-            APP.init(<?php echo $_location_id; ?>);
+            APP.init(GLOBALS.location_id);
             
         });
     
-    </script>
     <?php endif; ?>
+    </script>
     <?php 
     
     foreach ($scripts as $script) {

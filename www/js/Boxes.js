@@ -3622,7 +3622,7 @@ boxManager = {
                     collection[swap_holder_id] = {
 
                         box_id: $(oldBox).children().attr('id'),
-                        location_id: 1,
+                        location_id: GLOBALS.location_id,
                         box_class: fromContainer.attr('class')
 
                     };
@@ -3630,7 +3630,7 @@ boxManager = {
                     collection[holder_id] =
                     {
                         box_id: $(ui.draggable).attr('id'),
-                        location_id: 1,
+                        location_id: GLOBALS.location_id,
                         box_class: $(this).attr('class')
                     };
 
@@ -3646,7 +3646,7 @@ boxManager = {
                     {
                         holder_id: holder_id,
                         box_id: $(ui.draggable).attr('id'),
-                        location_id: 1,
+                        location_id: GLOBALS.location_id,
                         box_class: $(this).attr('class'),
                         section_id: boxManager.section_id
                     };
@@ -3658,7 +3658,7 @@ boxManager = {
                 $(this).removeClass('empty').addClass('active');
 
 
-                if(boxManager.positions && !boxManager.positions[holder_id]) {
+                if(boxManager.positions.length && !boxManager.positions[holder_id]) {
                     collection[holder_id].delete_previous = true;
 
                 }
@@ -3752,6 +3752,7 @@ boxManager = {
 
         var self = this,
         settings = {};
+        settings.location_id = GLOBALS.location_id;
         settings.holders = [];
 
         $('.box-container').each(function() {
@@ -3768,7 +3769,7 @@ boxManager = {
 
                     holder_id: this.id,
                     box_id: $(this).find('.box').attr('id'),
-                    location_id: 1,
+                    location_id: GLOBALS.location_id,
                     section_id: self.section_id,
                     box_class: $(this).attr('class')
 
@@ -3781,11 +3782,11 @@ boxManager = {
        * it firstly do some ajax request that return json positions mapping
        */
         if($("#boxes-holder").length) {
-
+            
             this.genericRequest('/api/box/positions/' + this.section_id, $.param(settings), function(data) {
 
                 self.positions = data;
-
+                
                 var populated = {};
 
 
