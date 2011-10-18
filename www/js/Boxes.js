@@ -2526,13 +2526,15 @@ var BC_ReviewInbox = BC_Inbox.extend({
         var self = this;
 
         $.post('/api/dataProvider/reviews/alerts', {
-            status: 'alert'
+            status: 'alert',
+            loc: GLOBALS.location_id
         }, function(data) {
 
             self.alerts['alert'] = data.alerts;
 
             $.post('/api/dataProvider/reviews/alerts', {
-                status: 'todo'
+                status: 'todo',
+                loc: GLOBALS.location_id
             }, function(data) {
 
                 self.alerts['todo'] = data.alerts;
