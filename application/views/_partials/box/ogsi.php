@@ -1,4 +1,4 @@
-<div id="box-ogsi" class="box">
+<div id="box-ogsi" class="box not-draggable">
     <?php
     echo View::factory(
             '_partials/box/header', array(

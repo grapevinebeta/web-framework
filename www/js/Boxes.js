@@ -3658,7 +3658,7 @@ boxManager = {
                 $(this).removeClass('empty').addClass('active');
 
 
-                if(!boxManager.positions[holder_id]) {
+                if(boxManager.positions && !boxManager.positions[holder_id]) {
                     collection[holder_id].delete_previous = true;
 
                 }
@@ -3675,7 +3675,7 @@ boxManager = {
 
         var self = this;
 
-        $( "#boxes-holder .box" ).draggable({
+        $( "#boxes-holder .box" ).not('.not-draggable').draggable({
             snap: ".box-container",
             snapMode: 'inner',
             handle: ".box-header-button-move",
