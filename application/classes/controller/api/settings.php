@@ -17,7 +17,6 @@ class Controller_Api_Settings extends Controller_Api
     public function before()
     {
         parent::before();
-
         /**
          * @todo Perform a security check. According to requirements, there are
          *      3 types of users: Account Creator, Admin User and Normal User.
@@ -526,17 +525,9 @@ class Controller_Api_Settings extends Controller_Api
     public function action_getalert()
     {
 
-        /**
-         * @todo Change it into something more flexible
-         */
-        $location_id = Session::instance()->get('location_id');
-        if (!$location_id) {
-            die ('Location not found');
-        }
-
         // assume only one alert record exists for a location
         $alert = ORM::factory('alert')
-                ->where('location_id', '=', (int)$location_id)
+                ->where('location_id', '=', (int)$this->_location_id)
                 ->find();
 
         if (empty($alert->id)) {
@@ -555,6 +546,7 @@ class Controller_Api_Settings extends Controller_Api
      */
     public function action_updateuser()
     {
+        
 
         /**
          * @todo Change it into something more flexible

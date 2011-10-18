@@ -29,7 +29,7 @@ class Controller_Api extends Controller
         Cookie::$salt = Kohana::config('cookie.salt');
 
         $no_auth = $this->request->post('no_auth');
-        if (empty($no_auth)) {
+        if (empty($no_auth) && !$this->request->post('loc')) {
             if (!Auth::instance()->logged_in()) {
                 die('Unauthorized access'); // @todo replace it with proper message to the API client
             }

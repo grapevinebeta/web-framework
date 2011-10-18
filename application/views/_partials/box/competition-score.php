@@ -3,7 +3,7 @@
         '_partials/box/header', 
         array(
             'caption' => __('score and ranking details'),
-            'buttons' => array('dashboard-pin', 'move', 'show-data'),
+            'buttons' => array('dashboard-pin', 'move'),
             )
         ); 
     ?>

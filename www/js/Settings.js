@@ -1,3 +1,23 @@
+(function($) {
+    $.extend({
+        doGet: function(url, params) {
+            document.location = url + '?' + $.param(params);
+        },
+        doPost: function(url, params) {
+            var $form = $("<form method='POST'>").attr("action", url);
+            $.each(params, function(name, value) {
+                $("<input type='hidden'>")
+                    .attr("name", name)
+                    .attr("value", value)
+                    .appendTo($form);
+            });
+            $form.appendTo("body");
+            $form.submit();
+        }
+    });
+})(jQuery);
+
+
 /**
  * @todo This requires Class() function defined earlier. Make sure Class() is
  *      defined in common location and before this file is executed.
@@ -18,7 +38,37 @@ jQuery(function(){
 
         'init': function(){
             log('Settings object initialized!');
+            
+            this.location_id = GLOBALS.location_id;
+            
             this.initialize();
+        },
+
+        'initializeSections': function(onlyFillData) {
+            
+            // execute proper functions, if appropriate containers found
+            if (!!this.alertsSettings.length){
+                this.initializeAlertsSettings(onlyFillData);
+            }
+            if (!!this.billingSettings.length){
+                this.initializeBillingSettings(onlyFillData);
+            }
+            if (!!this.competitorsSettings.length){
+                this.initializeCompetitorsSettings(onlyFillData);
+            }
+            if (!!this.generalLocationSettings.length){
+                this.initializeGeneralLocationSettings(onlyFillData);
+            }
+            if (!!this.reportsSettings.length){
+                this.initializeReportsSettings(onlyFillData);
+            }
+            if (!!this.socialMediaSettings.length){
+                this.initializeSocialMediaSettings(onlyFillData);
+            }
+            if (!!this.userManagementSettings.length){
+                this.initializeUserManagement(onlyFillData);
+            }
+            
         },
 
         'initialize': function(){
@@ -32,80 +82,83 @@ jQuery(function(){
             this.socialMediaSettings = jQuery(this.options.socialMediaSettingsSelector);
             this.userManagementSettings = jQuery(this.options.userManagementSelector);
 
-            // execute proper functions, if appropriate containers found
-            if (!!this.alertsSettings.length){
-                this.initializeAlertsSettings();
-            }
-            if (!!this.billingSettings.length){
-                this.initializeBillingSettings();
-            }
-            if (!!this.competitorsSettings.length){
-                this.initializeCompetitorsSettings();
-            }
-            if (!!this.generalLocationSettings.length){
-                this.initializeGeneralLocationSettings();
-            }
-            if (!!this.reportsSettings.length){
-                this.initializeReportsSettings();
-            }
-            if (!!this.socialMediaSettings.length){
-                this.initializeSocialMediaSettings();
-            }
-            if (!!this.userManagementSettings.length){
-                this.initializeUserManagement();
-            }
+            var self = this;
+
+            jQuery('#loc select').live('change', function() {
+
+                self.location_id =  parseInt($('option:selected',this).val());
+                
+                self.initializeSections(true);
+
+            });
+
+            this.initializeSections(false);
 
         },
 
-        'initializeAlertsSettings': function(){
+        'initializeAlertsSettings': function(onlyFillData){
             var self = this;
             var form = this.alertsSettings.find('form.alertsSettingsForm');
             
-            jQuery.post('/api/settings/getalert', {}, function(data){
+            jQuery.post('/api/settings/getalert', {loc: self.location_id}, function(data){
                 if(data.result && typeof data.result.alert != 'undefined'){
+                    
                     self.propagateFormData(data.result.alert, form);
                 }
             });
 
-            form.delegate('[name="criteria"]', 'keydown', function(){
-                var checked = form.find(':radio[name="type"][value="my"]').prop('checked');
-                if (!checked){
-                    form.find(':radio[name="type"][value="my"]').prop('checked', true);
-                    log('User has modified default criteria. Checking "my tags" checkbox');
-                }
-            });
+            if(!onlyFillData) {
+             
+                form.delegate('[name="criteria"]', 'keydown', function(){
+                    var checked = form.find(':radio[name="type"][value="my"]').prop('checked');
+                    if (!checked){
+                        form.find(':radio[name="type"][value="my"]').prop('checked', true);
+                        log('User has modified default criteria. Checking "my tags" checkbox');
+                    }
+                });
 
-            form.delegate(':radio[name="type"]', 'change', function(){
-                var element = jQuery(this);
-                form.find('[name="criteria"]').val(element.attr('data-alerts-tags'));
-                log('Criteria field value changed into the following: "' + element.attr('data-alerts-tags') + '"');
-            });
-            
-            this.alertsSettings.delegate('form', 'submit', function(event){
-                event.preventDefault();
-                log('Someone has changed the content of one of the fields in alert edit form: ' + form.serialize());
-                var form_data = form.serializeArray();
-                var params = {};
-                jQuery.each(form_data, function(i, v){
-                    params[v.name] = v.value;
+                form.delegate(':radio[name="type"]', 'change', function(){
+                    var element = jQuery(this);
+                    form.find('[name="criteria"]').val(element.attr('data-alerts-tags'));
+                    log('Criteria field value changed into the following: "' + element.attr('data-alerts-tags') + '"');
                 });
-                jQuery.post('/api/settings/updatealert', {
-                    'params': params
-                }, function(data){
-                    log('Request to update the data sent successfully. The response was:');
-                    log(data);
-                });
-            });
             
-            log('Alerts settings initialized');
+                this.alertsSettings.delegate('form', 'submit', function(event){
+                    event.preventDefault();
+                    log('Someone has changed the content of one of the fields in alert edit form: ' + form.serialize());
+                    var form_data = form.serializeArray();
+                    var params = {};
+                    jQuery.each(form_data, function(i, v){
+                        params[v.name] = v.value;
+                    });
+
+                
+                    jQuery.post('/api/settings/updatealert', {
+                        'params': params,
+                        loc: self.location_id
+                    }, function(data){
+                        log('Request to update the data sent successfully. The response was:');
+                        log(data);
+                    });
+                });
+            
+                log('Alerts settings initialized');
+             
+            }
         },
 
         'initializeBillingSettings': function(){
             log('Billing settings initialized');
         },
 
-        'initializeCompetitorsSettings': function(){
-            var self = this;
+        'initializeCompetitorsSettings': function(reload){
+            if(reload) {
+             
+                $.doPost(location.href, {
+                    loc: this.location_id
+                });
+             
+            }
             /*
             this.competitorsSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
@@ -153,19 +206,37 @@ jQuery(function(){
             log('Competitors settings initialized');
         },
 
-        'initializeGeneralLocationSettings': function(){
-            log('General settings initialized');
+        'initializeGeneralLocationSettings': function(reload){
+            
+            
+            if(reload) {
+             
+                $.doPost(location.href, {
+                    loc: this.location_id
+                });
+             
+            }
+            
         },
 
-        'initializeReportsSettings': function(){
+        'initializeReportsSettings': function(reload){
             var self = this;
+            
+            if(reload) {
+             
+                $.doPost(location.href, {
+                    loc: this.location_id
+                });
+             
+            }
             
             this.reportsSettings.delegate('form', 'submit', function(event){
                 event.preventDefault();
 
                 // @todo Replace it with some shorthand method for requests
                 jQuery.post('/api/settings/addemail', {
-                    'email': jQuery(this).find('input[name="email"]').val()
+                    'email': jQuery(this).find('input[name="email"]').val(),
+                    loc: self.location_id
                 }, function(data){
                     log('Retrieved data:');
                     log(data);
@@ -186,7 +257,8 @@ jQuery(function(){
                     log('Attempting to delete mail "' + email + '" from the current location');
 
                     jQuery.post('/api/settings/deleteemail', {
-                        'email': email
+                        'email': email,
+                        loc: self.location_id
                     }, function(data){
                         if (data.result && data.result.success){
                             self.refreshReportsSettingsEmails();
@@ -201,7 +273,16 @@ jQuery(function(){
             log('Reports settings initialized');
         },
 
-        'initializeSocialMediaSettings': function(){
+        'initializeSocialMediaSettings': function(reload){
+            
+            if(reload) {
+             
+                $.doPost(location.href, {
+                    loc: this.location_id
+                });
+             
+            }
+            
             var self = this;
 
             this.socialMediaSettings.delegate('form', 'submit', function(event){
@@ -211,7 +292,8 @@ jQuery(function(){
                 jQuery.post('/api/settings/updatetwittersearch', {
                     'params': {
                         'twitter_search': twitter_search
-                    }
+                    },
+                    loc: self.location_id
                 }, function(data){
                     if (data.result){
                         log('Request to change Twitter search setting successful');
@@ -238,7 +320,17 @@ jQuery(function(){
             log('Social media settings initialized');
         },
 
-        'initializeUserManagement': function(){
+        'initializeUserManagement': function(reload){
+            
+                        
+            if(reload) {
+             
+                $.doPost(location.href, {
+                    loc: this.location_id
+                });
+             
+            }
+            
             var self = this;
             var editForm = this.userManagementSettings.find('form.userEditForm');
 
@@ -260,7 +352,8 @@ jQuery(function(){
                 jQuery.post('/api/settings/updateuser', {
                     'params': {
                         'user': user
-                    }
+                    },
+                    loc: self.location_id
                 }, function(data){
                     if(data.result){
                         // success?
@@ -297,7 +390,8 @@ jQuery(function(){
                 jQuery.post('/api/settings/getuser', {
                     'params': {
                         'user_id': user_id
-                    }
+                    },
+                    loc: self.location_id
                 }, function(data){
                     log('Propagating user data received from server');
                     self.propagateFormData(data.result.user, editForm);
@@ -318,7 +412,8 @@ jQuery(function(){
                     jQuery.post('/api/settings/deleteuser', {
                         'params': {
                             'user_id': user_id
-                        }
+                        },
+                        loc: self.location_id
                     }, function(data){
                         if (data.result){
                             log('User has been successfully deleted');
@@ -344,7 +439,8 @@ jQuery(function(){
                     'params' : {
                         'level': level,
                         'user_id': user_id
-                    }
+                    },
+                    loc: self.location_id
                 }, function(data){
                     log('Answer to the request:');
                     log(data);
@@ -410,7 +506,8 @@ jQuery(function(){
             jQuery.post('/api/settings/socialdisconnect', {
                 'params': {
                     'network': network
-                }
+                },
+                loc: self.location_id
             }, function(data){
                 if (typeof data.result.success !== 'undefined' && data.result.success){
                     // success
@@ -442,9 +539,24 @@ jQuery(function(){
             if (typeof form == 'undefined'){
                 form = jQuery('form');
             }
+            
+            
             var field;
+            
+            
+            if(!data['type']) {
+                
+                form.find('input[name="type"][value="grapevine"]').trigger('click');
+                
+            }
+            
             for (field_name in data){
-                form.find('input[name="' + field_name + '"]').each(function(){
+                form.find('*[name="' + field_name + '"]').each(function(){
+                    
+                    if(!data[field_name]) {
+                        return;
+                    }
+                    
                     if (jQuery.inArray(jQuery(this).attr('type'), ['radio', 'checkbox']) != -1){
                         // radio button or checkbox - check if matches value, otherwise uncheck
                         if (jQuery(this).val() == (''+data[field_name])){
@@ -457,6 +569,8 @@ jQuery(function(){
                             log('Unchecking ' + field_name + ' ("' + data[field_name] + '") field');
                         }
                     }else{
+                        
+                        
                         jQuery(this).val(data[field_name]);
                         log('Propagating ' + field_name + ' field with data:');
                         log(data[field_name]);
@@ -475,14 +589,10 @@ jQuery(function(){
             var form = self.generalLocationSettings.find('form');
 
             if (typeof settings == 'undefined'){
-                var location_id = self.generalLocationSettings.find('input[name="location_id"]').val();
-                if (location_id == '') {
-                    location_id = null;
-                }
 
                 // propagate data when the page is displayed
                 jQuery.post('/api/settings/getgeneral', {
-                    'location_id': location_id
+                    'location_id': self.location_id
                 }, function(data){
                     if (data.result){
                         log('General location data retrieved');
@@ -500,7 +610,7 @@ jQuery(function(){
         'refreshReportsSettingsEmails': function(){
             var self = this;
             
-            jQuery.post('/api/settings/getemails', {}, function(data){
+            jQuery.post('/api/settings/getemails', {loc: self.location_id}, function(data){
                 if (data.result){
                     // result received
                     self.reportsSettings.find('.reportsSettingsEmails').replaceWith(data.result.emails_html);

@@ -142,9 +142,9 @@ window.fbAsyncInit = function() {
         
 };
     
-(function() {
+$(function() {
         
-    $.post('/api/box/auth', null, function(data) {
+    $.post('/api/box/auth', {loc: GLOBALS.location_id}, function(data) {
             
             
         credentials = data;
@@ -176,4 +176,4 @@ window.fbAsyncInit = function() {
     });
         
         
-}());
+});

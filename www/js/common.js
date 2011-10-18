@@ -25,7 +25,10 @@ var APP = {
                 
                 var opt = '';
                 $.map(rs.locations, function(value, key) {
-                    opt += '<option value="' + key + '">' + value + '</option>';
+                    
+                    var selected = key == APP.location.current_location_id ? 'selected="selected"' : '';
+                    
+                    opt += '<option value="' + key + '" ' + selected + '>' + value + '</option>';
                 });
 
                 $('body').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>');

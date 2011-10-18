@@ -36,6 +36,11 @@ class Controller_Account extends Controller_Template {
     
     public function action_general()
     {
+        $location_id = $this->request->post('loc');
+        if (!empty($location_id)) {
+            $this->_location = ORM::factory('location', $location_id);
+        }
+        
         $this->_contentView = View::factory('account/general', array(
             'location' => $this->_location,
             'user' => $this->_current_user,
@@ -44,6 +49,11 @@ class Controller_Account extends Controller_Template {
     
     public function action_users()
     {
+        
+        $location_id = $this->request->post('loc');
+        if (!empty($location_id)) {
+            $this->_location = ORM::factory('location', $location_id);
+        }
         $location = $this->_location;
 
         $this->_contentView = View::factory('account/users', array(
@@ -114,17 +124,19 @@ class Controller_Account extends Controller_Template {
         
         $competitors = $settings->getSetting('competitor');
         
+        $companies = array();
         
-        $companies = DB::select_array(array('id', 'name'))
-                ->from('companies')
-                ->where('id', 'IN', $competitors)
-                ->execute();
+        if(count($competitors)) {
+            $companies = DB::select_array(array('id', 'name'))
+                    ->from('companies')
+                    ->where('id', 'IN', $competitors)
+                    ->execute();
+
+            /* @var $companies Database_Result_Cached|Kohana_Database */
+
+            $companies = $companies->as_array('id', 'name');
         
-        /* @var $companies Database_Result_Cached|Kohana_Database */
-        
-        $companies = $companies->as_array('id', 'name');
-        
-        
+        }
         
         $this->_contentView->competitors = $companies;
         
@@ -135,7 +147,7 @@ class Controller_Account extends Controller_Template {
         $twitter_search_settings = $this->_location->getSettings()->getSetting('twitter_search');
         $twitter_search = Arr::get($twitter_search_settings, 0);
         $this->_contentView = View::factory('account/socials', array(
-            'location_id' => (int)$this->_location->id,
+            'location_id' => (int)$this->_location_id,
             'twitter_search' => $twitter_search,
         ));
     }

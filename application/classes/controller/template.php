@@ -62,6 +62,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
              *      the location clarifies) it and Controller_Api use the first
              *      location found in the database and accessible to user
              */
+            
             $this->_location = $this->_current_user->getLocations(false)->current();
             
             // bind current location to every view
@@ -70,7 +71,7 @@ abstract class Controller_Template extends Kohana_Controller_Template
             $manyLocations = (bool) ($this->_current_user->getLocations(false)->count() > 1);
             
             View::bind_global('_location_switch', $manyLocations);
-            $this->_location_id = (int)$this->_location->id;
+            $this->_location_id = (int) $this->request->post('loc') ? $this->request->post('loc') : $this->_location->id;
             View::bind_global('_location_id', $this->_location_id);
             
             Session::instance()->set('location_id',$this->_location_id);
