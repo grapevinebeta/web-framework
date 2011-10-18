@@ -3789,8 +3789,8 @@ boxManager = {
                 
                 var populated = {};
 
-
                 for(var box in data) {
+                    
 
                     var j = data[box],
                     current = self.collection[j.box_id];
@@ -3845,7 +3845,7 @@ boxManager = {
         this.section_id = $('.top-menu-item.active')
         .text()
         .toLowerCase()
-        .replace(/\s+/g,"_");
+        .replace(/\s+/g,"_") || location.pathname.replace(/[\s|\/]+/g,"_");
 
         this.initHolders();
 

@@ -1,5 +1,6 @@
 <a href="#" class="window-close">Close</a>
 <div id="boxes-holder">
+    <div class="box-container active">
     <?php $viewingRange = Session::instance()->get('viewingRange'); ?>
     <div id="box-recent-reviews" class="box" filter="<?php echo $alert; ?>" date="<?php echo $viewingRange['date'] ?>" period="<?php echo $viewingRange['period'] ?>">
         <?php
@@ -40,6 +41,7 @@
                 </table>
             </div>
         </div>
+    </div>
     </div>
 </div>
 <script type="text/javascript">

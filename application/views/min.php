@@ -39,5 +39,20 @@
                 }
             }
         ?>
+        
+            
+    <script type="text/javascript">
+    
+    var GLOBALS = {};
+    GLOBALS.location_id = <?php echo $_location_id; ?>;
+            
+            
+    $(document).ready(function() {
+        APP.init(GLOBALS.location_id, true);
+        
+    });
+            
+    </script>
+        
     </body>
 </html> 

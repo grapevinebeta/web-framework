@@ -55,18 +55,20 @@ abstract class Controller_Min extends Kohana_Controller_Template
             // bind current user to every view
             View::bind_global('_current_user', $this->_current_user);
 
-            /**
-             * @todo It must be replaced with some kind of Route parameter or
-             *      maybe GET parameter - for now (before the final shape of the
-             *      application and the relation between company account and
-             *      the location clarifies) it and Controller_Api use the first
-             *      location found in the database and accessible to user
-             */
+            
             $this->_location = $this->_current_user->getLocations(false)->current();
-
+            
             // bind current location to every view
             View::bind_global('_current_location', $this->_location);
+            
+            $manyLocations = (bool) ($this->_current_user->getLocations(false)->count() > 1);
+            
+            View::bind_global('_location_switch', $manyLocations);
             $this->_location_id = (int)$this->_location->id;
+            View::bind_global('_location_id', $this->_location_id);
+            
+            Session::instance()->set('location_id',$this->_location_id);
+            
         } else {
             /**
              * @todo User went through the security checks, but is still logged
@@ -99,7 +101,7 @@ abstract class Controller_Min extends Kohana_Controller_Template
         $this->template->scripts = array(
             'js/common.js', // adds some common functions
             'js/DataProvider.js',
-            'js/Boxes.min.js', // minified verion of Boxes.js
+            'js/Boxes.js', // minified verion of Boxes.js
             'js/jquery.ba-resize.min.js', // minified verion of Resize
             'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js',
             'js/jquery.tipTip.min.js',

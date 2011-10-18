@@ -12,7 +12,7 @@ var APP = {
     
     location : null,
     
-    init: function(location_id) {
+    init: function(location_id, skipLocationSelector) {
         
         var self = this;
         
@@ -20,19 +20,23 @@ var APP = {
             
             self.location = rs;
 
-            var opt = '';
-            $.map(rs.locations, function(value, key) {
-                opt += '<option value="' + key + '">' + value + '</option>';
-            });
 
-            $('body').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>');
-            $('#loc').bind('change', function() {
+            if(!skipLocationSelector) {
+                
+                var opt = '';
+                $.map(rs.locations, function(value, key) {
+                    opt += '<option value="' + key + '">' + value + '</option>';
+                });
 
-                self.location.current_location_id =  parseInt($('option:selected',this).val());
+                $('body').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>');
+                $('#loc').bind('change', function() {
 
-                boxManager.refresh();
+                    self.location.current_location_id =  parseInt($('option:selected',this).val());
 
-            });
+                    boxManager.refresh();
+
+                });
+            }
             
             boxManager
             .add(new BC_TagsAnalysis())
@@ -56,8 +60,12 @@ var APP = {
             .init(); // we need to init all boxes only when we init top menu
         
             
-            TopMenu = new TopMenu();
-            TopMenu.init();
+            if(typeof(TopMenu) != 'undefined') {
+             
+                TopMenu = new TopMenu();
+                TopMenu.init();
+             
+            }
         
         });
     }
