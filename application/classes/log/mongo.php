@@ -17,13 +17,13 @@ class Log_Mongo extends Log_Writer
             $internal_db = $mongo->selectDB('dashboard');
             $logs = $internal_db->selectCollection('logs');
             $logs->batchInsert($messages);
-            // if (Kohana::config("global.send_alerts")) {
-            $mailer = new Model_Mailer();
-            $sent = $mailer->send(
-                'errors@pickgrapevine.com', 'New Alert',
-                    '<div>' . print_r($messages, true) . '</div>',
-                null, 'app@pickgrapevine.com'
-            );
+           // if (Kohana::config("global.send_alerts")) {
+                $mailer = new Model_Mailer();
+                $sent = $mailer->send(
+                    'errors@pickgrapevine.com', 'New Alert',
+                        '<div>' . print_r($messages, true) . '</div>',
+                    null, 'app@pickgrapevine.com'
+                );
             //}
 
         }

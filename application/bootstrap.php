@@ -112,6 +112,7 @@ Kohana::modules(array(
 	 'facebook' => MODPATH . 'facebook',
 	 'twitter' => MODPATH . 'twitter',
         'freshbooks' => MODPATH . 'freshbooks',
+        'automodeler'=>MODPATH.'auto-modeler'
 	));
 
 /**
@@ -302,6 +303,7 @@ Route::set('api', '<directory>(/<controller>(/<action>(/<id>)))', array(
 Route::set('api_rest', '<directory>(/<controller>(/<action>/<field>(/<id>)))', array(
 		'directory' => '(api)'
 	));
+  
     Route::set('admin', '<directory>(/<controller>(/<action>(/<id>)))', array(
 		'directory' => '(admin)'
 	));

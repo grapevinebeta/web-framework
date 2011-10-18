@@ -126,7 +126,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         ) {
             $location_name = $location_names[$location];
             $results[$location_name]['reviews'] = array(
-                'value' => $doc['count'],
+                'value' => intval($doc['count']),
                 'competition' => $location_name,
                 'rank'
                 => array(
