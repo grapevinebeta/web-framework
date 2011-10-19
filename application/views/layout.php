@@ -48,6 +48,7 @@
         </div>
     </div>
     
+    <?php if(isset($_location_id)): ?>
     <script type="text/javascript">
     
     var GLOBALS = {};
@@ -61,6 +62,7 @@
     
     <?php endif; ?>
     </script>
+    <?php endif; ?>
     <?php 
     
     foreach ($scripts as $script) {

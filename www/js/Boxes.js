@@ -2522,7 +2522,6 @@ var BC_ReviewInbox = BC_Inbox.extend({
         if(!alerts.length)
             return;
 
-
         var self = this;
 
         $.post('/api/dataProvider/reviews/alerts', {
