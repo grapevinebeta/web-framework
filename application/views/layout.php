@@ -52,7 +52,9 @@
     <script type="text/javascript">
     
     var GLOBALS = {};
+    <?php if(isset($_location_id)):?>
     GLOBALS.location_id = <?php echo $_location_id; ?>;
+    <?php endif?>
     <?php if(isset($_location_switch)): ?>
     
         $(document).ready(function() {

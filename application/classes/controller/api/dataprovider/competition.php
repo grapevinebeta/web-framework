@@ -304,6 +304,30 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
             'finalize' => $finalize
         );
 
+        $before_map
+                = "function(){
+            var locs=$js_locations;
+            var agg=this.aggregates;
+             locs.forEach(function(location){
+                emit({location:location},agg[location]||{});
+             });
+
+        }";
+        $before_results = $db->command(
+            array(
+                'mapreduce' => 'metrics',
+                'query'
+                => array(
+                    'type' => 'scoreboard',
+                    'date' => array('$lt' => $this->startDate),
+                    'period' => 'day'
+                ),
+                'map' => $before_map,
+                'reduce' => $reduce,
+                'out' => array('inline' => TRUE),
+                'finalize' => $finalize
+            )
+        );
         $return = $db->command($command);
         $results = array();
 
@@ -317,6 +341,15 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
 
 
         }
+        $before = array();
+        foreach (
+            $before_results['results'] as $doc
+        ) {
+            $id = $doc['_id'];
+
+
+            $before[$id['location']] = $doc['value'];
+        }
         // ensure that dates are in lowest to highest
         ksort($results);
         //$dates = array_values($results);
@@ -325,6 +358,7 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
         $no_date_default = array_fill_keys(array_keys($location_names), array('points' => 0, 'count' => 0));
 
 
+        $first = true;
         $cleaned = array_fill_keys($dates, array());
         for (
             $i = 0; $i < $len; $i++
@@ -338,9 +372,6 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
             $location_dates = Arr::get($results, $date, $no_date_default);
 
 
-            if ($i == 5) {
-                $a = 1;
-            }
             foreach (
                 $location_ids as $location_id
             ) {
@@ -356,11 +387,17 @@ class Controller_Api_DataProvider_Competition extends Controller_Api_DataProvide
                     $past_location_values = Arr::path($results, $path, array('points' => 0, 'count' => 0));
                     $points += Arr::get($past_location_values, 'points', 0);
                     $count += Arr::get($past_location_values, 'count', 0);
+
                     $j--;
+                    if ($first && $j == -1) {
+                        $points += Arr::path($before, "$location_id.points", 0);
+                        $count += Arr::path($before, "$location_id.count", 0);
+                    }
 
                 }
                 $cleaned[$date][$location_id] = $count ? $points / $count : 0;
             }
+            $first = false;
         }
 
         $results = $cleaned;
