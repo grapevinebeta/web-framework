@@ -2368,14 +2368,14 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'NEW'
+                    status: 'BLANK'
                 }, function() {
 
                     tr.find('.recent-review-status-icon')
                     .removeClass('new closed todo')
-                    .addClass('new');
+                    .addClass('blank');
 
-                    status = 'new';
+                    status = 'blank';
 
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-new"><span>[  ]</span></div>');
                     tr.prev().find('.col-status').html(reviewStatus);
