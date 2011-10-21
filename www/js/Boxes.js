@@ -2371,6 +2371,9 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     status: 'blank'
                 }, function() {
 
+                    data.context.initFilters(true);
+                    data.context.renderAlerts();
+
                     tr.find('.recent-review-status-icon')
                     .removeClass('new closed todo blank')
                     .addClass('blank');
@@ -2524,6 +2527,8 @@ var BC_ReviewInbox = BC_Inbox.extend({
 
         var alerts = $('#alerts .light-box-content');
 
+        var loc = APP.location.current_location_id ? APP.location.current_location_id : GLOBALS.location_id;
+
         if(!alerts.length)
             return;
 
@@ -2531,7 +2536,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
 
         $.post('/api/dataProvider/reviews/alerts', {
             status: 'alert',
-            loc: GLOBALS.location_id
+            loc: loc
         }, function(data) {
 
             self.alerts['alert'] = data.alerts;

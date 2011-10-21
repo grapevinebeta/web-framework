@@ -37,6 +37,7 @@ var APP = {
                     self.location.current_location_id =  parseInt($('option:selected',this).val());
 
                     boxManager.refresh();
+                    boxManager.getBox('box-recent-reviews').renderAlerts();
 
                 });
             }
