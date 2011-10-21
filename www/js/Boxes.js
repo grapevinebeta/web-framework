@@ -15,7 +15,7 @@ Class.__asMethod__ = function(func, superClass) {
 /**
  * this object helps to extend default behaviour of each objects
  *
- */
+ */   
 
 Class.extend = function(def) {
     var classDef = function() {
@@ -1225,7 +1225,11 @@ var BC_Inbox = BoxController.extend({
         alert('You must implement it by yourself');
     },
 
-    initFilters: function() {
+    initFilters: function(forceReload) {
+
+        if(forceReload)
+            this.data = this.dataProvider.fetch();
+            
 
 
         var filters = this.data.filters;
@@ -1244,7 +1248,7 @@ var BC_Inbox = BoxController.extend({
 
     afterLoadDataCustom: function() {
 
-      this.initFilters();
+      this.initFilters(false);
 
     },
 
@@ -2345,6 +2349,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 }, function() {
 
                     data.context.renderAlerts();
+                    data.contentx.initFilters(true);
 
 
                     tr.find('.recent-review-status-icon')
