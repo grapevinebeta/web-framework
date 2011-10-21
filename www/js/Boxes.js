@@ -2368,16 +2368,16 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'opened'
+                    status: 'blank'
                 }, function() {
 
                     tr.find('.recent-review-status-icon')
-                    .removeClass('new closed todo')
-                    .addClass('opened');
+                    .removeClass('new closed todo blank')
+                    .addClass('blank');
 
-                    status = 'opened';
+                    status = 'blank';
 
-                    var reviewStatus = $('<div class="reviewStatus reviewStatus-opened"><span>[  ]</span></div>');
+                    var reviewStatus = $('<div class="reviewStatus reviewStatus-blank"><span>[  ]</span></div>');
                     tr.prev().find('.col-status').html(reviewStatus);
                     checkboxes.removeAttr('disabled');
                 })
