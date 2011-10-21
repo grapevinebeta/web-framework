@@ -1228,7 +1228,7 @@ var BC_Inbox = BoxController.extend({
     initFilters: function(forceReload) {
 
         if(forceReload)
-            this.data = this.dataProvider.fetch();
+            return this.dataProvider.fetch();
             
 
 
@@ -2350,7 +2350,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
 
                     data.context.renderAlerts();
                     data.context.initFilters(true);
-
+                    
 
                     tr.find('.recent-review-status-icon')
                     .removeClass('new closed todo')
