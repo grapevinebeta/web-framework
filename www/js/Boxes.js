@@ -2348,8 +2348,8 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     status: value.toUpperCase()
                 }, function() {
 
-                    data.context.renderAlerts();
                     data.context.initFilters(true);
+                    data.context.renderAlerts();
                     
 
                     tr.find('.recent-review-status-icon')
