@@ -2345,7 +2345,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 $(this).prop('checked', true);
 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: value.toUpperCase()
+                    status: value
                 }, function() {
 
                     data.context.initFilters(true);
@@ -2356,7 +2356,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                     .removeClass('new closed todo')
                     .addClass(value);
 
-                    var icon = value == 'new' ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
+                    var icon = value in {'new': 1, 'blank': 1} ? '&nbsp;' : (value == 'closed' ? ' x ' : '!');
                     var reviewStatus = $('<div class="reviewStatus reviewStatus-' + value + '"><span>[ ' + icon + ' ]</span></div>');
 
                     tr.prev().find('.col-status').html(reviewStatus);
