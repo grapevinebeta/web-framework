@@ -2368,7 +2368,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
             else if(!nbrChecked && message.score >= 3) {
 
                 boxManager.genericRequest('/api/dataProvider/reviews' + '/status/' + data.id, {
-                    status: 'BLANK'
+                    status: 'blank'
                 }, function() {
 
                     tr.find('.recent-review-status-icon')
