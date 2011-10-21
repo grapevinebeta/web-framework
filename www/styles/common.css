@@ -217,9 +217,18 @@ html[xmlns] .clearfix {
     color: #f00;
 }
 
+#header-menu {
+    position: relative;
+}
+
 #loc {
     position: absolute;
-    right: 10px;
+    right: -200px;
     text-align: left;
-    top: 12px;
+    top: -5px;
+    width: 200px;
+}
+
+#loc select {
+    width: 100%;
 }
