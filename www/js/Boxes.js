@@ -2349,7 +2349,7 @@ var BC_ReviewInbox = BC_Inbox.extend({
                 }, function() {
 
                     data.context.renderAlerts();
-                    data.contentx.initFilters(true);
+                    data.contenxt.initFilters(true);
 
 
                     tr.find('.recent-review-status-icon')
