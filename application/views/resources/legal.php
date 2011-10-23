@@ -6,7 +6,7 @@
 </h1>
 
 <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum volutpat, felis non interdum interdum, velit massa ullamcorper lectus, sed tempor lorem magna placerat justo. Vestibulum et aliquet sem. Donec tellus lacus, luctus hendrerit facilisis id, eleifend id urna. Pellentesque eu scelerisque neque. Pellentesque sagittis, tortor iaculis tristique tristique, sapien turpis fermentum felis, nec molestie urna velit sit amet mi. Morbi feugiat tellus in purus scelerisque at aliquet odio tincidunt. Duis volutpat ipsum at turpis pulvinar pharetra aliquet velit pretium. Mauris condimentum nunc nec mi ultrices suscipit adipiscing purus auctor. Nunc in lorem in sem dignissim aliquet. Praesent gravida, leo et semper porta, arcu purus rutrum felis, in consequat quam elit ac libero.
+    Legal documentation coming soon.
 </p>
 <p>
     Cras varius erat ac tortor laoreet quis lacinia quam luctus. Sed sed tortor in enim vehicula lobortis ac interdum neque. Morbi non nisl quam, non facilisis ligula. Mauris condimentum sapien non nunc egestas consequat sit amet non est. Aliquam ac velit metus, non faucibus enim. Suspendisse lectus quam, viverra eget dignissim sit amet, lobortis ac metus. Etiam interdum tempor nisl at ornare. Ut vitae velit tortor. Vestibulum tempus dolor ut urna tempus pharetra. Sed sem neque, iaculis id adipiscing non, adipiscing vitae risus.
