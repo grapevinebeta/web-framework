@@ -131,15 +131,22 @@ class Model_User extends Model_Auth_User {
                 ->where('location_id', 'IN', array_keys($rs))
                 ->execute();
         
+        $hashes = array();
+        
         foreach($rs as $key => $name) {
-            
-            $sql->values(array($key, strtolower(Inflector::underscore($name))));
+            $hashes[] = $hash = strtolower(Inflector::underscore($name));
+            $sql->values(array($key, $hash));
             
         }
         
         $sql->execute();
                 
-        return $rs;
+        return 
+        array(
+            'locations' => array_combine($hashes, array_values($rs)),
+            'hashes' => array_combine($hashes, array_keys($rs)),
+        );
+        
         
     }
 

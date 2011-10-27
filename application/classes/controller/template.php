@@ -68,10 +68,22 @@ abstract class Controller_Template extends Kohana_Controller_Template
             // bind current location to every view
             View::bind_global('_current_location', $this->_location);
             
+            
             $manyLocations = (bool) ($this->_current_user->getLocations(false)->count() > 1);
             
             View::bind_global('_location_switch', $manyLocations);
             $this->_location_id = (int) $this->request->post('loc') ? $this->request->post('loc') : $this->_location->id;
+            
+            $rs = DB::select()
+                    ->from('locations_slug')
+                    ->where('location_id', '=', $this->_location_id)
+                    ->as_assoc()
+                    ->execute();
+            
+            $rs = $rs->current();
+            
+            View::bind_global('_location_hash', $rs['slug']);
+            
             View::bind_global('_location_id', $this->_location_id);
             
             Session::instance()->set('location_id',$this->_location_id);

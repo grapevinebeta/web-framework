@@ -54,6 +54,7 @@
     var GLOBALS = {};
     <?php if(isset($_location_id)):?>
     GLOBALS.location_id = <?php echo $_location_id; ?>;
+    GLOBALS.location_hash = '<?php echo $_location_hash; ?>';
     <?php endif?>
     <?php if(isset($_location_switch)): ?>
     

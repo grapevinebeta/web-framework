@@ -25,12 +25,10 @@ var APP = {
                     
                     var reg = /(\/\w+)(\/#([!\/\w\_\-]+)?)?$/gi;
                     
-                    href = href.replace(reg, "$1" + APP.location.current_location_id);
+                    href = href.replace(reg, "$1" + '#!/' + APP.location.current_location_hash);
                     
                     return  href;
                 }
-            }).bind('click', function() {
-               console.log('gggg'); 
             });
 
         });
@@ -39,15 +37,39 @@ var APP = {
             
             self.location = rs;
 
+            var wHash = window.location.hash.split('#!/');
+            
+            wHash = wHash[1] ? wHash[1] : null;
+
+            var hash = wHash ? wHash : GLOBALS.location_hash;
+
+
+            if(wHash) {
+                          
+                $("a").not("*[href^=http]").attr({
+                    href: function() {
+                    
+                        var href = $(this).attr('href');
+                    
+                        var reg = /(\/\w+)(\/#([!\/\w\_\-]+)?)?$/gi;
+                    
+                        href = href.replace(reg, "$1" + '#!/' + wHash);
+                    
+                        return  href;
+                    }
+                });
+            
+                self.location.current_location_hash =  wHash;
+                self.location.current_location_id =  self.location.hashes[wHash];
+                   
+            }
 
             if(!skipLocationSelector) {
                 
                 var opt = '<option value="">Select location</option>';
                 $.map(rs.locations, function(value, key) {
                     
-                    var selected = key == APP.location.current_location_id ? 'selected="selected"' : '';
-                    
-                    slug = '#!/' + key;
+                    var selected = key == hash  ? 'selected="selected"' : '';
 
                     
                     opt += '<option value="' + key + '" ' + selected + '>' + value + '</option>';
@@ -58,13 +80,14 @@ var APP = {
                     
                     
                     var selected = $('option:selected',this).val(), 
-                    url = window.location.protocol + '//' + window.location.hostname + '/';
+                    url = window.location.href.split('#')[0];
                     
                     if(selected) {
                      
-                        window.location.replace(url + selected);  
+                        window.location.replace(url + '#!/' + selected);  
                         
-                        self.location.current_location_id =  selected;
+                        self.location.current_location_hash =  selected;
+                        self.location.current_location_id =  self.location.hashes[selected];
                         
                         boxManager.refresh();
                         boxManager.getBox('box-recent-reviews').renderAlerts();
@@ -73,7 +96,8 @@ var APP = {
                     else {
                         
                         window.location.replace(url + '#');  
-                        self.location.current_location_id =  GLOBALS.location_id;
+                        self.location.current_location_hash =  GLOBALS.location_hash;
+                        self.location.current_location_hash =  GLOBALS.location_id;
                         
                     }
 
