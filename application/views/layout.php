@@ -58,7 +58,7 @@
     <?php endif?>
     <?php if(isset($_location_switch)): ?>
     
-        $(document).ready(function() {
+        $(function() {
             APP.init(GLOBALS.location_id, false);
             
         });

@@ -12,20 +12,24 @@ var APP = {
     
     location : null,
     
+    initSettings: function() {
+        
+        this.settings = new GLOBALS.settings();
+        this.settings.init();
+        
+    },
+    
     init: function(location_id, skipLocationSelector) {
         
         var self = this;
         
         $(window).hashchange(function() {
 
-            $("a").not("*[href^=http]").attr({
+            $("a").not("*[href^=http], .ignore").attr({
                 href: function() {
                     
-                    var href = $(this).attr('href');
-                    
-                    var reg = /(\/\w+)(\/#([!\/\w\_\-]+)?)?$/gi;
-                    
-                    href = href.replace(reg, "$1" + '#!/' + APP.location.current_location_hash);
+                    var href = $(this).attr('href')
+                    .split('#')[0] + '#!/' + APP.location.current_location_hash;;
                     
                     return  href;
                 }
@@ -46,14 +50,12 @@ var APP = {
 
             if(wHash) {
                           
-                $("a").not("*[href^=http]").attr({
+                $("a").not("*[href^=http], .ignore").attr({
                     href: function() {
                     
-                        var href = $(this).attr('href');
-                    
-                        var reg = /(\/\w+)(\/#([!\/\w\_\-]+)?)?$/gi;
-                    
-                        href = href.replace(reg, "$1" + '#!/' + wHash);
+                        var href = $(this).attr('href')
+                        .split('#')[0] + '#!/' + wHash;
+                        ;
                     
                         return  href;
                     }
@@ -89,8 +91,12 @@ var APP = {
                         self.location.current_location_hash =  selected;
                         self.location.current_location_id =  self.location.hashes[selected];
                         
-                        boxManager.refresh();
-                        boxManager.getBox('box-recent-reviews').renderAlerts();
+                        if(boxManager) {
+                         
+                            boxManager.refresh();
+                            boxManager.getBox('box-recent-reviews').renderAlerts();
+                         
+                        }
                      
                     }
                     else {
@@ -132,6 +138,8 @@ var APP = {
                 TopMenu.init();
              
             }
+            
+            self.initSettings();
         
         });
     }

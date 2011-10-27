@@ -17,14 +17,13 @@
     });
 })(jQuery);
 
-
 /**
  * @todo This requires Class() function defined earlier. Make sure Class() is
  *      defined in common location and before this file is executed.
  */
 
 jQuery(function(){
-    var Settings = Class.extend({
+    GLOBALS.settings = Class.extend({
 
         'options': {
             'alertsSettingsSelector': '#alertsSettings',
@@ -39,9 +38,17 @@ jQuery(function(){
         'init': function(){
             log('Settings object initialized!');
             
-            this.location_id = GLOBALS.location_id;
+            this.location_id = APP.location.current_location_id 
+                ? APP.location.current_location_id : GLOBALS.location_id;
             
-            this.initialize();
+            
+            
+            if(GLOBALS.location_id != this.location_id) {
+                this.initialize(true);
+            }
+            else
+                this.initialize(false);
+            
         },
 
         'initializeSections': function(onlyFillData) {
@@ -71,7 +78,7 @@ jQuery(function(){
             
         },
 
-        'initialize': function(){
+        'initialize': function(forceReload){
 
             // assign containers
             this.alertsSettings = jQuery(this.options.alertsSettingsSelector);
@@ -86,13 +93,15 @@ jQuery(function(){
 
             jQuery('#loc select').live('change', function() {
 
-                self.location_id =  parseInt($('option:selected',this).val());
+                console.log(APP.location.current_location_id);                
+
+                self.location_id =  APP.location.current_location_id;
                 
                 self.initializeSections(true);
 
             });
 
-            this.initializeSections(false);
+            this.initializeSections(forceReload);
 
         },
 
@@ -622,6 +631,5 @@ jQuery(function(){
 
     });
 
-    Settings = new Settings();
-    Settings.init();
+
 });
