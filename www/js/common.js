@@ -16,6 +16,25 @@ var APP = {
         
         var self = this;
         
+        $(window).hashchange(function() {
+
+            $("a").not("*[href^=http]").attr({
+                href: function() {
+                    
+                    var href = $(this).attr('href');
+                    
+                    var reg = /(\/\w+)(\/#([!\/\w\_\-]+)?)?$/gi;
+                    
+                    href = href.replace(reg, "$1" + APP.location.current_location_id);
+                    
+                    return  href;
+                }
+            }).bind('click', function() {
+               console.log('gggg'); 
+            });
+
+        });
+        
         $.getJSON('/api/box/location_js?loc=' + location_id, function(rs) {
             
             self.location = rs;
@@ -23,21 +42,40 @@ var APP = {
 
             if(!skipLocationSelector) {
                 
-                var opt = '';
+                var opt = '<option value="">Select location</option>';
                 $.map(rs.locations, function(value, key) {
                     
                     var selected = key == APP.location.current_location_id ? 'selected="selected"' : '';
+                    
+                    slug = '#!/' + key;
+
                     
                     opt += '<option value="' + key + '" ' + selected + '>' + value + '</option>';
                 });
 
                 $('#header-menu').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>');
                 $('#loc').bind('change', function() {
-
-                    self.location.current_location_id =  parseInt($('option:selected',this).val());
-
-                    boxManager.refresh();
-                    boxManager.getBox('box-recent-reviews').renderAlerts();
+                    
+                    
+                    var selected = $('option:selected',this).val(), 
+                    url = window.location.protocol + '//' + window.location.hostname + '/';
+                    
+                    if(selected) {
+                     
+                        window.location.replace(url + selected);  
+                        
+                        self.location.current_location_id =  selected;
+                        
+                        boxManager.refresh();
+                        boxManager.getBox('box-recent-reviews').renderAlerts();
+                     
+                    }
+                    else {
+                        
+                        window.location.replace(url + '#');  
+                        self.location.current_location_id =  GLOBALS.location_id;
+                        
+                    }
 
                 });
             }

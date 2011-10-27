@@ -113,7 +113,7 @@ class Model_User extends Model_Auth_User {
         }
 
 
-        return DB::select()
+        $rs =  DB::select()
                 ->from('companies_locations')
                 ->join('locations')
                 ->on('companies_locations.location_id', '=', 'locations.id')
@@ -122,6 +122,25 @@ class Model_User extends Model_Auth_User {
                 ->as_assoc()
                 ->execute()
                 ->as_array('location_id', 'name');
+        
+        $sql =  DB::insert('locations_slug', array('location_id', 'slug'));
+        
+        $values = array();
+        
+        DB::delete('locations_slug')
+                ->where('location_id', 'IN', array_keys($rs))
+                ->execute();
+        
+        foreach($rs as $key => $name) {
+            
+            $sql->values(array($key, strtolower(Inflector::underscore($name))));
+            
+        }
+        
+        $sql->execute();
+                
+        return $rs;
+        
     }
 
     /**
