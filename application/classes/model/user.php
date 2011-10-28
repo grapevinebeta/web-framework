@@ -134,7 +134,8 @@ class Model_User extends Model_Auth_User {
         $hashes = array();
         
         foreach($rs as $key => $name) {
-            $hashes[] = $hash = strtolower(Inflector::underscore($name));
+            
+            $hashes[] = $hash = strtolower(Inflector::underscore(preg_replace("/[^A-Za-z0-9\s]/", "", $name)));
             $sql->values(array($key, $hash));
             
         }

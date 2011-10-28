@@ -19,6 +19,84 @@ var APP = {
         
     },
     
+    initSelector: function() {
+        
+        var self = this;
+        
+        var opt = '<option value="">Select location</option>';
+        $.map(self.location.locations, function(value, key) {
+                    
+            var selected = key == self.location.current_location_hash  ? 'selected="selected"' : '';
+
+                    
+            opt += '<option value="' + key + '" ' + selected + '>' + value + '</option>';
+        });
+
+        $('#header-menu').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>')
+        .children('#loc')
+        .bind('change', function() {
+                    
+                    
+            var selected = $('option:selected',this).val(), 
+            url = window.location.href.split('#')[0];
+                    
+            if(selected) {
+                     
+                window.location.replace(url + '#!/' + selected);  
+                        
+                self.location.current_location_hash =  selected;
+                self.location.current_location_id =  self.location.hashes[selected];
+                        
+                     
+            }
+            else {
+                        
+                window.location.replace(url + '#');  
+                self.location.current_location_hash =  GLOBALS.location_hash;
+                self.location.current_location_hash =  GLOBALS.location_id;
+                        
+            }
+
+        });
+        
+    },
+    
+    initComponents: function() {
+      
+        boxManager
+        .add(new BC_TagsAnalysis())
+        .add(new BC_Scoreboard())
+        .add(new BC_ScoreboardCurrent())
+        .add(new BC_ReviewSites())
+        .add(new BC_ReviewInbox())
+        .add(new BC_SocialActivity())
+        .add(new BC_SocialSubscribers())
+        .add(new BC_SocialMediaInbox())
+        .add(new BC_CompetitionDistribution())
+        .add(new BC_CompetitionComparision())
+        .add(new BC_CompetitionReviewInbox())
+        .add(new BC_CompetitionScore())
+        //    .add(new BC_Photos())
+        //    .add(new BC_Videos())
+        .add(new BC_StatusUpdate())
+        .add(new BC_RecentActivity())
+        .setDataProvider(new DataProvider())
+        .setExporter(Exporter)
+        .init(); // we need to init all boxes only when we init top menu
+        
+            
+        if(typeof(TopMenu) != 'undefined') {
+             
+            TopMenu = new TopMenu();
+            TopMenu.init();
+             
+        }
+            
+        if(this.settings)
+            this.initSettings();
+      
+    },
+    
     init: function(location_id, skipLocationSelector) {
         
         var self = this;
@@ -29,117 +107,42 @@ var APP = {
                 href: function() {
                     
                     var href = $(this).attr('href')
-                    .split('#')[0] + '#!/' + APP.location.current_location_hash;;
+                    .split('#')[0] + '#!/' + APP.location.current_location_hash;
                     
                     return  href;
                 }
             });
+            
+            if(boxManager) {
+                         
+                boxManager.refresh();
+                boxManager.getBox('box-recent-reviews').renderAlerts();
+                         
+            }
 
         });
         
-        $.getJSON('/api/box/location_js?loc=' + location_id, function(rs) {
+        $.getJSON('/api/box/location_js', function(data) {
             
-            self.location = rs;
+            self.location = data;
 
-            var wHash = window.location.hash.split('#!/');
+            var wHash = window.location.hash.split('#!/'),
+            hash = wHash[1] ? wHash[1] : GLOBALS.location_hash,
+            url = window.location.href.split('#')[0];
+
+
+            self.location.current_location_hash =  hash;
+            self.location.current_location_id =  self.location.hashes[hash];
             
-            wHash = wHash[1] ? wHash[1] : null;
-
-            var hash = wHash ? wHash : GLOBALS.location_hash;
-
-
-            if(wHash) {
-                          
-                $("a").not("*[href^=http], .ignore").attr({
-                    href: function() {
-                    
-                        var href = $(this).attr('href')
-                        .split('#')[0] + '#!/' + wHash;
-                        ;
-                    
-                        return  href;
-                    }
-                });
-            
-                self.location.current_location_hash =  wHash;
-                self.location.current_location_id =  self.location.hashes[wHash];
-                   
-            }
+            window.location.replace(url + '#!/' + hash);  
 
             if(!skipLocationSelector) {
                 
-                var opt = '<option value="">Select location</option>';
-                $.map(rs.locations, function(value, key) {
-                    
-                    var selected = key == hash  ? 'selected="selected"' : '';
-
-                    
-                    opt += '<option value="' + key + '" ' + selected + '>' + value + '</option>';
-                });
-
-                $('#header-menu').append('<div id="loc">Select location:<br /> <select name="loc">' + opt + '</select></div>');
-                $('#loc').bind('change', function() {
-                    
-                    
-                    var selected = $('option:selected',this).val(), 
-                    url = window.location.href.split('#')[0];
-                    
-                    if(selected) {
-                     
-                        window.location.replace(url + '#!/' + selected);  
-                        
-                        self.location.current_location_hash =  selected;
-                        self.location.current_location_id =  self.location.hashes[selected];
-                        
-                        if(boxManager) {
-                         
-                            boxManager.refresh();
-                            boxManager.getBox('box-recent-reviews').renderAlerts();
-                         
-                        }
-                     
-                    }
-                    else {
-                        
-                        window.location.replace(url + '#');  
-                        self.location.current_location_hash =  GLOBALS.location_hash;
-                        self.location.current_location_hash =  GLOBALS.location_id;
-                        
-                    }
-
-                });
+                self.initSelector();
             }
             
-            boxManager
-            .add(new BC_TagsAnalysis())
-            .add(new BC_Scoreboard())
-            .add(new BC_ScoreboardCurrent())
-            .add(new BC_ReviewSites())
-            .add(new BC_ReviewInbox())
-            .add(new BC_SocialActivity())
-            .add(new BC_SocialSubscribers())
-            .add(new BC_SocialMediaInbox())
-            .add(new BC_CompetitionDistribution())
-            .add(new BC_CompetitionComparision())
-            .add(new BC_CompetitionReviewInbox())
-            .add(new BC_CompetitionScore())
-            //    .add(new BC_Photos())
-            //    .add(new BC_Videos())
-            .add(new BC_StatusUpdate())
-            .add(new BC_RecentActivity())
-            .setDataProvider(new DataProvider())
-            .setExporter(Exporter)
-            .init(); // we need to init all boxes only when we init top menu
-        
+            self.initComponents();
             
-            if(typeof(TopMenu) != 'undefined') {
-             
-                TopMenu = new TopMenu();
-                TopMenu.init();
-             
-            }
-            
-            self.initSettings();
         
         });
     }

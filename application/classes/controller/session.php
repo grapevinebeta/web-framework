@@ -21,6 +21,10 @@ class Controller_Session extends Controller_Template {
             
             if ($user) {
                 // credentials are ok
+                
+                // reindex locations - good to check it before first login
+                Auth::instance()->get_user()->getLocationsList();
+                
                 $this->request->redirect(Route::url('frontpage'));
             } else {
                 // credentials were incorrect
