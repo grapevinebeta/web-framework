@@ -93,8 +93,6 @@ jQuery(function(){
 
             jQuery('#loc select').live('change', function() {
 
-                console.log(APP.location.current_location_id);                
-
                 self.location_id =  APP.location.current_location_id;
                 
                 self.initializeSections(true);

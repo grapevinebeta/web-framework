@@ -92,7 +92,7 @@ var APP = {
              
         }
             
-        if(this.settings)
+        if(GLOBALS.settings)
             this.initSettings();
       
     },
