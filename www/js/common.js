@@ -106,8 +106,11 @@ var APP = {
             $("a").not("*[href^=http], .ignore").attr({
                 href: function() {
                     
-                    var href = $(this).attr('href')
-                    .split('#')[0] + '#!/' + APP.location.current_location_hash;
+                    var href = $(this).attr('href');
+                    
+                    href = href ? (href.split('#')[0] + '#!/' + APP.location.current_location_hash)
+                     :
+                         false;
                     
                     return  href;
                 }
