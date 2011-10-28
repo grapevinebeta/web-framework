@@ -23,7 +23,7 @@ var APP = {
         
         var self = this;
         
-        var opt = '<option value="">Select location</option>';
+        var opt = '';
         $.map(self.location.locations, function(value, key) {
                     
             var selected = key == self.location.current_location_hash  ? 'selected="selected"' : '';
@@ -123,7 +123,7 @@ var APP = {
                 
                 var reviews = boxManager.getBox('box-recent-reviews')
                 
-                if(reviews.length)
+                if(reviews)
                     reviews.renderAlerts();
                          
             }
