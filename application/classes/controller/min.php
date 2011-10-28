@@ -99,6 +99,7 @@ abstract class Controller_Min extends Kohana_Controller_Template
         );
         // notice that we use minified versions of all scripts, for dev remove .min
         $this->template->scripts = array(
+            'js/jquery.ba-bbq.min.js',
             'js/common.js', // adds some common functions
             'js/DataProvider.js',
             'js/Boxes.js', // minified verion of Boxes.js
