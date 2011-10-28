@@ -136,6 +136,8 @@ var APP = {
             
             window.location.replace(url + '#!/' + hash);  
 
+            $(window).hashchange();
+
             if(!skipLocationSelector) {
                 
                 self.initSelector();
