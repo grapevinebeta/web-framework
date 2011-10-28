@@ -116,7 +116,12 @@ var APP = {
             if(boxManager) {
                          
                 boxManager.refresh();
-                boxManager.getBox('box-recent-reviews').renderAlerts();
+                
+                
+                var reviews = boxManager.getBox('box-recent-reviews')
+                
+                if(reviews.length)
+                    reviews.renderAlerts();
                          
             }
 
